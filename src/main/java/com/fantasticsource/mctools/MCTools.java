@@ -10,7 +10,6 @@ import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -104,14 +103,19 @@ public class MCTools
         return centerPos.add(-xzRange + (int) (Math.random() * xzRange * 2 + 1), -xzRange + (int) (Math.random() * xzRange * 2 + 1), -yRange + (int) (Math.random() * yRange * 2 + 1));
     }
 
-    public static boolean isClient(World world)
-    {
-        return world.isRemote;
-    }
-
     public static boolean isOP(EntityPlayerMP player)
     {
-        return FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().canSendCommands(player.getGameProfile());
+        for (String string : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getOppedPlayerNames())
+        {
+            if (string.equalsIgnoreCase(player.getGameProfile().getName())) return true;
+        }
+
+        return false;
+    }
+
+    public static boolean isServerOwner(EntityPlayerMP player)
+    {
+        return FMLCommonHandler.instance().getMinecraftServerInstance().getServerOwner().equalsIgnoreCase(player.getGameProfile().getName());
     }
 
     public static boolean isPassive(EntityLivingBase livingBase)
