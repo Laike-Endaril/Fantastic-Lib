@@ -16,6 +16,12 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class MCTools
 {
+    public static void crash(Exception e, int code, boolean hardExit)
+    {
+        e.printStackTrace();
+        FMLCommonHandler.instance().exitJava(code, hardExit);
+    }
+
     public static boolean isRidingOrRiddenBy(Entity entity1, Entity entity2)
     {
         //getRidingEntity DOES NOT GET THE RIDING ENTITY!  It gets the RIDDEN entity (these are opposites, ppl...)
