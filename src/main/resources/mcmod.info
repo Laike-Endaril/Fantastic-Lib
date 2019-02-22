@@ -1,0 +1,16 @@
+[
+{
+  "modid": "fantasticlib",
+  "name": "Fantastic Lib",
+  "description": "You only need this if it's a dependency for another mod you're running",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Laike_Endaril"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
