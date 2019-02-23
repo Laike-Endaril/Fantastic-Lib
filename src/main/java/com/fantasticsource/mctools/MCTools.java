@@ -8,14 +8,22 @@ import net.minecraft.entity.ai.*;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
+import java.io.File;
+
 public class MCTools
 {
+    public static File getDataFile(MinecraftServer server, String filename)
+    {
+        return new File(server.worlds[0].getSaveHandler().getWorldDirectory() + File.separator + "data" + File.separator + filename);
+    }
+
     public static void crash(Exception e, int code, boolean hardExit)
     {
         e.printStackTrace();
