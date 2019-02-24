@@ -19,9 +19,9 @@ import java.io.File;
 
 public class MCTools
 {
-    public static File getDataFile(MinecraftServer server, String filename)
+    public static String getDataDir(MinecraftServer server)
     {
-        return new File(server.worlds[0].getSaveHandler().getWorldDirectory() + File.separator + "data" + File.separator + filename);
+        return server.worlds[0].getSaveHandler().getWorldDirectory() + File.separator + "data" + File.separator;
     }
 
     public static void crash(Exception e, int code, boolean hardExit)
