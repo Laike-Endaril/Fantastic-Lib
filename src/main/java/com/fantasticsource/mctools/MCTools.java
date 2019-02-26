@@ -73,33 +73,15 @@ public class MCTools
         return ((IEntityOwnable) entity).getOwner();
     }
 
-    public static double getYaw(Entity fromEntity, Entity toEntity, TrigLookupTable trigTable)
-    {
-        return getYaw(fromEntity.getPositionVector(), toEntity.getPositionVector(), trigTable);
-    }
-
-    public static double getYaw(Entity fromEntity, BlockPos toPos, TrigLookupTable trigTable)
-    {
-        return getYaw(fromEntity.getPositionVector(), new Vec3d(toPos), trigTable);
-    }
-
     public static double getYaw(Vec3d fromVec, Vec3d toVec, TrigLookupTable trigTable)
     {
         return Tools.radtodeg(trigTable.arctanFullcircle(fromVec.z, fromVec.x, toVec.z, toVec.x));
     }
 
-    public static double getPitch(Entity fromEntity, Entity toEntity, TrigLookupTable trigTable)
+    public static double getPitch(Vec3d fromVec, Vec3d toVec, TrigLookupTable trigTable)
     {
-        if (toEntity == null) return fromEntity.rotationPitch;
-        double result = Tools.radtodeg(trigTable.arctanFullcircle(0, 0, Tools.distance(fromEntity.posX, fromEntity.posZ, toEntity.posX, toEntity.posZ), toEntity.posY - fromEntity.posY));
-        return fromEntity.posY > toEntity.posY ? -result : result;
-    }
-
-    public static double getPitch(Entity fromEntity, BlockPos toPos, TrigLookupTable trigTable)
-    {
-        if (toPos == null) return fromEntity.rotationPitch;
-        double result = Tools.radtodeg(trigTable.arctanFullcircle(0, 0, Tools.distance(fromEntity.posX, fromEntity.posZ, toPos.getX(), toPos.getZ()), toPos.getY() - fromEntity.posY));
-        return fromEntity.posY > toPos.getY() ? -result : result;
+        double result = Tools.radtodeg(trigTable.arctanFullcircle(0, 0, Tools.distance(fromVec.x, fromVec.z, toVec.x, toVec.z), toVec.y - fromVec.y));
+        return fromVec.y > toVec.y ? -result : result;
     }
 
     public static double getAttribute(EntityLivingBase entity, IAttribute attribute, double defaultVal)
