@@ -1,8 +1,11 @@
 package com.fantasticsource.mctools;
 
+import com.fantasticsource.tools.ReflectionTool;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.TrigLookupTable;
 import com.fantasticsource.tools.datastructures.ExplicitPriorityQueue;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.ai.attributes.IAttribute;
@@ -11,14 +14,47 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import java.io.File;
+import java.lang.reflect.Field;
 
 public class MCTools
 {
+    private static Field activeRenderInfoPositionField;
+
+    static
+    {
+        try
+        {
+            activeRenderInfoPositionField = ReflectionTool.getField(true, ActiveRenderInfo.class, "field_149374_a", "field_175127_b", "field_175129_b", "field_178150_j", "field_178586_f", "field_178811_e", "field_179717_a", "field_179725_b", "field_179822_b", "field_179838_b", "field_180247_b", "field_180282_a", "field_180329_a", "field_184423_h", "field_191139_b", "field_194003_c", "position");
+        }
+        catch (NoSuchFieldException | IllegalAccessException e)
+        {
+            crash(e, 700, false);
+        }
+    }
+
+
+    public static Vec3d getCameraPosition() throws IllegalAccessException
+    {
+        return Minecraft.getMinecraft().player.getPositionVector().add((Vec3d) activeRenderInfoPositionField.get(null));
+    }
+
+    public static void setCameraPosition(double x, double y, double z) throws IllegalAccessException
+    {
+        setCameraPosition(new Vec3d(x, y, z));
+    }
+
+    public static void setCameraPosition(Vec3d position) throws IllegalAccessException
+    {
+        activeRenderInfoPositionField.set(null, position);
+    }
+
+
     public static String getDataDir(MinecraftServer server)
     {
         return server.worlds[0].getSaveHandler().getWorldDirectory() + File.separator + "data" + File.separator;
@@ -29,7 +65,7 @@ public class MCTools
         e.printStackTrace();
         FMLCommonHandler.instance().exitJava(code, hardExit);
     }
- 
+
     public static boolean isRidingOrRiddenBy(Entity entity1, Entity entity2)
     {
         //getRidingEntity DOES NOT GET THE RIDING ENTITY!  It gets the RIDDEN entity (these are opposites, ppl...)
