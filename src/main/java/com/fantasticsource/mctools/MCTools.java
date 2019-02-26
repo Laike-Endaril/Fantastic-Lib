@@ -44,16 +44,6 @@ public class MCTools
         return Minecraft.getMinecraft().player.getPositionVector().add((Vec3d) activeRenderInfoPositionField.get(null));
     }
 
-    public static void setCameraPosition(double x, double y, double z) throws IllegalAccessException
-    {
-        setCameraPosition(new Vec3d(x, y, z));
-    }
-
-    public static void setCameraPosition(Vec3d position) throws IllegalAccessException
-    {
-        activeRenderInfoPositionField.set(null, position.subtract(Minecraft.getMinecraft().player.getPositionVector()));
-    }
-
 
     public static String getDataDir(MinecraftServer server)
     {
