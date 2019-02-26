@@ -51,7 +51,7 @@ public class MCTools
 
     public static void setCameraPosition(Vec3d position) throws IllegalAccessException
     {
-        activeRenderInfoPositionField.set(null, position);
+        activeRenderInfoPositionField.set(null, position.subtract(Minecraft.getMinecraft().player.getPositionVector()));
     }
 
 
