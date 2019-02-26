@@ -4,6 +4,7 @@ import com.fantasticsource.tools.ReflectionTool;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.TrigLookupTable;
 import com.fantasticsource.tools.datastructures.ExplicitPriorityQueue;
+import com.fantasticsource.tools.datastructures.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.entity.*;
@@ -21,27 +22,49 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.nio.IntBuffer;
 
 public class MCTools
 {
-    private static Field activeRenderInfoPositionField;
+    private static Field activeRenderInfoViewportField, activeRenderInfoProjectionField;
 
     static
     {
         try
         {
-            activeRenderInfoPositionField = ReflectionTool.getField(true, ActiveRenderInfo.class, "field_149374_a", "field_175127_b", "field_175129_b", "field_178150_j", "field_178586_f", "field_178811_e", "field_179717_a", "field_179725_b", "field_179822_b", "field_179838_b", "field_180247_b", "field_180282_a", "field_180329_a", "field_184423_h", "field_191139_b", "field_194003_c", "position");
+            activeRenderInfoViewportField = ReflectionTool.getField(ActiveRenderInfo.class, "field_178814_a", "VIEWPORT");
+            activeRenderInfoProjectionField = ReflectionTool.getField(ActiveRenderInfo.class, "field_178813_c", "PROJECTION");
         }
-        catch (NoSuchFieldException | IllegalAccessException e)
+        catch (Exception e)
         {
             crash(e, 700, false);
         }
     }
 
 
+    public static Pair<Double, Double> getEntityXYInWindow(Entity entity, TrigLookupTable trigTable) throws IllegalAccessException
+    {
+        return get2DWindowCoordsFrom3DWorldCoords(entity.getPositionVector(), trigTable);
+    }
+
+    public static Pair<Double, Double> get2DWindowCoordsFrom3DWorldCoords(Vec3d position, TrigLookupTable trigTable) throws IllegalAccessException
+    {
+        return null;//TODO
+    }
+
+    public static int getViewportWidth() throws IllegalAccessException
+    {
+        return ((IntBuffer) activeRenderInfoViewportField.get(null)).get(2);
+    }
+
+    public static int getViewportHeight() throws IllegalAccessException
+    {
+        return ((IntBuffer) activeRenderInfoViewportField.get(null)).get(3);
+    }
+
     public static Vec3d getCameraPosition() throws IllegalAccessException
     {
-        return Minecraft.getMinecraft().player.getPositionVector().add((Vec3d) activeRenderInfoPositionField.get(null));
+        return Minecraft.getMinecraft().player.getPositionVector().add(ActiveRenderInfo.getCameraPosition());
     }
 
 
