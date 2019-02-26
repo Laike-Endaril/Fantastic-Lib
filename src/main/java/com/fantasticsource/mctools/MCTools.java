@@ -75,14 +75,17 @@ public class MCTools
 
     public static double getYaw(Entity fromEntity, Entity toEntity, TrigLookupTable trigTable)
     {
-        if (toEntity == null) return fromEntity.getRotationYawHead();
-        return Tools.radtodeg(trigTable.arctanFullcircle(fromEntity.posZ, fromEntity.posX, toEntity.posZ, toEntity.posX));
+        return getYaw(fromEntity, toEntity.getPosition(), trigTable);
     }
 
     public static double getYaw(Entity fromEntity, BlockPos toPos, TrigLookupTable trigTable)
     {
-        if (toPos == null) return fromEntity.getRotationYawHead();
-        return Tools.radtodeg(trigTable.arctanFullcircle(fromEntity.posZ, fromEntity.posX, toPos.getZ(), toPos.getX()));
+        return getYaw(fromEntity.getPositionVector(), new Vec3d(toPos), trigTable);
+    }
+
+    public static double getYaw(Vec3d fromVec, Vec3d toVec, TrigLookupTable trigTable)
+    {
+        return Tools.radtodeg(trigTable.arctanFullcircle(fromVec.z, fromVec.x, toVec.z, toVec.x));
     }
 
     public static double getPitch(Entity fromEntity, Entity toEntity, TrigLookupTable trigTable)
