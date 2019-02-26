@@ -75,7 +75,7 @@ public class MCTools
 
     public static double getYaw(Entity fromEntity, Entity toEntity, TrigLookupTable trigTable)
     {
-        return getYaw(fromEntity, toEntity.getPosition(), trigTable);
+        return getYaw(fromEntity.getPositionVector(), toEntity.getPositionVector(), trigTable);
     }
 
     public static double getYaw(Entity fromEntity, BlockPos toPos, TrigLookupTable trigTable)
