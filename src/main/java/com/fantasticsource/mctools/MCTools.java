@@ -19,14 +19,16 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import org.lwjgl.util.glu.GLU;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 public class MCTools
 {
-    private static Field activeRenderInfoViewportField, activeRenderInfoProjectionField;
+    private static Field activeRenderInfoViewportField, activeRenderInfoProjectionField, activeRenderInfoModelviewField;
 
     static
     {
@@ -34,6 +36,7 @@ public class MCTools
         {
             activeRenderInfoViewportField = ReflectionTool.getField(ActiveRenderInfo.class, "field_178814_a", "VIEWPORT");
             activeRenderInfoProjectionField = ReflectionTool.getField(ActiveRenderInfo.class, "field_178813_c", "PROJECTION");
+            activeRenderInfoModelviewField = ReflectionTool.getField(ActiveRenderInfo.class, "field_178812_b", "MODELVIEW");
         }
         catch (Exception e)
         {
@@ -42,15 +45,20 @@ public class MCTools
     }
 
 
-    public static Pair<Double, Double> getEntityXYInWindow(Entity entity, TrigLookupTable trigTable) throws IllegalAccessException
+    public static Pair<Float, Float> getEntityXYInWindow(Entity entity) throws IllegalAccessException
     {
-        return get2DWindowCoordsFrom3DWorldCoords(entity.getPositionVector(), trigTable);
+        return get2DWindowCoordsFrom3DWorldCoords(entity.getPositionVector());
     }
 
-    public static Pair<Double, Double> get2DWindowCoordsFrom3DWorldCoords(Vec3d position, TrigLookupTable trigTable) throws IllegalAccessException
+    public static Pair<Float, Float> get2DWindowCoordsFrom3DWorldCoords(Vec3d position) throws IllegalAccessException
     {
-        return null;//TODO
+        Vec3d playerPos = Minecraft.getMinecraft().player.getPositionVector();
+
+        FloatBuffer result = FloatBuffer.allocate(3);
+        GLU.gluProject((float) (position.x - playerPos.x), (float) (position.y - playerPos.y), (float) (position.z - playerPos.z), (FloatBuffer) activeRenderInfoModelviewField.get(null), (FloatBuffer) activeRenderInfoProjectionField.get(null), (IntBuffer) activeRenderInfoViewportField.get(null), result);
+        return new Pair<>(result.get(0) * 0.5f, ((float) getViewportHeight() - result.get(1)) * 0.5f);
     }
+
 
     public static int getViewportWidth() throws IllegalAccessException
     {
