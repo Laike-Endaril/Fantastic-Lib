@@ -11,6 +11,7 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DamageSource;
@@ -47,15 +48,31 @@ public class MCTools
 
     public static Pair<Float, Float> getEntityXYInWindow(Entity entity) throws IllegalAccessException
     {
-        return get2DWindowCoordsFrom3DWorldCoords(entity.getPositionVector());
+        return getEntityXYInWindow(entity, 0, 0, 0);
     }
 
-    public static Pair<Float, Float> get2DWindowCoordsFrom3DWorldCoords(Vec3d position) throws IllegalAccessException
+    public static Pair<Float, Float> getEntityXYInWindow(Entity entity, double xOffset, double yOffset, double zOffset) throws IllegalAccessException
     {
-        Vec3d playerPos = Minecraft.getMinecraft().player.getPositionVector();
+        double partialTick = Minecraft.getMinecraft().getRenderPartialTicks();
+
+        double x = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * partialTick + xOffset;
+        double y = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * partialTick + yOffset;
+        double z = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * partialTick + zOffset;
+
+        return get2DWindowCoordsFrom3DWorldCoords(x, y, z);
+    }
+
+    public static Pair<Float, Float> get2DWindowCoordsFrom3DWorldCoords(double x, double y, double z) throws IllegalAccessException
+    {
+        double partialTick = Minecraft.getMinecraft().getRenderPartialTicks();
+
+        EntityPlayer player = Minecraft.getMinecraft().player;
+        double px = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTick;
+        double py = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTick;
+        double pz = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTick;
 
         FloatBuffer result = FloatBuffer.allocate(3);
-        GLU.gluProject((float) (position.x - playerPos.x), (float) (position.y - playerPos.y), (float) (position.z - playerPos.z), (FloatBuffer) activeRenderInfoModelviewField.get(null), (FloatBuffer) activeRenderInfoProjectionField.get(null), (IntBuffer) activeRenderInfoViewportField.get(null), result);
+        GLU.gluProject((float) (x - px), (float) (y - py), (float) (z - pz), (FloatBuffer) activeRenderInfoModelviewField.get(null), (FloatBuffer) activeRenderInfoProjectionField.get(null), (IntBuffer) activeRenderInfoViewportField.get(null), result);
         return new Pair<>(result.get(0) * 0.5f, ((float) getViewportHeight() - result.get(1)) * 0.5f);
     }
 
