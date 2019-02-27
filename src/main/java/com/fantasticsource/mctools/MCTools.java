@@ -29,7 +29,7 @@ import java.nio.IntBuffer;
 
 public class MCTools
 {
-    private static Field activeRenderInfoViewportField, activeRenderInfoProjectionField, activeRenderInfoModelviewField;
+    private static Field activeRenderInfoViewportField, activeRenderInfoProjectionField, activeRenderInfoModelviewField, minecraftRenderPartialTicksPausedField;
 
     static
     {
@@ -38,6 +38,7 @@ public class MCTools
             activeRenderInfoViewportField = ReflectionTool.getField(ActiveRenderInfo.class, "field_178814_a", "VIEWPORT");
             activeRenderInfoProjectionField = ReflectionTool.getField(ActiveRenderInfo.class, "field_178813_c", "PROJECTION");
             activeRenderInfoModelviewField = ReflectionTool.getField(ActiveRenderInfo.class, "field_178812_b", "MODELVIEW");
+            minecraftRenderPartialTicksPausedField = ReflectionTool.getField(Minecraft.class, "field_193996_ah", "renderPartialTicksPaused");
         }
         catch (Exception e)
         {
@@ -53,19 +54,25 @@ public class MCTools
 
     public static Pair<Float, Float> getEntityXYInWindow(Entity entity, double xOffset, double yOffset, double zOffset) throws IllegalAccessException
     {
-        double partialTick = Minecraft.getMinecraft().getRenderPartialTicks();
+        Minecraft mc = Minecraft.getMinecraft();
+        double partialTick = mc.isGamePaused() ? (double) (float) minecraftRenderPartialTicksPausedField.get(mc) : mc.getRenderPartialTicks();
 
         double x = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * partialTick + xOffset;
         double y = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * partialTick + yOffset;
         double z = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * partialTick + zOffset;
 
-        return get2DWindowCoordsFrom3DWorldCoords(x, y, z);
+        return get2DWindowCoordsFrom3DWorldCoords(x, y, z, partialTick);
     }
 
     public static Pair<Float, Float> get2DWindowCoordsFrom3DWorldCoords(double x, double y, double z) throws IllegalAccessException
     {
-        double partialTick = Minecraft.getMinecraft().getRenderPartialTicks();
+        Minecraft mc = Minecraft.getMinecraft();
+        double partialTick = mc.isGamePaused() ? (double) (float) minecraftRenderPartialTicksPausedField.get(mc) : mc.getRenderPartialTicks();
+        return get2DWindowCoordsFrom3DWorldCoords(x, y, z, partialTick);
+    }
 
+    private static Pair<Float, Float> get2DWindowCoordsFrom3DWorldCoords(double x, double y, double z, double partialTick) throws IllegalAccessException
+    {
         EntityPlayer player = Minecraft.getMinecraft().player;
         double px = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTick;
         double py = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTick;
