@@ -19,6 +19,9 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Config;
+import net.minecraftforge.common.config.ConfigManager;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.lwjgl.util.glu.GLU;
@@ -27,10 +30,11 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.Map;
 
 public class MCTools
 {
-    private static Field activeRenderInfoViewportField, activeRenderInfoProjectionField, activeRenderInfoModelviewField, minecraftRenderPartialTicksPausedField;
+    private static Field activeRenderInfoViewportField, activeRenderInfoProjectionField, activeRenderInfoModelviewField, minecraftRenderPartialTicksPausedField, configManagerCONFIGSField;
 
     static
     {
@@ -40,11 +44,19 @@ public class MCTools
             activeRenderInfoProjectionField = ReflectionTool.getField(ActiveRenderInfo.class, "field_178813_c", "PROJECTION");
             activeRenderInfoModelviewField = ReflectionTool.getField(ActiveRenderInfo.class, "field_178812_b", "MODELVIEW");
             minecraftRenderPartialTicksPausedField = ReflectionTool.getField(Minecraft.class, "field_193996_ah", "renderPartialTicksPaused");
+            configManagerCONFIGSField = ReflectionTool.getField(ConfigManager.class, "CONFIGS");
         }
         catch (Exception e)
         {
             crash(e, 700, false);
         }
+    }
+
+
+    public static void reloadConfig(String configFilename, String modid) throws IllegalAccessException
+    {
+        ((Map<String, Configuration>) configManagerCONFIGSField.get(null)).remove(configFilename);
+        ConfigManager.sync(modid, Config.Type.INSTANCE);
     }
 
 
