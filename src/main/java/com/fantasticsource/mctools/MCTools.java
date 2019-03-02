@@ -6,7 +6,6 @@ import com.fantasticsource.tools.TrigLookupTable;
 import com.fantasticsource.tools.datastructures.ExplicitPriorityQueue;
 import com.fantasticsource.tools.datastructures.Pair;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.*;
@@ -93,8 +92,7 @@ public class MCTools
 
         FloatBuffer result = FloatBuffer.allocate(3);
         GLU.gluProject((float) (x - px), (float) (y - py), (float) (z - pz), (FloatBuffer) activeRenderInfoModelviewField.get(null), (FloatBuffer) activeRenderInfoProjectionField.get(null), (IntBuffer) activeRenderInfoViewportField.get(null), result);
-        int guiScale = (new ScaledResolution(Minecraft.getMinecraft())).getScaleFactor();
-        return new Pair<>(result.get(0) / guiScale, ((float) getViewportHeight() - result.get(1)) / guiScale);
+        return new Pair<>(result.get(0), (float) getViewportHeight() - result.get(1));
     }
 
 
