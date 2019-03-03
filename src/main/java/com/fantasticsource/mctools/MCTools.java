@@ -23,6 +23,8 @@ import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.util.glu.GLU;
 
 import java.io.File;
@@ -39,15 +41,28 @@ public class MCTools
     {
         try
         {
-            activeRenderInfoViewportField = ReflectionTool.getField(ActiveRenderInfo.class, "field_178814_a", "VIEWPORT");
-            activeRenderInfoProjectionField = ReflectionTool.getField(ActiveRenderInfo.class, "field_178813_c", "PROJECTION");
-            activeRenderInfoModelviewField = ReflectionTool.getField(ActiveRenderInfo.class, "field_178812_b", "MODELVIEW");
-            minecraftRenderPartialTicksPausedField = ReflectionTool.getField(Minecraft.class, "field_193996_ah", "renderPartialTicksPaused");
             configManagerCONFIGSField = ReflectionTool.getField(ConfigManager.class, "CONFIGS");
         }
         catch (Exception e)
         {
             crash(e, 700, false);
+        }
+    }
+
+
+    @SideOnly(Side.CLIENT)
+    public static void clientInit()
+    {
+        try
+        {
+            activeRenderInfoViewportField = ReflectionTool.getField(ActiveRenderInfo.class, "field_178814_a", "VIEWPORT");
+            activeRenderInfoProjectionField = ReflectionTool.getField(ActiveRenderInfo.class, "field_178813_c", "PROJECTION");
+            activeRenderInfoModelviewField = ReflectionTool.getField(ActiveRenderInfo.class, "field_178812_b", "MODELVIEW");
+            minecraftRenderPartialTicksPausedField = ReflectionTool.getField(Minecraft.class, "field_193996_ah", "renderPartialTicksPaused");
+        }
+        catch (Exception e)
+        {
+            crash(e, 701, false);
         }
     }
 
@@ -59,11 +74,13 @@ public class MCTools
     }
 
 
+    @SideOnly(Side.CLIENT)
     public static Pair<Float, Float> getEntityXYInWindow(Entity entity) throws IllegalAccessException
     {
         return getEntityXYInWindow(entity, 0, 0, 0);
     }
 
+    @SideOnly(Side.CLIENT)
     public static Pair<Float, Float> getEntityXYInWindow(Entity entity, double xOffset, double yOffset, double zOffset) throws IllegalAccessException
     {
         Minecraft mc = Minecraft.getMinecraft();
@@ -76,6 +93,7 @@ public class MCTools
         return get2DWindowCoordsFrom3DWorldCoords(x, y, z, partialTick);
     }
 
+    @SideOnly(Side.CLIENT)
     public static Pair<Float, Float> get2DWindowCoordsFrom3DWorldCoords(double x, double y, double z) throws IllegalAccessException
     {
         Minecraft mc = Minecraft.getMinecraft();
@@ -83,6 +101,7 @@ public class MCTools
         return get2DWindowCoordsFrom3DWorldCoords(x, y, z, partialTick);
     }
 
+    @SideOnly(Side.CLIENT)
     private static Pair<Float, Float> get2DWindowCoordsFrom3DWorldCoords(double x, double y, double z, double partialTick) throws IllegalAccessException
     {
         EntityPlayer player = Minecraft.getMinecraft().player;
@@ -96,16 +115,19 @@ public class MCTools
     }
 
 
+    @SideOnly(Side.CLIENT)
     public static int getViewportWidth() throws IllegalAccessException
     {
         return ((IntBuffer) activeRenderInfoViewportField.get(null)).get(2);
     }
 
+    @SideOnly(Side.CLIENT)
     public static int getViewportHeight() throws IllegalAccessException
     {
         return ((IntBuffer) activeRenderInfoViewportField.get(null)).get(3);
     }
 
+    @SideOnly(Side.CLIENT)
     public static Vec3d getCameraPosition() throws IllegalAccessException
     {
         return Minecraft.getMinecraft().player.getPositionVector().add(ActiveRenderInfo.getCameraPosition());
