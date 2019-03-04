@@ -1,6 +1,6 @@
 package com.fantasticsource.tools.datastructures;
 
-import static com.fantasticsource.tools.Tools.mod;
+import static com.fantasticsource.tools.Tools.posMod;
 
 @SuppressWarnings({"UnusedParameters", "unused"})
 public class ShiftableGridFlippingZ<T> extends ShiftableGrid<T>
@@ -23,13 +23,13 @@ public class ShiftableGridFlippingZ<T> extends ShiftableGrid<T>
     public void set(int x, int y, int z, T value)
     {
         //noinspection unchecked
-        shiftableGrids[mod(z, 2)].set(x, y, value);
+        shiftableGrids[posMod(z, 2)].set(x, y, value);
     }
 
     public T get(int x, int y, int z)
     {
         //noinspection unchecked
-        return (T) shiftableGrids[mod(z, 2)].get(x, y);
+        return (T) shiftableGrids[posMod(z, 2)].get(x, y);
     }
 
     public void clearBoth()
@@ -53,7 +53,7 @@ public class ShiftableGridFlippingZ<T> extends ShiftableGrid<T>
         shiftableGrids[0].shift(x, y, true);
         shiftableGrids[1].shift(x, y, true);
 
-        if (mod(z, 2) == 1)
+        if (posMod(z, 2) == 1)
         {
             ShiftableGridFlippingZ sg = shiftableGrids[0];
             shiftableGrids[0] = shiftableGrids[1];

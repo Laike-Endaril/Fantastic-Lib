@@ -16,27 +16,27 @@ public class Tools
 {
     public static int angleDifDeg(int angle1, int angle2)
     {
-        return mod(angle2 - angle1, 360);
+        return posMod(angle2 - angle1, 360);
     }
 
     public static float angleDifDeg(float angle1, float angle2)
     {
-        return mod(angle2 - angle1, 360);
+        return posMod(angle2 - angle1, 360);
     }
 
     public static double angleDifDeg(double angle1, double angle2)
     {
-        return mod(angle2 - angle1, 360);
+        return posMod(angle2 - angle1, 360);
     }
 
     public static float angleDifRad(float angle1, float angle2)
     {
-        return mod(angle2 - angle1, (float) Math.PI * 2);
+        return posMod(angle2 - angle1, (float) Math.PI * 2);
     }
 
     public static double angleDifRad(double angle1, double angle2)
     {
-        return mod(angle2 - angle1, Math.PI * 2);
+        return posMod(angle2 - angle1, Math.PI * 2);
     }
 
 
@@ -392,21 +392,21 @@ public class Tools
         return rad * 180 / Math.PI;
     }
 
-    public static int mod(int a, int b)
+    public static int posMod(int a, int b)
     {
         a = a % b;
         if (a < 0) a += b;
         return a;
     }
 
-    public static float mod(float a, float b)
+    public static float posMod(float a, float b)
     {
         a = a % b;
         if (a < 0) a += b;
         return a;
     }
 
-    public static double mod(double a, double b)
+    public static double posMod(double a, double b)
     {
         a = a % b;
         if (a < 0) a += b;

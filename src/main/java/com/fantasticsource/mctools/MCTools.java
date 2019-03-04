@@ -1,12 +1,12 @@
 package com.fantasticsource.mctools;
 
 import com.fantasticsource.tools.ReflectionTool;
-import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.TrigLookupTable;
 import com.fantasticsource.tools.datastructures.ExplicitPriorityQueue;
 import com.fantasticsource.tools.datastructures.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.ai.attributes.IAttribute;
@@ -32,6 +32,8 @@ import java.lang.reflect.Field;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Map;
+
+import static com.fantasticsource.tools.Tools.*;
 
 public class MCTools
 {
@@ -75,13 +77,13 @@ public class MCTools
 
 
     @SideOnly(Side.CLIENT)
-    public static Pair<Float, Float> getEntityXYInWindow(Entity entity) throws IllegalAccessException
+    public static Pair<Float, Float> getEntityXYInWindow(Entity entity, TrigLookupTable trigLookupTable) throws IllegalAccessException
     {
-        return getEntityXYInWindow(entity, 0, 0, 0);
+        return getEntityXYInWindow(entity, 0, 0, 0, trigLookupTable);
     }
 
     @SideOnly(Side.CLIENT)
-    public static Pair<Float, Float> getEntityXYInWindow(Entity entity, double xOffset, double yOffset, double zOffset) throws IllegalAccessException
+    public static Pair<Float, Float> getEntityXYInWindow(Entity entity, double xOffset, double yOffset, double zOffset, TrigLookupTable trigLookupTable) throws IllegalAccessException
     {
         Minecraft mc = Minecraft.getMinecraft();
         double partialTick = mc.isGamePaused() ? (double) (float) minecraftRenderPartialTicksPausedField.get(mc) : mc.getRenderPartialTicks();
@@ -90,19 +92,24 @@ public class MCTools
         double y = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * partialTick + yOffset;
         double z = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * partialTick + zOffset;
 
-        return get2DWindowCoordsFrom3DWorldCoords(x, y, z, partialTick);
+        return get2DWindowCoordsFrom3DWorldCoords(x, y, z, partialTick, trigLookupTable);
     }
 
     @SideOnly(Side.CLIENT)
-    public static Pair<Float, Float> get2DWindowCoordsFrom3DWorldCoords(double x, double y, double z) throws IllegalAccessException
+    public static Pair<Float, Float> get2DWindowCoordsFrom3DWorldCoords(double x, double y, double z, TrigLookupTable trigLookupTable) throws IllegalAccessException
     {
         Minecraft mc = Minecraft.getMinecraft();
         double partialTick = mc.isGamePaused() ? (double) (float) minecraftRenderPartialTicksPausedField.get(mc) : mc.getRenderPartialTicks();
-        return get2DWindowCoordsFrom3DWorldCoords(x, y, z, partialTick);
+        return get2DWindowCoordsFrom3DWorldCoords(x, y, z, partialTick, trigLookupTable);
     }
 
+
+    /**
+     * When the entity is visible in the current projection, the returned values are its position in the window
+     * When the entity is not visible in the current projection, the returned values are an off-screen position with the correct ratio to be used for an edge-of-screen indicator
+     */
     @SideOnly(Side.CLIENT)
-    private static Pair<Float, Float> get2DWindowCoordsFrom3DWorldCoords(double x, double y, double z, double partialTick) throws IllegalAccessException
+    private static Pair<Float, Float> get2DWindowCoordsFrom3DWorldCoords(double x, double y, double z, double partialTick, TrigLookupTable trigLookupTable) throws IllegalAccessException
     {
         EntityPlayer player = Minecraft.getMinecraft().player;
         double px = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTick;
@@ -111,7 +118,27 @@ public class MCTools
 
         FloatBuffer result = FloatBuffer.allocate(3);
         GLU.gluProject((float) (x - px), (float) (y - py), (float) (z - pz), (FloatBuffer) activeRenderInfoModelviewField.get(null), (FloatBuffer) activeRenderInfoProjectionField.get(null), (IntBuffer) activeRenderInfoViewportField.get(null), result);
-        return new Pair<>(result.get(0), (float) getViewportHeight() - result.get(1));
+
+        RenderManager manager = Minecraft.getMinecraft().getRenderManager();
+        Vec3d cameraPos = getCameraPosition();
+        double yawDif = posMod(angleDifDeg(manager.playerViewY, getYawDeg(cameraPos, new Vec3d(x, y, z), trigLookupTable)), 360);
+        double pitchDif = posMod(angleDifDeg(manager.playerViewX, getPitchDeg(cameraPos, new Vec3d(x, y, z), trigLookupTable)), 360);
+        if (yawDif >= 180) yawDif -= 360;
+        if (pitchDif >= 180) pitchDif -= 360;
+        double indicatorAngle = pitchDif * trigLookupTable.cos(degtorad(yawDif));
+        System.out.println(indicatorAngle);
+
+        float xx;
+        if (yawDif >= 90) xx = getViewportWidth();
+        else if (yawDif <= -90) xx = 0;
+        else xx = result.get(0);
+
+        float yy;
+        if (pitchDif >= 90) yy = 0;
+        else if (pitchDif <= -90) yy = getViewportHeight();
+        else yy = (float) getViewportHeight() - result.get(1);
+
+        return new Pair<>(xx, yy);
     }
 
 
@@ -128,7 +155,7 @@ public class MCTools
     }
 
     @SideOnly(Side.CLIENT)
-    public static Vec3d getCameraPosition() throws IllegalAccessException
+    public static Vec3d getCameraPosition()
     {
         return Minecraft.getMinecraft().player.getPositionVector().add(ActiveRenderInfo.getCameraPosition());
     }
@@ -162,14 +189,14 @@ public class MCTools
         return ((IEntityOwnable) entity).getOwner();
     }
 
-    public static double getYaw(Vec3d fromVec, Vec3d toVec, TrigLookupTable trigTable)
+    public static double getYawDeg(Vec3d fromVec, Vec3d toVec, TrigLookupTable trigTable)
     {
-        return Tools.radtodeg(trigTable.arctanFullcircle(fromVec.z, fromVec.x, toVec.z, toVec.x));
+        return radtodeg(trigTable.arctanFullcircle(fromVec.z, fromVec.x, toVec.z, toVec.x));
     }
 
-    public static double getPitch(Vec3d fromVec, Vec3d toVec, TrigLookupTable trigTable)
+    public static double getPitchDeg(Vec3d fromVec, Vec3d toVec, TrigLookupTable trigTable)
     {
-        double result = Tools.radtodeg(trigTable.arctanFullcircle(0, 0, Tools.distance(fromVec.x, fromVec.z, toVec.x, toVec.z), toVec.y - fromVec.y));
+        double result = radtodeg(trigTable.arctanFullcircle(0, 0, distance(fromVec.x, fromVec.z, toVec.x, toVec.z), toVec.y - fromVec.y));
         return result >= 180 ? result - 360 : result;
     }
 
@@ -248,7 +275,7 @@ public class MCTools
             }
         }
 
-        return MCTools.getAttribute(livingBase, SharedMonsterAttributes.ATTACK_DAMAGE, 0) <= 0;
+        return getAttribute(livingBase, SharedMonsterAttributes.ATTACK_DAMAGE, 0) <= 0;
     }
 
     public static void printAITasks(EntityLiving living)

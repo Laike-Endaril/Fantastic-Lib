@@ -2,6 +2,8 @@ package com.fantasticsource.tools;
 
 import java.util.Date;
 
+import static com.fantasticsource.tools.Tools.posMod;
+
 @SuppressWarnings("unused")
 public class TrigLookupTable
 {
@@ -125,7 +127,7 @@ public class TrigLookupTable
 
     public double sin(double theta)
     {
-        theta = Tools.mod(theta, Math.PI * 2);
+        theta = posMod(theta, Math.PI * 2);
 
         int i = (int) Math.round(table.length * theta / (Math.PI * 2));
         if (i == table.length) i = 0;

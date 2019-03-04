@@ -1,6 +1,6 @@
 package com.fantasticsource.tools.datastructures;
 
-import static com.fantasticsource.tools.Tools.mod;
+import static com.fantasticsource.tools.Tools.posMod;
 
 @SuppressWarnings("unused")
 public class ShiftableGrid<T>
@@ -19,14 +19,14 @@ public class ShiftableGrid<T>
 
     public void set(int x, int y, T value)
     {
-        //This IS the mod you're looking for...but it's certainly not the same as %, so check out the mod function itself in Tools object
-        values[mod(x + xOffset, w)][mod(y + yOffset, h)] = value;
+        //This IS the posMod you're looking for...but it's certainly not the same as %, so check out the posMod function itself in Tools object
+        values[posMod(x + xOffset, w)][posMod(y + yOffset, h)] = value;
     }
 
     public T get(int x, int y)
     {
         //noinspection unchecked
-        return (T) values[mod(x + xOffset, w)][mod(y + yOffset, h)];
+        return (T) values[posMod(x + xOffset, w)][posMod(y + yOffset, h)];
     }
 
     public void clear()
