@@ -3,15 +3,10 @@ package com.fantasticsource.mctools;
 import com.fantasticsource.tools.ReflectionTool;
 import com.fantasticsource.tools.TrigLookupTable;
 import com.fantasticsource.tools.datastructures.ExplicitPriorityQueue;
-import com.fantasticsource.tools.datastructures.Pair;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DamageSource;
@@ -23,21 +18,17 @@ import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.util.glu.GLU;
 
 import java.io.File;
 import java.lang.reflect.Field;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.util.Map;
 
-import static com.fantasticsource.tools.Tools.*;
+import static com.fantasticsource.tools.Tools.distance;
+import static com.fantasticsource.tools.Tools.radtodeg;
 
 public class MCTools
 {
-    private static Field activeRenderInfoViewportField, activeRenderInfoProjectionField, activeRenderInfoModelviewField, minecraftRenderPartialTicksPausedField, configManagerCONFIGSField;
+    private static Field configManagerCONFIGSField;
 
     static
     {
@@ -52,112 +43,10 @@ public class MCTools
     }
 
 
-    @SideOnly(Side.CLIENT)
-    public static void clientInit()
-    {
-        try
-        {
-            activeRenderInfoViewportField = ReflectionTool.getField(ActiveRenderInfo.class, "field_178814_a", "VIEWPORT");
-            activeRenderInfoProjectionField = ReflectionTool.getField(ActiveRenderInfo.class, "field_178813_c", "PROJECTION");
-            activeRenderInfoModelviewField = ReflectionTool.getField(ActiveRenderInfo.class, "field_178812_b", "MODELVIEW");
-            minecraftRenderPartialTicksPausedField = ReflectionTool.getField(Minecraft.class, "field_193996_ah", "renderPartialTicksPaused");
-        }
-        catch (Exception e)
-        {
-            crash(e, 701, false);
-        }
-    }
-
-
     public static void reloadConfig(String configFilename, String modid) throws IllegalAccessException
     {
         ((Map<String, Configuration>) configManagerCONFIGSField.get(null)).remove(configFilename);
         ConfigManager.sync(modid, Config.Type.INSTANCE);
-    }
-
-
-    @SideOnly(Side.CLIENT)
-    public static Pair<Float, Float> getEntityXYInWindow(Entity entity, TrigLookupTable trigLookupTable) throws IllegalAccessException
-    {
-        return getEntityXYInWindow(entity, 0, 0, 0, trigLookupTable);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static Pair<Float, Float> getEntityXYInWindow(Entity entity, double xOffset, double yOffset, double zOffset, TrigLookupTable trigLookupTable) throws IllegalAccessException
-    {
-        Minecraft mc = Minecraft.getMinecraft();
-        double partialTick = mc.isGamePaused() ? (double) (float) minecraftRenderPartialTicksPausedField.get(mc) : mc.getRenderPartialTicks();
-
-        double x = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * partialTick + xOffset;
-        double y = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * partialTick + yOffset;
-        double z = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * partialTick + zOffset;
-
-        return get2DWindowCoordsFrom3DWorldCoords(x, y, z, partialTick, trigLookupTable);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static Pair<Float, Float> get2DWindowCoordsFrom3DWorldCoords(double x, double y, double z, TrigLookupTable trigLookupTable) throws IllegalAccessException
-    {
-        Minecraft mc = Minecraft.getMinecraft();
-        double partialTick = mc.isGamePaused() ? (double) (float) minecraftRenderPartialTicksPausedField.get(mc) : mc.getRenderPartialTicks();
-        return get2DWindowCoordsFrom3DWorldCoords(x, y, z, partialTick, trigLookupTable);
-    }
-
-
-    /**
-     * When the entity is visible in the current projection, the returned values are its position in the window
-     * When the entity is not visible in the current projection, the returned values are an off-screen position with the correct ratio to be used for an edge-of-screen indicator
-     */
-    @SideOnly(Side.CLIENT)
-    private static Pair<Float, Float> get2DWindowCoordsFrom3DWorldCoords(double x, double y, double z, double partialTick, TrigLookupTable trigLookupTable) throws IllegalAccessException
-    {
-        EntityPlayer player = Minecraft.getMinecraft().player;
-        double px = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTick;
-        double py = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTick;
-        double pz = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTick;
-
-        FloatBuffer result = FloatBuffer.allocate(3);
-        GLU.gluProject((float) (x - px), (float) (y - py), (float) (z - pz), (FloatBuffer) activeRenderInfoModelviewField.get(null), (FloatBuffer) activeRenderInfoProjectionField.get(null), (IntBuffer) activeRenderInfoViewportField.get(null), result);
-
-        RenderManager manager = Minecraft.getMinecraft().getRenderManager();
-        Vec3d cameraPos = getCameraPosition();
-        double yawDif = posMod(angleDifDeg(manager.playerViewY, getYawDeg(cameraPos, new Vec3d(x, y, z), trigLookupTable)), 360);
-        double pitchDif = posMod(angleDifDeg(manager.playerViewX, getPitchDeg(cameraPos, new Vec3d(x, y, z), trigLookupTable)), 360);
-        if (yawDif >= 180) yawDif -= 360;
-        if (pitchDif >= 180) pitchDif -= 360;
-        double indicatorAngle = pitchDif * trigLookupTable.cos(degtorad(yawDif));
-        System.out.println(indicatorAngle);
-
-        float xx;
-        if (yawDif >= 90) xx = getViewportWidth();
-        else if (yawDif <= -90) xx = 0;
-        else xx = result.get(0);
-
-        float yy;
-        if (pitchDif >= 90) yy = 0;
-        else if (pitchDif <= -90) yy = getViewportHeight();
-        else yy = (float) getViewportHeight() - result.get(1);
-
-        return new Pair<>(xx, yy);
-    }
-
-
-    @SideOnly(Side.CLIENT)
-    public static int getViewportWidth() throws IllegalAccessException
-    {
-        return ((IntBuffer) activeRenderInfoViewportField.get(null)).get(2);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static int getViewportHeight() throws IllegalAccessException
-    {
-        return ((IntBuffer) activeRenderInfoViewportField.get(null)).get(3);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static Vec3d getCameraPosition()
-    {
-        return Minecraft.getMinecraft().player.getPositionVector().add(ActiveRenderInfo.getCameraPosition());
     }
 
 

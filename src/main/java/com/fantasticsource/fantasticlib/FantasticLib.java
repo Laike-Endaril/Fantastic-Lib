@@ -1,6 +1,6 @@
 package com.fantasticsource.fantasticlib;
 
-import com.fantasticsource.mctools.MCTools;
+import com.fantasticsource.mctools.Render;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -16,6 +16,6 @@ public class FantasticLib
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        if (event.getSide() == Side.CLIENT) MCTools.clientInit();
+        if (event.getSide() == Side.CLIENT) Render.init();
     }
 }
