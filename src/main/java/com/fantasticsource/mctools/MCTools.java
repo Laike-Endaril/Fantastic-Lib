@@ -170,7 +170,7 @@ public class MCTools
     public static double getPitch(Vec3d fromVec, Vec3d toVec, TrigLookupTable trigTable)
     {
         double result = Tools.radtodeg(trigTable.arctanFullcircle(0, 0, Tools.distance(fromVec.x, fromVec.z, toVec.x, toVec.z), toVec.y - fromVec.y));
-        return fromVec.y > toVec.y ? -result : result;
+        return result >= 180 ? result - 360 : result;
     }
 
     public static double getAttribute(EntityLivingBase entity, IAttribute attribute, double defaultVal)
