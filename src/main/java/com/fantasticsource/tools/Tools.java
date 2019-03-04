@@ -14,6 +14,32 @@ import java.util.Random;
 @SuppressWarnings("unused")
 public class Tools
 {
+    public static int angleDifDeg(int angle1, int angle2)
+    {
+        return mod(angle2 - angle1, 360);
+    }
+
+    public static float angleDifDeg(float angle1, float angle2)
+    {
+        return mod(angle2 - angle1, 360);
+    }
+
+    public static double angleDifDeg(double angle1, double angle2)
+    {
+        return mod(angle2 - angle1, 360);
+    }
+
+    public static float angleDifRad(float angle1, float angle2)
+    {
+        return mod(angle2 - angle1, (float) Math.PI * 2);
+    }
+
+    public static double angleDifRad(double angle1, double angle2)
+    {
+        return mod(angle2 - angle1, Math.PI * 2);
+    }
+
+
     public static int average(int... values)
     {
         int sum = 0;
