@@ -121,25 +121,23 @@ public class Render
 
         RenderManager manager = Minecraft.getMinecraft().getRenderManager();
         Vec3d cameraPos = getCameraPosition();
+
         double yawDif = posMod(angleDifDeg(manager.playerViewY, getYawDeg(cameraPos, new Vec3d(x, y, z), trigLookupTable)), 360);
         double pitchDif = posMod(angleDifDeg(manager.playerViewX, getPitchDeg(cameraPos, new Vec3d(x, y, z), trigLookupTable)), 360);
         if (yawDif >= 180) yawDif -= 360;
         if (pitchDif >= 180) pitchDif -= 360;
 
+        double xFactor = (yawDif / getHFOV(trigLookupTable) + 0.5);
+        double yFactor = (pitchDif / getVFOV() + 0.5);
 
-        //TODO fix parts below here pertaining to when it's offscreen
-        float xx;
-        float yy;
-        if (Math.abs(yawDif) >= 90 || Math.abs(pitchDif) >= 90)
+        if (xFactor < 0 || xFactor >= 1 || yFactor < 0 || yFactor >= 1)
         {
-            xx = (float) ((yawDif / getHFOV(trigLookupTable) + 0.5) * getViewportWidth());
-            yy = (float) ((pitchDif / getVFOV() + 0.5) * getViewportHeight());
+            float xx = (float) (xFactor) * getViewportWidth();
+            float yy = (float) (yFactor * getViewportHeight());
             return new Pair<>(xx, yy);
         }
 
-        xx = result.get(0);
-        yy = (float) getViewportHeight() - result.get(1);
-        return new Pair<>(xx, yy);
+        return new Pair<>(result.get(0), (float) getViewportHeight() - result.get(1));
     }
 
 
