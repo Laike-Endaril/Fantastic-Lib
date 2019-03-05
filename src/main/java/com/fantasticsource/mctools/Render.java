@@ -1,6 +1,7 @@
 package com.fantasticsource.mctools;
 
 import com.fantasticsource.tools.ReflectionTool;
+import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.TrigLookupTable;
 import com.fantasticsource.tools.datastructures.Pair;
 import net.minecraft.client.Minecraft;
@@ -127,13 +128,15 @@ public class Render
         if (yawDif >= 180) yawDif -= 360;
         if (pitchDif >= 180) pitchDif -= 360;
 
-        double xFactor = (yawDif / getHFOV(trigLookupTable) + 0.5);
-        double yFactor = (pitchDif / getVFOV() + 0.5);
+        double xFactor = (yawDif / getHFOV(trigLookupTable));
+        double yFactor = (pitchDif / getVFOV());
 
-        if (xFactor < 0 || xFactor >= 1 || yFactor < 0 || yFactor >= 1)
+        double maxFactor = Tools.max(Math.abs(xFactor), Math.abs(yFactor));
+        if (maxFactor > 0.5)
         {
-            float xx = (float) (xFactor) * getViewportWidth();
-            float yy = (float) (yFactor * getViewportHeight());
+            System.out.println("off");
+            float xx = (float) (xFactor / maxFactor + 0.5) * getViewportWidth();
+            float yy = (float) (yFactor / maxFactor + 0.5) * getViewportHeight();
             return new Pair<>(xx, yy);
         }
 
