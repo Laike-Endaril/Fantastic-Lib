@@ -78,16 +78,28 @@ public class MCTools
         return ((IEntityOwnable) entity).getOwner();
     }
 
+
+    public static double getYawRad(Vec3d fromVec, Vec3d toVec, TrigLookupTable trigTable)
+    {
+        return trigTable.arctanFullcircle(fromVec.z, fromVec.x, toVec.z, toVec.x);
+    }
+
     public static double getYawDeg(Vec3d fromVec, Vec3d toVec, TrigLookupTable trigTable)
     {
-        return radtodeg(trigTable.arctanFullcircle(fromVec.z, fromVec.x, toVec.z, toVec.x));
+        return radtodeg(getYawRad(fromVec, toVec, trigTable));
+    }
+
+    public static double getPitchRad(Vec3d fromVec, Vec3d toVec, TrigLookupTable trigTable)
+    {
+        double result = trigTable.arctanFullcircle(0, 0, distance(fromVec.x, fromVec.z, toVec.x, toVec.z), toVec.y - fromVec.y);
+        return result >= Math.PI ? result - Math.PI * 2 : result;
     }
 
     public static double getPitchDeg(Vec3d fromVec, Vec3d toVec, TrigLookupTable trigTable)
     {
-        double result = radtodeg(trigTable.arctanFullcircle(0, 0, distance(fromVec.x, fromVec.z, toVec.x, toVec.z), toVec.y - fromVec.y));
-        return result >= 180 ? result - 360 : result;
+        return radtodeg(getPitchRad(fromVec, toVec, trigTable));
     }
+
 
     public static double getAttribute(EntityLivingBase entity, IAttribute attribute, double defaultVal)
     {

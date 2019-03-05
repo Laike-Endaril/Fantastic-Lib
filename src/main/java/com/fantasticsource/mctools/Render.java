@@ -1,14 +1,12 @@
 package com.fantasticsource.mctools;
 
 import com.fantasticsource.tools.ReflectionTool;
-import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.TrigLookupTable;
 import com.fantasticsource.tools.datastructures.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.FOVUpdateEvent;
@@ -17,7 +15,6 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.util.glu.GLU;
 
 import java.lang.reflect.Field;
 import java.nio.FloatBuffer;
@@ -111,15 +108,6 @@ public class Render
      */
     private static Pair<Float, Float> get2DWindowCoordsFrom3DWorldCoords(double x, double y, double z, double partialTick, TrigLookupTable trigLookupTable) throws IllegalAccessException
     {
-        EntityPlayer player = Minecraft.getMinecraft().player;
-        double px = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTick;
-        double py = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTick;
-        double pz = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTick;
-
-        FloatBuffer result = FloatBuffer.allocate(3);
-        FloatBuffer projection = (FloatBuffer) activeRenderInfoProjectionField.get(null);
-        GLU.gluProject((float) (x - px), (float) (y - py), (float) (z - pz), (FloatBuffer) activeRenderInfoModelviewField.get(null), projection, (IntBuffer) activeRenderInfoViewportField.get(null), result);
-
         RenderManager manager = Minecraft.getMinecraft().getRenderManager();
         Vec3d cameraPos = getCameraPosition();
 
@@ -128,19 +116,11 @@ public class Render
         if (yawDif >= 180) yawDif -= 360;
         if (pitchDif >= 180) pitchDif -= 360;
 
-        double xFactor = (yawDif / getHFOV(trigLookupTable));
-        double yFactor = (pitchDif / getVFOV());
+        double zNear = getZNearDist();
+        double xFactor = yawDif <= -90 ? Double.NEGATIVE_INFINITY : yawDif >= 90 ? Double.POSITIVE_INFINITY : zNear * trigLookupTable.tan(degtorad(yawDif)) / getZNearWidth();
+        double yFactor = pitchDif <= -90 ? Double.NEGATIVE_INFINITY : pitchDif >= 90 ? Double.POSITIVE_INFINITY : zNear * trigLookupTable.tan(degtorad(pitchDif)) / getZNearHeight();
 
-        double maxFactor = Tools.max(Math.abs(xFactor), Math.abs(yFactor));
-        if (maxFactor > 0.5)
-        {
-            System.out.println("off");
-            float xx = (float) (xFactor / maxFactor + 0.5) * getViewportWidth();
-            float yy = (float) (yFactor / maxFactor + 0.5) * getViewportHeight();
-            return new Pair<>(xx, yy);
-        }
-
-        return new Pair<>(result.get(0), (float) getViewportHeight() - result.get(1));
+        return new Pair<>((float) (0.5 + xFactor) * getViewportWidth(), (float) (0.5 + yFactor) * getViewportHeight());
     }
 
 
