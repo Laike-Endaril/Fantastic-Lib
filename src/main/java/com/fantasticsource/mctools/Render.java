@@ -146,12 +146,16 @@ public class Render
         in[0] = in[0] * in[3];
         in[1] = in[1] * in[3];
 
-        float maxFactor = Tools.max(Math.abs(in[0] * 2), Math.abs(in[1] * 2));
-        if (behind || maxFactor > 1)
+        float scaleFactor = behind ? Math.abs(in[0] * 2) : Tools.max(Math.abs(in[0] * 2), Math.abs(in[1] * 2));
+        //The line above this comment is for games that have pitch rotation limited to +/-(90*) or close to it (it's usually technically less than 90 to prevent some mathematical issues)
+        //The line below this comment is what you would use in games that do not have said limitation; eg. many flying games, especially space-themed ones
+//        float scaleFactor = Tools.max(Math.abs(in[0] * 2), Math.abs(in[1] * 2));
+
+        if (behind || scaleFactor > 1)
         {
             //If offscreen, scale both x and y so that the maximum of the 2 is on the edge of the window
-            in[0] /= maxFactor;
-            in[1] /= maxFactor;
+            in[0] /= scaleFactor;
+            in[1] /= scaleFactor;
         }
 
         //Map x,y to viewport
