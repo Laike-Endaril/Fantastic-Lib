@@ -1,12 +1,13 @@
 package com.fantasticsource.mctools;
 
 import com.fantasticsource.tools.ReflectionTool;
+import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.TrigLookupTable;
 import com.fantasticsource.tools.datastructures.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.FOVUpdateEvent;
@@ -20,8 +21,8 @@ import java.lang.reflect.Field;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-import static com.fantasticsource.mctools.MCTools.*;
-import static com.fantasticsource.tools.Tools.*;
+import static com.fantasticsource.mctools.MCTools.crash;
+import static com.fantasticsource.tools.Tools.radtodeg;
 
 @SideOnly(Side.CLIENT)
 public class Render
@@ -81,12 +82,12 @@ public class Render
     }
 
 
-    public static Pair<Float, Float> getEntityXYInWindow(Entity entity, TrigLookupTable trigLookupTable) throws IllegalAccessException
+    public static Pair<Float, Float> getEntityXYInWindow(Entity entity) throws IllegalAccessException
     {
-        return getEntityXYInWindow(entity, 0, 0, 0, trigLookupTable);
+        return getEntityXYInWindow(entity, 0, 0, 0);
     }
 
-    public static Pair<Float, Float> getEntityXYInWindow(Entity entity, double xOffset, double yOffset, double zOffset, TrigLookupTable trigLookupTable) throws IllegalAccessException
+    public static Pair<Float, Float> getEntityXYInWindow(Entity entity, double xOffset, double yOffset, double zOffset) throws IllegalAccessException
     {
         double partialTick = getPartialTick();
 
@@ -94,33 +95,78 @@ public class Render
         double y = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * partialTick + yOffset;
         double z = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * partialTick + zOffset;
 
-        return get2DWindowCoordsFrom3DWorldCoords(x, y, z, partialTick, trigLookupTable);
+        return get2DWindowCoordsFrom3DWorldCoords(x, y, z, partialTick);
     }
 
-    public static Pair<Float, Float> get2DWindowCoordsFrom3DWorldCoords(double x, double y, double z, TrigLookupTable trigLookupTable) throws IllegalAccessException
+    public static Pair<Float, Float> get2DWindowCoordsFrom3DWorldCoords(double x, double y, double z) throws IllegalAccessException
     {
-        return get2DWindowCoordsFrom3DWorldCoords(x, y, z, getPartialTick(), trigLookupTable);
+        return get2DWindowCoordsFrom3DWorldCoords(x, y, z, getPartialTick());
     }
 
     /**
      * When the entity is visible in the current projection, the returned values are its position in the window
      * When the entity is not visible in the current projection, the returned values are an off-screen position with the correct ratio to be used for an edge-of-screen indicator
      */
-    private static Pair<Float, Float> get2DWindowCoordsFrom3DWorldCoords(double x, double y, double z, double partialTick, TrigLookupTable trigLookupTable) throws IllegalAccessException
+    private static Pair<Float, Float> get2DWindowCoordsFrom3DWorldCoords(double x, double y, double z, double partialTick) throws IllegalAccessException
     {
-        RenderManager manager = Minecraft.getMinecraft().getRenderManager();
-        Vec3d cameraPos = getCameraPosition();
+        //Based on GLU.gluProject()
+        EntityPlayer player = Minecraft.getMinecraft().player;
+        double px = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTick;
+        double py = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTick;
+        double pz = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTick;
 
-        double yawDif = posMod(angleDifDeg(manager.playerViewY, getYawDeg(cameraPos, new Vec3d(x, y, z), trigLookupTable)), 360);
-        double pitchDif = posMod(angleDifDeg(manager.playerViewX, getPitchDeg(cameraPos, new Vec3d(x, y, z), trigLookupTable)), 360);
-        if (yawDif >= 180) yawDif -= 360;
-        if (pitchDif >= 180) pitchDif -= 360;
+        FloatBuffer modelView = ((FloatBuffer) activeRenderInfoModelviewField.get(null)).duplicate();
+        FloatBuffer projection = ((FloatBuffer) activeRenderInfoProjectionField.get(null)).duplicate();
+        IntBuffer viewport = ((IntBuffer) activeRenderInfoViewportField.get(null)).duplicate();
 
-        double zNear = getZNearDist();
-        double xFactor = yawDif <= -90 ? Double.NEGATIVE_INFINITY : yawDif >= 90 ? Double.POSITIVE_INFINITY : zNear * trigLookupTable.tan(degtorad(yawDif)) / getZNearWidth();
-        double yFactor = pitchDif <= -90 ? Double.NEGATIVE_INFINITY : pitchDif >= 90 ? Double.POSITIVE_INFINITY : zNear * trigLookupTable.tan(degtorad(pitchDif)) / getZNearHeight();
+        float[] in = new float[4];
+        float[] out = new float[4];
 
-        return new Pair<>((float) (0.5 + xFactor) * getViewportWidth(), (float) (0.5 + yFactor) * getViewportHeight());
+        in[0] = (float) (x - px);
+        in[1] = (float) (y - py);
+        in[2] = (float) (z - pz);
+        in[3] = 1.0f;
+
+        multMatrix(modelView, in, out);
+        multMatrix(projection, out, in);
+
+        if (in[3] == 0.0) return null;
+
+        in[3] = (1.0f / in[3]) * 0.5f;
+
+        boolean behind = in[3] < 0;
+        if (behind)
+        {
+            //Offscreen, hehind znear plane
+            in[0] = -in[0];
+            in[1] = -in[1];
+        }
+
+        //x and y are between -0.5 and 0.5 if on window
+        in[0] = in[0] * in[3];
+        in[1] = in[1] * in[3];
+
+        float maxFactor = Tools.max(Math.abs(in[0] * 2), Math.abs(in[1] * 2));
+        if (behind || maxFactor > 1)
+        {
+            //If offscreen, scale both x and y so that the maximum of the 2 is on the edge of the window
+            in[0] /= maxFactor;
+            in[1] /= maxFactor;
+        }
+
+        //Map x,y to viewport
+        float xx = (0.5f + in[0]) * viewport.get(2) + viewport.get(0);
+        float yy = (0.5f - in[1]) * viewport.get(3) + viewport.get(1);
+
+        return new Pair<>(xx, yy);
+    }
+
+    private static void multMatrix(FloatBuffer m, float[] in, float[] out)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            out[i] = in[0] * m.get(i) + in[1] * m.get(i + 4) + in[2] * m.get(i + 8) + in[3] * m.get(i + 12);
+        }
     }
 
 
