@@ -83,7 +83,7 @@ public class Tools
 
     public static float min(float... values)
     {
-        float result = Float.MAX_VALUE;
+        float result = Float.POSITIVE_INFINITY;
         for (float value : values)
         {
             if (value < result) result = value;
@@ -93,7 +93,7 @@ public class Tools
 
     public static double min(double... values)
     {
-        double result = Double.MAX_VALUE;
+        double result = Double.POSITIVE_INFINITY;
         for (double value : values)
         {
             if (value < result) result = value;
@@ -113,7 +113,7 @@ public class Tools
 
     public static float max(float... values)
     {
-        float result = Float.MIN_VALUE;
+        float result = Float.NEGATIVE_INFINITY;
         for (float value : values)
         {
             if (value > result) result = value;
@@ -123,7 +123,7 @@ public class Tools
 
     public static double max(double... values)
     {
-        double result = Double.MIN_VALUE;
+        double result = Double.NEGATIVE_INFINITY;
         for (double value : values)
         {
             if (value > result) result = value;
