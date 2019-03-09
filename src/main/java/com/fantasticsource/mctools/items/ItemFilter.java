@@ -39,9 +39,9 @@ public class ItemFilter
      * dye:0
      * tetra:duplex_tool_modular > duplex/sickle_left_material & duplex/butt_right_material
      */
-    public static ItemFilter getFilter(String itemStackString)
+    public static ItemFilter getInstance(String itemStackString)
     {
-        return getFilter(itemStackString, false);
+        return getInstance(itemStackString, false);
     }
 
     /**
@@ -59,7 +59,7 @@ public class ItemFilter
      * dye:0
      * tetra:duplex_tool_modular > duplex/sickle_left_material & duplex/butt_right_material
      */
-    public static ItemFilter getFilter(String itemStackString, boolean suppressItemMissingError)
+    public static ItemFilter getInstance(String itemStackString, boolean suppressItemMissingError)
     {
         ItemFilter result = new ItemFilter();
 
