@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 
 public class ItemFilter
 {
-    public ItemStack itemStack = null;
+    private ItemStack itemStack = null;
     private LinkedHashMap<String, String> tagsRequired = new LinkedHashMap<>();
     private LinkedHashMap<String, String> tagsDisallowed = new LinkedHashMap<>();
 
@@ -35,6 +35,26 @@ public class ItemFilter
      * tetra:duplex_tool_modular > duplex/sickle_left_material & duplex/butt_right_material
      */
     public ItemFilter(String itemStackString)
+    {
+        this(itemStackString, false);
+    }
+
+    /**
+     * Syntax is domain:item:meta > nbtkey1 = nbtvalue1 & nbtkey2 = nbtvalue2
+     * All of these are optional except item
+     * <p>
+     * Each nbt value requires a key, but not necessarily a value (if no value is specified, it just checks if the key exists)
+     * Each NBT entry can be negated by starting it with a !
+     * eg...
+     * !generic.attackDamage
+     * !generic.attackDamage = 4
+     * <p>
+     * Examples...
+     * diamond_sword
+     * dye:0
+     * tetra:duplex_tool_modular > duplex/sickle_left_material & duplex/butt_right_material
+     */
+    public ItemFilter(String itemStackString, boolean suppressItemMissingError)
     {
         String[] registryAndNBT = itemStackString.trim().split(Pattern.quote(">"));
         String token;
@@ -98,7 +118,7 @@ public class ItemFilter
 
             if (itemStack == null)
             {
-                System.err.println("Item for item filter not found: " + token);
+                if (!suppressItemMissingError) System.err.println("Item for item filter not found: " + token);
                 return;
             }
         }
@@ -130,6 +150,11 @@ public class ItemFilter
         }
     }
 
+
+    public ItemStack getItemStack()
+    {
+        return itemStack;
+    }
 
     public boolean matches(ItemStack stack)
     {
