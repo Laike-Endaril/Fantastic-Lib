@@ -19,6 +19,11 @@ public class ItemFilter
     private LinkedHashMap<String, String> tagsDisallowed = new LinkedHashMap<>();
 
 
+    private ItemFilter()
+    {
+    }
+
+
     /**
      * Syntax is domain:item:meta > nbtkey1 = nbtvalue1 & nbtkey2 = nbtvalue2
      * All of these are optional except item
@@ -34,9 +39,9 @@ public class ItemFilter
      * dye:0
      * tetra:duplex_tool_modular > duplex/sickle_left_material & duplex/butt_right_material
      */
-    public ItemFilter(String itemStackString)
+    public static ItemFilter getFilter(String itemStackString)
     {
-        this(itemStackString, false);
+        return getFilter(itemStackString, false);
     }
 
     /**
@@ -54,20 +59,22 @@ public class ItemFilter
      * dye:0
      * tetra:duplex_tool_modular > duplex/sickle_left_material & duplex/butt_right_material
      */
-    public ItemFilter(String itemStackString, boolean suppressItemMissingError)
+    public static ItemFilter getFilter(String itemStackString, boolean suppressItemMissingError)
     {
+        ItemFilter result = new ItemFilter();
+
         String[] registryAndNBT = itemStackString.trim().split(Pattern.quote(">"));
         String token;
 
         if (registryAndNBT.length == 0)
         {
             System.err.println("Not enough arguments for item filter: " + itemStackString);
-            return;
+            return null;
         }
         if (registryAndNBT.length > 2)
         {
             System.err.println("Too many arguments for item filter: " + itemStackString);
-            return;
+            return null;
         }
 
 
@@ -82,7 +89,7 @@ public class ItemFilter
             if (innerTokens.length > 3)
             {
                 System.err.println("Bad item name: " + token);
-                return;
+                return null;
             }
             if (innerTokens.length == 3)
             {
@@ -108,18 +115,18 @@ public class ItemFilter
             Item item = ForgeRegistries.ITEMS.getValue(resourceLocation);
             if (item != null)
             {
-                itemStack = new ItemStack(item, 1, meta);
+                result.itemStack = new ItemStack(item, 1, meta);
             }
             else
             {
                 Block block = ForgeRegistries.BLOCKS.containsKey(resourceLocation) ? ForgeRegistries.BLOCKS.getValue(resourceLocation) : null;
-                if (block != null) itemStack = new ItemStack(block, 1, Integer.parseInt(innerTokens[2]));
+                if (block != null) result.itemStack = new ItemStack(block, 1, Integer.parseInt(innerTokens[2]));
             }
 
-            if (itemStack == null)
+            if (result.itemStack == null)
             {
                 if (!suppressItemMissingError) System.err.println("Item for item filter not found: " + token);
-                return;
+                return null;
             }
         }
 
@@ -137,17 +144,19 @@ public class ItemFilter
                 if (keyValue.length > 2)
                 {
                     System.err.println("Each NBT tag can only be set to one value!  Error in item filter: " + itemStackString);
-                    return;
+                    return null;
                 }
 
                 String key = keyValue[0].trim();
                 if (!key.equals(""))
                 {
-                    if (key.charAt(0) == '!') tagsDisallowed.put(key, keyValue.length == 2 ? keyValue[1].trim() : null);
-                    else tagsRequired.put(key, keyValue.length == 2 ? keyValue[1].trim() : null);
+                    if (key.charAt(0) == '!') result.tagsDisallowed.put(key, keyValue.length == 2 ? keyValue[1].trim() : null);
+                    else result.tagsRequired.put(key, keyValue.length == 2 ? keyValue[1].trim() : null);
                 }
             }
         }
+
+        return result;
     }
 
 
