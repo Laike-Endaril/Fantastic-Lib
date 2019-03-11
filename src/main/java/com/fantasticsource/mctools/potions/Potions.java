@@ -15,9 +15,17 @@ public class Potions
      */
     public static ArrayList<PotionEffect> parsePotions(String potionList)
     {
+        return parsePotions(potionList, false);
+    }
+
+    /**
+     * Syntax is registryname.duration.level & registryname.duration.level & registryname.duration.level...
+     */
+    public static ArrayList<PotionEffect> parsePotions(String potionList, boolean allMaxDuration)
+    {
         String[] potions = potionList.split("&");
         for (int i = 0; i < potions.length; i++) potions[i] = potions[i].trim();
-        return parsePotions(potions);
+        return parsePotions(potions, allMaxDuration);
     }
 
     /**
@@ -25,12 +33,20 @@ public class Potions
      */
     public static ArrayList<PotionEffect> parsePotions(String[] potionList)
     {
+        return parsePotions(potionList, false);
+    }
+
+    /**
+     * Syntax for each is registryname.duration.level
+     */
+    public static ArrayList<PotionEffect> parsePotions(String[] potionList, boolean allMaxDuration)
+    {
         ArrayList<PotionEffect> result = new ArrayList<>();
 
         PotionEffect potion;
         for (String string : potionList)
         {
-            potion = parsePotion(string);
+            potion = parsePotion(string, allMaxDuration);
             if (potion != null) result.add(potion);
         }
 
