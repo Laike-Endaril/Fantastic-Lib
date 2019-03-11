@@ -42,6 +42,14 @@ public class Potions
      */
     public static PotionEffect parsePotion(String potionString)
     {
+        return parsePotion(potionString, false);
+    }
+
+    /**
+     * Syntax is registryname.duration.level
+     */
+    public static PotionEffect parsePotion(String potionString, boolean maxDuration)
+    {
         String[] tokens;
         int duration, amplifier;
         Potion potion;
@@ -68,9 +76,18 @@ public class Potions
             return null;
         }
 
-        duration = tokens.length > 1 ? Integer.parseInt(tokens[1].trim()) : Integer.MAX_VALUE;
-        amplifier = tokens.length > 2 ? Integer.parseInt(tokens[2].trim()) : 0;
-        if (amplifier > 0) amplifier--; //Makes it so ppl can just type 2 for stength 2 instead of typing 1
+        if (maxDuration)
+        {
+            duration = Integer.MAX_VALUE;
+            amplifier = tokens.length > 1 ? Integer.parseInt(tokens[1].trim()) : 0;
+            if (amplifier > 0) amplifier--; //Makes it so ppl can just type 2 for stength 2 instead of typing 1
+        }
+        else
+        {
+            duration = tokens.length > 1 ? Integer.parseInt(tokens[1].trim()) : Integer.MAX_VALUE;
+            amplifier = tokens.length > 2 ? Integer.parseInt(tokens[2].trim()) : 0;
+            if (amplifier > 0) amplifier--; //Makes it so ppl can just type 2 for stength 2 instead of typing 1
+        }
 
         return new PotionEffect(potion, duration, amplifier, false, true);
     }
