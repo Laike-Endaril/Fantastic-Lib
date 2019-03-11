@@ -3,6 +3,7 @@ package com.fantasticsource.mctools.attributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class AttributeMods
 {
@@ -52,6 +53,6 @@ public class AttributeMods
             return null;
         }
 
-        return new AttributeModifier(tokens[0].trim(), Double.parseDouble(tokens2[0]), tokens2.length > 1 ? Integer.parseInt(tokens2[1]) : 0);
+        return new AttributeModifier("FL_autogen_" + UUID.randomUUID().toString(), Double.parseDouble(tokens2[0]), tokens2.length > 1 ? Integer.parseInt(tokens2[1]) : 0);
     }
 }
