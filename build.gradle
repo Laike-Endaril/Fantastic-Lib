@@ -77,6 +77,14 @@ processResources {
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
+
+    rename '(fantasticlib_at.cfg)', 'META-INF/$1'
+}
+
+jar {
+    manifest {
+        attributes 'FMLAT': 'fantasticlib_at.cfg'
+    }
 }
 
 task deobfJar(type: Jar) {

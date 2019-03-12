@@ -9,16 +9,19 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldEventListener;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import javax.annotation.Nullable;
+
+import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 
 public class WorldEventDistributor implements IWorldEventListener
 {
     @SubscribeEvent
     public static void worldLoad(WorldEvent.Load event)
     {
-        event.getWorld().addEventListener(new WorldEventDistributor());
+        event.getWorld().eventListeners.add(0, new WorldEventDistributor());
     }
 
     @Override
@@ -42,7 +45,7 @@ public class WorldEventDistributor implements IWorldEventListener
     @Override
     public void playSoundToAllNearExcept(@Nullable EntityPlayer player, SoundEvent soundIn, SoundCategory category, double x, double y, double z, float volume, float pitch)
     {
-        System.out.println("Sound detected");
+        EVENT_BUS.post(new DSoundEvent(player, soundIn, category, x, y, z, volume, pitch));
     }
 
     @Override
@@ -91,5 +94,13 @@ public class WorldEventDistributor implements IWorldEventListener
     public void sendBlockBreakProgress(int breakerId, BlockPos pos, int progress)
     {
 
+    }
+
+    public class DSoundEvent extends Event
+    {
+        private DSoundEvent(@Nullable EntityPlayer player, SoundEvent soundIn, SoundCategory category, double x, double y, double z, float volume, float pitch)
+        {
+
+        }
     }
 }
