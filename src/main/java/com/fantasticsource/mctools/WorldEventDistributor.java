@@ -1,11 +1,13 @@
 package com.fantasticsource.mctools;
 
+import com.fantasticsource.tools.ReflectionTool;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IWorldEventListener;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.WorldEvent;
@@ -14,6 +16,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,29 +24,54 @@ import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 
 public class WorldEventDistributor implements IWorldEventListener
 {
+    private static Field worldEventListenersField;
+
+    static
+    {
+        try
+        {
+            worldEventListenersField = ReflectionTool.getField(World.class, "field_73021_x", "eventListeners");
+        }
+        catch (NoSuchFieldException | IllegalAccessException e)
+        {
+            MCTools.crash(e, 702, true);
+        }
+    }
+
     private World world;
 
     private List<IWorldEventListener> normalListeners = new ArrayList<>();
 
-    private WorldEventDistributor(World world)
+    private WorldEventDistributor(World world, List<IWorldEventListener> originalListeners)
     {
         this.world = world;
-        normalListeners.addAll(world.eventListeners);
-        world.eventListeners.clear();
+        normalListeners.addAll(originalListeners);
+        originalListeners.clear();
     }
 
     @SubscribeEvent
     public static void worldLoad(WorldEvent.Load event)
     {
-        World world = event.getWorld();
-        world.eventListeners.add(0, new WorldEventDistributor(world));
+        try
+        {
+            World world = event.getWorld();
+            List<IWorldEventListener> originalListeners = (List<IWorldEventListener>) worldEventListenersField.get(world);
+            originalListeners.add(0, new WorldEventDistributor(world, originalListeners));
+        }
+        catch (IllegalAccessException e)
+        {
+            MCTools.crash(e, 703, true);
+        }
     }
 
 
     @Override
     public void notifyBlockUpdate(World worldIn, BlockPos pos, IBlockState oldState, IBlockState newState, int flags)
     {
-        for (IWorldEventListener listener : normalListeners) listener.notifyBlockUpdate(worldIn, pos, oldState, newState, flags);
+        if (!EVENT_BUS.post(new DBlockUpdateEvent(worldIn, pos, oldState, newState, flags)))
+        {
+            for (IWorldEventListener listener : normalListeners) listener.notifyBlockUpdate(worldIn, pos, oldState, newState, flags);
+        }
     }
 
     @Override
@@ -117,12 +145,33 @@ public class WorldEventDistributor implements IWorldEventListener
 
 
     @Cancelable
+    public class DBlockUpdateEvent extends Event
+    {
+        private DBlockUpdateEvent(World worldIn, BlockPos pos, IBlockState oldState, IBlockState newState, int flags)
+        {
+
+        }
+    }
+
+    @Cancelable
     public class DSoundEvent extends Event
     {
+        private EntityPlayer player;
+        private SoundEvent soundEvent;
+        private SoundCategory soundCategory;
+        private Vec3d position;
+        private float volume, pitch;
         private Entity entity;
 
-        private DSoundEvent(@Nullable EntityPlayer player, SoundEvent soundIn, SoundCategory category, double x, double y, double z, float volume, float pitch)
+        private DSoundEvent(@Nullable EntityPlayer player, SoundEvent soundEvent, SoundCategory soundCategory, double x, double y, double z, float volume, float pitch)
         {
+            this.player = player;
+            this.soundEvent = soundEvent;
+            this.soundCategory = soundCategory;
+            position = new Vec3d(x, y, z);
+            this.volume = volume;
+            this.pitch = pitch;
+
             for (Entity entity : world.loadedEntityList)
             {
                 if (entity.posX == x && entity.posY == y && entity.posZ == z)
@@ -136,6 +185,36 @@ public class WorldEventDistributor implements IWorldEventListener
         public Entity getEntity()
         {
             return entity;
+        }
+
+        public EntityPlayer getPlayer()
+        {
+            return player;
+        }
+
+        public SoundEvent getSoundEvent()
+        {
+            return soundEvent;
+        }
+
+        public SoundCategory getSoundCategory()
+        {
+            return soundCategory;
+        }
+
+        public Vec3d getPosition()
+        {
+            return position;
+        }
+
+        public float getVolume()
+        {
+            return volume;
+        }
+
+        public float getPitch()
+        {
+            return pitch;
         }
     }
 }
