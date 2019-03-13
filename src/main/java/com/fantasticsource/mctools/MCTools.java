@@ -18,6 +18,7 @@ import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Loader;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -42,6 +43,11 @@ public class MCTools
         }
     }
 
+
+    public static String getConfigDir()
+    {
+        return Loader.instance().getConfigDir().getAbsolutePath() + File.separator;
+    }
 
     public static void reloadConfig(String configFilename, String modid) throws IllegalAccessException
     {
