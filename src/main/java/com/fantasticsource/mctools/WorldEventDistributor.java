@@ -7,7 +7,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IWorldEventListener;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.WorldEvent;
@@ -89,9 +88,10 @@ public class WorldEventDistributor implements IWorldEventListener
     @Override
     public void playSoundToAllNearExcept(@Nullable EntityPlayer player, SoundEvent soundIn, SoundCategory category, double x, double y, double z, float volume, float pitch)
     {
-        if (!EVENT_BUS.post(new DSoundEvent(player, soundIn, category, x, y, z, volume, pitch)))
+        DSoundEvent event = new DSoundEvent(player, soundIn, category, x, y, z, volume, pitch);
+        if (!EVENT_BUS.post(event))
         {
-            for (IWorldEventListener listener : normalListeners) listener.playSoundToAllNearExcept(player, soundIn, category, x, y, z, volume, pitch);
+            for (IWorldEventListener listener : normalListeners) listener.playSoundToAllNearExcept(event.player, event.soundEvent, event.soundCategory, event.x, event.y, event.z, event.volume, event.pitch);
         }
     }
 
@@ -156,19 +156,21 @@ public class WorldEventDistributor implements IWorldEventListener
     @Cancelable
     public class DSoundEvent extends Event
     {
-        private EntityPlayer player;
-        private SoundEvent soundEvent;
-        private SoundCategory soundCategory;
-        private Vec3d position;
-        private float volume, pitch;
-        private Entity entity;
+        public EntityPlayer player;
+        public SoundEvent soundEvent;
+        public SoundCategory soundCategory;
+        public double x, y, z;
+        public float volume, pitch;
+        public Entity entity;
 
         private DSoundEvent(@Nullable EntityPlayer player, SoundEvent soundEvent, SoundCategory soundCategory, double x, double y, double z, float volume, float pitch)
         {
             this.player = player;
             this.soundEvent = soundEvent;
             this.soundCategory = soundCategory;
-            position = new Vec3d(x, y, z);
+            this.x = x;
+            this.y = y;
+            this.z = z;
             this.volume = volume;
             this.pitch = pitch;
 
@@ -180,41 +182,6 @@ public class WorldEventDistributor implements IWorldEventListener
                     break;
                 }
             }
-        }
-
-        public Entity getEntity()
-        {
-            return entity;
-        }
-
-        public EntityPlayer getPlayer()
-        {
-            return player;
-        }
-
-        public SoundEvent getSoundEvent()
-        {
-            return soundEvent;
-        }
-
-        public SoundCategory getSoundCategory()
-        {
-            return soundCategory;
-        }
-
-        public Vec3d getPosition()
-        {
-            return position;
-        }
-
-        public float getVolume()
-        {
-            return volume;
-        }
-
-        public float getPitch()
-        {
-            return pitch;
         }
     }
 }
