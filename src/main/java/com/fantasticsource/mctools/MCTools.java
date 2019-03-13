@@ -49,6 +49,11 @@ public class MCTools
         return Loader.instance().getConfigDir().getAbsolutePath() + File.separator;
     }
 
+    public static void reloadConfig(String modid) throws IllegalAccessException
+    {
+        reloadConfig(getConfigDir() + modid + ".cfg");
+    }
+
     public static void reloadConfig(String configFilename, String modid) throws IllegalAccessException
     {
         ((Map<String, Configuration>) configManagerCONFIGSField.get(null)).remove(configFilename);
