@@ -1,8 +1,10 @@
 package com.fantasticsource.fantasticlib;
 
+import com.fantasticsource.mctools.DataFiles;
 import com.fantasticsource.mctools.Render;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -17,5 +19,11 @@ public class FantasticLib
     public void preInit(FMLPreInitializationEvent event)
     {
         if (event.getSide() == Side.CLIENT) Render.init();
+    }
+
+    @EventHandler
+    public void postInit(FMLPostInitializationEvent event)
+    {
+        DataFiles.output();
     }
 }
