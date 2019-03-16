@@ -1,6 +1,7 @@
 package com.fantasticsource.mctools.items;
 
 import net.minecraft.block.Block;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
@@ -137,7 +138,13 @@ public class ItemFilter
         //NBT
         if (registryAndNBT.length > 1)
         {
-            String[] tags = registryAndNBT[1].trim().split(Pattern.quote("&"));
+            String nbt = registryAndNBT[1].trim();
+            for (Map.Entry<ResourceLocation, Enchantment> entry : ForgeRegistries.ENCHANTMENTS.getEntries())
+            {
+                nbt = nbt.replaceAll(entry.getKey().toString(), "id:" + Enchantment.getEnchantmentID(entry.getValue()) + "s");
+            }
+
+            String[] tags = nbt.split(Pattern.quote("&"));
             for (String tag : tags)
             {
                 tag = tag.trim();
