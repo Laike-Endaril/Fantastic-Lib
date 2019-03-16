@@ -3,6 +3,7 @@ package com.fantasticsource.mctools.items;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
@@ -185,10 +186,7 @@ public class ItemFilter
         {
             for (Map.Entry<String, String> entry : tagsDisallowed.entrySet())
             {
-                if (!(!compound.hasKey(entry.getKey()) || (entry.getValue() != null && !compound.getTag(entry.getKey()).toString().equals(entry.getValue()))))
-                {
-                    return false;
-                }
+                if (hasNBT(compound, entry.getKey(), entry.getValue())) return false;
             }
         }
 
@@ -201,15 +199,27 @@ public class ItemFilter
 
             for (Map.Entry<String, String> entry : entrySet)
             {
-                if (!compound.hasKey(entry.getKey()) || (entry.getValue() != null && !compound.getTag(entry.getKey()).toString().equals(entry.getValue())))
-                {
-                    return false;
-                }
+                if (!hasNBT(compound, entry.getKey(), entry.getValue())) return false;
             }
         }
 
 
         //Passed all filters
         return true;
+    }
+
+    private boolean hasNBT(NBTTagCompound compound, String key, String value)
+    {
+        String[] keymap = key.split(":");
+        NBTBase v = compound;
+        for (String k : keymap)
+        {
+            if (!(v instanceof NBTTagCompound)) return false;
+            k = k.trim();
+            if (!compound.hasKey(k)) return false;
+            v = compound.getTag(k);
+        }
+
+        return value == null || value.equals(v.toString());
     }
 }
