@@ -150,8 +150,15 @@ public class ItemFilter
                 String key = keyValue[0].trim();
                 if (!key.equals(""))
                 {
-                    if (key.charAt(0) == '!') result.tagsDisallowed.put(key, keyValue.length == 2 ? keyValue[1].trim() : null);
-                    else result.tagsRequired.put(key, keyValue.length == 2 ? keyValue[1].trim() : null);
+                    LinkedHashMap<String, String> map;
+                    if (key.charAt(0) == '!')
+                    {
+                        key = key.substring(1);
+                        map = result.tagsDisallowed;
+                    }
+                    else map = result.tagsRequired;
+
+                    map.put(key, keyValue.length == 2 ? keyValue[1].trim() : null);
                 }
             }
         }
