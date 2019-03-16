@@ -5,9 +5,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -186,7 +188,7 @@ public class ItemFilter
         {
             for (Map.Entry<String, String> entry : tagsDisallowed.entrySet())
             {
-                if (hasNBT(compound, entry.getKey(), entry.getValue())) return false;
+                if (checkNBT(compound, entry.getKey().split(":", -1), entry.getValue())) return false;
             }
         }
 
@@ -199,7 +201,7 @@ public class ItemFilter
 
             for (Map.Entry<String, String> entry : entrySet)
             {
-                if (!hasNBT(compound, entry.getKey(), entry.getValue())) return false;
+                if (!checkNBT(compound, entry.getKey().split(":", -1), entry.getValue())) return false;
             }
         }
 
@@ -208,18 +210,59 @@ public class ItemFilter
         return true;
     }
 
-    private boolean hasNBT(NBTTagCompound compound, String key, String value)
+    private boolean checkNBT(NBTBase base, String[] keymap, String value)
     {
-        String[] keymap = key.split(":");
-        NBTBase v = compound;
-        for (String k : keymap)
+//        System.out.println("NBT... " + base.toString() + " ... " + (keymap == null ? "null" : keymap.length == 0 ? "0 length" : keymap[0]));
+        if (keymap == null || keymap.length == 0)
         {
-            if (!(v instanceof NBTTagCompound)) return false;
-            k = k.trim();
-            if (!compound.hasKey(k)) return false;
-            v = compound.getTag(k);
+            return checkValue(base, value);
         }
 
-        return value == null || value.equals(v.toString());
+
+        String key = keymap[0].trim();
+
+        if (key.equals(""))
+        {
+            if (base instanceof NBTTagList)
+            {
+                for (NBTBase base1 : (NBTTagList) base)
+                {
+                    if (checkNBT(base1, Arrays.copyOfRange(keymap, 1, keymap.length), value)) return true;
+                }
+            }
+
+            return false;
+        }
+
+        if (base instanceof NBTTagCompound)
+        {
+            NBTTagCompound compound = (NBTTagCompound) base;
+            if (!compound.hasKey(key)) return false;
+
+            return checkNBT(compound.getTag(key), Arrays.copyOfRange(keymap, 1, keymap.length), value);
+        }
+
+        return false;
+    }
+
+    private boolean checkValue(NBTBase base, String value)
+    {
+//        System.out.println("Val... " + base.toString() + " ... " + (value == null ? "null" : value));
+        if (value == null || value.trim().equals(base.toString())) return true;
+
+
+        value = value.replace(";", ",");
+        if (value.equals(base.toString())) return true;
+
+        String[] newValues = value.split(",");
+        if (newValues.length < 2 && !value.contains(":")) return false;
+
+        for (String newValue : newValues)
+        {
+            String[] tokens = newValue.split(":");
+            if (!checkNBT(base, Arrays.copyOf(tokens, tokens.length - 1), tokens[tokens.length - 1])) return false;
+        }
+
+        return true;
     }
 }
