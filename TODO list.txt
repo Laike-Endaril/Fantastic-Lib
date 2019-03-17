@@ -1,3 +1,7 @@
+PlayerInventoryChangeEvent
+
+
+
 Hearing system
 
 Map SPacketEffect ids to actual sounds
@@ -13,6 +17,7 @@ Potion effects
 Wet: Adds duration if you are in water or rain, up to a max.  If you are burning at any time for its duration, it deals minor steam damage, removes burning and then removes itself
 Frozen: Triggers if you touch ice while wet.  Removes wet and stops movement until you take damage once or the duration runs out.  If you start burning while frozen, frozen and burning are both removed.
 Burning: Triggers when set on fire, and sets you on fire when it is triggered.  Puts out the fire when it ends...basically just trying to link normal burning to a usable potion effect
+Deflection: % chance of deflecting attacks
 
 Doom: Instant death if it is not removed before the countdown hits 0.  OP if not filtered carefully
 Voidwalker: Allows you to walk on / place blocks on the void at the bottom of the world, as if it were solid; mostly useful in the end
