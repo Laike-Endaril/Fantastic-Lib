@@ -1,7 +1,13 @@
+Hearing system
+
+Map SPacketEffect ids to actual sounds
+
+
 Damage types
 
 Steam: If not bypassing armor, damage is reduced by armor twice.  If bypassing armor, damage is increased by armor value
 Fire: Bypasses armor, is increased by armor value
+
 
 Potion effects
 Wet: Adds duration if you are in water or rain, up to a max.  If you are burning at any time for its duration, it deals minor steam damage, removes burning and then removes itself
