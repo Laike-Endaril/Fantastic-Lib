@@ -222,10 +222,19 @@ public class MCTools
         {
             priority = queue.peekPriority();
             ai = queue.poll();
+            boolean isNPE = false;
+
+            if (ai instanceof NPEAttackTargetTaskHolder)
+            {
+                isNPE = true;
+                ai = ((NPEAttackTargetTaskHolder) ai).getBadAI();
+            }
+
             str = ai.getClass().getSimpleName();
             if (str.equals("")) str = ai.getClass().getName();
             if (str.equals("")) str = ai.getClass().getPackage().getName() + ".???????";
-            System.out.println(priority + "\t" + str);
+
+            System.out.println(priority + "\t" + (isNPE ? "NpeAttackTargetTaskHolder (" + str + ")" : str));
         }
         System.out.println("===================================");
         System.out.println();

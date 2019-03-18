@@ -57,4 +57,9 @@ public class NPEAttackTargetTaskHolder extends EntityAIBase
     {
         badAI.resetTask();
     }
+
+    public EntityAIBase getBadAI()
+    {
+        return badAI;
+    }
 }
