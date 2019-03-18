@@ -1,7 +1,11 @@
 package com.fantasticsource.fantasticlib;
 
+import com.fantasticsource.fantasticlib.config.FantasticConfig;
 import com.fantasticsource.mctools.DataFiles;
+import com.fantasticsource.mctools.EntityRenderFixer;
 import com.fantasticsource.mctools.Render;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -14,6 +18,15 @@ public class FantasticLib
     public static final String MODID = "fantasticlib";
     public static final String NAME = "Fantastic Lib";
     public static final String VERSION = "1.12.2.007a";
+
+    public FantasticLib()
+    {
+        if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+        {
+            //Physical client
+            if (FantasticConfig.entityRenderFixer) MinecraftForge.EVENT_BUS.register(EntityRenderFixer.class);
+        }
+    }
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
