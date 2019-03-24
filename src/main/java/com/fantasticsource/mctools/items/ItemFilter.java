@@ -1,6 +1,8 @@
 package com.fantasticsource.mctools.items;
 
+import com.fantasticsource.fantasticlib.FantasticLib;
 import net.minecraft.block.Block;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -72,12 +74,12 @@ public class ItemFilter
 
         if (registryAndNBT.length == 0)
         {
-            System.err.println("Not enough arguments for item filter: " + itemStackString);
+            System.err.println(I18n.format(FantasticLib.MODID + ".error.notEnoughItemFilterArgs", itemStackString));
             return null;
         }
         if (registryAndNBT.length > 2)
         {
-            System.err.println("Too many arguments for item filter: " + itemStackString);
+            System.err.println(I18n.format(FantasticLib.MODID + ".error.tooManyItemFilterArgs", itemStackString));
             return null;
         }
 
@@ -92,7 +94,7 @@ public class ItemFilter
             String[] innerTokens = token.split(Pattern.quote(":"));
             if (innerTokens.length > 3)
             {
-                System.err.println("Bad item name: " + token);
+                System.err.println(I18n.format(FantasticLib.MODID + ".error.badItemName", token));
                 return null;
             }
             if (innerTokens.length == 3)
@@ -105,7 +107,7 @@ public class ItemFilter
                 }
                 catch (NumberFormatException e)
                 {
-                    System.err.println("Bad item meta: " + token);
+                    System.err.println(I18n.format(FantasticLib.MODID + ".error.badItemMeta", token));
                     return null;
                 }
             }
@@ -138,7 +140,7 @@ public class ItemFilter
 
             if (result.itemStack == null)
             {
-                if (!suppressItemMissingError) System.err.println("Item for item filter not found: " + token);
+                if (!suppressItemMissingError) System.err.println(I18n.format(FantasticLib.MODID + ".error.itemForFilterNotFound", token));
                 return null;
             }
         }
@@ -162,7 +164,7 @@ public class ItemFilter
                 String[] keyValue = tag.split(Pattern.quote("="));
                 if (keyValue.length > 2)
                 {
-                    System.err.println("Each NBT tag can only be set to one value!  Error in item filter: " + itemStackString);
+                    System.err.println(I18n.format(FantasticLib.MODID + ".error.tooManyNBTValues", itemStackString));
                     return null;
                 }
 
