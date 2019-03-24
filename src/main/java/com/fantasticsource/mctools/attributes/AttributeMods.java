@@ -52,6 +52,14 @@ public class AttributeMods
             return null;
         }
 
-        return new AttributeModifier(tokens[0].trim(), Double.parseDouble(tokens2[0].trim()), tokens2.length > 1 ? Integer.parseInt(tokens2[1].trim()) : 0);
+        try
+        {
+            return new AttributeModifier(tokens[0].trim(), Double.parseDouble(tokens2[0].trim()), tokens2.length > 1 ? Integer.parseInt(tokens2[1].trim()) : 0);
+        }
+        catch (NumberFormatException e)
+        {
+            System.err.println("Malformed attribute modifier string: " + modString);
+            return null;
+        }
     }
 }
