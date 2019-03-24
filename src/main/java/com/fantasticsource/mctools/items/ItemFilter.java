@@ -98,7 +98,16 @@ public class ItemFilter
             if (innerTokens.length == 3)
             {
                 resourceLocation = new ResourceLocation(innerTokens[0], innerTokens[1]);
-                meta = Integer.parseInt(innerTokens[2]);
+
+                try
+                {
+                    meta = Integer.parseInt(innerTokens[2]);
+                }
+                catch (NumberFormatException e)
+                {
+                    System.err.println("Bad item meta: " + token);
+                    return null;
+                }
             }
             else if (innerTokens.length == 1) resourceLocation = new ResourceLocation("minecraft", innerTokens[0]);
             else
@@ -124,7 +133,7 @@ public class ItemFilter
             else
             {
                 Block block = ForgeRegistries.BLOCKS.containsKey(resourceLocation) ? ForgeRegistries.BLOCKS.getValue(resourceLocation) : null;
-                if (block != null) result.itemStack = new ItemStack(block, 1, Integer.parseInt(innerTokens[2]));
+                if (block != null) result.itemStack = new ItemStack(block, 1, meta);
             }
 
             if (result.itemStack == null)
