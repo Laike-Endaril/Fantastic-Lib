@@ -5,7 +5,7 @@ fantasticlib.error.badItemMeta=Bad item meta: %s
 fantasticlib.error.itemForFilterNotFound=Item for item filter not found: %s
 fantasticlib.error.tooManyNBTValues=Each NBT tag can only be set to one value!  Error in item filter: %s
 
-
+fantasticlib.error.malformedAMod=Malformed attribute modifier string: %s
 
 
 
