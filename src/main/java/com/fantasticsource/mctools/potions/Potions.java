@@ -49,7 +49,8 @@ public class Potions
         for (String string : potionList)
         {
             potion = parsePotion(string, allMaxDuration);
-            if (potion != null) result.add(potion);
+            if (potion == null) return null;
+            result.add(potion);
         }
 
         return result;
