@@ -4,6 +4,7 @@ import com.fantasticsource.fantasticlib.config.FantasticConfig;
 import com.fantasticsource.mctools.DataFiles;
 import com.fantasticsource.mctools.EntityRenderFixer;
 import com.fantasticsource.mctools.Render;
+import com.fantasticsource.mctools.TooltipFixer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
@@ -25,6 +26,7 @@ public class FantasticLib
         {
             //Physical client
             if (FantasticConfig.entityRenderFixer) MinecraftForge.EVENT_BUS.register(EntityRenderFixer.class);
+            MinecraftForge.EVENT_BUS.register(TooltipFixer.class);
         }
     }
 

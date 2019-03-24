@@ -1,2 +1,2 @@
 fantasticlib.config.entityRenderFixer=Use Entity Render Fixer
-fantasticlib.config.entityRenderFixer.tooltip=If enabled, runs some code to reset certain openGL settings after each entity renders\n\nOnly use this if you need it to fix a graphical issue\n \n
+fantasticlib.config.entityRenderFixer.tooltip=FILLSCREEN If enabled, runs some code to reset certain openGL settings after each entity renders\n\nOnly use this if you need it to fix a graphical issue\n \n
