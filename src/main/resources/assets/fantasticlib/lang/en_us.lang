@@ -7,6 +7,12 @@ fantasticlib.error.tooManyNBTValues=Each NBT tag can only be set to one value!  
 
 fantasticlib.error.malformedAMod=Malformed attribute modifier string: %s
 
+fantasticlib.error.notEnoughPotionArgs=Not enough arguments for potion effect (should be min of 1): %s
+fantasticlib.error.tooManyPotionArgs=Too many arguments for potion effect (should be max of 3): %s
+fantasticlib.error.potionNotFound=ResourceLocation for potion not found: %s
+fantasticlib.error.potionAmpNotNumber=Amplifier for potion is not a number: %s
+fantasticlib.error.potionDurNotNumber=Duration for potion is not a number: %s
+
 
 
 fantasticlib.config.entityRenderFixer=Use Entity Render Fixer

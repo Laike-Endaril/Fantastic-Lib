@@ -1,5 +1,7 @@
 package com.fantasticsource.mctools.potions;
 
+import com.fantasticsource.fantasticlib.FantasticLib;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
@@ -76,19 +78,19 @@ public class Potions
         tokens = potionString.split(Pattern.quote("."));
         if (tokens.length < 1)
         {
-            System.err.println("Not enough arguments for potion effect; should be min of 1");
+            System.err.println(I18n.format(FantasticLib.MODID + ".error.notEnoughPotionArgs", potionString));
             return null;
         }
         if (tokens.length > 3)
         {
-            System.err.println("Too many arguments for potion effect; should be max of 3");
+            System.err.println(I18n.format(FantasticLib.MODID + ".error.tooManyPotionArgs", potionString));
             return null;
         }
 
         potion = ForgeRegistries.POTIONS.getValue(new ResourceLocation(tokens[0].trim()));
         if (potion == null)
         {
-            System.err.println("ResourceLocation for potion \"" + potionString + "\" not found!");
+            System.err.println(I18n.format(FantasticLib.MODID + ".error.potionNotFound", potionString));
             return null;
         }
 
@@ -102,7 +104,7 @@ public class Potions
             }
             catch (NumberFormatException e)
             {
-                System.err.println("Amplifier for potion is not a number: " + potionString);
+                System.err.println(I18n.format(FantasticLib.MODID + ".error.potionAmpNotNumber", potionString));
                 return null;
             }
 
@@ -116,7 +118,7 @@ public class Potions
             }
             catch (NumberFormatException e)
             {
-                System.err.println("Duration for potion is not a number: " + potionString);
+                System.err.println(I18n.format(FantasticLib.MODID + ".error.potionDurNotNumber", potionString));
                 return null;
             }
 
@@ -126,7 +128,7 @@ public class Potions
             }
             catch (NumberFormatException e)
             {
-                System.err.println("Amplifier for potion is not a number: " + potionString);
+                System.err.println(I18n.format(FantasticLib.MODID + ".error.potionAmpNotNumber", potionString));
                 return null;
             }
 
