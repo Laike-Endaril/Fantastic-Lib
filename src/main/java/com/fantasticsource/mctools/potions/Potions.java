@@ -95,13 +95,41 @@ public class Potions
         if (maxDuration)
         {
             duration = Integer.MAX_VALUE;
-            amplifier = tokens.length > 1 ? Integer.parseInt(tokens[1].trim()) : 0;
+
+            try
+            {
+                amplifier = tokens.length > 1 ? Integer.parseInt(tokens[1].trim()) : 0;
+            }
+            catch (NumberFormatException e)
+            {
+                System.err.println("Amplifier for potion is not a number: " + potionString);
+                return null;
+            }
+
             if (amplifier > 0) amplifier--; //Makes it so ppl can just type 2 for stength 2 instead of typing 1
         }
         else
         {
-            duration = tokens.length > 1 ? Integer.parseInt(tokens[1].trim()) : Integer.MAX_VALUE;
-            amplifier = tokens.length > 2 ? Integer.parseInt(tokens[2].trim()) : 0;
+            try
+            {
+                duration = tokens.length > 1 ? Integer.parseInt(tokens[1].trim()) : Integer.MAX_VALUE;
+            }
+            catch (NumberFormatException e)
+            {
+                System.err.println("Duration for potion is not a number: " + potionString);
+                return null;
+            }
+
+            try
+            {
+                amplifier = tokens.length > 2 ? Integer.parseInt(tokens[2].trim()) : 0;
+            }
+            catch (NumberFormatException e)
+            {
+                System.err.println("Amplifier for potion is not a number: " + potionString);
+                return null;
+            }
+
             if (amplifier > 0) amplifier--; //Makes it so ppl can just type 2 for stength 2 instead of typing 1
         }
 
