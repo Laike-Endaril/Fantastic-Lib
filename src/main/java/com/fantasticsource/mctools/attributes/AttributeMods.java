@@ -29,7 +29,11 @@ public class AttributeMods
         for (String string : modList)
         {
             modifier = parseMod(string);
-            if (modifier != null) result.add(modifier);
+            if (modifier == null)
+            {
+                return null;
+            }
+            result.add(modifier);
         }
 
         return result;
