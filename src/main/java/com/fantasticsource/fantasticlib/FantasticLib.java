@@ -1,16 +1,15 @@
 package com.fantasticsource.fantasticlib;
 
 import com.fantasticsource.fantasticlib.config.FantasticConfig;
-import com.fantasticsource.mctools.DataFiles;
-import com.fantasticsource.mctools.EntityRenderFixer;
-import com.fantasticsource.mctools.Render;
-import com.fantasticsource.mctools.TooltipFixer;
+import com.fantasticsource.mctools.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 @Mod(modid = FantasticLib.MODID, name = FantasticLib.NAME, version = FantasticLib.VERSION)
@@ -40,5 +39,18 @@ public class FantasticLib
     public void postInit(FMLPostInitializationEvent event)
     {
         DataFiles.output();
+    }
+
+
+    @EventHandler
+    public static void serverStart(FMLServerAboutToStartEvent event)
+    {
+        MCTools.serverStart(event);
+    }
+
+    @EventHandler
+    public static void serverStop(FMLServerStoppedEvent event)
+    {
+        MCTools.serverStop(event);
     }
 }

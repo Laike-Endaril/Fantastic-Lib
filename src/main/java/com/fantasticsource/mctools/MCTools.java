@@ -19,6 +19,8 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -30,6 +32,7 @@ import static com.fantasticsource.tools.Tools.radtodeg;
 public class MCTools
 {
     private static Field configManagerCONFIGSField;
+    private static boolean host = false;
 
     static
     {
@@ -41,6 +44,25 @@ public class MCTools
         {
             crash(e, 700, false);
         }
+    }
+
+
+    /**
+     * Whether we are hosting the game; returns true if a server is currently running within this application
+     */
+    public static boolean hosting()
+    {
+        return host;
+    }
+
+    public static void serverStart(FMLServerAboutToStartEvent event)
+    {
+        host = true;
+    }
+
+    public static void serverStop(FMLServerStoppedEvent event)
+    {
+        host = false;
     }
 
 
