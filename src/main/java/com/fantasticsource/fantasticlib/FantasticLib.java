@@ -29,18 +29,6 @@ public class FantasticLib
         }
     }
 
-    @EventHandler
-    public void preInit(FMLPreInitializationEvent event)
-    {
-        if (event.getSide() == Side.CLIENT) Render.init();
-    }
-
-    @EventHandler
-    public void postInit(FMLPostInitializationEvent event)
-    {
-        DataFiles.output();
-    }
-
 
     @EventHandler
     public static void serverStart(FMLServerAboutToStartEvent event)
@@ -52,5 +40,18 @@ public class FantasticLib
     public static void serverStop(FMLServerStoppedEvent event)
     {
         MCTools.serverStop(event);
+    }
+
+
+    @EventHandler
+    public void preInit(FMLPreInitializationEvent event)
+    {
+        if (event.getSide() == Side.CLIENT) Render.init();
+    }
+
+    @EventHandler
+    public void postInit(FMLPostInitializationEvent event)
+    {
+        DataFiles.output();
     }
 }
