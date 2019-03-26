@@ -73,7 +73,7 @@ public class MCTools
 
     public static void reloadConfig(String modid) throws IllegalAccessException
     {
-        reloadConfig(getConfigDir() + modid + ".cfg");
+        reloadConfig(getConfigDir() + modid + ".cfg", modid);
     }
 
     public static void reloadConfig(String configFilename, String modid) throws IllegalAccessException
