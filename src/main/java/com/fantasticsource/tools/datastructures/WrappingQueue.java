@@ -36,11 +36,23 @@ public class WrappingQueue<T>
         return (T) array[(index + startPos) % array.length];
     }
 
+    public void setOldestToNewest(int index, T value)
+    {
+        if (index < 0 || index >= used) throw new ArrayIndexOutOfBoundsException("Index: " + index + ", Length: " + used);
+        array[(index + startPos) % array.length] = value;
+    }
+
     @SuppressWarnings("unchecked")
     public T getNewestToOldest(int index)
     {
         if (index <= -used || index > 0) throw new ArrayIndexOutOfBoundsException("Index: " + index + ", Length: " + used);
         return (T) array[(index + insertPos + array.length) % array.length];
+    }
+
+    public void setNewestToOldest(int index, T value)
+    {
+        if (index <= -used || index > 0) throw new ArrayIndexOutOfBoundsException("Index: " + index + ", Length: " + used);
+        array[(index + insertPos + array.length) % array.length] = value;
     }
 
     public T pop()
@@ -49,7 +61,7 @@ public class WrappingQueue<T>
     }
 
     /**
-     * Returns true if the object was removed, false if object was not found
+     * Returns removed object
      */
     @SuppressWarnings("unchecked")
     public T remove(int index)
