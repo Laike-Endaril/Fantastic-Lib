@@ -4,39 +4,43 @@ package com.fantasticsource.tools.datastructures;
 public class WrappingQueue<T>
 {
     private Object[] array;
-    private int insertPos = 0, startPos = 0, length = 0;
+    private int insertPos = 0, startPos = 0, used = 0;
 
-    public WrappingQueue(int size)
+    public WrappingQueue(int capacity)
     {
-        array = new Object[size];
+        array = new Object[capacity];
     }
 
-    public boolean add(T t) //Returns true if an entry was overwritten
+    /**
+     * Returns true if an entry was overwritten
+     */
+    public boolean add(T t)
     {
         array[insertPos] = t;
 
-        insertPos++;
-        if (insertPos == array.length) insertPos = 0;
+        if (++insertPos == array.length) insertPos = 0;
 
-        length++;
-        if (length > array.length)
+        if (++used > array.length)
         {
-            length = array.length;
-            startPos++;
-            if (startPos == array.length) startPos = 0;
+            used = array.length;
+            if (++startPos == array.length) startPos = 0;
             return true;
         }
         return false;
     }
 
     @SuppressWarnings("unchecked")
-    public T get(int index)
+    public T getOldestToNewest(int index)
     {
-        if (index >= length) throw new ArrayIndexOutOfBoundsException("Index: " + index + ", Length: " + length);
+        if (index < 0 || index >= used) throw new ArrayIndexOutOfBoundsException("Index: " + index + ", Length: " + used);
+        return (T) array[(index + startPos) % array.length];
+    }
 
-        index += startPos;
-        if (index >= array.length) index -= array.length;
-        return (T) array[index];
+    @SuppressWarnings("unchecked")
+    public T getNewestToOldest(int index)
+    {
+        if (index <= -used || index > 0) throw new ArrayIndexOutOfBoundsException("Index: " + index + ", Length: " + used);
+        return (T) array[(index + insertPos + array.length) % array.length];
     }
 
     public T pop()
@@ -44,10 +48,13 @@ public class WrappingQueue<T>
         return remove(0);
     }
 
+    /**
+     * Returns true if the object was removed, false if object was not found
+     */
     @SuppressWarnings("unchecked")
     public T remove(int index)
     {
-        if (index >= length) throw new ArrayIndexOutOfBoundsException("Index: " + index + ", Length: " + length);
+        if (index < 0 || index >= used) throw new ArrayIndexOutOfBoundsException("Index: " + index + ", Length: " + used);
 
         int i = (index + startPos) % array.length;
         T result = (T) array[i];
@@ -56,17 +63,20 @@ public class WrappingQueue<T>
             if (i == 0) array[0] = array[array.length - 1];
             else array[i] = array[i - 1];
 
-            i--;
-            if (i < 0) i = array.length - 1;
+            if (--i < 0) i = array.length - 1;
         }
 
+        used--;
         startPos++;
         if (startPos == array.length) startPos = 0;
 
         return result;
     }
 
-    public boolean remove(T t) //Returns true if the object was removed, false if object was not found
+    /**
+     * Returns true if the object was removed, false if object was not found
+     */
+    public boolean remove(T t)
     {
         int index = indexOf(t);
         if (index == -1) return false;
@@ -74,23 +84,21 @@ public class WrappingQueue<T>
         return true;
     }
 
-    public Object[] getArray()
+    public Object[] toArray()
     {
-        return getArray(0, length);
+        return toArray(0, used);
     }
 
-    public Object[] getArray(int index, int length)
+    public Object[] toArray(int index, int length)
     {
-        if (index + length > this.length) throw new ArrayIndexOutOfBoundsException("Index: " + index + length + ", Length: " + this.length);
+        if (index < 0 || length < 0 || index + length > used) throw new ArrayIndexOutOfBoundsException("Index: " + index + length + ", Length: " + used);
 
         Object[] result = new Object[length];
         index = (index + startPos) % array.length;
         for (int i = 0; i < length; i++)
         {
             result[i] = array[index];
-
-            index++;
-            if (index == array.length) index = 0;
+            if (++index == array.length) index = 0;
         }
 
         return result;
@@ -98,17 +106,16 @@ public class WrappingQueue<T>
 
     public int size()
     {
-        return length;
+        return used;
     }
 
     public int indexOf(T t)
     {
         int index = startPos;
-        for (int i = 0; i < length; i++)
+        for (int i = 0; i < used; i++)
         {
             if (array[index].equals(t)) return i;
-            index++;
-            if (index == array.length) index = 0;
+            if (++index == array.length) index = 0;
         }
         return -1;
     }
@@ -121,7 +128,7 @@ public class WrappingQueue<T>
     public void clear()
     {
         startPos = 0;
-        length = 0;
+        used = 0;
         insertPos = 0;
     }
 }
