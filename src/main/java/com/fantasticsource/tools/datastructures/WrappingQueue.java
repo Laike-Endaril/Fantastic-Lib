@@ -46,7 +46,7 @@ public class WrappingQueue<T>
     public T getNewestToOldest(int index)
     {
         if (index <= -used || index > 0) throw new ArrayIndexOutOfBoundsException("Index: " + index + ", Length: " + used);
-        return (T) array[(index + insertPos + array.length) % array.length];
+        return (T) array[(index + insertPos - 1 + array.length) % array.length];
     }
 
     public void setNewestToOldest(int index, T value)
