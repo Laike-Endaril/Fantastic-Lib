@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 public class Potions
 {
     /**
-     * Syntax is registryname.duration.level & registryname.duration.level & registryname.duration.level...
+     * Syntax is registryname;duration;level & registryname;duration;level & registryname;duration;level...
      */
     public static ArrayList<PotionEffect> parsePotions(String potionList)
     {
@@ -21,7 +21,7 @@ public class Potions
     }
 
     /**
-     * Syntax is registryname.duration.level & registryname.duration.level & registryname.duration.level...
+     * Syntax is registryname;duration;level & registryname;duration;level & registryname;duration;level...
      */
     public static ArrayList<PotionEffect> parsePotions(String potionList, boolean allMaxDuration)
     {
@@ -31,7 +31,7 @@ public class Potions
     }
 
     /**
-     * Syntax for each is registryname.duration.level
+     * Syntax for each is registryname;duration;level
      */
     public static ArrayList<PotionEffect> parsePotions(String[] potionList)
     {
@@ -39,7 +39,7 @@ public class Potions
     }
 
     /**
-     * Syntax for each is registryname.duration.level
+     * Syntax for each is registryname;duration;level
      */
     public static ArrayList<PotionEffect> parsePotions(String[] potionList, boolean allMaxDuration)
     {
@@ -57,7 +57,7 @@ public class Potions
     }
 
     /**
-     * Syntax is registryname.duration.level
+     * Syntax is registryname;duration;level
      */
     public static PotionEffect parsePotion(String potionString)
     {
@@ -65,7 +65,7 @@ public class Potions
     }
 
     /**
-     * Syntax is registryname.duration.level
+     * Syntax is registryname;duration;level
      */
     public static PotionEffect parsePotion(String potionString, boolean maxDuration)
     {
@@ -76,7 +76,7 @@ public class Potions
         potionString = potionString.trim();
         if (potionString.equals("")) return null;
 
-        tokens = potionString.split(Pattern.quote("."));
+        tokens = potionString.split(Pattern.quote(";"));
         if (tokens.length < 1)
         {
             System.err.println(I18n.format(FantasticLib.MODID + ".error.notEnoughPotionArgs", potionString));
