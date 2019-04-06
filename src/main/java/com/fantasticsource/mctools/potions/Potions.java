@@ -8,12 +8,13 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class Potions
 {
     /**
-     * Syntax is registryname;duration;level & registryname;duration;level & registryname;duration;level...
+     * Syntax is registryname.duration.level & registryname.duration.level & registryname.duration.level...
      */
     public static ArrayList<PotionEffect> parsePotions(String potionList)
     {
@@ -21,7 +22,16 @@ public class Potions
     }
 
     /**
-     * Syntax is registryname;duration;level & registryname;duration;level & registryname;duration;level...
+     * Syntax is registryname.duration.level & registryname.duration.level & registryname.duration.level...
+     */
+    public static ArrayList<PotionEffect> parsePotions(String[] potionList)
+    {
+        return parsePotions(potionList, false);
+    }
+
+    /**
+     * Syntax if allMaxDuration is true is registryname.level & registryname.level & registryname.level...
+     * Syntax if allMaxDuration is false is registryname.duration.level & registryname.duration.level & registryname.duration.level...
      */
     public static ArrayList<PotionEffect> parsePotions(String potionList, boolean allMaxDuration)
     {
@@ -31,15 +41,8 @@ public class Potions
     }
 
     /**
-     * Syntax for each is registryname;duration;level
-     */
-    public static ArrayList<PotionEffect> parsePotions(String[] potionList)
-    {
-        return parsePotions(potionList, false);
-    }
-
-    /**
-     * Syntax for each is registryname;duration;level
+     * If allMaxDuration is true, syntax for each is registryname.level
+     * If allMaxDuration is false, syntax for each is registryname.duration.level
      */
     public static ArrayList<PotionEffect> parsePotions(String[] potionList, boolean allMaxDuration)
     {
@@ -57,7 +60,7 @@ public class Potions
     }
 
     /**
-     * Syntax is registryname;duration;level
+     * Syntax is registryname.duration.level
      */
     public static PotionEffect parsePotion(String potionString)
     {
@@ -65,43 +68,53 @@ public class Potions
     }
 
     /**
-     * Syntax is registryname;duration;level
+     * If maxDuration is true, syntax is registryname.level
+     * If maxDuration is false, syntax is registryname.duration.level
      */
     public static PotionEffect parsePotion(String potionString, boolean maxDuration)
     {
-        String[] tokens;
-        int duration, amplifier;
-        Potion potion;
-
         potionString = potionString.trim();
         if (potionString.equals("")) return null;
 
-        tokens = potionString.split(Pattern.quote(";"));
-        if (tokens.length < 1)
-        {
-            System.err.println(I18n.format(FantasticLib.MODID + ".error.notEnoughPotionArgs", potionString));
-            return null;
-        }
-        if (tokens.length > 3)
-        {
-            System.err.println(I18n.format(FantasticLib.MODID + ".error.tooManyPotionArgs", potionString));
-            return null;
-        }
+        if (!potionString.contains(":")) potionString = "minecraft:" + potionString;
 
-        potion = ForgeRegistries.POTIONS.getValue(new ResourceLocation(tokens[0].trim()));
-        if (potion == null)
+        String regString = "";
+        Potion potion = null;
+        for (Map.Entry<ResourceLocation, Potion> entry : ForgeRegistries.POTIONS.getEntries())
+        {
+            String testString = entry.getKey().toString();
+
+            boolean match = testString.equals(potionString);
+            if (!match) match = testString.length() < potionString.length() && potionString.substring(0, testString.length()).equals(testString);
+
+            if (match && testString.length() > regString.length())
+            {
+                regString = testString;
+                potion = entry.getValue();
+            }
+        }
+        if (regString.equals(""))
         {
             System.err.println(I18n.format(FantasticLib.MODID + ".error.potionNotFound", potionString));
             return null;
         }
 
+        potionString = potionString.replace(regString, "").trim().replace(".", "");
+        String[] tokens = potionString.equals("") ? new String[0] : potionString.replace(regString, "").split(Pattern.quote("."));
+        if (tokens.length > (maxDuration ? 1 : 2))
+        {
+            System.err.println(I18n.format(FantasticLib.MODID + ".error.tooManyPotionArgs", potionString));
+            return null;
+        }
+
+        int duration, amplifier;
         if (maxDuration)
         {
             duration = Integer.MAX_VALUE;
 
             try
             {
-                amplifier = tokens.length > 1 ? Integer.parseInt(tokens[1].trim()) : 0;
+                amplifier = tokens.length > 0 ? Integer.parseInt(tokens[0].trim()) : 0;
             }
             catch (NumberFormatException e)
             {
@@ -115,7 +128,7 @@ public class Potions
         {
             try
             {
-                duration = tokens.length > 1 ? Integer.parseInt(tokens[1].trim()) : Integer.MAX_VALUE;
+                duration = tokens.length > 0 ? Integer.parseInt(tokens[0].trim()) : Integer.MAX_VALUE;
             }
             catch (NumberFormatException e)
             {
@@ -125,7 +138,7 @@ public class Potions
 
             try
             {
-                amplifier = tokens.length > 2 ? Integer.parseInt(tokens[2].trim()) : 0;
+                amplifier = tokens.length > 1 ? Integer.parseInt(tokens[1].trim()) : 0;
             }
             catch (NumberFormatException e)
             {
