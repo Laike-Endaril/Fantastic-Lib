@@ -1,16 +1,14 @@
-PlayerInventoryChangeEvent
-
-
-
 Hearing system
 
 Map SPacketEffect ids to actual sounds
+
 
 
 Damage types
 
 Steam: If not bypassing armor, damage is reduced by armor twice.  If bypassing armor, damage is increased by armor value
 Fire: Bypasses armor, is increased by armor value
+
 
 
 Potion effects

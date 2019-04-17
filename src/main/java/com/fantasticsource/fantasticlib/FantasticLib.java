@@ -27,6 +27,8 @@ public class FantasticLib
             if (FantasticConfig.entityRenderFixer) MinecraftForge.EVENT_BUS.register(EntityRenderFixer.class);
             MinecraftForge.EVENT_BUS.register(TooltipFixer.class);
         }
+
+        MinecraftForge.EVENT_BUS.register(PlayerData.class);
     }
 
 
@@ -53,5 +55,6 @@ public class FantasticLib
     public void postInit(FMLPostInitializationEvent event)
     {
         DataFiles.output();
+        PlayerData.load();
     }
 }
