@@ -2,6 +2,7 @@ package com.fantasticsource.mctools;
 
 import com.fantasticsource.fantasticlib.FantasticLib;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
@@ -33,6 +34,36 @@ public class PlayerData
     }
 
 
+    public static String getName(UUID id)
+    {
+        EntityPlayer player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUUID(id);
+        if (player != null)
+        {
+            playerData.put(player.getPersistentID(), new PlayerData(player.getName(), player));
+            return player.getName();
+        }
+
+        return playerData.get(id).name;
+    }
+
+    public static UUID getID(String name)
+    {
+        EntityPlayer player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUsername(name);
+        if (player != null)
+        {
+            playerData.put(player.getPersistentID(), new PlayerData(player.getName(), player));
+            return player.getPersistentID();
+        }
+
+        for (Map.Entry<UUID, PlayerData> entry : playerData.entrySet())
+        {
+            if (entry.getValue().name.equals(name)) return entry.getKey();
+        }
+
+        return null;
+    }
+
+
     public static void save()
     {
         File file = new File(modDir);
@@ -59,19 +90,22 @@ public class PlayerData
         if (!file.exists()) file.mkdir();
 
         file = new File(referenceDir);
+        if (!file.exists()) file.mkdir();
+
+        file = new File(referenceDir + "players.txt");
         if (!file.exists())
         {
-            file.mkdir();
+            save();
             return;
         }
 
         try
         {
-            BufferedReader reader = new BufferedReader(new FileReader(new File(referenceDir + "players.txt")));
+            BufferedReader reader = new BufferedReader(new FileReader(file));
             String line = reader.readLine();
-            while (!line.equals(""))
+            while (line != null && !line.trim().equals(""))
             {
-                String[] tokens = line.split(",");
+                String[] tokens = line.split("=");
                 playerData.put(UUID.fromString(tokens[0].trim()), new PlayerData(tokens[1].trim()));
 
                 line = reader.readLine();
@@ -83,6 +117,7 @@ public class PlayerData
             e.printStackTrace();
         }
     }
+
 
     @SubscribeEvent
     public static void playerLogon(PlayerEvent.PlayerLoggedInEvent event)
