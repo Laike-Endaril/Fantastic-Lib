@@ -1,3 +1,7 @@
+Add reference file for oredict entries
+
+
+
 Hearing system
 
 Map SPacketEffect ids to actual sounds
