@@ -136,14 +136,23 @@ public class Potions
                 return null;
             }
 
-            try
+            if (tokens.length < 1) amplifier = 0;
+            else
             {
-                amplifier = tokens.length > 1 ? Integer.parseInt(tokens[1].trim()) : 0;
-            }
-            catch (NumberFormatException e)
-            {
-                System.err.println(I18n.format(FantasticLib.MODID + ".error.potionAmpNotNumber", potionString));
-                return null;
+                String token = tokens[1].trim();
+                if (token.equals("*")) amplifier = Integer.MAX_VALUE;
+                else
+                {
+                    try
+                    {
+                        amplifier = Integer.parseInt(tokens[1].trim());
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        System.err.println(I18n.format(FantasticLib.MODID + ".error.potionAmpNotNumber", potionString));
+                        return null;
+                    }
+                }
             }
 
             if (amplifier > 0) amplifier--; //Makes it so ppl can just type 2 for stength 2 instead of typing 1
