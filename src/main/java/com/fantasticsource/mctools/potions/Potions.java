@@ -112,17 +112,25 @@ public class Potions
         {
             duration = Integer.MAX_VALUE;
 
-            try
+            if (tokens.length < 1) amplifier = 0;
+            else
             {
-                amplifier = tokens.length > 0 ? Integer.parseInt(tokens[0].trim()) : 0;
+                String token = tokens[0].trim();
+                if (token.equals("*")) amplifier = Integer.MAX_VALUE;
+                else
+                {
+                    try
+                    {
+                        amplifier = Integer.parseInt(tokens[0].trim());
+                        if (amplifier > 0) amplifier--; //Makes it so ppl can just type 2 for stength 2 instead of typing 1
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        System.err.println(I18n.format(FantasticLib.MODID + ".error.potionAmpNotNumber", potionString));
+                        return null;
+                    }
+                }
             }
-            catch (NumberFormatException e)
-            {
-                System.err.println(I18n.format(FantasticLib.MODID + ".error.potionAmpNotNumber", potionString));
-                return null;
-            }
-
-            if (amplifier > 0) amplifier--; //Makes it so ppl can just type 2 for stength 2 instead of typing 1
         }
         else
         {
@@ -146,6 +154,7 @@ public class Potions
                     try
                     {
                         amplifier = Integer.parseInt(tokens[1].trim());
+                        if (amplifier > 0) amplifier--; //Makes it so ppl can just type 2 for stength 2 instead of typing 1
                     }
                     catch (NumberFormatException e)
                     {
@@ -154,8 +163,6 @@ public class Potions
                     }
                 }
             }
-
-            if (amplifier > 0) amplifier--; //Makes it so ppl can just type 2 for stength 2 instead of typing 1
         }
 
         return new PotionEffect(potion, duration, amplifier, false, true);
