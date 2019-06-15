@@ -136,7 +136,7 @@ public class Potions
                 return null;
             }
 
-            if (tokens.length < 1) amplifier = 0;
+            if (tokens.length < 2) amplifier = 0;
             else
             {
                 String token = tokens[1].trim();
