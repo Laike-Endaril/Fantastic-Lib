@@ -136,6 +136,8 @@ public class MCTools
 
     public static double getAttribute(EntityLivingBase entity, IAttribute attribute, double defaultVal)
     {
+        if (entity == null) return defaultVal;
+
         //getEntityAttribute is incorrectly tagged as @Nonnull; it can and will return a null value sometimes, thus this helper
         IAttributeInstance iAttributeInstance = entity.getEntityAttribute(attribute);
         return iAttributeInstance == null ? defaultVal : iAttributeInstance.getAttributeValue();
