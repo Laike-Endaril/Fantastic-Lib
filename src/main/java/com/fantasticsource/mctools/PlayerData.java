@@ -40,7 +40,11 @@ public class PlayerData
     public static PlayerData get(UUID id)
     {
         PlayerData result = playerData.get(id);
-        if (result != null) return result;
+        if (result != null)
+        {
+            if (result.player != null && !result.player.getName().equals(result.name)) result.name = result.player.getName();
+            return result;
+        }
 
         EntityPlayer player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUUID(id);
         if (player != null) //getPlayerByUUID() can absolutely return null
@@ -82,7 +86,7 @@ public class PlayerData
     public static UUID getID(String name)
     {
         PlayerData data = get(name);
-        return data == null ? null : data.player.getPersistentID();
+        return data == null ? null : data.player == null ? null : data.player.getPersistentID();
     }
 
 
@@ -97,7 +101,11 @@ public class PlayerData
         try
         {
             BufferedWriter writer = new BufferedWriter(new FileWriter(new File(referenceDir + "players.txt")));
-            for (Map.Entry<UUID, PlayerData> entry : playerData.entrySet()) writer.write(entry.getKey() + " = " + entry.getValue().name + "\r\n");
+            for (UUID id : playerData.keySet())
+            {
+                PlayerData data = get(id);
+                if (data != null && data.name != null) writer.write(id + " = " + data.name + "\r\n");
+            }
             writer.close();
         }
         catch (IOException e)
