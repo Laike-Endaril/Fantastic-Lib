@@ -230,7 +230,6 @@ public class ItemFilter
 
     private boolean checkNBT(NBTBase base, String[] keymap, String value)
     {
-//        System.out.println("NBT... " + base.toString() + " ... " + (keymap == null ? "null" : keymap.length == 0 ? "0 length" : keymap[0]));
         if (keymap == null || keymap.length == 0)
         {
             return checkValue(base, value);
@@ -265,7 +264,6 @@ public class ItemFilter
 
     private boolean checkValue(NBTBase base, String value)
     {
-//        System.out.println("Val... " + base.toString() + " ... " + (value == null ? "null" : value));
         if (value == null || value.trim().equals(base.toString())) return true;
 
 
