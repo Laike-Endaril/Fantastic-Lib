@@ -1,7 +1,10 @@
 package com.fantasticsource.mctools;
 
 import com.fantasticsource.fantasticlib.FantasticLib;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -34,33 +37,52 @@ public class PlayerData
     }
 
 
-    public static String getName(UUID id)
+    public static PlayerData get(UUID id)
     {
+        PlayerData result = playerData.get(id);
+        if (result != null) return result;
+
         EntityPlayer player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUUID(id);
-        if (player != null)
+        if (player != null) //getPlayerByUUID() can absolutely return null
         {
-            playerData.put(player.getPersistentID(), new PlayerData(player.getName(), player));
-            return player.getName();
+            result = new PlayerData(player.getName(), player);
+            playerData.put(id, result);
+            return result;
         }
 
-        return playerData.get(id).name;
+        return null;
+    }
+
+    public static PlayerData get(String name)
+    {
+        PlayerData result;
+        for (Map.Entry<UUID, PlayerData> entry : playerData.entrySet())
+        {
+            result = entry.getValue();
+            if (result.name.equals(name)) return result;
+        }
+
+        EntityPlayer player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUsername(name);
+        if (player != null)
+        {
+            result = new PlayerData(player.getName(), player);
+            playerData.put(player.getPersistentID(), result);
+            return result;
+        }
+
+        return null;
+    }
+
+    public static String getName(UUID id)
+    {
+        PlayerData data = get(id);
+        return data == null ? null : data.name;
     }
 
     public static UUID getID(String name)
     {
-        EntityPlayer player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUsername(name);
-        if (player != null)
-        {
-            playerData.put(player.getPersistentID(), new PlayerData(player.getName(), player));
-            return player.getPersistentID();
-        }
-
-        for (Map.Entry<UUID, PlayerData> entry : playerData.entrySet())
-        {
-            if (entry.getValue().name.equals(name)) return entry.getKey();
-        }
-
-        return null;
+        PlayerData data = get(name);
+        return data == null ? null : data.player.getPersistentID();
     }
 
 
@@ -120,16 +142,27 @@ public class PlayerData
 
 
     @SubscribeEvent
-    public static void playerLogon(PlayerEvent.PlayerLoggedInEvent event)
+    public static void playerLogon(EntityJoinWorldEvent event)
     {
-        EntityPlayer player = event.player;
-        playerData.put(player.getPersistentID(), new PlayerData(player.getName(), player));
-        save();
+        Entity entity = event.getEntity();
+        if (entity instanceof EntityPlayerMP)
+        {
+            EntityPlayerMP player = (EntityPlayerMP) entity;
+            playerData.put(player.getPersistentID(), new PlayerData(player.getName(), player));
+            save();
+        }
     }
 
     @SubscribeEvent
     public static void playerLogoff(PlayerEvent.PlayerLoggedOutEvent event)
     {
-        playerData.get(event.player.getPersistentID()).player = null;
+        if (event.player != null)
+        {
+            UUID id = event.player.getPersistentID();
+            if (playerData.containsKey(id))
+            {
+                playerData.get(id).player = null;
+            }
+        }
     }
 }
