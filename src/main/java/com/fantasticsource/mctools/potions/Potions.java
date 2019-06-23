@@ -52,7 +52,7 @@ public class Potions
         for (String string : potionList)
         {
             potion = parsePotion(string, allMaxDuration);
-            if (potion == null) return null;
+            if (potion == null) continue;
             result.add(potion);
         }
 
