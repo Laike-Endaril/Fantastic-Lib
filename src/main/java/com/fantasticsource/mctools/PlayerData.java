@@ -23,16 +23,18 @@ public class PlayerData
     private static String referenceDir = modDir + "reference" + File.separator;
 
     public String name;
+    public UUID id;
     public EntityPlayer player;
 
-    public PlayerData(String name)
+    public PlayerData(String name, UUID id)
     {
-        this(name, null);
+        this(name, id, null);
     }
 
-    public PlayerData(String name, EntityPlayer player)
+    public PlayerData(String name, UUID id, EntityPlayer player)
     {
         this.name = name;
+        this.id = id;
         this.player = player;
     }
 
@@ -49,7 +51,7 @@ public class PlayerData
         EntityPlayer player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUUID(id);
         if (player != null) //getPlayerByUUID() can absolutely return null
         {
-            result = new PlayerData(player.getName(), player);
+            result = new PlayerData(player.getName(), player.getPersistentID(), player);
             playerData.put(id, result);
             return result;
         }
@@ -69,7 +71,7 @@ public class PlayerData
         EntityPlayer player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUsername(name);
         if (player != null)
         {
-            result = new PlayerData(player.getName(), player);
+            result = new PlayerData(player.getName(), player.getPersistentID(), player);
             playerData.put(player.getPersistentID(), result);
             return result;
         }
@@ -86,7 +88,7 @@ public class PlayerData
     public static UUID getID(String name)
     {
         PlayerData data = get(name);
-        return data == null ? null : data.player == null ? null : data.player.getPersistentID();
+        return data == null ? null : data.id;
     }
 
 
@@ -136,7 +138,8 @@ public class PlayerData
             while (line != null && !line.trim().equals(""))
             {
                 String[] tokens = line.split("=");
-                playerData.put(UUID.fromString(tokens[0].trim()), new PlayerData(tokens[1].trim()));
+                UUID id = UUID.fromString(tokens[0].trim());
+                playerData.put(id, new PlayerData(tokens[1].trim(), id));
 
                 line = reader.readLine();
             }
@@ -156,7 +159,7 @@ public class PlayerData
         if (entity instanceof EntityPlayerMP)
         {
             EntityPlayerMP player = (EntityPlayerMP) entity;
-            playerData.put(player.getPersistentID(), new PlayerData(player.getName(), player));
+            playerData.put(player.getPersistentID(), new PlayerData(player.getName(), player.getPersistentID(), player));
             save();
         }
     }
