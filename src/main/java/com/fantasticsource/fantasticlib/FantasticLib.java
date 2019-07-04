@@ -17,7 +17,7 @@ public class FantasticLib
 {
     public static final String MODID = "fantasticlib";
     public static final String NAME = "Fantastic Lib";
-    public static final String VERSION = "1.12.2.019a";
+    public static final String VERSION = "1.12.2.020";
 
     public FantasticLib()
     {
