@@ -148,8 +148,25 @@ public class SortableTable
         }
     }
 
-    public Object[] get(int index)
+    public Object get(int column, int index)
     {
+        if (index < 0 || index > used) throw new ArrayIndexOutOfBoundsException();
+        if (column < 0 || column > columns.length) throw new ArrayIndexOutOfBoundsException();
+
+        return columns[column].values[index];
+    }
+
+    public Object[] getColumn(int column)
+    {
+        if (column < 0 || column > columns.length) throw new ArrayIndexOutOfBoundsException();
+
+        return columns[column].values.clone();
+    }
+
+    public Object[] getRow(int index)
+    {
+        if (index < 0 || index > used) throw new ArrayIndexOutOfBoundsException();
+
         Object[] result = new Object[columns.length];
         for (int i = 0; i < columns.length; i++)
         {
