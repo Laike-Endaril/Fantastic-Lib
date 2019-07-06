@@ -225,6 +225,16 @@ public class Tools
     }
 
 
+    public static <T> T choose(T[] choices)
+    {
+        return choices[(int) Math.floor(Math.random() * choices.length)];
+    }
+
+    public static <T> T choose(List<T> choices)
+    {
+        return choices.get((int) Math.floor(Math.random() * choices.size()));
+    }
+
     public static byte choose(byte... choices)
     {
         return choices[(int) Math.floor(Math.random() * choices.length)];
