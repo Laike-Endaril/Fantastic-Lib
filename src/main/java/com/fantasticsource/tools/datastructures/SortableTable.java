@@ -148,6 +148,16 @@ public class SortableTable
         }
     }
 
+    public Object[] get(int index)
+    {
+        Object[] result = new Object[columns.length];
+        for (int i = 0; i < columns.length; i++)
+        {
+            result[i] = columns[i].values[index];
+        }
+        return result;
+    }
+
     public void delete(int index)
     {
         if (index >= used) throw new ArrayIndexOutOfBoundsException("Item count: " + used + ", index given: " + index);
