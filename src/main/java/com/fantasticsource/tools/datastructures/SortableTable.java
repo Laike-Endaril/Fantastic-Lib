@@ -57,6 +57,11 @@ public class SortableTable
         st.print();
     }
 
+    public int size()
+    {
+        return used;
+    }
+
     public void add(Object... item)
     {
         if (item.length != columns.length) throw new IllegalArgumentException("Item length (" + item.length + ") must match number of columns (" + columns.length + ")");
