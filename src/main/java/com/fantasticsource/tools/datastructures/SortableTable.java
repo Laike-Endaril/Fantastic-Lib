@@ -153,7 +153,7 @@ public class SortableTable
         if (keyColumn < 0 || keyColumn > columns.length) throw new ArrayIndexOutOfBoundsException();
         if (valueColumn < 0 || valueColumn > columns.length) throw new ArrayIndexOutOfBoundsException();
 
-        int index = indexOf(0, keyColumn);
+        int index = indexOf(key, keyColumn);
         if (index < 0 || index > used) return null;
 
         return columns[valueColumn].values[index];
