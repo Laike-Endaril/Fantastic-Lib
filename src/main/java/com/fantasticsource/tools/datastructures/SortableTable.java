@@ -171,7 +171,9 @@ public class SortableTable
     {
         if (column < 0 || column > columns.length) throw new ArrayIndexOutOfBoundsException();
 
-        return columns[column].values.clone();
+        Object[] result = new Object[used];
+        System.arraycopy(columns[column].values, 0, result, 0, used);
+        return result;
     }
 
     public Object[] getRow(int index)
