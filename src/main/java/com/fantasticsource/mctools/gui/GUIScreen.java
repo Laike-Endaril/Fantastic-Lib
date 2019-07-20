@@ -14,7 +14,7 @@ import java.util.ArrayList;
 @SideOnly(Side.CLIENT)
 public abstract class GUIScreen extends GuiScreen
 {
-    public static double mouseX, mouseY;
+    public static double mouseX = 0.5, mouseY = 0.5;
     protected ArrayList<GUIElement> guiElements = new ArrayList<>();
     private ArrayList<Integer> mouseButtons = new ArrayList<>();
 
