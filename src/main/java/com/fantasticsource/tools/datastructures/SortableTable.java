@@ -295,6 +295,12 @@ public class SortableTable
         columns[column].label = label;
     }
 
+    public void labels(String... labels)
+    {
+        int i = 0;
+        for (String label : labels) label(i++, label);
+    }
+
     public String toString()
     {
         String[] strings = new String[columns.length * (1 + used)];
