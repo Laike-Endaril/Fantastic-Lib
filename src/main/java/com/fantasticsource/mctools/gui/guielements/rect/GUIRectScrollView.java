@@ -4,6 +4,7 @@ import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.guielements.GUIElement;
 import com.fantasticsource.tools.Tools;
 import net.minecraft.client.renderer.GlStateManager;
+import org.lwjgl.opengl.GL11;
 
 public class GUIRectScrollView extends GUIRectElement
 {
@@ -64,6 +65,8 @@ public class GUIRectScrollView extends GUIRectElement
     @Override
     public void draw(double screenWidth, double screenHeight)
     {
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        GL11.glScissor(0, 0, 0, 0);
         recalc2();
 
         GlStateManager.pushMatrix();
@@ -79,6 +82,7 @@ public class GUIRectScrollView extends GUIRectElement
 
 
         background.draw(screenWidth, screenHeight);
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
 
     @Override

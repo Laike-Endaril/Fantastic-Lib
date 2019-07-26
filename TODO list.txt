@@ -1,3 +1,12 @@
+Add clipping to scrollview to fix element bleed
+
+Add new GUI elements...
+...buttons (can contain other elements and propagate hover and activeness)
+...string input (with allowance filters; none/boolean/math; if the current text doesn't pass the filter, show in red)
+...tab view (tabs along top; filters event and render propagation based on active element)
+
+
+
 Add reference file for oredict entries
 
 
