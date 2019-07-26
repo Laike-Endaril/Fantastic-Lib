@@ -78,7 +78,7 @@ public class GUIRectScrollView extends GUIRectElement
 
         for (GUIElement element : children)
         {
-            if (element.y + height < top || element.y >= bottom) continue;
+            if (element.y + ((GUIRectElement) element).height < top || element.y >= bottom) continue;
             element.draw(screenWidth, screenHeight);
         }
 
