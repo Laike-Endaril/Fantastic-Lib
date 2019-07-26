@@ -3,6 +3,7 @@ package com.fantasticsource.mctools.gui.guielements.rect;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.guielements.GUIElement;
 import com.fantasticsource.tools.Tools;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.GL11;
 
@@ -66,7 +67,10 @@ public class GUIRectScrollView extends GUIRectElement
     public void draw(double screenWidth, double screenHeight)
     {
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GL11.glScissor(0, 0, 0, 0);
+        int mcScale = new ScaledResolution(screen.mc).getScaleFactor();
+        int scaledHeight = (int) (height * screenHeight * mcScale);
+        GL11.glScissor((int) (x * screenWidth * mcScale), (int) (screenHeight * mcScale - y * screenHeight * (mcScale << 1)) - scaledHeight, (int) (width * screenWidth * mcScale), scaledHeight);
+        GL11.glScissor((int) (x * screenWidth * mcScale), 0, (int) (width * screenWidth * mcScale), (int) (height * screenHeight * mcScale));
         recalc2();
 
         GlStateManager.pushMatrix();
