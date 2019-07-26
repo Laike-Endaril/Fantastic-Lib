@@ -66,11 +66,11 @@ public class GUIRectScrollView extends GUIRectElement
     @Override
     public void draw(double screenWidth, double screenHeight)
     {
-        GL11.glEnable(GL11.GL_SCISSOR_TEST);
         int mcScale = new ScaledResolution(screen.mc).getScaleFactor();
-        int scaledHeight = (int) (height * screenHeight * mcScale);
-        GL11.glScissor((int) (x * screenWidth * mcScale), (int) (screenHeight * mcScale - y * screenHeight * (mcScale << 1)) - scaledHeight, (int) (width * screenWidth * mcScale), scaledHeight);
-        GL11.glScissor((int) (x * screenWidth * mcScale), 0, (int) (width * screenWidth * mcScale), (int) (height * screenHeight * mcScale));
+        double wScale = screenWidth * mcScale, hScale = screenHeight * mcScale;
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        GL11.glScissor((int) (x * wScale), (int) ((1 - (y + height)) * hScale), (int) (width * wScale), (int) (height * hScale));
+
         recalc2();
 
         GlStateManager.pushMatrix();
@@ -86,6 +86,7 @@ public class GUIRectScrollView extends GUIRectElement
 
 
         background.draw(screenWidth, screenHeight);
+
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
 
