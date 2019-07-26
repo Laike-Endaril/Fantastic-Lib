@@ -1,7 +1,6 @@
 package com.fantasticsource.mctools.gui.guielements.rect;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
-import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.renderer.GlStateManager;
 
@@ -23,7 +22,6 @@ public class GradientRect extends GUIRectElement
     @Override
     public void draw(double screenWidth, double screenHeight)
     {
-        if (parent == null) return;
         GlStateManager.disableTexture2D();
         GlStateManager.disableAlpha();
 
