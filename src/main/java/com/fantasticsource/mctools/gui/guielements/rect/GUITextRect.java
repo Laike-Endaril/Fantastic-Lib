@@ -13,6 +13,11 @@ public class GUITextRect extends GUIRectElement
     private String text;
     private Color color, hoverColor, pressedColor;
 
+    public GUITextRect(GUIScreen screen, double x, double y, String text, Color color, Color hoverColor, Color pressedColor)
+    {
+        this(screen, x, y, screen.mc.fontRenderer.getStringWidth(text), text, color, hoverColor, pressedColor);
+    }
+
     public GUITextRect(GUIScreen screen, double x, double y, double width, String text, Color color, Color hoverColor, Color pressedColor)
     {
         super(screen, x, y, width, 0);
