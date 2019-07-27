@@ -11,7 +11,7 @@ import org.lwjgl.opengl.GL11;
 public class GUIRectScrollView extends GUIRectView
 {
     public double internalHeight, progress = -1;
-    private double lastScreenWidth, lastScreenHeight, top, bottom;
+    private double top, bottom;
 
     public GUIRectScrollView(GUIScreen screen, double x, double y, double width, double height, GUIRectElement... subElements)
     {
@@ -29,13 +29,6 @@ public class GUIRectScrollView extends GUIRectView
     @Override
     public void recalc()
     {
-        double screenWidth = screen.width, screenHeight = screen.height;
-
-        if (screenWidth == lastScreenWidth && screenHeight == lastScreenHeight) return;
-        lastScreenWidth = screenWidth;
-        lastScreenHeight = screenHeight;
-
-
         internalHeight = 0;
         for (GUIElement element : children)
         {
