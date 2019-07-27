@@ -51,7 +51,7 @@ public abstract class GUIElement
             active = false;
         }
 
-        for (GUIElement child : children) child.mouseReleased(x - this.x, y - this.y, button);
+        for (GUIElement child : (ArrayList<GUIElement>) children.clone()) child.mouseReleased(x - this.x, y - this.y, button);
     }
 
     public void mouseDrag(double x, double y, int button)
