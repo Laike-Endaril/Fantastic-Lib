@@ -42,13 +42,13 @@ public class GUITextRect extends GUIRectElement
     }
 
     @Override
-    public void draw(double screenWidth, double screenHeight)
+    public void draw()
     {
         GlStateManager.enableTexture2D();
 
         GlStateManager.pushMatrix();
         GlStateManager.translate(getScreenX(), getScreenY(), 0);
-        GlStateManager.scale(1 / screenWidth, 1 / screenHeight, 1);
+        GlStateManager.scale(1d / screen.width, 1d / screen.height, 1);
 
         Color c = !isMouseWithin() ? color : active ? pressedColor : hoverColor;
         fontRenderer.drawString(text, 0, 0, (c.color() >> 8) | c.a() << 24, false);

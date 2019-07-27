@@ -24,9 +24,9 @@ public abstract class GUIElement
 
     public abstract boolean isWithin(double x, double y);
 
-    public void draw(double screenWidth, double screenHeight)
+    public void draw()
     {
-        for (GUIElement child : children) child.draw(screenWidth, screenHeight);
+        for (GUIElement child : children) child.draw();
     }
 
     public void mouseWheel(double x, double y, int delta)

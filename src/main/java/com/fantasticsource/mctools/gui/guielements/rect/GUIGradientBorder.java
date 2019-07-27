@@ -24,8 +24,10 @@ public class GUIGradientBorder extends GUIRectElement
     }
 
     @Override
-    public void draw(double screenWidth, double screenHeight)
+    public void draw()
     {
+        double screenWidth = screen.width, screenHeight = screen.height;
+
         GlStateManager.disableTexture2D();
         GlStateManager.disableAlpha();
 

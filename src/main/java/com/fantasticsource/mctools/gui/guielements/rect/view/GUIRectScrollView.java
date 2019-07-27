@@ -66,8 +66,10 @@ public class GUIRectScrollView extends GUIRectView
     }
 
     @Override
-    public void draw(double screenWidth, double screenHeight)
+    public void draw()
     {
+        double screenWidth = screen.width, screenHeight = screen.height;
+
         int mcScale = new ScaledResolution(screen.mc).getScaleFactor();
         double wScale = screenWidth * mcScale, hScale = screenHeight * mcScale;
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
@@ -81,13 +83,13 @@ public class GUIRectScrollView extends GUIRectView
         for (GUIElement element : children)
         {
             if (element.y + element.height < top || element.y >= bottom) continue;
-            element.draw(screenWidth, screenHeight);
+            element.draw();
         }
 
         GlStateManager.popMatrix();
 
 
-        foreground.draw(screenWidth, screenHeight);
+        foreground.draw();
 
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }

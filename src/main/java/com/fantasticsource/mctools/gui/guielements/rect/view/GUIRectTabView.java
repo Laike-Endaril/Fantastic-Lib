@@ -56,8 +56,10 @@ public class GUIRectTabView extends GUIRectView
     }
 
     @Override
-    public void draw(double screenWidth, double screenHeight)
+    public void draw()
     {
+        double screenWidth = screen.width, screenHeight = screen.height;
+
         int mcScale = new ScaledResolution(screen.mc).getScaleFactor();
         double wScale = screenWidth * mcScale, hScale = screenHeight * mcScale;
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
@@ -66,11 +68,11 @@ public class GUIRectTabView extends GUIRectView
         for (GUIElement element : children)
         {
             if (element.x + element.width < 0 || element.x > width || element.y + element.height < 0 || element.y >= height) continue;
-            element.draw(screenWidth, screenHeight);
+            element.draw();
         }
 
 
-        foreground.draw(screenWidth, screenHeight);
+        foreground.draw();
 
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }

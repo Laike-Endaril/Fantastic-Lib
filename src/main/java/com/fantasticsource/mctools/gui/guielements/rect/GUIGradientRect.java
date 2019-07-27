@@ -20,7 +20,7 @@ public class GUIGradientRect extends GUIRectElement
     }
 
     @Override
-    public void draw(double screenWidth, double screenHeight)
+    public void draw()
     {
         GlStateManager.disableTexture2D();
         GlStateManager.disableAlpha();

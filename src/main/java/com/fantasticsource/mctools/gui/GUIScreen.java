@@ -30,7 +30,7 @@ public abstract class GUIScreen extends GuiScreen
         GlStateManager.pushMatrix();
         GlStateManager.scale(width, height, 1);
 
-        for (GUIElement element : guiElements) element.draw(width, height);
+        for (GUIElement element : guiElements) element.draw();
 
         GlStateManager.popMatrix();
 
