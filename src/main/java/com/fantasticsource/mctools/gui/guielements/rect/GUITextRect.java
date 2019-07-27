@@ -20,19 +20,13 @@ public class GUITextRect extends GUIRectElement
 
     public GUITextRect(GUIScreen screen, double x, double y, double width, String text, Color color, Color hoverColor, Color pressedColor)
     {
-        super(screen, x, y, width, 0);
+        super(screen, x, y, width, (double) screen.mc.fontRenderer.FONT_HEIGHT / screen.height);
         this.text = text;
         this.color = color;
         this.hoverColor = hoverColor;
         this.pressedColor = pressedColor;
 
         active = false;
-    }
-
-    @Override
-    public boolean mousePressed(double x, double y, int button)
-    {
-        return super.mousePressed(x, y, button);
     }
 
     @Override
