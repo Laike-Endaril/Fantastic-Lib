@@ -1,7 +1,6 @@
 package com.fantasticsource.mctools.gui;
 
 import com.fantasticsource.mctools.gui.guielements.GUIElement;
-import com.fantasticsource.mctools.gui.guielements.rect.view.GUIRectScrollView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
@@ -50,12 +49,10 @@ public abstract class GUIScreen extends GuiScreen
     @Override
     public void onResize(Minecraft mcIn, int w, int h)
     {
-        super.onResize(mcIn, w, h);
+        if (w == width && h == height) return;
 
-        for (GUIElement element : guiElements)
-        {
-            if (element instanceof GUIRectScrollView) ((GUIRectScrollView) element).recalc(w, h);
-        }
+        super.onResize(mcIn, w, h);
+        for (GUIElement element : guiElements) element.recalc();
     }
 
     @Override

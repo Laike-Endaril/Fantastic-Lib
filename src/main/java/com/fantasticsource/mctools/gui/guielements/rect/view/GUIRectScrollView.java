@@ -3,7 +3,6 @@ package com.fantasticsource.mctools.gui.guielements.rect.view;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.guielements.GUIElement;
 import com.fantasticsource.mctools.gui.guielements.rect.GUIRectElement;
-import com.fantasticsource.mctools.gui.guielements.rect.GUITextRect;
 import com.fantasticsource.tools.Tools;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
@@ -12,37 +11,37 @@ import org.lwjgl.opengl.GL11;
 public class GUIRectScrollView extends GUIRectView
 {
     public double internalHeight, progress = -1;
-    private GUIRectElement foreground;
     private double lastScreenWidth, lastScreenHeight, top, bottom;
 
-    public GUIRectScrollView(GUIScreen screen, GUIRectElement foreground, double screenWidth, double screenHeight, GUIRectElement... subElements)
+    public GUIRectScrollView(GUIScreen screen, double x, double y, double width, double height, GUIRectElement... subElements)
     {
-        super(screen, foreground.x, foreground.y, foreground.width, foreground.height);
+        super(screen, x, y, width, height);
 
-        this.foreground = foreground;
         for (GUIRectElement element : subElements)
         {
             children.add(element);
             element.parent = this;
         }
 
-        recalc(screenWidth, screenHeight);
+        recalc();
     }
 
-    public void recalc(double screenWidth, double screenHeight)
+    @Override
+    public void recalc()
     {
+        double screenWidth = screen.width, screenHeight = screen.height;
+
         if (screenWidth == lastScreenWidth && screenHeight == lastScreenHeight) return;
         lastScreenWidth = screenWidth;
         lastScreenHeight = screenHeight;
 
 
-        double pxWidth = screenWidth * width;
         internalHeight = 0;
         for (GUIElement element : children)
         {
             if (element instanceof GUIRectElement)
             {
-                if (element instanceof GUITextRect) ((GUITextRect) element).recalcHeight(pxWidth, screenHeight);
+                element.recalc();
                 internalHeight = Tools.max(internalHeight, element.y + element.height);
             }
         }
@@ -70,13 +69,12 @@ public class GUIRectScrollView extends GUIRectView
     {
         double screenWidth = screen.width, screenHeight = screen.height;
 
+        recalc2();
+
         int mcScale = new ScaledResolution(screen.mc).getScaleFactor();
         double wScale = screenWidth * mcScale, hScale = screenHeight * mcScale;
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         GL11.glScissor((int) (x * wScale), (int) ((1 - (y + height)) * hScale), (int) (width * wScale), (int) (height * hScale));
-
-        recalc2();
-
         GlStateManager.pushMatrix();
         GlStateManager.translate(0, -top, 0);
 
@@ -87,10 +85,6 @@ public class GUIRectScrollView extends GUIRectView
         }
 
         GlStateManager.popMatrix();
-
-
-        foreground.draw();
-
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
 

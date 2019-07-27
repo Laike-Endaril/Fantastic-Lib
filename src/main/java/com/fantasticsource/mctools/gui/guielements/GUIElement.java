@@ -103,4 +103,9 @@ public abstract class GUIElement
     {
         return getClass().getSimpleName();
     }
+
+    public void recalc()
+    {
+        for (GUIElement element : children) element.recalc();
+    }
 }

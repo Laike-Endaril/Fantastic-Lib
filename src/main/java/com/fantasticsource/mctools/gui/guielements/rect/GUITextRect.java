@@ -26,13 +26,7 @@ public class GUITextRect extends GUIRectElement
         this.hoverColor = hoverColor;
         this.pressedColor = pressedColor;
 
-        recalcHeight(screen.width, screen.height);
         active = false;
-    }
-
-    public void recalcHeight(double width, double screenHeight)
-    {
-        height = (double) fontRenderer.getWordWrappedHeight(text, (int) width) / screenHeight;
     }
 
     @Override
