@@ -10,14 +10,14 @@ import org.lwjgl.opengl.GL11;
 public class GUIRectScrollView extends GUIRectElement
 {
     public double internalHeight, progress = -1;
-    private GUIRectElement background;
+    private GUIRectElement foreground;
     private double lastScreenWidth, lastScreenHeight, top, bottom;
 
-    public GUIRectScrollView(GUIScreen screen, GUIRectElement background, double screenWidth, double screenHeight, GUIRectElement... subElements)
+    public GUIRectScrollView(GUIScreen screen, GUIRectElement foreground, double screenWidth, double screenHeight, GUIRectElement... subElements)
     {
-        super(screen, background.x, background.y, background.width, background.height);
+        super(screen, foreground.x, foreground.y, foreground.width, foreground.height);
 
-        this.background = background;
+        this.foreground = foreground;
         for (GUIRectElement element : subElements)
         {
             children.add(element);
@@ -85,7 +85,7 @@ public class GUIRectScrollView extends GUIRectElement
         GlStateManager.popMatrix();
 
 
-        background.draw(screenWidth, screenHeight);
+        foreground.draw(screenWidth, screenHeight);
 
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
