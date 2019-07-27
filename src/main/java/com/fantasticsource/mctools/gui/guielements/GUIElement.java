@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public abstract class GUIElement
 {
-    public double x, y;
+    public double x, y, width, height;
     public GUIElement parent = null;
     public ArrayList<GUIElement> children = new ArrayList<>();
     protected GUIScreen screen;

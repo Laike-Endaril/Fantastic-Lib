@@ -10,12 +10,12 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 
-public class GradientBorder extends GUIRectElement
+public class GUIGradientBorder extends GUIRectElement
 {
     private double thickness;
     private Color border, center;
 
-    public GradientBorder(GUIScreen screen, double left, double top, double right, double bottom, double borderThickness, Color border, Color center)
+    public GUIGradientBorder(GUIScreen screen, double left, double top, double right, double bottom, double borderThickness, Color border, Color center)
     {
         super(screen, left, top, right - left, bottom - top);
         this.thickness = borderThickness;

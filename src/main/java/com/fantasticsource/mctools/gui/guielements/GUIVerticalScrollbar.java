@@ -1,29 +1,29 @@
 package com.fantasticsource.mctools.gui.guielements;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
+import com.fantasticsource.mctools.gui.guielements.rect.GUIGradientBorder;
 import com.fantasticsource.mctools.gui.guielements.rect.GUIRectElement;
-import com.fantasticsource.mctools.gui.guielements.rect.GUIRectScrollView;
-import com.fantasticsource.mctools.gui.guielements.rect.GradientBorder;
+import com.fantasticsource.mctools.gui.guielements.rect.view.GUIRectScrollView;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 
-public class VerticalScrollbar extends GUIRectElement
+public class GUIVerticalScrollbar extends GUIRectElement
 {
     private double height, sliderHeight;
-    private GradientBorder background, slider;
+    private GUIGradientBorder background, slider;
     private GUIRectScrollView scrollView;
 
-    public VerticalScrollbar(GUIScreen screen, double left, double top, double right, double bottom, Color backgroundBorder, Color backgroundCenter, Color sliderBorder, Color sliderCenter, GUIRectScrollView scrollView)
+    public GUIVerticalScrollbar(GUIScreen screen, double left, double top, double right, double bottom, Color backgroundBorder, Color backgroundCenter, Color sliderBorder, Color sliderCenter, GUIRectScrollView scrollView)
     {
         super(screen, left, top, right - left, bottom - top);
         this.scrollView = scrollView;
 
         double thickness = (right - left) / 3;
-        background = new GradientBorder(screen, left, top, right, bottom, thickness, backgroundBorder, backgroundCenter);
+        background = new GUIGradientBorder(screen, left, top, right, bottom, thickness, backgroundBorder, backgroundCenter);
         height = background.height;
         sliderHeight = height / 10;
 
-        slider = new GradientBorder(screen, left, 0, right, sliderHeight, thickness, sliderBorder, sliderCenter);
+        slider = new GUIGradientBorder(screen, left, 0, right, sliderHeight, thickness, sliderBorder, sliderCenter);
     }
 
     @Override

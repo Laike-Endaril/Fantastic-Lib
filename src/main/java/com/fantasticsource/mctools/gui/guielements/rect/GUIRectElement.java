@@ -5,8 +5,6 @@ import com.fantasticsource.mctools.gui.guielements.GUIElement;
 
 public abstract class GUIRectElement extends GUIElement
 {
-    public double width, height;
-
     public GUIRectElement(GUIScreen screen, double x, double y, double width, double height)
     {
         super(screen, x, y);

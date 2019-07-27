@@ -6,11 +6,11 @@ import net.minecraft.client.renderer.GlStateManager;
 
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 
-public class GradientRect extends GUIRectElement
+public class GUIGradientRect extends GUIRectElement
 {
     private Color topRight, topLeft, bottomLeft, bottomRight;
 
-    public GradientRect(GUIScreen screen, double left, double top, double right, double bottom, Color topRight, Color topLeft, Color bottomLeft, Color bottomRight)
+    public GUIGradientRect(GUIScreen screen, double left, double top, double right, double bottom, Color topRight, Color topLeft, Color bottomLeft, Color bottomRight)
     {
         super(screen, left, top, right - left, bottom - top);
         this.topRight = topRight;

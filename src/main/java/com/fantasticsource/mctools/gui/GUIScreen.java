@@ -1,7 +1,7 @@
 package com.fantasticsource.mctools.gui;
 
 import com.fantasticsource.mctools.gui.guielements.GUIElement;
-import com.fantasticsource.mctools.gui.guielements.rect.GUIRectScrollView;
+import com.fantasticsource.mctools.gui.guielements.rect.view.GUIRectScrollView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
