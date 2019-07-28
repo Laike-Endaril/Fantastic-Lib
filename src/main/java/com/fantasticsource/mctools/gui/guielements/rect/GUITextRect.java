@@ -42,6 +42,8 @@ public class GUITextRect extends GUIRectElement
         fontRenderer.drawString(text, 0, 0, (c.color() >> 8) | c.a() << 24, false);
 
         GlStateManager.popMatrix();
+
+        super.draw();
     }
 
     @Override

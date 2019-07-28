@@ -36,6 +36,8 @@ public class GUIVerticalScrollbar extends GUIRectElement
             slider.y = y + (this.height - sliderHeight) * scrollView.progress;
             slider.draw();
         }
+
+        super.draw();
     }
 
     @Override

@@ -95,5 +95,7 @@ public class GUIGradientBorder extends GUIRectElement
 
 
         tessellator.draw();
+
+        super.draw();
     }
 }

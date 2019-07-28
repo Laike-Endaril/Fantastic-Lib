@@ -40,5 +40,7 @@ public class GUIGradientRect extends GUIRectElement
         GlStateManager.color(bottomRight.rf(), bottomRight.gf(), bottomRight.bf(), bottomRight.af());
         GlStateManager.glVertex3f(x2, y2, 0);
         GlStateManager.glEnd();
+
+        super.draw();
     }
 }
