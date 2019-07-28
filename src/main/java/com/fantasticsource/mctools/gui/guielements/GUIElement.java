@@ -10,7 +10,7 @@ public abstract class GUIElement
 {
     public double x, y, width, height;
     public GUIElement parent = null;
-    public ArrayList<GUIElement> children = new ArrayList<>();
+    protected ArrayList<GUIElement> children = new ArrayList<>();
     protected GUIScreen screen;
     protected boolean active = false;
 
@@ -107,5 +107,41 @@ public abstract class GUIElement
     public void recalc()
     {
         for (GUIElement element : children) element.recalc();
+    }
+
+
+    public void add(GUIElement element)
+    {
+        element.parent = this;
+        children.add(element);
+    }
+
+    public void add(int index, GUIElement element)
+    {
+        element.parent = this;
+        children.add(index, element);
+    }
+
+    public void remove(GUIElement element)
+    {
+        if (element.parent == this) element.parent = null;
+        children.remove(element);
+    }
+
+    public void remove(int index)
+    {
+        GUIElement element = children.remove(index);
+        if (element.parent == this) element.parent = null;
+    }
+
+    public int size()
+    {
+        return children.size();
+    }
+
+    public void clear()
+    {
+        for (GUIElement element : children) if (element.parent == this) element.parent = null;
+        children.clear();
     }
 }
