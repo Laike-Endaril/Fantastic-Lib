@@ -144,4 +144,9 @@ public abstract class GUIElement
         for (GUIElement element : children) if (element.parent == this) element.parent = null;
         children.clear();
     }
+
+    public GUIElement get(int index)
+    {
+        return children.get(index);
+    }
 }
