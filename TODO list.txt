@@ -1,5 +1,5 @@
 Add new GUI elements...
-...text buttons
+...add text buttons (GUIBorder containing GUIText)
 ...text input (with allowance filters; none/boolean/math; if the current text doesn't pass the filter, show in red)
 
 Add GUI element tooltips
