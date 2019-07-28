@@ -10,9 +10,9 @@ public class GUIGradientRect extends GUIRectElement
 {
     private Color topRight, topLeft, bottomLeft, bottomRight;
 
-    public GUIGradientRect(GUIScreen screen, double left, double top, double right, double bottom, Color topRight, Color topLeft, Color bottomLeft, Color bottomRight)
+    public GUIGradientRect(GUIScreen screen, double x, double y, double width, double height, Color topRight, Color topLeft, Color bottomLeft, Color bottomRight)
     {
-        super(screen, left, top, right - left, bottom - top);
+        super(screen, x, y, width, height);
         this.topRight = topRight;
         this.topLeft = topLeft;
         this.bottomLeft = bottomLeft;
