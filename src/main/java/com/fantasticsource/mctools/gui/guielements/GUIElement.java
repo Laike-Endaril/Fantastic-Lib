@@ -13,6 +13,8 @@ public abstract class GUIElement
     protected ArrayList<GUIElement> children = new ArrayList<>();
     protected GUIScreen screen;
     protected boolean active = false;
+    private ArrayList<GUIElement> linkedMouseActivity = new ArrayList<>();
+    private ArrayList<GUIElement> linkedMouseActivityReverse = new ArrayList<>();
 
 
     public GUIElement(GUIScreen screen, double x, double y)
@@ -36,7 +38,7 @@ public abstract class GUIElement
 
     public boolean mousePressed(double x, double y, int button)
     {
-        if (button == 0 && isMouseWithin()) active = true;
+        if (button == 0 && isMouseWithin()) setActive(true);
 
         for (GUIElement child : children) child.mousePressed(x - this.x, y - this.y, button);
 
@@ -48,7 +50,7 @@ public abstract class GUIElement
         if (button == 0)
         {
             if (active && isMouseWithin()) MinecraftForge.EVENT_BUS.post(new GUILeftClickEvent(screen, this));
-            active = false;
+            setActive(false);
         }
 
         for (GUIElement child : (ArrayList<GUIElement>) children.clone()) child.mouseReleased(x - this.x, y - this.y, button);
@@ -95,6 +97,10 @@ public abstract class GUIElement
 
     public boolean isMouseWithin()
     {
+        for (GUIElement element : linkedMouseActivityReverse)
+        {
+            if (element.isWithin(mouseX(), mouseY())) return true;
+        }
         return isWithin(mouseX(), mouseY());
     }
 
@@ -148,5 +154,23 @@ public abstract class GUIElement
     public GUIElement get(int index)
     {
         return children.get(index);
+    }
+
+    public void linkMouseActivity(GUIElement element)
+    {
+        linkedMouseActivity.add(element);
+        element.linkedMouseActivityReverse.add(this);
+    }
+
+    public void unlinkMouseActivity(GUIElement element)
+    {
+        linkedMouseActivity.remove(element);
+        element.linkedMouseActivityReverse.remove(this);
+    }
+
+    protected void setActive(boolean active)
+    {
+        this.active = active;
+        for (GUIElement element : linkedMouseActivity) element.active = active;
     }
 }

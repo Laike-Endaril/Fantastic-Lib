@@ -25,8 +25,6 @@ public class GUITextRect extends GUIRectElement
         this.color = color;
         this.hoverColor = hoverColor;
         this.pressedColor = pressedColor;
-
-        active = false;
     }
 
     @Override

@@ -67,7 +67,7 @@ public class GUIVerticalScrollbar extends GUIRectElement
     @Override
     public boolean mousePressed(double x, double y, int button)
     {
-        active = super.mousePressed(x, y, button);
+        setActive(super.mousePressed(x, y, button));
 
         if (active && scrollView.progress != -1)
         {
@@ -82,7 +82,7 @@ public class GUIVerticalScrollbar extends GUIRectElement
     {
         if (active && button == 0)
         {
-            if (scrollView.progress == -1) active = false;
+            if (scrollView.progress == -1) setActive(false);
             else scrollView.progress = Tools.min(Tools.max((y - this.y - slider.height * 0.5) / (height - slider.height), 0), 1);
         }
     }
