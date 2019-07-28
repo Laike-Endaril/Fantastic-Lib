@@ -15,6 +15,7 @@ public abstract class GUIRectElement extends GUIElement
     @Override
     public boolean isWithin(double x, double y)
     {
-        return this.x <= x && x < this.x + width && this.y <= y && y < this.y + height;
+        double xx = getScreenX(), yy = getScreenY();
+        return xx <= x && x < xx + width && yy <= y && y < yy + height;
     }
 }
