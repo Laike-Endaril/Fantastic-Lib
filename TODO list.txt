@@ -1,5 +1,4 @@
 Add new GUI elements...
-...finish tab view
 ...text buttons
 ...text input (with allowance filters; none/boolean/math; if the current text doesn't pass the filter, show in red)
 

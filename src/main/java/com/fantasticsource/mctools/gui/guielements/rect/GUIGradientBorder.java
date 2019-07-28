@@ -15,9 +15,9 @@ public class GUIGradientBorder extends GUIRectElement
     private double thickness;
     private Color border, center;
 
-    public GUIGradientBorder(GUIScreen screen, double left, double top, double right, double bottom, double borderThickness, Color border, Color center)
+    public GUIGradientBorder(GUIScreen screen, double x, double y, double width, double height, double borderThickness, Color border, Color center)
     {
-        super(screen, left, top, right - left, bottom - top);
+        super(screen, x, y, width, height);
         this.thickness = borderThickness;
         this.border = border;
         this.center = center;
