@@ -2,7 +2,7 @@ Add new GUI elements...
 ...add text buttons (GUIBorder containing GUIText)
 ...text input (with allowance filters; none/boolean/math; if the current text doesn't pass the filter, show in red)
 
-Add GUI element tooltips
+Add GUI element tooltips (GUIScreen.drawHoveringText())
 
 Fix scrollbars staying active if you release click while outside window
 

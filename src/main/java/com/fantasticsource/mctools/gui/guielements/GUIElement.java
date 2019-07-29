@@ -28,19 +28,19 @@ public abstract class GUIElement
 
     public void draw()
     {
-        for (GUIElement child : children) child.draw();
+        for (GUIElement child : (ArrayList<GUIElement>) children.clone()) child.draw();
     }
 
     public void mouseWheel(double x, double y, int delta)
     {
-        for (GUIElement child : children) child.mouseWheel(x - this.x, y - this.y, delta);
+        for (GUIElement child : (ArrayList<GUIElement>) children.clone()) child.mouseWheel(x - this.x, y - this.y, delta);
     }
 
     public boolean mousePressed(double x, double y, int button)
     {
         if (button == 0 && isMouseWithin()) setActive(true);
 
-        for (GUIElement child : children) child.mousePressed(x - this.x, y - this.y, button);
+        for (GUIElement child : (ArrayList<GUIElement>) children.clone()) child.mousePressed(x - this.x, y - this.y, button);
 
         return active;
     }
@@ -58,7 +58,7 @@ public abstract class GUIElement
 
     public void mouseDrag(double x, double y, int button)
     {
-        for (GUIElement child : children) child.mouseDrag(x - this.x, y - this.y, button);
+        for (GUIElement child : (ArrayList<GUIElement>) children.clone()) child.mouseDrag(x - this.x, y - this.y, button);
     }
 
     public double getScreenX()
@@ -112,7 +112,7 @@ public abstract class GUIElement
 
     public void recalc()
     {
-        for (GUIElement element : children) element.recalc();
+        for (GUIElement child : (ArrayList<GUIElement>) children.clone()) child.recalc();
     }
 
 
@@ -147,7 +147,7 @@ public abstract class GUIElement
 
     public void clear()
     {
-        for (GUIElement element : children) if (element.parent == this) element.parent = null;
+        for (GUIElement child : (ArrayList<GUIElement>) children.clone()) if (child.parent == this) child.parent = null;
         children.clear();
     }
 
@@ -172,5 +172,13 @@ public abstract class GUIElement
     {
         this.active = active;
         for (GUIElement element : linkedMouseActivity) element.active = active;
+    }
+
+    public void keyTyped(char typedChar, int keyCode)
+    {
+        for (GUIElement child : (ArrayList<GUIElement>) children.clone())
+        {
+            child.keyTyped(typedChar, keyCode);
+        }
     }
 }

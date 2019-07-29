@@ -8,6 +8,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Mouse;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 @SideOnly(Side.CLIENT)
@@ -114,6 +115,17 @@ public abstract class GUIScreen extends GuiScreen
                     element.mouseDrag(mouseX, mouseY, b);
                 }
             }
+        }
+    }
+
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) throws IOException
+    {
+        super.keyTyped(typedChar, keyCode);
+
+        for (GUIElement element : guiElements)
+        {
+            element.keyTyped(typedChar, keyCode);
         }
     }
 }
