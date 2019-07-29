@@ -10,6 +10,8 @@ import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
 
 public class GUITextInputRect extends GUITextRect
@@ -34,7 +36,50 @@ public class GUITextInputRect extends GUITextRect
 
         if (!active) return;
 
-        if (typedChar >= ' ' && typedChar <= '~')
+        if (GUIScreen.isCtrlKeyDown() && keyCode == Keyboard.KEY_A)
+        {
+            if (text.length() > 0)
+            {
+                selectorPosition = 0;
+                cursorPosition = text.length();
+            }
+        }
+        else if (GUIScreen.isCtrlKeyDown() && keyCode == Keyboard.KEY_X)
+        {
+            String s = "";
+
+            if (selectorPosition != -1 && selectorPosition != cursorPosition)
+            {
+                int min = Tools.min(selectorPosition, cursorPosition);
+                s = text.substring(min, Tools.max(cursorPosition, selectorPosition));
+                text = text.substring(0, min) + text.substring(Tools.max(selectorPosition, cursorPosition));
+                selectorPosition = -1;
+                cursorPosition = min;
+            }
+
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(s), null);
+        }
+        else if (GUIScreen.isCtrlKeyDown() && keyCode == Keyboard.KEY_C)
+        {
+            String s = "";
+
+            if (selectorPosition != -1 && selectorPosition != cursorPosition)
+            {
+                s = text.substring(Tools.min(cursorPosition, selectorPosition), Tools.max(cursorPosition, selectorPosition));
+            }
+
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(s), null);
+        }
+        else if (GUIScreen.isCtrlKeyDown() && keyCode == Keyboard.KEY_V)
+        {
+            int min = Tools.min(cursorPosition, selectorPosition);
+            if (min == -1) min = cursorPosition;
+            String before = text.substring(0, min) + removeIllegalChars(GUIScreen.getClipboardString());
+            text = before + text.substring(Tools.max(cursorPosition, selectorPosition));
+            selectorPosition = -1;
+            cursorPosition = before.length();
+        }
+        else if (typedChar >= ' ' && typedChar <= '~')
         {
             String before = text.substring(0, cursorPosition);
             String after = text.substring(cursorPosition);
@@ -43,7 +88,14 @@ public class GUITextInputRect extends GUITextRect
         }
         else if (typedChar == '\b')
         {
-            if (cursorPosition > 0)
+            if (selectorPosition != -1 && selectorPosition != cursorPosition)
+            {
+                int min = Tools.min(selectorPosition, cursorPosition);
+                text = text.substring(0, min) + text.substring(Tools.max(selectorPosition, cursorPosition));
+                selectorPosition = -1;
+                cursorPosition = min;
+            }
+            else if (cursorPosition > 0)
             {
                 text = text.substring(0, cursorPosition - 1) + text.substring(cursorPosition);
                 cursorPosition--;
@@ -51,7 +103,14 @@ public class GUITextInputRect extends GUITextRect
         }
         else if (keyCode == Keyboard.KEY_DELETE)
         {
-            if (cursorPosition < text.length())
+            if (selectorPosition != -1 && selectorPosition != cursorPosition)
+            {
+                int min = Tools.min(selectorPosition, cursorPosition);
+                text = text.substring(0, min) + text.substring(Tools.max(selectorPosition, cursorPosition));
+                selectorPosition = -1;
+                cursorPosition = min;
+            }
+            else if (cursorPosition < text.length())
             {
                 text = text.substring(0, cursorPosition) + text.substring(cursorPosition + 1);
             }
@@ -149,5 +208,15 @@ public class GUITextInputRect extends GUITextRect
     {
         if (active && !this.active) cursorTime = System.currentTimeMillis();
         super.setActive(active);
+    }
+
+    protected String removeIllegalChars(String text)
+    {
+        StringBuilder result = new StringBuilder();
+        for (char c : text.toCharArray())
+        {
+            if (c >= ' ' && c <= '~') result.append(c);
+        }
+        return result.toString();
     }
 }
