@@ -9,7 +9,7 @@ import com.fantasticsource.tools.datastructures.Color;
 
 public class GUIVerticalScrollbar extends GUIRectElement
 {
-    private double height, sliderHeight;
+    private double sliderHeight;
     private GUIGradientBorder background, slider;
     private GUIRectScrollView scrollView;
 

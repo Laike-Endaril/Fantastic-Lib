@@ -5,6 +5,7 @@ import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.guielements.GUIElement;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
@@ -160,6 +161,22 @@ public class GUITextInputRect extends GUITextRect
     @Override
     public void draw()
     {
+        double screenWidth = screen.width, screenHeight = screen.height;
+
+        int mcScale = new ScaledResolution(screen.mc).getScaleFactor();
+        double wScale = screenWidth * mcScale, hScale = screenHeight * mcScale;
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        GL11.glScissor((int) (x * wScale), (int) ((1 - (y + height)) * hScale), (int) (width * wScale), (int) (height * hScale));
+
+        for (GUIElement element : children)
+        {
+            if (element.x + element.width < 0 || element.x > width || element.y + element.height < 0 || element.y >= height) continue;
+            element.draw();
+        }
+
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+
+
         GlStateManager.enableTexture2D();
 
         GlStateManager.pushMatrix();
@@ -199,8 +216,6 @@ public class GUITextInputRect extends GUITextRect
         }
 
         GlStateManager.popMatrix();
-
-        for (GUIElement child : (ArrayList<GUIElement>) children.clone()) child.draw();
     }
 
     @Override
