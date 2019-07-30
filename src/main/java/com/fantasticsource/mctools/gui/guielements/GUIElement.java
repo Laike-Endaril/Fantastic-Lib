@@ -2,6 +2,7 @@ package com.fantasticsource.mctools.gui.guielements;
 
 import com.fantasticsource.mctools.gui.GUILeftClickEvent;
 import com.fantasticsource.mctools.gui.GUIScreen;
+import com.fantasticsource.tools.Tools;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.opengl.GL11;
@@ -10,6 +11,8 @@ import java.util.ArrayList;
 
 public abstract class GUIElement
 {
+    public int[] currentScissor = null;
+
     public double x, y, width, height;
     public GUIElement parent = null;
     protected ArrayList<GUIElement> children = new ArrayList<>();
@@ -34,8 +37,17 @@ public abstract class GUIElement
 
         int mcScale = new ScaledResolution(screen.mc).getScaleFactor();
         double wScale = screenWidth * mcScale, hScale = screenHeight * mcScale;
+
+        currentScissor = new int[]{(int) (getScreenX() * wScale), (int) ((1 - (getScreenY() + height)) * hScale), (int) (width * wScale), (int) (height * hScale)};
+        if (parent != null && parent.currentScissor != null)
+        {
+            currentScissor[0] = Tools.max(currentScissor[0], parent.currentScissor[0]);
+            currentScissor[1] = Tools.max(currentScissor[1], parent.currentScissor[1]);
+            currentScissor[2] = Tools.min(currentScissor[2], parent.currentScissor[2]);
+            currentScissor[3] = Tools.min(currentScissor[3], parent.currentScissor[3]);
+        }
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GL11.glScissor((int) (x * wScale), (int) ((1 - (y + height)) * hScale), (int) (width * wScale), (int) (height * hScale));
+        GL11.glScissor(currentScissor[0], currentScissor[1], currentScissor[2], currentScissor[3]);
 
         for (GUIElement element : children)
         {
@@ -43,6 +55,7 @@ public abstract class GUIElement
             element.draw();
         }
 
+        currentScissor = null;
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
 
