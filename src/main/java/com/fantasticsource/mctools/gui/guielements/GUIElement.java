@@ -196,7 +196,7 @@ public abstract class GUIElement
         element.linkedMouseActivityReverse.remove(this);
     }
 
-    protected void setActive(boolean active)
+    public void setActive(boolean active)
     {
         this.active = active;
         for (GUIElement element : linkedMouseActivity) element.active = active;

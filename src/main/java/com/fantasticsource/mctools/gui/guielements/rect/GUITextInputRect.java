@@ -219,7 +219,7 @@ public class GUITextInputRect extends GUITextRect
     }
 
     @Override
-    protected void setActive(boolean active)
+    public void setActive(boolean active)
     {
         if (active && !this.active) cursorTime = System.currentTimeMillis();
         super.setActive(active);

@@ -21,7 +21,11 @@ public class GUIRectTabView extends GUIRectView
 
         this.tabViews = tabViews;
         for (GUIRectElement element : tabViews) element.parent = this;
-        if (tabViews.length > 0) children.add(tabViews[0]);
+        if (tabViews.length > 0)
+        {
+            tabs[0].setActive(true);
+            children.add(tabViews[0]);
+        }
 
         this.tabs = tabs;
         for (GUIRectElement element : tabs)
@@ -44,6 +48,8 @@ public class GUIRectTabView extends GUIRectView
             if (element == tabs[i])
             {
                 if (i == current) return;
+
+                for (GUIElement tab : tabs) element.setActive(tab == element);
 
                 children.remove(tabViews[current]);
                 current = i;
