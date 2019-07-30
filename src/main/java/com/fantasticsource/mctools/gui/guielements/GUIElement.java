@@ -129,7 +129,8 @@ public abstract class GUIElement
         {
             if (element.isWithin(mouseX(), mouseY())) return true;
         }
-        return isWithin(mouseX(), mouseY());
+
+        return isWithin(mouseX(), mouseY()) && (parent == null || parent.isMouseWithin());
     }
 
     @Override
