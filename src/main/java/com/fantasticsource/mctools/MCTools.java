@@ -182,6 +182,8 @@ public class MCTools
 
     public static boolean isOP(EntityPlayerMP player)
     {
+        if (isServerOwner(player)) return true;
+
         for (String string : FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getOppedPlayerNames())
         {
             if (string.equalsIgnoreCase(player.getGameProfile().getName())) return true;
@@ -192,7 +194,7 @@ public class MCTools
 
     public static boolean isServerOwner(EntityPlayerMP player)
     {
-        return FMLCommonHandler.instance().getMinecraftServerInstance().getServerOwner().equalsIgnoreCase(player.getGameProfile().getName());
+        return player.getName().equals(FMLCommonHandler.instance().getMinecraftServerInstance().getServerOwner());
     }
 
     public static boolean isPassive(EntityLivingBase livingBase)
