@@ -17,7 +17,7 @@ public abstract class GUIElement
     public GUIElement parent = null;
     protected ArrayList<GUIElement> children = new ArrayList<>();
     protected GUIScreen screen;
-    protected boolean active = false;
+    protected boolean active = false, externalDeactivation = false;
     private ArrayList<GUIElement> linkedMouseActivity = new ArrayList<>();
     private ArrayList<GUIElement> linkedMouseActivityReverse = new ArrayList<>();
 
@@ -197,8 +197,24 @@ public abstract class GUIElement
         element.linkedMouseActivityReverse.remove(this);
     }
 
+    public void setExternalDeactivation(boolean external, boolean recursive)
+    {
+        externalDeactivation = external;
+        if (recursive)
+        {
+            for (GUIElement child : children) child.setExternalDeactivation(external, true);
+        }
+    }
+
     public void setActive(boolean active)
     {
+        setActive(active, false);
+    }
+
+    public void setActive(boolean active, boolean external)
+    {
+        if (!active && externalDeactivation && !external) return;
+
         this.active = active;
         for (GUIElement element : linkedMouseActivity) element.active = active;
     }

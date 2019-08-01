@@ -32,6 +32,7 @@ public class GUIRectTabView extends GUIRectView
         {
             children.add(element);
             element.parent = this;
+            element.setExternalDeactivation(true, true);
         }
 
         recalc();
@@ -45,19 +46,24 @@ public class GUIRectTabView extends GUIRectView
         GUIElement element = event.getElement();
         for (int i = 0; i < tabs.length; i++)
         {
-            if (element == tabs[i])
+            if (tabs[i] == element)
             {
-                if (i == current) return;
-
-                for (GUIElement tab : tabs) element.setActive(tab == element);
-
-                children.remove(tabViews[current]);
-                current = i;
-                children.add(0, tabViews[current]);
-
+                setActiveTab(i);
                 break;
             }
         }
+    }
+
+    private void setActiveTab(int index)
+    {
+        if (index == current) return;
+        GUIElement currentElement = tabs[index];
+
+        for (GUIElement element : tabs) element.setActive(element == currentElement, true);
+
+        children.remove(tabViews[current]);
+        current = index;
+        children.add(0, tabViews[current]);
     }
 
     @Override
