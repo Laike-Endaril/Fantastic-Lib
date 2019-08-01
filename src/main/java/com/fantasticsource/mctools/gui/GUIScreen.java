@@ -2,6 +2,7 @@ package com.fantasticsource.mctools.gui;
 
 import com.fantasticsource.mctools.gui.guielements.GUIElement;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.fml.relauncher.Side;
@@ -14,6 +15,8 @@ import java.util.ArrayList;
 @SideOnly(Side.CLIENT)
 public abstract class GUIScreen extends GuiScreen
 {
+    public static final FontRenderer FONT_RENDERER = Minecraft.getMinecraft().fontRenderer;
+
     public static double mouseX = 0.5, mouseY = 0.5;
     protected ArrayList<GUIElement> guiElements = new ArrayList<>();
     private ArrayList<Integer> mouseButtons = new ArrayList<>();

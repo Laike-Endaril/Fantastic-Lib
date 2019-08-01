@@ -15,6 +15,8 @@ import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
 
+import static com.fantasticsource.mctools.gui.GUIScreen.FONT_RENDERER;
+
 public class GUITextInputRect extends GUITextRect
 {
     protected int cursorPosition, selectorPosition = -1;
@@ -184,12 +186,12 @@ public class GUITextInputRect extends GUITextRect
         GlStateManager.scale(1d / screen.width, 1d / screen.height, 1);
 
         Color c = active ? activeColor : isMouseWithin() ? hoverColor : color;
-        fontRenderer.drawString(text, 0, 0, (c.color() >> 8) | c.a() << 24, false);
+        FONT_RENDERER.drawString(text, 0, 0, (c.color() >> 8) | c.a() << 24, false);
 
         if (active)
         {
-            float cursorX = fontRenderer.getStringWidth(text.substring(0, cursorPosition)) - 0.5f;
-            float selectorX = selectorPosition == -1 ? cursorX : fontRenderer.getStringWidth(text.substring(0, selectorPosition)) - 0.5f;
+            float cursorX = FONT_RENDERER.getStringWidth(text.substring(0, cursorPosition)) - 0.5f;
+            float selectorX = selectorPosition == -1 ? cursorX : FONT_RENDERER.getStringWidth(text.substring(0, selectorPosition)) - 0.5f;
 
             if (cursorX != selectorX)
             {
@@ -198,8 +200,8 @@ public class GUITextInputRect extends GUITextRect
                 GlStateManager.color(highlightColor.rf(), highlightColor.gf(), highlightColor.bf(), highlightColor.af());
                 GlStateManager.glBegin(GL11.GL_QUADS);
                 GlStateManager.glVertex3f(min, -0.5f, 0);
-                GlStateManager.glVertex3f(min, fontRenderer.FONT_HEIGHT - 1, 0);
-                GlStateManager.glVertex3f(max, fontRenderer.FONT_HEIGHT - 1, 0);
+                GlStateManager.glVertex3f(min, FONT_RENDERER.FONT_HEIGHT - 1, 0);
+                GlStateManager.glVertex3f(max, FONT_RENDERER.FONT_HEIGHT - 1, 0);
                 GlStateManager.glVertex3f(max, -0.5f, 0);
                 GlStateManager.glEnd();
             }
@@ -210,7 +212,7 @@ public class GUITextInputRect extends GUITextRect
                 GlStateManager.color(cursorColor.rf(), cursorColor.gf(), cursorColor.bf(), cursorColor.af());
                 GlStateManager.glBegin(GL11.GL_LINES);
                 GlStateManager.glVertex3f(cursorX, -0.5f, 0);
-                GlStateManager.glVertex3f(cursorX, fontRenderer.FONT_HEIGHT - 1, 0);
+                GlStateManager.glVertex3f(cursorX, FONT_RENDERER.FONT_HEIGHT - 1, 0);
                 GlStateManager.glEnd();
             }
         }

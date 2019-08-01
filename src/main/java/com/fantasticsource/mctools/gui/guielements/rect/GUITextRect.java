@@ -2,14 +2,12 @@ package com.fantasticsource.mctools.gui.guielements.rect;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.tools.datastructures.Color;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
+
+import static com.fantasticsource.mctools.gui.GUIScreen.FONT_RENDERER;
 
 public class GUITextRect extends GUIRectElement
 {
-    protected static FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
-
     protected String text;
     protected Color color, hoverColor, activeColor;
 
@@ -42,7 +40,7 @@ public class GUITextRect extends GUIRectElement
         GlStateManager.scale(1d / screen.width, 1d / screen.height, 1);
 
         Color c = active ? activeColor : isMouseWithin() ? hoverColor : color;
-        fontRenderer.drawString(text, 0, 0, (c.color() >> 8) | c.a() << 24, false);
+        FONT_RENDERER.drawString(text, 0, 0, (c.color() >> 8) | c.a() << 24, false);
 
         GlStateManager.popMatrix();
     }

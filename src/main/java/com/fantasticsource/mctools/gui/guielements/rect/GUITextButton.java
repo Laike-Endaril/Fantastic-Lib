@@ -3,8 +3,18 @@ package com.fantasticsource.mctools.gui.guielements.rect;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.tools.datastructures.Color;
 
+import static com.fantasticsource.mctools.gui.GUIScreen.FONT_RENDERER;
+
 public class GUITextButton extends GUIGradientBorder
 {
+    public static final double DEFAULT_PADDING = 0.01;
+    private static final Color WHITE = new Color(0xFFFFFFFF);
+
+    public GUITextButton(GUIScreen screen, double x, double y, String text)
+    {
+        this(screen, x, y, text, WHITE);
+    }
+
     public GUITextButton(GUIScreen screen, double x, double y, String text, Color color)
     {
         this(screen, x, y, text, color, color.copy().setColor(color.r(), color.g(), color.b(), 0));
@@ -12,7 +22,7 @@ public class GUITextButton extends GUIGradientBorder
 
     public GUITextButton(GUIScreen screen, double x, double y, String text, Color border, Color center)
     {
-        this(screen, x, y, text, 0.01, border, center);
+        this(screen, x, y, text, DEFAULT_PADDING, border, center);
     }
 
     public GUITextButton(GUIScreen screen, double x, double y, String text, double padding, Color border, Color center)
@@ -32,7 +42,7 @@ public class GUITextButton extends GUIGradientBorder
 
     public GUITextButton(GUIScreen screen, double x, double y, String text, double padding, double borderThickness, Color border, Color center, Color hoverBorder, Color hoverCenter, Color activeBorder, Color activeCenter)
     {
-        super(screen, x, y, (double) GUITextRect.fontRenderer.getStringWidth(text) / screen.width + padding * 2, (double) GUITextRect.fontRenderer.FONT_HEIGHT / screen.height + padding * 2, borderThickness, border, center, hoverBorder, hoverCenter, activeBorder, activeCenter);
+        super(screen, x, y, (double) FONT_RENDERER.getStringWidth(text) / screen.width + padding * 2, (double) FONT_RENDERER.FONT_HEIGHT / screen.height + padding * 2, borderThickness, border, center, hoverBorder, hoverCenter, activeBorder, activeCenter);
 
         GUITextRect textRect = new GUITextRect(screen, padding, padding, text, border, hoverBorder, activeBorder);
         add(textRect);
