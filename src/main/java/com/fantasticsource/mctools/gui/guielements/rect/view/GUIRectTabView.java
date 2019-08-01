@@ -16,6 +16,11 @@ public class GUIRectTabView extends GUIRectView
     private GUIRectView[] tabViews;
     private int current = 0;
 
+    public GUIRectTabView(GUIScreen screen, double x, double y, double width, double height, String... tabNames)
+    {
+        this(screen, x, y, width, height, genTabs(screen, tabNames));
+    }
+
     public GUIRectTabView(GUIScreen screen, double x, double y, double width, double height, String[] tabNames, GUIRectView... tabViews)
     {
         this(screen, x, y, width, height, genTabs(screen, tabNames), tabViews);
