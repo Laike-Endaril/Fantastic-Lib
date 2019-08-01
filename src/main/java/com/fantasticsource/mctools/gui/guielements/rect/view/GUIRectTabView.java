@@ -18,12 +18,12 @@ public class GUIRectTabView extends GUIRectView
 
     public GUIRectTabView(GUIScreen screen, double x, double y, double width, double height, String... tabNames)
     {
-        this(screen, x, y, width, height, genTabs(screen, tabNames));
+        this(screen, x, y, width, height, genTabs(screen, width, tabNames));
     }
 
     public GUIRectTabView(GUIScreen screen, double x, double y, double width, double height, String[] tabNames, GUIRectView... tabViews)
     {
-        this(screen, x, y, width, height, genTabs(screen, tabNames), tabViews);
+        this(screen, x, y, width, height, genTabs(screen, width, tabNames), tabViews);
     }
 
     public GUIRectTabView(GUIScreen screen, double x, double y, double width, double height, GUIRectElement[] tabs, GUIRectView... tabViews)
@@ -75,7 +75,7 @@ public class GUIRectTabView extends GUIRectView
         return result;
     }
 
-    public static GUIRectElement[] genTabs(GUIScreen screen, String[] tabNames)
+    public static GUIRectElement[] genTabs(GUIScreen screen, double width, String[] tabNames)
     {
         GUIRectElement[] result = new GUIRectElement[tabNames.length];
 
@@ -83,7 +83,7 @@ public class GUIRectTabView extends GUIRectView
         for (int i = 0; i < result.length; i++)
         {
             String name = tabNames[i];
-            if (xx + ((double) FONT_RENDERER.getStringWidth(name) / screen.width) + GUITextButton.DEFAULT_PADDING * 2 > 1)
+            if (xx + ((double) FONT_RENDERER.getStringWidth(name) / screen.width) + GUITextButton.DEFAULT_PADDING * 2 > screen.width * width)
             {
                 yy += ((double) FONT_RENDERER.FONT_HEIGHT / screen.height) + GUITextButton.DEFAULT_PADDING * 2;
                 xx = 0;
