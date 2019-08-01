@@ -83,7 +83,7 @@ public class GUIRectTabView extends GUIRectView
         for (int i = 0; i < result.length; i++)
         {
             String name = tabNames[i];
-            if (xx + ((double) FONT_RENDERER.getStringWidth(name) / screen.width) + GUITextButton.DEFAULT_PADDING * 2 > screen.width * width)
+            if (xx + ((double) FONT_RENDERER.getStringWidth(name) / screen.width) + GUITextButton.DEFAULT_PADDING * 2 > width)
             {
                 yy += ((double) FONT_RENDERER.FONT_HEIGHT / screen.height) + GUITextButton.DEFAULT_PADDING * 2;
                 xx = 0;
