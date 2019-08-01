@@ -42,8 +42,8 @@ public class GUIGradientRect extends GUIRectElement
 
         float x1 = (float) getScreenX();
         float y1 = (float) getScreenY();
-        float x2 = (float) (x1 + width);
-        float y2 = (float) (y1 + height);
+        float x2 = (float) (x1 + getScreenWidth());
+        float y2 = (float) (y1 + getScreenHeight());
 
         Color[] colors = active ? activeColors : isMouseWithin() ? hoverColors : this.colors;
 

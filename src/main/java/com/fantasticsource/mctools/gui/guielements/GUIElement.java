@@ -101,6 +101,18 @@ public abstract class GUIElement
         return parent.getScreenY() + y;
     }
 
+    public double getScreenWidth()
+    {
+        if (parent == null) return width;
+        return parent.getScreenWidth() * width;
+    }
+
+    public double getScreenHeight()
+    {
+        if (parent == null) return height;
+        return parent.getScreenHeight() * height;
+    }
+
     public double mouseX()
     {
         if (parent == null) return GUIScreen.mouseX;

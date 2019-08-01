@@ -25,6 +25,7 @@ public class GUITextRect extends GUIRectElement
     {
         width = (double) (screen.mc.fontRenderer.getStringWidth(text) - 1) / screen.width;
         height = (double) (screen.mc.fontRenderer.FONT_HEIGHT - 1) / screen.height;
+        
         super.recalc();
     }
 
