@@ -35,7 +35,7 @@ public class GUITextButton extends GUIGradientBorder
         super(screen, x, y, (double) GUITextRect.fontRenderer.getStringWidth(text) / screen.width + padding * 2, (double) GUITextRect.fontRenderer.FONT_HEIGHT / screen.height + padding * 2, borderThickness, border, center, hoverBorder, hoverCenter, activeBorder, activeCenter);
 
         GUITextRect textRect = new GUITextRect(screen, padding, padding, text, border, hoverBorder, activeBorder);
-        children.add(textRect);
+        add(textRect);
         linkMouseActivity(textRect);
     }
 
