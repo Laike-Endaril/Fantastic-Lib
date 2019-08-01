@@ -200,8 +200,8 @@ public class GUITextInputRect extends GUITextRect
                 GlStateManager.color(highlightColor.rf(), highlightColor.gf(), highlightColor.bf(), highlightColor.af());
                 GlStateManager.glBegin(GL11.GL_QUADS);
                 GlStateManager.glVertex3f(min, -0.5f, 0);
-                GlStateManager.glVertex3f(min, FONT_RENDERER.FONT_HEIGHT - 1, 0);
-                GlStateManager.glVertex3f(max, FONT_RENDERER.FONT_HEIGHT - 1, 0);
+                GlStateManager.glVertex3f(min, (float) height, 0);
+                GlStateManager.glVertex3f(max, (float) height, 0);
                 GlStateManager.glVertex3f(max, -0.5f, 0);
                 GlStateManager.glEnd();
             }
@@ -212,7 +212,7 @@ public class GUITextInputRect extends GUITextRect
                 GlStateManager.color(cursorColor.rf(), cursorColor.gf(), cursorColor.bf(), cursorColor.af());
                 GlStateManager.glBegin(GL11.GL_LINES);
                 GlStateManager.glVertex3f(cursorX, -0.5f, 0);
-                GlStateManager.glVertex3f(cursorX, FONT_RENDERER.FONT_HEIGHT - 1, 0);
+                GlStateManager.glVertex3f(cursorX, (float) height, 0);
                 GlStateManager.glEnd();
             }
         }

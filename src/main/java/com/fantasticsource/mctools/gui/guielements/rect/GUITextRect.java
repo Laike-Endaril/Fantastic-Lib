@@ -13,7 +13,7 @@ public class GUITextRect extends GUIRectElement
 
     public GUITextRect(GUIScreen screen, double x, double y, String text, Color color, Color hoverColor, Color activeColor)
     {
-        super(screen, x, y, (double) screen.mc.fontRenderer.getStringWidth(text) / screen.width, (double) screen.mc.fontRenderer.FONT_HEIGHT / screen.height);
+        super(screen, x, y, (double) (screen.mc.fontRenderer.getStringWidth(text) - 1) / screen.width, (double) (screen.mc.fontRenderer.FONT_HEIGHT - 1) / screen.height);
         this.text = text;
         this.color = color;
         this.hoverColor = hoverColor;
@@ -23,8 +23,8 @@ public class GUITextRect extends GUIRectElement
     @Override
     public void recalc()
     {
-        width = (double) screen.mc.fontRenderer.getStringWidth(text) / screen.width;
-        height = (double) screen.mc.fontRenderer.FONT_HEIGHT / screen.height;
+        width = (double) (screen.mc.fontRenderer.getStringWidth(text) - 1) / screen.width;
+        height = (double) (screen.mc.fontRenderer.FONT_HEIGHT - 1) / screen.height;
         super.recalc();
     }
 

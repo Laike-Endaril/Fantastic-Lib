@@ -4,8 +4,6 @@ Add GUI element tooltips (GUIScreen.drawHoveringText())
 
 Fix scrollbars staying active if you release click while outside window
 
-Fix text inputs being deselected when interacting with the maximize button
-
 Add mouse interactions to text input cursor/selections
 
 

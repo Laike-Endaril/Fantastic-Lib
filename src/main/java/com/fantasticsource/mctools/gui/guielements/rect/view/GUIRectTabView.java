@@ -13,17 +13,21 @@ import static com.fantasticsource.mctools.gui.GUIScreen.FONT_RENDERER;
 public class GUIRectTabView extends GUIRectView
 {
     private GUIRectElement[] tabs;
-    private GUIRectView[] tabViews;
+    public GUIRectView[] tabViews;
     private int current = 0;
+    private boolean autocalcTabs = false, autocalcTabviews = false;
 
     public GUIRectTabView(GUIScreen screen, double x, double y, double width, double height, String... tabNames)
     {
         this(screen, x, y, width, height, genTabs(screen, width, tabNames));
+        autocalcTabs = true;
+        autocalcTabviews = true;
     }
 
     public GUIRectTabView(GUIScreen screen, double x, double y, double width, double height, String[] tabNames, GUIRectView... tabViews)
     {
         this(screen, x, y, width, height, genTabs(screen, width, tabNames), tabViews);
+        autocalcTabs = true;
     }
 
     public GUIRectTabView(GUIScreen screen, double x, double y, double width, double height, GUIRectElement[] tabs, GUIRectView... tabViews)
@@ -60,7 +64,7 @@ public class GUIRectTabView extends GUIRectView
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-    public static GUIRectView[] genTabViews(GUIScreen screen, GUIRectElement[] tabs)
+    private static GUIRectView[] genTabViews(GUIScreen screen, GUIRectElement[] tabs)
     {
         GUIRectView[] result = new GUIRectView[tabs.length];
 
@@ -75,7 +79,41 @@ public class GUIRectTabView extends GUIRectView
         return result;
     }
 
-    public static GUIRectElement[] genTabs(GUIScreen screen, double width, String[] tabNames)
+    @Override
+    public void recalc()
+    {
+        super.recalc();
+
+        if (autocalcTabs)
+        {
+            double xx = 0, yy = 0;
+            for (GUIRectElement tab : tabs)
+            {
+                if (xx + tab.width > width)
+                {
+                    yy += tab.height;
+                    xx = 0;
+                }
+
+                tab.x = xx;
+                tab.y = yy;
+
+                xx += tab.width;
+            }
+            yy += tabs[0].height;
+
+            if (autocalcTabviews)
+            {
+                for (GUIRectView view : tabViews)
+                {
+                    view.y = yy;
+                    view.height = 1 - yy;
+                }
+            }
+        }
+    }
+
+    private static GUIRectElement[] genTabs(GUIScreen screen, double width, String[] tabNames)
     {
         GUIRectElement[] result = new GUIRectElement[tabNames.length];
 
@@ -83,9 +121,9 @@ public class GUIRectTabView extends GUIRectView
         for (int i = 0; i < result.length; i++)
         {
             String name = tabNames[i];
-            if (xx + ((double) FONT_RENDERER.getStringWidth(name) / screen.width) + GUITextButton.DEFAULT_PADDING * 2 > width)
+            if (xx + ((double) (FONT_RENDERER.getStringWidth(name) - 1) / screen.width) + GUITextButton.DEFAULT_PADDING * 2 > width)
             {
-                yy += ((double) FONT_RENDERER.FONT_HEIGHT / screen.height) + GUITextButton.DEFAULT_PADDING * 2;
+                yy += ((double) (FONT_RENDERER.FONT_HEIGHT - 1) / screen.height) + GUITextButton.DEFAULT_PADDING * 2;
                 xx = 0;
             }
 
