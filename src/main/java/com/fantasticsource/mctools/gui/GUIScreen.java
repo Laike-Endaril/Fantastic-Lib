@@ -20,6 +20,7 @@ public abstract class GUIScreen extends GuiScreen
     public static double mouseX = 0.5, mouseY = 0.5;
     protected ArrayList<GUIElement> guiElements = new ArrayList<>();
     private ArrayList<Integer> mouseButtons = new ArrayList<>();
+    private boolean ready = false;
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
@@ -46,8 +47,18 @@ public abstract class GUIScreen extends GuiScreen
     @Override
     public void initGui()
     {
-        guiElements.clear();
+        if (!ready)
+        {
+            ready = true;
+            init();
+        }
+
         mouseButtons.clear();
+        for (GUIElement element : guiElements) element.recalc();
+    }
+
+    protected void init()
+    {
     }
 
     @Override
