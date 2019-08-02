@@ -52,4 +52,16 @@ public class GUITextRect extends GUIRectElement
     {
         return text;
     }
+
+    @Override
+    public double getScreenWidth()
+    {
+        return width;
+    }
+
+    @Override
+    public double getScreenHeight()
+    {
+        return height;
+    }
 }

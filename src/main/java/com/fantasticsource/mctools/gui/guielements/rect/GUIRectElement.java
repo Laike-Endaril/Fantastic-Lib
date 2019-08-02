@@ -16,6 +16,6 @@ public abstract class GUIRectElement extends GUIElement
     public boolean isWithin(double x, double y)
     {
         double xx = getScreenX(), yy = getScreenY();
-        return xx <= x && x < xx + width && yy <= y && y < yy + height;
+        return xx <= x && x < xx + getScreenWidth() && yy <= y && y < yy + getScreenHeight();
     }
 }

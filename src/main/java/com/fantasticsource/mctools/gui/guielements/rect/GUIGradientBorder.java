@@ -12,7 +12,7 @@ import static org.lwjgl.opengl.GL11.GL_QUADS;
 
 public class GUIGradientBorder extends GUIRectElement
 {
-    private double thickness;
+    protected double thickness;
     private Color border, center, hoverBorder, hoverCenter, activeBorder, activeCenter;
 
     public GUIGradientBorder(GUIScreen screen, double x, double y, double width, double height, double borderThickness, Color border, Color center)
@@ -62,9 +62,9 @@ public class GUIGradientBorder extends GUIRectElement
         double width = getScreenWidth(), height = getScreenHeight();
         double x2 = x1 + width, y2 = y1 + height;
 
-        double min = Tools.min(width * 0.5 * screenWidth, height * 0.5 * screenHeight, thickness * screenWidth, thickness * screenHeight);
-        double xThickness = min / screenWidth;
-        double yThickness = min / screenHeight;
+        double pxWidth = width * screenWidth, pxHeight = height * screenHeight;
+        double min = Tools.min(0.5, thickness) * Tools.min(pxWidth, pxHeight);
+        double xThickness = min / screenWidth, yThickness = min / screenHeight;
 
 
         Tessellator tessellator = Tessellator.getInstance();

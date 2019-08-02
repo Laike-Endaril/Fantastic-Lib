@@ -24,7 +24,7 @@ public class GUIRectTabView extends GUIRectView
         autocalcTabs = true;
         autocalcTabviews = true;
 
-        tabBackground = new GUIGradientBorder(screen, 0, 0, 1, 1, 1, new Color(0xFFFFFFFF), new Color(0));
+        tabBackground = new GUIGradientBorder(screen, 0, 0, 1, 1, 0.1, new Color(0xFFFFFFFF), new Color(0));
         add(0, tabBackground);
 
         recalc();
@@ -35,7 +35,7 @@ public class GUIRectTabView extends GUIRectView
         this(screen, x, y, width, height, genTabs(screen, tabNames), tabViews);
         autocalcTabs = true;
 
-        tabBackground = new GUIGradientBorder(screen, 0, 0, 1, 1, 1, new Color(0xFFFFFFFF), new Color(0));
+        tabBackground = new GUIGradientBorder(screen, 0, 0, 1, 1, 0.1, new Color(0xFFFFFFFF), new Color(0));
         add(0, tabBackground);
 
         recalc();

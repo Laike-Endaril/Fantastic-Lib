@@ -18,12 +18,11 @@ public class GUIVerticalScrollbar extends GUIRectElement
         super(screen, x, y, width, height);
         this.scrollView = scrollView;
 
-        double thickness = width / 3;
-        background = new GUIGradientBorder(screen, x, y, width, height, thickness, backgroundBorder, backgroundCenter);
+        background = new GUIGradientBorder(screen, x, y, width, height, 1d / 3, backgroundBorder, backgroundCenter);
         height = background.height;
         sliderHeight = height / 10;
 
-        slider = new GUIGradientBorder(screen, 0, 0, width, sliderHeight, thickness, sliderBorder, sliderCenter);
+        slider = new GUIGradientBorder(screen, 0, 0, width, sliderHeight, 1d / 3, sliderBorder, sliderCenter);
     }
 
     @Override
