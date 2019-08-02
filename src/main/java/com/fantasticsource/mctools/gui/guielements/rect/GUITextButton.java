@@ -65,12 +65,14 @@ public class GUITextButton extends GUIGradientBorder
     }
 
     @Override
-    public void recalc()
+    public GUIElement recalc()
     {
         super.recalc();
 
         GUIElement textRect = children.get(0);
         width = textRect.width + padding * 2;
         height = textRect.height + padding * 2;
+
+        return this;
     }
 }

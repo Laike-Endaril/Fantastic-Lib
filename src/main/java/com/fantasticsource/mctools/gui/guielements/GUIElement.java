@@ -151,9 +151,10 @@ public abstract class GUIElement
         return getClass().getSimpleName();
     }
 
-    public void recalc()
+    public GUIElement recalc()
     {
         for (GUIElement child : (ArrayList<GUIElement>) children.clone()) child.recalc();
+        return this;
     }
 
 

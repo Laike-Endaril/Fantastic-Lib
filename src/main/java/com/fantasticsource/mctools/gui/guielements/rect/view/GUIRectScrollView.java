@@ -27,7 +27,7 @@ public class GUIRectScrollView extends GUIRectView
     }
 
     @Override
-    public void recalc()
+    public GUIElement recalc()
     {
         internalHeight = 0;
         for (GUIElement element : children)
@@ -40,6 +40,8 @@ public class GUIRectScrollView extends GUIRectView
         }
 
         recalc2();
+
+        return this;
     }
 
     private void recalc2()

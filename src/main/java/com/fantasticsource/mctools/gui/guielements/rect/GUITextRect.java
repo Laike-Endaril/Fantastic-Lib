@@ -1,6 +1,7 @@
 package com.fantasticsource.mctools.gui.guielements.rect;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
+import com.fantasticsource.mctools.gui.guielements.GUIElement;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.renderer.GlStateManager;
 
@@ -21,12 +22,12 @@ public class GUITextRect extends GUIRectElement
     }
 
     @Override
-    public void recalc()
+    public GUIElement recalc()
     {
         width = (double) (screen.mc.fontRenderer.getStringWidth(text) - 1) / screen.width;
         height = (double) (screen.mc.fontRenderer.FONT_HEIGHT - 1) / screen.height;
-        
-        super.recalc();
+
+        return super.recalc();
     }
 
     @Override
