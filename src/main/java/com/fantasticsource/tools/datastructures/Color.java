@@ -62,6 +62,94 @@ public class Color
     }
 
 
+    public Color setR(int r)
+    {
+        this.r = r;
+        rf = (float) r / 255;
+
+        intValue = (r << 24) | (g << 16) | (b << 8) | a;
+        hex = Integer.toHexString(intValue);
+
+        return this;
+    }
+
+    public Color setRF(float rf)
+    {
+        this.rf = rf;
+        this.r = (int) (rf * 255);
+
+        intValue = (r << 24) | (g << 16) | (b << 8) | a;
+        hex = Integer.toHexString(intValue);
+
+        return this;
+    }
+
+    public Color setG(int g)
+    {
+        this.g = g;
+        gf = (float) g / 255;
+
+        intValue = (r << 24) | (g << 16) | (b << 8) | a;
+        hex = Integer.toHexString(intValue);
+
+        return this;
+    }
+
+    public Color setGF(float gf)
+    {
+        this.gf = gf;
+        this.g = (int) (gf * 255);
+
+        intValue = (r << 24) | (g << 16) | (b << 8) | a;
+        hex = Integer.toHexString(intValue);
+
+        return this;
+    }
+
+    public Color setB(int b)
+    {
+        this.b = b;
+        bf = (float) b / 255;
+
+        intValue = (r << 24) | (g << 16) | (b << 8) | a;
+        hex = Integer.toHexString(intValue);
+
+        return this;
+    }
+
+    public Color setBF(float bf)
+    {
+        this.bf = bf;
+        this.b = (int) (bf * 255);
+
+        intValue = (r << 24) | (g << 16) | (b << 8) | a;
+        hex = Integer.toHexString(intValue);
+
+        return this;
+    }
+
+    public Color setA(int a)
+    {
+        this.a = a;
+        af = (float) a / 255;
+
+        intValue = (r << 24) | (g << 16) | (b << 8) | a;
+        hex = Integer.toHexString(intValue);
+
+        return this;
+    }
+
+    public Color setAF(float af)
+    {
+        this.af = af;
+        this.a = (int) (af * 255);
+
+        intValue = (r << 24) | (g << 16) | (b << 8) | a;
+        hex = Integer.toHexString(intValue);
+
+        return this;
+    }
+
     public Color setColor(int color)
     {
         intValue = color;
