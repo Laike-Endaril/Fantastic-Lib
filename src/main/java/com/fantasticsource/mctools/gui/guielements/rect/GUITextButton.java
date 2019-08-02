@@ -18,7 +18,7 @@ public class GUITextButton extends GUIGradientBorder
 
     public GUITextButton(GUIScreen screen, double x, double y, String text, Color color)
     {
-        this(screen, x, y, text, color, color.copy().setColor(color.r(), color.g(), color.b(), 0));
+        this(screen, x, y, text, color, getColor(color).setAF(color.af() * 0.4f));
     }
 
     public GUITextButton(GUIScreen screen, double x, double y, String text, Color border, Color center)
