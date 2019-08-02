@@ -1,16 +1,22 @@
-package com.fantasticsource.mctools.gui.guielements.rect;
+package com.fantasticsource.mctools.gui.guielements.rect.text;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.guielements.GUIElement;
+import com.fantasticsource.mctools.gui.guielements.rect.GUIRectElement;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.renderer.GlStateManager;
 
-import static com.fantasticsource.mctools.gui.GUIScreen.FONT_RENDERER;
+import static com.fantasticsource.mctools.gui.GUIScreen.*;
 
 public class GUITextRect extends GUIRectElement
 {
     protected String text;
     protected Color color, hoverColor, activeColor;
+
+    public GUITextRect(GUIScreen screen, double x, double y, String text, Color color)
+    {
+        this(screen, x, y, text, getColor(color), getHover(color), color);
+    }
 
     public GUITextRect(GUIScreen screen, double x, double y, String text, Color color, Color hoverColor, Color activeColor)
     {

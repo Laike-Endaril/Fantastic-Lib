@@ -12,9 +12,7 @@ import java.util.ArrayList;
 
 public abstract class GUIElement
 {
-    public static final Color
-            WHITE = new Color(0xFFFFFFFF),
-            T_GRAY = new Color(0xAAAAAA77);
+    public static final Color T_GRAY = new Color(0xAAAAAA77);
 
     public int[] currentScissor = null;
 

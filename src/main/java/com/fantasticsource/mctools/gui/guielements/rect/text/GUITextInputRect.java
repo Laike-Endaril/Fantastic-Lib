@@ -1,8 +1,10 @@
-package com.fantasticsource.mctools.gui.guielements.rect;
+package com.fantasticsource.mctools.gui.guielements.rect.text;
 
 import com.fantasticsource.mctools.gui.GUILeftClickEvent;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.guielements.GUIElement;
+import com.fantasticsource.mctools.gui.guielements.rect.text.filter.FilterNone;
+import com.fantasticsource.mctools.gui.guielements.rect.text.filter.TextFilter;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.gui.ScaledResolution;
@@ -16,12 +18,27 @@ import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
 
 import static com.fantasticsource.mctools.gui.GUIScreen.FONT_RENDERER;
+import static com.fantasticsource.mctools.gui.GUIScreen.getColor;
+import static com.fantasticsource.mctools.gui.GUIScreen.getHover;
+import static com.fantasticsource.tools.datastructures.Color.*;
 
 public class GUITextInputRect extends GUITextRect
 {
     protected int cursorPosition, selectorPosition = -1;
     protected Color cursorColor, highlightColor;
     protected long cursorTime;
+    private TextFilter filter;
+
+    public GUITextInputRect(GUIScreen screen, double x, double y, String text, TextFilter filter)
+    {
+        super(screen, x, y, text, filter.acceptable(text) ? GREEN : RED);
+
+        cursorPosition = text.length();
+        this.filter = filter;
+
+        cursorColor = WHITE;
+        highlightColor = activeColor.copy().setAF(0.3f);
+    }
 
     public GUITextInputRect(GUIScreen screen, double x, double y, String text, Color color, Color hoverColor, Color activeColor, Color cursorColor, Color hightlightColor)
     {
@@ -30,6 +47,8 @@ public class GUITextInputRect extends GUITextRect
         cursorPosition = text.length();
         this.cursorColor = cursorColor;
         this.highlightColor = hightlightColor;
+
+        filter = FilterNone.INSTANCE;
     }
 
     @Override
@@ -140,6 +159,13 @@ public class GUITextInputRect extends GUITextRect
         }
 
         cursorTime = System.currentTimeMillis();
+
+        if (filter.getClass() != FilterNone.class)
+        {
+            activeColor = filter.acceptable(text) ? GREEN : RED;
+            color = getColor(activeColor);
+            hoverColor = getHover(activeColor);
+        }
     }
 
     @Override

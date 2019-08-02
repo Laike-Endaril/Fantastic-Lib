@@ -1,8 +1,13 @@
-package com.fantasticsource.mctools.gui.guielements.rect;
+package com.fantasticsource.mctools.gui.guielements.rect.text;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.guielements.GUIElement;
+import com.fantasticsource.mctools.gui.guielements.rect.GUIGradientBorder;
 import com.fantasticsource.tools.datastructures.Color;
+
+import static com.fantasticsource.mctools.gui.GUIScreen.getColor;
+import static com.fantasticsource.mctools.gui.GUIScreen.getHover;
+import static com.fantasticsource.tools.datastructures.Color.WHITE;
 
 public class GUITextButton extends GUIGradientBorder
 {
@@ -42,16 +47,6 @@ public class GUITextButton extends GUIGradientBorder
         linkMouseActivity(textRect);
 
         recalc();
-    }
-
-    private static Color getColor(Color active)
-    {
-        return new Color(active.rf() * 0.6f, active.gf() * 0.6f, active.bf() * 0.6f, active.af());
-    }
-
-    private static Color getHover(Color active)
-    {
-        return new Color(active.rf() * 0.7f, active.gf() * 0.7f, active.bf() * 0.7f, active.af());
     }
 
     @Override

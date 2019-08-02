@@ -5,9 +5,11 @@ import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.guielements.GUIElement;
 import com.fantasticsource.mctools.gui.guielements.rect.GUIGradientBorder;
 import com.fantasticsource.mctools.gui.guielements.rect.GUIRectElement;
-import com.fantasticsource.mctools.gui.guielements.rect.GUITextButton;
+import com.fantasticsource.mctools.gui.guielements.rect.text.GUITextButton;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
+import static com.fantasticsource.tools.datastructures.Color.WHITE;
 
 public class GUIRectTabView extends GUIRectView
 {

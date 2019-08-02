@@ -1,6 +1,7 @@
 package com.fantasticsource.mctools.gui;
 
 import com.fantasticsource.mctools.gui.guielements.GUIElement;
+import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
@@ -21,6 +22,16 @@ public abstract class GUIScreen extends GuiScreen
     protected ArrayList<GUIElement> guiElements = new ArrayList<>();
     private ArrayList<Integer> mouseButtons = new ArrayList<>();
     private boolean ready = false;
+
+    public static Color getColor(Color active)
+    {
+        return new Color(active.rf() * 0.6f, active.gf() * 0.6f, active.bf() * 0.6f, active.af());
+    }
+
+    public static Color getHover(Color active)
+    {
+        return new Color(active.rf() * 0.7f, active.gf() * 0.7f, active.bf() * 0.7f, active.af());
+    }
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
