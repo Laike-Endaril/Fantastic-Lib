@@ -103,10 +103,13 @@ public class GUITextInputRect extends GUITextRect
         }
         else if (typedChar >= ' ' && typedChar <= '~')
         {
-            String before = text.substring(0, cursorPosition);
-            String after = text.substring(cursorPosition);
+            int min = Tools.min(cursorPosition, selectorPosition);
+            if (min == -1) min = cursorPosition;
+            String before = text.substring(0, min);
+            String after = text.substring(Tools.max(cursorPosition, selectorPosition));
             text = before + typedChar + after;
-            cursorPosition++;
+            selectorPosition = -1;
+            cursorPosition = min + 1;
         }
         else if (typedChar == '\b')
         {
