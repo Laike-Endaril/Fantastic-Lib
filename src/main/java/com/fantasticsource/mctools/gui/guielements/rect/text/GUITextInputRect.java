@@ -17,13 +17,13 @@ import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
 
-import static com.fantasticsource.mctools.gui.GUIScreen.FONT_RENDERER;
-import static com.fantasticsource.mctools.gui.GUIScreen.getColor;
-import static com.fantasticsource.mctools.gui.GUIScreen.getHover;
+import static com.fantasticsource.mctools.gui.GUIScreen.*;
 import static com.fantasticsource.tools.datastructures.Color.*;
 
 public class GUITextInputRect extends GUITextRect
 {
+    private static final Color T_WHITE = new Color(0xFFFFFF88);
+
     protected int cursorPosition, selectorPosition = -1;
     protected Color cursorColor, highlightColor;
     protected long cursorTime;
@@ -37,7 +37,7 @@ public class GUITextInputRect extends GUITextRect
         this.filter = filter;
 
         cursorColor = WHITE;
-        highlightColor = activeColor.copy().setAF(0.3f);
+        highlightColor = T_WHITE;
     }
 
     public GUITextInputRect(GUIScreen screen, double x, double y, String text, Color color, Color hoverColor, Color activeColor, Color cursorColor, Color hightlightColor)
@@ -211,9 +211,25 @@ public class GUITextInputRect extends GUITextRect
         GlStateManager.translate(getScreenX(), getScreenY(), 0);
         GlStateManager.scale(1d / screen.width, 1d / screen.height, 1);
 
+
+        //Highlight red if text does not pass filter
+        if (!filter.acceptable(text))
+        {
+            GlStateManager.disableTexture2D();
+            GlStateManager.color(1, 0, 0, 0.7f);
+            GlStateManager.glBegin(GL11.GL_LINES);
+            GlStateManager.glVertex3f(0, -0.5f, 0);
+            GlStateManager.glVertex3f(0, (float) (height * screenHeight), 0);
+            GlStateManager.glEnd();
+        }
+
+
+        //Actual text
         Color c = active ? activeColor : isMouseWithin() ? hoverColor : color;
         FONT_RENDERER.drawString(text, 0, 0, (c.color() >> 8) | c.a() << 24, false);
 
+
+        //Cursor and selection highlight
         if (active)
         {
             float cursorX = FONT_RENDERER.getStringWidth(text.substring(0, cursorPosition)) - 0.5f;
@@ -226,8 +242,8 @@ public class GUITextInputRect extends GUITextRect
                 GlStateManager.color(highlightColor.rf(), highlightColor.gf(), highlightColor.bf(), highlightColor.af());
                 GlStateManager.glBegin(GL11.GL_QUADS);
                 GlStateManager.glVertex3f(min, -0.5f, 0);
-                GlStateManager.glVertex3f(min, (float) height, 0);
-                GlStateManager.glVertex3f(max, (float) height, 0);
+                GlStateManager.glVertex3f(min, (float) (height * screenHeight), 0);
+                GlStateManager.glVertex3f(max, (float) (height * screenHeight), 0);
                 GlStateManager.glVertex3f(max, -0.5f, 0);
                 GlStateManager.glEnd();
             }
@@ -238,7 +254,7 @@ public class GUITextInputRect extends GUITextRect
                 GlStateManager.color(cursorColor.rf(), cursorColor.gf(), cursorColor.bf(), cursorColor.af());
                 GlStateManager.glBegin(GL11.GL_LINES);
                 GlStateManager.glVertex3f(cursorX, -0.5f, 0);
-                GlStateManager.glVertex3f(cursorX, (float) height, 0);
+                GlStateManager.glVertex3f(cursorX, (float) (height * screenHeight), 0);
                 GlStateManager.glEnd();
             }
         }
