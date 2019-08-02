@@ -5,6 +5,17 @@ import static com.fantasticsource.tools.Tools.min;
 
 public class Color
 {
+    public static final Color
+            BLANK = new Color(0),
+            BLACK = new Color(0xFF),
+            WHITE = new Color(0xFFFFFFFF),
+            RED = new Color(0xFF0000FF),
+            GREEN = new Color(0x00FF00FF),
+            BLUE = new Color(0x0000FFFF),
+            YELLOW = new Color(0xFFFF00FF),
+            AQUA = new Color(0x00FFFFFF),
+            PURPLE = new Color(0xFF00FFFF);
+
     private int intValue, r, g, b, a;
     private float rf, gf, bf, af;
     private String hex;
