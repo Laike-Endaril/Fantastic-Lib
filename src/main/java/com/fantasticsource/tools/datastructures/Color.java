@@ -117,10 +117,10 @@ public class Color
         bf = min(max(b, 0), 1);
         af = min(max(a, 0), 1);
 
-        this.r = min(max((int) rf * 255, 0), 255);
-        this.g = min(max((int) gf * 255, 0), 255);
-        this.b = min(max((int) bf * 255, 0), 255);
-        this.a = min(max((int) af * 255, 0), 255);
+        this.r = min(max((int) (rf * 255), 0), 255);
+        this.g = min(max((int) (gf * 255), 0), 255);
+        this.b = min(max((int) (bf * 255), 0), 255);
+        this.a = min(max((int) (af * 255), 0), 255);
 
         intValue = (this.r << 24) | (this.g << 16) | (this.b << 8) | this.a;
 
