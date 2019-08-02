@@ -65,10 +65,10 @@ public class GUITextButton extends GUIGradientBorder
         width = textRect.width + scaledPadding * 2;
         height = textRect.height + scaledPadding * 2;
 
-        textRect.x = scaledPadding;
-        textRect.y = scaledPadding;
-
         thickness = scaledPadding / height;
+
+        textRect.x = scaledPadding / width;
+        textRect.y = scaledPadding / height;
 
         return this;
     }

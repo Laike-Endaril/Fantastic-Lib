@@ -38,7 +38,7 @@ public abstract class GUIElement
         int mcScale = new ScaledResolution(screen.mc).getScaleFactor();
         double wScale = screenWidth * mcScale, hScale = screenHeight * mcScale;
 
-        currentScissor = new int[]{(int) (getScreenX() * wScale), (int) ((1 - (getScreenY() + height)) * hScale), (int) (width * wScale), (int) (height * hScale)};
+        currentScissor = new int[]{(int) (getScreenX() * wScale), (int) ((1 - (getScreenY() + getScreenHeight())) * hScale), (int) (getScreenWidth() * wScale), (int) (getScreenHeight() * hScale)};
         if (parent != null && parent.currentScissor != null)
         {
             currentScissor[0] = Tools.max(currentScissor[0], parent.currentScissor[0]);
@@ -51,7 +51,7 @@ public abstract class GUIElement
 
         for (GUIElement element : children)
         {
-            if (element.x + element.width < 0 || element.x > width || element.y + element.height < 0 || element.y >= height) continue;
+            if (element.x + element.width < 0 || element.x > 1 || element.y + element.height < 0 || element.y >= 1) continue;
             element.draw();
         }
 
@@ -92,13 +92,13 @@ public abstract class GUIElement
     public double getScreenX()
     {
         if (parent == null) return x;
-        return parent.getScreenX() + x;
+        return parent.getScreenX() + x * parent.getScreenWidth();
     }
 
     public double getScreenY()
     {
         if (parent == null) return y;
-        return parent.getScreenY() + y;
+        return parent.getScreenY() + y * parent.getScreenHeight();
     }
 
     public double getScreenWidth()
