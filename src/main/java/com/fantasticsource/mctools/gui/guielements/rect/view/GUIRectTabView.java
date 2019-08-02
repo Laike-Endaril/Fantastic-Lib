@@ -6,7 +6,6 @@ import com.fantasticsource.mctools.gui.guielements.GUIElement;
 import com.fantasticsource.mctools.gui.guielements.rect.GUIGradientBorder;
 import com.fantasticsource.mctools.gui.guielements.rect.GUIRectElement;
 import com.fantasticsource.mctools.gui.guielements.rect.GUITextButton;
-import com.fantasticsource.tools.datastructures.Color;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -24,7 +23,8 @@ public class GUIRectTabView extends GUIRectView
         autocalcTabs = true;
         autocalcTabviews = true;
 
-        tabBackground = new GUIGradientBorder(screen, 0, 0, 1, 1, 0.1, new Color(0xFFFFFFFF), new Color(0));
+        GUITextButton tab = (GUITextButton) tabs[0];
+        tabBackground = new GUIGradientBorder(screen, 0, 0, 1, 1, 0.1, tab.border, tab.center);
         add(0, tabBackground);
 
         recalc();
@@ -35,7 +35,8 @@ public class GUIRectTabView extends GUIRectView
         this(screen, x, y, width, height, genTabs(screen, tabNames), tabViews);
         autocalcTabs = true;
 
-        tabBackground = new GUIGradientBorder(screen, 0, 0, 1, 1, 0.1, new Color(0xFFFFFFFF), new Color(0));
+        GUITextButton tab = (GUITextButton) tabs[0];
+        tabBackground = new GUIGradientBorder(screen, 0, 0, 1, 1, 0.1, tab.border, tab.center);
         add(0, tabBackground);
 
         recalc();
@@ -81,7 +82,7 @@ public class GUIRectTabView extends GUIRectView
 
         for (int i = 0; i < result.length; i++)
         {
-            result[i] = new GUITextButton(screen, 0, 0, tabNames[i]);
+            result[i] = new GUITextButton(screen, 0, 0, tabNames[i], WHITE, T_GRAY);
         }
 
         return result;

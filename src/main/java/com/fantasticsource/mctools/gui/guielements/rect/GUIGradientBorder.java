@@ -12,8 +12,8 @@ import static org.lwjgl.opengl.GL11.GL_QUADS;
 
 public class GUIGradientBorder extends GUIRectElement
 {
+    public Color border, center, hoverBorder, hoverCenter, activeBorder, activeCenter;
     protected double thickness;
-    private Color border, center, hoverBorder, hoverCenter, activeBorder, activeCenter;
 
     public GUIGradientBorder(GUIScreen screen, double x, double y, double width, double height, double borderThickness, Color border, Color center)
     {

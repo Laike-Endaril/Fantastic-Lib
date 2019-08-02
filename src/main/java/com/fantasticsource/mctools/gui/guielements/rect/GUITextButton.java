@@ -7,7 +7,6 @@ import com.fantasticsource.tools.datastructures.Color;
 public class GUITextButton extends GUIGradientBorder
 {
     public static final double DEFAULT_PADDING = 0.5;
-    private static final Color WHITE = new Color(0xFFFFFFFF);
 
     private GUITextRect textRect;
     private double padding;
@@ -47,12 +46,12 @@ public class GUITextButton extends GUIGradientBorder
 
     private static Color getColor(Color active)
     {
-        return new Color(active.r() >> 1, active.g() >> 1, active.b() >> 1, active.a());
+        return new Color(active.rf() * 0.6f, active.gf() * 0.6f, active.bf() * 0.6f, active.af());
     }
 
     private static Color getHover(Color active)
     {
-        return new Color((int) (0.75 * active.r()), (int) (0.75 * active.g()), (int) (0.75 * active.b()), active.a());
+        return new Color(active.rf() * 0.7f, active.gf() * 0.7f, active.bf() * 0.7f, active.af());
     }
 
     @Override

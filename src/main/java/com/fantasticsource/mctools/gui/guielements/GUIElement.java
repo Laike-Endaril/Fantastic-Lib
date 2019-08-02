@@ -3,6 +3,7 @@ package com.fantasticsource.mctools.gui.guielements;
 import com.fantasticsource.mctools.gui.GUILeftClickEvent;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.tools.Tools;
+import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.opengl.GL11;
@@ -11,6 +12,10 @@ import java.util.ArrayList;
 
 public abstract class GUIElement
 {
+    public static final Color
+            WHITE = new Color(0xFFFFFFFF),
+            T_GRAY = new Color(0xAAAAAA77);
+
     public int[] currentScissor = null;
 
     public double x, y, width, height;
