@@ -12,7 +12,7 @@ import static com.fantasticsource.mctools.gui.GUIScreen.FONT_RENDERER;
 
 public class GUIRectTabView extends GUIRectView
 {
-    private GUIRectElement[] tabs;
+    public GUIRectElement[] tabs;
     public GUIRectView[] tabViews;
     private int current = 0;
     private boolean autocalcTabs = false, autocalcTabviews = false;
@@ -155,9 +155,10 @@ public class GUIRectTabView extends GUIRectView
 
         for (GUIElement element : tabs) element.setActive(element == currentElement, true);
 
-        children.remove(tabViews[current]);
+        int i = children.indexOf(tabViews[current]);
+        children.remove(i);
         current = index;
-        children.add(0, tabViews[current]);
+        children.add(i, tabViews[current]);
     }
 
     @Override
