@@ -8,7 +8,7 @@ import com.fantasticsource.tools.datastructures.Color;
 public class GUILabeledTextInput extends GUIRectElement
 {
     private GUITextRect label;
-    private GUITextInputRect input;
+    public GUITextInputRect input;
 
     public GUILabeledTextInput(GUIScreen screen, double x, double y, String labelText, String defaultText, TextFilter filter)
     {

@@ -10,7 +10,7 @@ import static com.fantasticsource.mctools.gui.GUIScreen.*;
 
 public class GUITextRect extends GUIRectElement
 {
-    protected String text;
+    public String text;
     protected Color color, hoverColor, activeColor;
 
     public GUITextRect(GUIScreen screen, double x, double y, String text, Color color)
