@@ -14,6 +14,23 @@ import java.util.Random;
 @SuppressWarnings("unused")
 public class Tools
 {
+    public static String[] fixedSplit(String string, String regex)
+    {
+        String[] tokens = string.split(regex);
+
+        String last = tokens[tokens.length - 1];
+        if (last.charAt(last.length() - 1) != string.charAt(string.length() - 1))
+        {
+            String[] tokens2 = new String[tokens.length + 1];
+            System.arraycopy(tokens, 0, tokens2, 0, tokens.length);
+            tokens2[tokens2.length - 1] = "";
+            return tokens2;
+        }
+
+        return tokens;
+    }
+
+
     public static int angleDifDeg(int angle1, int angle2)
     {
         return posMod(angle2 - angle1, 360);
