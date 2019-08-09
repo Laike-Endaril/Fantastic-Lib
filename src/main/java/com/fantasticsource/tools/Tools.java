@@ -66,7 +66,7 @@ public class Tools
         return result;
     }
 
-    public String[][] preservedSplitSeparated(String string, String regex)
+    public static String[][] preservedSplitSeparated(String string, String regex)
     {
         String[][] result = new String[2][];
         result[0] = string.split(regex);
