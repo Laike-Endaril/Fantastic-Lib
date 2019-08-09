@@ -66,6 +66,27 @@ public class Tools
         return result;
     }
 
+    public String[][] preservedSplitSeparated(String string, String regex)
+    {
+        String[][] result = new String[2][];
+        result[0] = string.split(regex);
+        result[1] = new String[result[0].length - 1];
+
+        string = string.substring(result[0][0].length());
+
+        String token;
+        int index;
+        for (int i = 1; i < result[0].length; i++)
+        {
+            token = result[0][i];
+            index = string.indexOf(token);
+            result[1][i - 1] = string.substring(0, index);
+            string = string.substring(string.indexOf(token) + token.length());
+        }
+
+        return result;
+    }
+
 
     public static int angleDifDeg(int angle1, int angle2)
     {
