@@ -30,7 +30,7 @@ public class Tools
         return tokens;
     }
 
-    public static String[] preservedSplit(String string, String regex)
+    public static String[] preservedSplit(String string, String regex, boolean interpolateResult)
     {
         String[] tokens = string.split(regex);
         String[] result = new String[tokens.length * 2 - 1];
@@ -38,13 +38,29 @@ public class Tools
         result[0] = tokens[0];
         string = string.substring(result[0].length());
 
+        String token;
         int index;
-        for (int i = 1; i < tokens.length; i++)
+        if (interpolateResult)
         {
-            index = string.indexOf(tokens[i]);
-            result[(i << 1) - 1] = string.substring(0, index);
-            result[i << 1] = tokens[i];
-            string = string.substring(string.indexOf(tokens[i]) + tokens[i].length());
+            for (int i = 1; i < tokens.length; i++)
+            {
+                token = tokens[i];
+                index = string.indexOf(token);
+                result[(i << 1) - 1] = string.substring(0, index);
+                result[i << 1] = token;
+                string = string.substring(string.indexOf(token) + token.length());
+            }
+        }
+        else
+        {
+            System.arraycopy(tokens, 0, result, 0, tokens.length);
+            for (int i = 1; i < tokens.length; i++)
+            {
+                token = tokens[i];
+                index = string.indexOf(token);
+                result[tokens.length - 1 + i] = string.substring(0, index);
+                string = string.substring(string.indexOf(token) + token.length());
+            }
         }
 
         return result;
