@@ -3,16 +3,18 @@ package com.fantasticsource.tools;
 import javax.annotation.Nonnull;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
 
 public class MultiPrintStream extends PrintStream
 {
-    private PrintStream[] streams;
+    public ArrayList<PrintStream> streams = new ArrayList<>();
 
     public MultiPrintStream(PrintStream... printStreams)
     {
         super((OutputStream) null);
-        streams = printStreams;
+        streams.addAll(Arrays.asList(printStreams));
     }
 
     @Override
