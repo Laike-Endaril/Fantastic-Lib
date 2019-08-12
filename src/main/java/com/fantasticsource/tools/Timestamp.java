@@ -27,6 +27,11 @@ public class Timestamp
         millisecond = Integer.parseInt(millisecondString);
     }
 
+    public static Timestamp getInstance()
+    {
+        return getInstance(Instant.now());
+    }
+
     public static Timestamp getInstance(Instant instant)
     {
         return instant == null ? null : new Timestamp(instant);
