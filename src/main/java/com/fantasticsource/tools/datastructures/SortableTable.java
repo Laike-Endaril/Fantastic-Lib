@@ -5,6 +5,10 @@ public class SortableTable
 {
     public static final int INITIAL_SIZE = 16;
 
+    public static final int
+            COMPARE_KEY = 1,
+            COMPARE_DIFFERENCE = 2;
+
     private Column[] columns;
     private int used = 0, sortedColumn = -1;
     private boolean ascending = true;
@@ -61,6 +65,33 @@ public class SortableTable
     {
         return used;
     }
+
+//    public SortableTable compareTo(SortableTable other, int... comparisons)
+//    {
+//        if (columns.length != other.columns.length) throw new IllegalArgumentException("Tables must have the same columns!");
+//        if (comparisons.length != columns.length) throw new IllegalArgumentException("You must define a comparison for each column!");
+//
+//        Class[] classes = new Class[columns.length];
+//        int keyColumn = -1;
+//        for (int i = 0; i < columns.length; i++)
+//        {
+//            if (columns[i].c != other.columns[i].c) throw new IllegalArgumentException("Tables must have the same columns!");
+//            else classes[i] = columns[i].c;
+//
+//            if (comparisons[i] == COMPARE_KEY)
+//            {
+//                if (keyColumn == -1) keyColumn = i;
+//                else throw new IllegalArgumentException("Exactly one comparison must be COMPARE_KEY!");
+//            }
+//        }
+//        if (keyColumn == -1) throw new IllegalArgumentException("Exactly one comparison must be COMPARE_KEY!");
+//
+//        SortableTable result = new SortableTable(classes);
+//        for (int i = 0; i < used; i++)
+//        {
+//            result.add();
+//        }
+//    }
 
     public void add(Object... item)
     {
@@ -301,6 +332,18 @@ public class SortableTable
         for (String label : labels) label(i++, label);
     }
 
+    public void unit(int column, String unit)
+    {
+        if (column >= columns.length) throw new ArrayIndexOutOfBoundsException("Columns: " + columns.length + ", index given: " + column);
+        columns[column].unit = unit;
+    }
+
+    public void units(String... units)
+    {
+        int i = 0;
+        for (String unit : units) unit(i++, unit);
+    }
+
     public String toString()
     {
         String[] strings = new String[columns.length * (1 + used)];
@@ -364,7 +407,7 @@ public class SortableTable
                 CLASS = 9;
 
         byte comparison;
-        String label;
+        String label, unit = "";
         Object[] values = new Object[INITIAL_SIZE];
         Class c;
 
@@ -492,8 +535,8 @@ public class SortableTable
 
         String toString(int index)
         {
-            if (comparison != CLASS) return "" + values[index];
-            return values[index].getClass().getSimpleName();
+            if (comparison != CLASS) return values[index] + unit;
+            return values[index].getClass().getSimpleName() + unit;
         }
     }
 }
