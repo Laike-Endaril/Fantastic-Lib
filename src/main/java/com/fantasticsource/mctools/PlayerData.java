@@ -4,6 +4,8 @@ import com.fantasticsource.fantasticlib.FantasticLib;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.PlayerList;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
@@ -48,15 +50,18 @@ public class PlayerData
             return result;
         }
 
-        EntityPlayer player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUUID(id);
-        if (player != null) //getPlayerByUUID() can absolutely return null
-        {
-            result = new PlayerData(player.getName(), player.getPersistentID(), player);
-            playerData.put(id, result);
-            return result;
-        }
+        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+        if (server == null) return null;
 
-        return null;
+        PlayerList playerList = server.getPlayerList();
+        if (playerList == null) return null;
+
+        EntityPlayer player = playerList.getPlayerByUUID(id);
+        if (player == null) return null; //getPlayerByUUID() can absolutely return null
+
+        result = new PlayerData(player.getName(), player.getPersistentID(), player);
+        playerData.put(id, result);
+        return result;
     }
 
     public static PlayerData get(String name)
@@ -68,15 +73,18 @@ public class PlayerData
             if (result.name.equals(name)) return result;
         }
 
-        EntityPlayer player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUsername(name);
-        if (player != null)
-        {
-            result = new PlayerData(player.getName(), player.getPersistentID(), player);
-            playerData.put(player.getPersistentID(), result);
-            return result;
-        }
+        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+        if (server == null) return null;
 
-        return null;
+        PlayerList playerList = server.getPlayerList();
+        if (playerList == null) return null;
+
+        EntityPlayer player = playerList.getPlayerByUsername(name);
+        if (player == null) return null;
+
+        result = new PlayerData(player.getName(), player.getPersistentID(), player);
+        playerData.put(player.getPersistentID(), result);
+        return result;
     }
 
     public static String getName(UUID id)

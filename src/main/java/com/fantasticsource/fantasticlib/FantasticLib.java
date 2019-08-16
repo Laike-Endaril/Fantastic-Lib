@@ -48,6 +48,8 @@ public class FantasticLib
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
+        PlayerData.load();
+
         if (event.getSide() == Side.CLIENT) Render.init();
     }
 
@@ -55,6 +57,5 @@ public class FantasticLib
     public void postInit(FMLPostInitializationEvent event)
     {
         DataFiles.output();
-        PlayerData.load();
     }
 }
