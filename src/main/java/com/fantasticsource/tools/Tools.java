@@ -14,6 +14,22 @@ import java.util.Random;
 @SuppressWarnings("unused")
 public class Tools
 {
+    public static boolean delete(File file)
+    {
+        if (file.isDirectory())
+        {
+            File[] files = file.listFiles();
+            if (files != null)
+            {
+                for (File f : files)
+                {
+                    delete(f);
+                }
+            }
+        }
+        return file.delete();
+    }
+
     public static String[] fixedSplit(String string, String regex)
     {
         String[] tokens = string.split(regex);
