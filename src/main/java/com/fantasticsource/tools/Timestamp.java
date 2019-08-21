@@ -115,7 +115,12 @@ public class Timestamp
     @Override
     public String toString()
     {
-        return yearString + "-" + monthString + "-" + dayString + " " + hourString + ":" + minuteString + ":" + secondString + "." + millisecondString;
+        return toString(true, true, true);
+    }
+
+    public String toString(boolean date, boolean time, boolean ms)
+    {
+        return (date ? yearString + "-" + monthString + "-" + dayString : "") + (date && time ? " " : "") + (time ? hourString + ":" + minuteString + ":" + secondString + (ms ? "." + millisecondString : "") : "");
     }
 
     public int compareTo(Timestamp other)
