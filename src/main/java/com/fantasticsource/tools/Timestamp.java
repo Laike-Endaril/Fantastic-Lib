@@ -117,4 +117,9 @@ public class Timestamp
     {
         return yearString + "-" + monthString + "-" + dayString + " " + hourString + ":" + minuteString + ":" + secondString + "." + millisecondString;
     }
+
+    public int compareTo(Timestamp other)
+    {
+        return instant.compareTo(other.instant);
+    }
 }
