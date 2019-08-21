@@ -4,11 +4,14 @@ import java.time.Instant;
 
 public class Timestamp
 {
+    protected final Instant instant;
     protected final int year, month, day, hour, minute, second, millisecond;
     protected final String yearString, monthString, dayString, hourString, minuteString, secondString, millisecondString;
 
     protected Timestamp(Instant instant)
     {
+        this.instant = instant;
+
         String s = instant.toString();
         yearString = s.substring(0, 4);
         monthString = s.substring(5, 7);
@@ -36,6 +39,8 @@ public class Timestamp
     {
         return instant == null ? null : new Timestamp(instant);
     }
+
+    public Instant getInstant;
 
     public int getYear()
     {
