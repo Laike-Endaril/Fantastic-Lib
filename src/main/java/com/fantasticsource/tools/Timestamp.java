@@ -40,7 +40,10 @@ public class Timestamp
         return instant == null ? null : new Timestamp(instant);
     }
 
-    public Instant getInstant;
+    public Instant getInstant()
+    {
+        return instant;
+    }
 
     public int getYear()
     {
