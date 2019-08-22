@@ -14,7 +14,8 @@ public class Color
             BLUE = new Color(0x0000FFFF),
             YELLOW = new Color(0xFFFF00FF),
             AQUA = new Color(0x00FFFFFF),
-            PURPLE = new Color(0xFF00FFFF);
+            PURPLE = new Color(0xFF00FFFF),
+            GRAY = new Color(0x777777FF);
 
     private int intValue, r, g, b, a;
     private float rf, gf, bf, af;
@@ -261,6 +262,11 @@ public class Color
     public int color()
     {
         return intValue;
+    }
+
+    public int toARGB()
+    {
+        return (intValue >> 8) | (a << 24);
     }
 
     public int r()
