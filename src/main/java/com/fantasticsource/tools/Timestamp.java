@@ -13,13 +13,15 @@ public class Timestamp
         this.instant = instant;
 
         String s = instant.toString();
+        int last = s.length() - 1;
+
         yearString = s.substring(0, 4);
         monthString = s.substring(5, 7);
         dayString = s.substring(8, 10);
         hourString = s.substring(11, 13);
         minuteString = s.substring(14, 16);
-        secondString = s.substring(17, 19);
-        millisecondString = s.substring(20, 23);
+        secondString = s.substring(17, Tools.min(19, last));
+        millisecondString = last >= 20 ? s.substring(20, Tools.min(23, last)) : "0";
 
         year = Integer.parseInt(yearString);
         month = Integer.parseInt(monthString);
