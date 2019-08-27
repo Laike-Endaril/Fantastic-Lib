@@ -180,6 +180,11 @@ public class GUITextInputRect extends GUITextRect
         if (button == 0 && isMouseWithin())
         {
             setActive(true);
+            if (isShiftKeyDown())
+            {
+                if (selectorPosition == -1) selectorPosition = cursorPosition;
+            }
+            else selectorPosition = -1;
             cursorPosition = findCursorPosition(mouseX());
         }
         else setActive(false);
