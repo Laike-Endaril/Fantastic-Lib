@@ -29,6 +29,9 @@ public class GUITextInputRect extends GUITextRect
     protected long cursorTime;
     private TextFilter filter;
 
+    protected double mouseDownX = Double.NaN, mouseDownY = Double.NaN;
+
+
     public GUITextInputRect(GUIScreen screen, double x, double y, String text, TextFilter filter)
     {
         super(screen, x, y, text, filter.acceptable(text) ? GREEN : RED);
@@ -174,7 +177,12 @@ public class GUITextInputRect extends GUITextRect
     @Override
     public boolean mousePressed(double x, double y, int button)
     {
-        setActive(button == 0 && isMouseWithin());
+        if (button == 0 && isMouseWithin())
+        {
+            setActive(true);
+            cursorPosition = findCursorPosition(mouseX());
+        }
+        else setActive(false);
 
         for (GUIElement child : (ArrayList<GUIElement>) children.clone()) child.mousePressed(x - this.x, y - this.y, button);
 
@@ -187,6 +195,19 @@ public class GUITextInputRect extends GUITextRect
         if (button == 0 && active && isMouseWithin()) MinecraftForge.EVENT_BUS.post(new GUILeftClickEvent(screen, this));
 
         for (GUIElement child : (ArrayList<GUIElement>) children.clone()) child.mouseReleased(x - this.x, y - this.y, button);
+    }
+
+    @Override
+    public void mouseDrag(double x, double y, int button)
+    {
+        if (button == 0 && isMouseWithin())
+        {
+            if (selectorPosition == -1) selectorPosition = cursorPosition;
+            cursorPosition = findCursorPosition(mouseX());
+            if (selectorPosition == cursorPosition) selectorPosition = -1;
+        }
+
+        super.mouseDrag(x, y, button);
     }
 
     @Override
@@ -280,5 +301,23 @@ public class GUITextInputRect extends GUITextRect
             if (c >= ' ' && c <= '~') result.append(c);
         }
         return result.toString();
+    }
+
+    protected int findCursorPosition(double x)
+    {
+        double dif = x - getScreenX();
+        int result = 0;
+        for (char c : text.toCharArray())
+        {
+            double lastDif = dif;
+            dif -= (double) FONT_RENDERER.getCharWidth(c) / screen.width;
+            if (dif <= 0)
+            {
+                if (Math.abs(dif) < lastDif) result++;
+                break;
+            }
+            result++;
+        }
+        return result;
     }
 }
