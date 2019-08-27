@@ -30,7 +30,7 @@ public class GUITextInputRect extends GUITextRect
     private TextFilter filter;
 
     protected long lastClickTime;
-    int lastAbsMouseX;
+    protected int lastAbsMouseX;
 
 
     public GUITextInputRect(GUIScreen screen, double x, double y, String text, TextFilter filter)
@@ -173,6 +173,8 @@ public class GUITextInputRect extends GUITextRect
             color = getColor(activeColor);
             hoverColor = getHover(activeColor);
         }
+
+        recalc();
     }
 
     @Override
