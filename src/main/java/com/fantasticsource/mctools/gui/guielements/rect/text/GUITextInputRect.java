@@ -29,7 +29,8 @@ public class GUITextInputRect extends GUITextRect
     protected long cursorTime;
     private TextFilter filter;
 
-    protected double mouseDownX = Double.NaN, mouseDownY = Double.NaN;
+    protected long lastClickTime;
+    int lastAbsMouseX;
 
 
     public GUITextInputRect(GUIScreen screen, double x, double y, String text, TextFilter filter)
@@ -180,12 +181,34 @@ public class GUITextInputRect extends GUITextRect
         if (button == 0 && isMouseWithin())
         {
             setActive(true);
-            if (isShiftKeyDown())
+            long time = System.currentTimeMillis();
+            int absMouseX = (int) (mouseX * screen.width);
+            if (time - lastClickTime <= 250 && Math.abs(lastAbsMouseX - absMouseX) < 3)
             {
-                if (selectorPosition == -1) selectorPosition = cursorPosition;
+                //Double-click
+                lastClickTime = 0;
+
+                cursorPosition = findCursorPosition(mouseX());
+                selectorPosition = cursorPosition;
+
+                char[] chars = text.toCharArray();
+                while (cursorPosition < chars.length && chars[cursorPosition] != ' ') cursorPosition++;
+                while (selectorPosition > 0 && chars[selectorPosition - 1] != ' ') selectorPosition--;
+                if (selectorPosition == cursorPosition) selectorPosition = -1;
             }
-            else selectorPosition = -1;
-            cursorPosition = findCursorPosition(mouseX());
+            else
+            {
+                //Single-click
+                lastClickTime = time;
+                lastAbsMouseX = absMouseX;
+
+                if (isShiftKeyDown())
+                {
+                    if (selectorPosition == -1) selectorPosition = cursorPosition;
+                }
+                else selectorPosition = -1;
+                cursorPosition = findCursorPosition(mouseX());
+            }
         }
         else setActive(false);
 
