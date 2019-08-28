@@ -32,6 +32,8 @@ public class Tools
 
     public static String[] fixedSplit(String string, String regex)
     {
+        if (string.equals("")) return new String[]{""};
+
         String[] tokens = string.split(regex);
 
         String last = tokens[tokens.length - 1];
