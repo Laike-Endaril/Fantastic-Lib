@@ -201,6 +201,17 @@ public abstract class GUIElement
         return children.get(index);
     }
 
+    public int indexOf(GUIElement child)
+    {
+        int i = 0;
+        for (GUIElement element : children)
+        {
+            if (element == child) return i;
+            i++;
+        }
+        return -1;
+    }
+
     public void linkMouseActivity(GUIElement element)
     {
         linkedMouseActivity.add(element);
