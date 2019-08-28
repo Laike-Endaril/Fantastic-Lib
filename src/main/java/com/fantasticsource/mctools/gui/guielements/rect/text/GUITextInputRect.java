@@ -62,6 +62,20 @@ public class GUITextInputRect extends GUITextRect
 
         if (!active) return;
 
+//        if (keyCode == Keyboard.KEY_RETURN)
+//        {
+//            if (parent instanceof MultilineTextInput)
+//            {
+//                int min = Tools.min(cursorPosition, selectorPosition);
+//                if (min == -1) min = cursorPosition;
+//                String before = text.substring(0, min);
+//                String after = text.substring(Tools.max(cursorPosition, selectorPosition));
+//                text = before;
+//                selectorPosition = -1;
+//                cursorPosition = min + 1;
+//            }
+//        }
+//        else if (GUIScreen.isCtrlKeyDown() && keyCode == Keyboard.KEY_A)
         if (GUIScreen.isCtrlKeyDown() && keyCode == Keyboard.KEY_A)
         {
             if (text.length() > 0)
