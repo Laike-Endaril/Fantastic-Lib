@@ -98,7 +98,21 @@ public class GUITextInputRect extends GUITextRect
         {
             if (parent instanceof MultilineTextInput && GUIScreen.isCtrlKeyDown())
             {
-                //TODO
+                if (GUIScreen.isShiftKeyDown())
+                {
+                    //TODO multiline selection
+                }
+                else
+                {
+                    GUITextInputRect element = (GUITextInputRect) parent.get(0);
+                    if (element != this)
+                    {
+                        setActive(false);
+                        element.setActive(true);
+                    }
+                    element.cursorPosition = 0;
+                    element.selectorPosition = -1;
+                }
             }
             else
             {
@@ -124,7 +138,21 @@ public class GUITextInputRect extends GUITextRect
         {
             if (parent instanceof MultilineTextInput && GUIScreen.isCtrlKeyDown())
             {
-                //TODO
+                if (GUIScreen.isShiftKeyDown())
+                {
+                    //TODO multiline selection
+                }
+                else
+                {
+                    GUITextInputRect element = (GUITextInputRect) parent.get(parent.size() - 1);
+                    if (element != this)
+                    {
+                        setActive(false);
+                        element.setActive(true);
+                    }
+                    element.cursorPosition = element.text.length();
+                    element.selectorPosition = -1;
+                }
             }
             else
             {
