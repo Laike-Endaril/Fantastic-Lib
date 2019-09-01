@@ -2,7 +2,6 @@ package com.fantasticsource.mctools.gui.guielements.rect.text;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.guielements.GUIElement;
-import com.fantasticsource.mctools.gui.guielements.rect.GUIRectElement;
 import com.fantasticsource.mctools.gui.guielements.rect.view.GUIRectScrollView;
 import com.fantasticsource.tools.datastructures.Color;
 
@@ -11,12 +10,13 @@ public class MultilineTextInput extends GUIRectScrollView
     public final double lineSpacing;
     public Color color, hoverColor, activeColor, cursorColor, highlightColor;
 
-    public MultilineTextInput(GUIScreen screen, double x, double y, double width, double height, double lineSpacing, GUIRectElement... subElements)
+    public MultilineTextInput(GUIScreen screen, double x, double y, double width, double height, String... lines)
     {
-        super(screen, x, y, width, height, subElements);
+        super(screen, x, y, width, height);
 
-        this.lineSpacing = lineSpacing;
-        add(new GUITextInputRect(screen, 0, 0, "", color, hoverColor, activeColor, cursorColor, highlightColor));
+        this.lineSpacing = (double) GUIScreen.FONT_RENDERER.FONT_HEIGHT / screen.height;
+        if (lines.length == 0) add("");
+        else for (String line : lines) add(line);
     }
 
     @Override
@@ -35,11 +35,11 @@ public class MultilineTextInput extends GUIRectScrollView
 
     public void add(String s)
     {
-        add(new GUITextInputRect(screen, 0, 0, s, color, hoverColor, activeColor, cursorColor, highlightColor));
+        add(new GUITextInputRect(screen, 0, children.get(children.size() - 1).y + lineSpacing, s, color, hoverColor, activeColor, cursorColor, highlightColor));
     }
 
     public void add(int index, String s)
     {
-        add(index, new GUITextInputRect(screen, 0, 0, s, color, hoverColor, activeColor, cursorColor, highlightColor));
+        add(index, new GUITextInputRect(screen, 0, children.get(children.size() - 1).y + lineSpacing, s, color, hoverColor, activeColor, cursorColor, highlightColor));
     }
 }

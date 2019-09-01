@@ -8,6 +8,7 @@ import net.minecraft.entity.ai.*;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
@@ -24,6 +25,7 @@ import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Map;
 
 import static com.fantasticsource.tools.Tools.distance;
@@ -46,6 +48,47 @@ public class MCTools
         }
     }
 
+
+    public static ArrayList<String> legibleNBT(NBTBase nbt)
+    {
+        ArrayList<String> result = new ArrayList<>();
+
+        char[] chars = nbt.toString().toCharArray();
+        String current = "";
+        String indent = "";
+        for (int i = 0; i < chars.length; i++)
+        {
+            char c = chars[i];
+            switch (c)
+            {
+                case '{':
+                case '[':
+                    if (!current.equals("")) result.add(indent + current);
+                    result.add(indent + c);
+                    current = "";
+                    indent += " ";
+                    break;
+
+                case '}':
+                case ']':
+                    if (!current.equals("")) result.add(indent + current);
+                    indent = indent.substring(0, indent.length() - 1);
+                    result.add(indent + c + (i + 1 < chars.length && chars[i + 1] == ',' ? ',' : ""));
+                    current = "";
+                    break;
+
+                case ',':
+                    if (!current.equals("")) result.add(indent + current + c);
+                    current = "";
+                    break;
+
+                default:
+                    current += c;
+            }
+        }
+
+        return result;
+    }
 
     /**
      * Whether we are hosting the game; returns true if a server is currently running within this application
