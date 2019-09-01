@@ -12,7 +12,18 @@ public class MultilineTextInput extends GUIRectScrollView
 
     public MultilineTextInput(GUIScreen screen, double x, double y, double width, double height, String... lines)
     {
+        this(screen, x, y, width, height, GUIScreen.getColor(Color.GRAY), GUIScreen.getHover(Color.GRAY), Color.GRAY, Color.WHITE, Color.WHITE.copy().setAF(0.4f), lines);
+    }
+
+    public MultilineTextInput(GUIScreen screen, double x, double y, double width, double height, Color color, Color hoverColor, Color activeColor, Color cursorColor, Color hightlightColor, String... lines)
+    {
         super(screen, x, y, width, height);
+
+        this.color = color;
+        this.hoverColor = hoverColor;
+        this.activeColor = activeColor;
+        this.cursorColor = cursorColor;
+        this.highlightColor = hightlightColor;
 
         this.lineSpacing = (double) GUIScreen.FONT_RENDERER.FONT_HEIGHT / screen.height;
         if (lines.length == 0) add("");
@@ -35,11 +46,12 @@ public class MultilineTextInput extends GUIRectScrollView
 
     public void add(String s)
     {
-        add(new GUITextInputRect(screen, 0, children.get(children.size() - 1).y + lineSpacing, s, color, hoverColor, activeColor, cursorColor, highlightColor));
+        if (children.size() == 0) add(new GUITextInputRect(screen, lineSpacing / 4, lineSpacing / 2, s, color, hoverColor, activeColor, cursorColor, highlightColor));
+        else add(new GUITextInputRect(screen, lineSpacing / 4, children.get(children.size() - 1).y + lineSpacing, s, color, hoverColor, activeColor, cursorColor, highlightColor));
     }
 
     public void add(int index, String s)
     {
-        add(index, new GUITextInputRect(screen, 0, children.get(children.size() - 1).y + lineSpacing, s, color, hoverColor, activeColor, cursorColor, highlightColor));
+        add(index, new GUITextInputRect(screen, lineSpacing / 4, children.get(children.size() - 1).y + lineSpacing, s, color, hoverColor, activeColor, cursorColor, highlightColor));
     }
 }

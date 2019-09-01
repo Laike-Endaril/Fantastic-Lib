@@ -51,9 +51,14 @@ public class MCTools
 
     public static ArrayList<String> legibleNBT(NBTBase nbt)
     {
+        return legibleNBT(nbt.toString());
+    }
+
+    public static ArrayList<String> legibleNBT(String nbtString)
+    {
         ArrayList<String> result = new ArrayList<>();
 
-        char[] chars = nbt.toString().toCharArray();
+        char[] chars = nbtString.toCharArray();
         String current = "";
         String indent = "";
         for (int i = 0; i < chars.length; i++)

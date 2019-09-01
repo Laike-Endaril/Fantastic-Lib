@@ -195,6 +195,17 @@ public class GUITextInputRect extends GUITextRect
     }
 
     @Override
+    public boolean isWithin(double x, double y)
+    {
+        if (parent instanceof MultilineTextInput)
+        {
+            double yy = getScreenY();
+            return parent.isWithin(x, y) && yy <= y && y < yy + getScreenHeight();
+        }
+        return super.isWithin(x, y);
+    }
+
+    @Override
     public boolean mousePressed(double x, double y, int button)
     {
         if (button == 0 && isMouseWithin())
