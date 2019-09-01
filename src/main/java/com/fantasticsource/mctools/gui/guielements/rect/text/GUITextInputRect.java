@@ -102,21 +102,22 @@ public class GUITextInputRect extends GUITextRect
             }
             else
             {
-                if (GUIScreen.isShiftKeyDown())
-                {
-                    if (selectorPosition == -1 && cursorPosition != text.length()) selectorPosition = cursorPosition;
-                }
-                else selectorPosition = -1;
-
-                int endPos2 = text.length(), endPos1 = endPos2;
+                int endPos2 = text.length(), endPos = endPos2;
                 char[] chars = text.toCharArray();
                 for (int i = chars.length - 1; i >= 0; i--)
                 {
-                    if (chars[i] == ' ') endPos1--;
+                    if (chars[i] == ' ') endPos--;
                     else break;
                 }
-                if (endPos1 == 0) endPos1 = endPos2;
-                cursorPosition = cursorPosition == endPos1 ? endPos2 : endPos1;
+                if (endPos == 0 || cursorPosition == endPos) endPos = endPos2;
+
+                if (GUIScreen.isShiftKeyDown())
+                {
+                    if (selectorPosition == -1 && cursorPosition != endPos) selectorPosition = cursorPosition;
+                }
+                else selectorPosition = -1;
+
+                cursorPosition = endPos;
             }
         }
         else if (GUIScreen.isCtrlKeyDown() && keyCode == Keyboard.KEY_A)
