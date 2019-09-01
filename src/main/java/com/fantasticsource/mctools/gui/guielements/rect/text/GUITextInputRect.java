@@ -83,7 +83,7 @@ public class GUITextInputRect extends GUITextRect
         return i;
     }
 
-    public int tabbing()
+    public int tabs()
     {
         if (!(parent instanceof MultilineTextInput)) return 0;
 
@@ -124,22 +124,20 @@ public class GUITextInputRect extends GUITextRect
                 selectorPosition = -1;
                 cursorPosition = min;
 
-                String tabbing = "";
-                for (char c : text.toCharArray())
+                int tabs = tabs();
+                for (char c : before.toCharArray())
                 {
-                    if (c == ' ') tabbing += c;
-                    else if (c == '{')
-                    {
-                        tabbing += ' ';
-                        break;
-                    }
-                    else break;
+                    if (c == '{') tabs++;
+                    else if (c == '}') tabs--;
                 }
+
+                StringBuilder tabbing = new StringBuilder();
+                for (int i = tabs; i > 0; i--) tabbing.append(" ");
 
                 setActive(false);
                 GUITextInputRect element = (GUITextInputRect) ((MultilineTextInput) parent).add(parent.indexOf(this) + 1, tabbing + after);
                 element.setActive(true);
-                element.cursorPosition = tabbing.length();
+                element.cursorPosition = tabs;
             }
         }
         else if (keyCode == Keyboard.KEY_HOME)
@@ -164,7 +162,7 @@ public class GUITextInputRect extends GUITextRect
             }
             else
             {
-                int startPos = isWhitespace() ? Tools.min(text.length(), tabbing()) : nonWhitespaceStart();
+                int startPos = isWhitespace() ? Tools.min(text.length(), tabs()) : nonWhitespaceStart();
                 if (cursorPosition == startPos) startPos = 0;
 
                 if (GUIScreen.isShiftKeyDown())
@@ -198,7 +196,7 @@ public class GUITextInputRect extends GUITextRect
             }
             else
             {
-                int endPos = isWhitespace() ? Tools.min(text.length(), tabbing()) : nonWhitespaceEnd();
+                int endPos = isWhitespace() ? Tools.min(text.length(), tabs()) : nonWhitespaceEnd();
                 if (cursorPosition == endPos) endPos = text.length();
 
                 if (GUIScreen.isShiftKeyDown())
