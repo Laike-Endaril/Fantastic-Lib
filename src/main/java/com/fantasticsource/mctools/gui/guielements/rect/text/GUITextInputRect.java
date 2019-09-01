@@ -94,6 +94,32 @@ public class GUITextInputRect extends GUITextRect
                 element.cursorPosition = tabbing.length();
             }
         }
+        else if (keyCode == Keyboard.KEY_HOME)
+        {
+            if (parent instanceof MultilineTextInput && GUIScreen.isCtrlKeyDown())
+            {
+                //TODO
+            }
+            else
+            {
+                int startPos2 = 0, startPos = startPos2;
+                char[] chars = text.toCharArray();
+                for (int i = 0; i < chars.length; i++)
+                {
+                    if (chars[i] == ' ') startPos++;
+                    else break;
+                }
+                if (startPos == text.length() || cursorPosition == startPos) startPos = startPos2;
+
+                if (GUIScreen.isShiftKeyDown())
+                {
+                    if (selectorPosition == -1 && cursorPosition != startPos) selectorPosition = cursorPosition;
+                }
+                else selectorPosition = -1;
+
+                cursorPosition = startPos;
+            }
+        }
         else if (keyCode == Keyboard.KEY_END)
         {
             if (parent instanceof MultilineTextInput && GUIScreen.isCtrlKeyDown())
