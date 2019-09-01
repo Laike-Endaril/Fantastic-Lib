@@ -135,7 +135,7 @@ public class GUITextInputRect extends GUITextRect
                 for (int i = tabs; i > 0; i--) tabbing.append(" ");
 
                 setActive(false);
-                GUITextInputRect element = (GUITextInputRect) ((MultilineTextInput) parent).add(parent.indexOf(this) + 1, tabbing + after);
+                GUITextInputRect element = (GUITextInputRect) ((MultilineTextInput) parent).add(parent.indexOf(this) + 1, tabbing + after.trim());
                 element.setActive(true);
                 element.cursorPosition = tabs;
             }
