@@ -62,25 +62,31 @@ public class GUIRectScrollView extends GUIRectView
     @Override
     public void draw()
     {
-        double screenWidth = screen.width, screenHeight = screen.height;
-
         recalc2();
 
-        int mcScale = new ScaledResolution(screen.mc).getScaleFactor();
-        double wScale = screenWidth * mcScale, hScale = screenHeight * mcScale;
-        GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GL11.glScissor((int) (x * wScale), (int) ((1 - (y + height)) * hScale), (int) (width * wScale), (int) (height * hScale));
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(0, -top, 0);
-
-        for (GUIElement element : children)
+        if (children.size() > 0 && width > 0 && height > 0)
         {
-            if (element.y + element.height < top || element.y >= bottom) continue;
-            element.draw();
-        }
+            double screenWidth = screen.width, screenHeight = screen.height;
 
-        GlStateManager.popMatrix();
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+            int mcScale = new ScaledResolution(screen.mc).getScaleFactor();
+            double wScale = screenWidth * mcScale, hScale = screenHeight * mcScale;
+
+            GL11.glEnable(GL11.GL_SCISSOR_TEST);
+            GL11.glScissor((int) (x * wScale), (int) ((1 - (y + height)) * hScale), (int) (width * wScale), (int) (height * hScale));
+
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(0, -top, 0);
+
+            for (GUIElement element : children)
+            {
+                if (element.y + element.height < top || element.y >= bottom) continue;
+                element.draw();
+            }
+
+            GlStateManager.popMatrix();
+
+            GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        }
     }
 
     @Override

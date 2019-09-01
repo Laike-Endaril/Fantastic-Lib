@@ -36,30 +36,34 @@ public abstract class GUIElement
 
     public void draw()
     {
-        double screenWidth = screen.width, screenHeight = screen.height;
-
-        int mcScale = new ScaledResolution(screen.mc).getScaleFactor();
-        double wScale = screenWidth * mcScale, hScale = screenHeight * mcScale;
-
-        currentScissor = new int[]{(int) (getScreenX() * wScale), (int) ((1 - (getScreenY() + getScreenHeight())) * hScale), (int) (getScreenWidth() * wScale), (int) (getScreenHeight() * hScale)};
-        if (parent != null && parent.currentScissor != null)
+        if (children.size() > 0 && width > 0 && height > 0)
         {
-            currentScissor[0] = Tools.max(currentScissor[0], parent.currentScissor[0]);
-            currentScissor[1] = Tools.max(currentScissor[1], parent.currentScissor[1]);
-            currentScissor[2] = Tools.min(currentScissor[2], parent.currentScissor[2]);
-            currentScissor[3] = Tools.min(currentScissor[3], parent.currentScissor[3]);
-        }
-        GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GL11.glScissor(currentScissor[0], currentScissor[1], currentScissor[2], currentScissor[3]);
+            double screenWidth = screen.width, screenHeight = screen.height;
 
-        for (GUIElement element : children)
-        {
-            if (element.x + element.width < 0 || element.x > 1 || element.y + element.height < 0 || element.y >= 1) continue;
-            element.draw();
-        }
+            int mcScale = new ScaledResolution(screen.mc).getScaleFactor();
+            double wScale = screenWidth * mcScale, hScale = screenHeight * mcScale;
 
-        currentScissor = null;
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+            currentScissor = new int[]{(int) (getScreenX() * wScale), (int) ((1 - (getScreenY() + getScreenHeight())) * hScale), (int) (getScreenWidth() * wScale), (int) (getScreenHeight() * hScale)};
+            if (parent != null && parent.currentScissor != null)
+            {
+                currentScissor[0] = Tools.max(currentScissor[0], parent.currentScissor[0]);
+                currentScissor[1] = Tools.max(currentScissor[1], parent.currentScissor[1]);
+                currentScissor[2] = Tools.min(currentScissor[2], parent.currentScissor[2]);
+                currentScissor[3] = Tools.min(currentScissor[3], parent.currentScissor[3]);
+            }
+
+            GL11.glEnable(GL11.GL_SCISSOR_TEST);
+            GL11.glScissor(currentScissor[0], currentScissor[1], currentScissor[2], currentScissor[3]);
+
+            for (GUIElement element : children)
+            {
+                if (element.x + element.width < 0 || element.x > 1 || element.y + element.height < 0 || element.y >= 1) continue;
+                element.draw();
+            }
+
+            currentScissor = null;
+            GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        }
     }
 
     public void mouseWheel(double x, double y, int delta)

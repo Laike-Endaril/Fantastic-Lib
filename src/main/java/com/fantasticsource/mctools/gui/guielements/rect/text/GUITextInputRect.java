@@ -290,16 +290,18 @@ public class GUITextInputRect extends GUITextRect
 
         int mcScale = new ScaledResolution(screen.mc).getScaleFactor();
         double wScale = screenWidth * mcScale, hScale = screenHeight * mcScale;
-        GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GL11.glScissor((int) (x * wScale), (int) ((1 - (y + height)) * hScale), (int) (width * wScale), (int) (height * hScale));
 
-        for (GUIElement element : children)
+        if (children.size() > 0 && width > 0 && height > 0)
         {
-            if (element.x + element.width < 0 || element.x > width || element.y + element.height < 0 || element.y >= height) continue;
-            element.draw();
+            GL11.glEnable(GL11.GL_SCISSOR_TEST);
+            GL11.glScissor((int) (x * wScale), (int) ((1 - (y + height)) * hScale), (int) (width * wScale), (int) (height * hScale));
+            for (GUIElement element : children)
+            {
+                if (element.x + element.width < 0 || element.x > width || element.y + element.height < 0 || element.y >= height) continue;
+                element.draw();
+            }
+            GL11.glDisable(GL11.GL_SCISSOR_TEST);
         }
-
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
 
         GlStateManager.enableTexture2D();
@@ -323,7 +325,7 @@ public class GUITextInputRect extends GUITextRect
 
         //Actual text
         Color c = active ? activeColor : isMouseWithin() ? hoverColor : color;
-        FONT_RENDERER.drawString(text, 0, 0, (c.color() >> 8) | c.a() << 24, false);
+        if (text.length() > 0) FONT_RENDERER.drawString(text, 0, 0, (c.color() >> 8) | c.a() << 24, false);
 
 
         //Cursor and selection highlight
