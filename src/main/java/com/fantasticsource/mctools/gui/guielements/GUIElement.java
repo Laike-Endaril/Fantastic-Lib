@@ -161,16 +161,18 @@ public abstract class GUIElement
     }
 
 
-    public void add(GUIElement element)
+    public GUIElement add(GUIElement element)
     {
         element.parent = this;
         children.add(element);
+        return element;
     }
 
-    public void add(int index, GUIElement element)
+    public GUIElement add(int index, GUIElement element)
     {
         element.parent = this;
         children.add(index, element);
+        return element;
     }
 
     public void remove(GUIElement element)
