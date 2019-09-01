@@ -55,6 +55,54 @@ public class GUITextInputRect extends GUITextRect
         filter = FilterNone.INSTANCE;
     }
 
+    public boolean isWhitespace()
+    {
+        for (char c : text.toCharArray()) if (c != ' ') return false;
+        return true;
+    }
+
+    public int nonWhitespaceStart()
+    {
+        int i = 0;
+        for (char c : text.toCharArray())
+        {
+            if (c != ' ') break;
+            i++;
+        }
+        return i;
+    }
+
+    public int nonWhitespaceEnd()
+    {
+        char[] chars = text.toCharArray();
+        int i = chars.length;
+        for (; i > 0; i--)
+        {
+            if (chars[i - 1] != ' ') break;
+        }
+        return i;
+    }
+
+    public int tabbing()
+    {
+        if (!(parent instanceof MultilineTextInput)) return 0;
+
+        int tabbing = 0;
+        for (int index = 0; index < parent.size(); index++)
+        {
+            GUITextInputRect element = (GUITextInputRect) parent.get(index);
+            if (element == this) return tabbing;
+
+            for (char c : element.text.toCharArray())
+            {
+                if (c == '{') tabbing++;
+                else if (c == '}') tabbing--;
+            }
+        }
+
+        throw new IllegalStateException("This should be impossible");
+    }
+
     @Override
     public void keyTyped(char typedChar, int keyCode)
     {
@@ -116,14 +164,8 @@ public class GUITextInputRect extends GUITextRect
             }
             else
             {
-                int startPos2 = 0, startPos = startPos2;
-                char[] chars = text.toCharArray();
-                for (int i = 0; i < chars.length; i++)
-                {
-                    if (chars[i] == ' ') startPos++;
-                    else break;
-                }
-                if (startPos == text.length() || cursorPosition == startPos) startPos = startPos2;
+                int startPos = isWhitespace() ? Tools.min(text.length(), tabbing()) : nonWhitespaceStart();
+                if (cursorPosition == startPos) startPos = 0;
 
                 if (GUIScreen.isShiftKeyDown())
                 {
@@ -156,14 +198,8 @@ public class GUITextInputRect extends GUITextRect
             }
             else
             {
-                int endPos2 = text.length(), endPos = endPos2;
-                char[] chars = text.toCharArray();
-                for (int i = chars.length - 1; i >= 0; i--)
-                {
-                    if (chars[i] == ' ') endPos--;
-                    else break;
-                }
-                if (endPos == 0 || cursorPosition == endPos) endPos = endPos2;
+                int endPos = isWhitespace() ? Tools.min(text.length(), tabbing()) : nonWhitespaceEnd();
+                if (cursorPosition == endPos) endPos = text.length();
 
                 if (GUIScreen.isShiftKeyDown())
                 {
@@ -227,7 +263,7 @@ public class GUITextInputRect extends GUITextRect
             selectorPosition = -1;
             cursorPosition = min + 1;
         }
-        else if (typedChar == '\b')
+        else if (keyCode == Keyboard.KEY_BACK)
         {
             if (selectorPosition != -1 && selectorPosition != cursorPosition)
             {
