@@ -252,6 +252,11 @@ public abstract class GUIElement
         for (GUIElement element : linkedMouseActivity) element.active = active;
     }
 
+    public boolean isActive()
+    {
+        return active;
+    }
+
     public void keyTyped(char typedChar, int keyCode)
     {
         for (GUIElement child : (ArrayList<GUIElement>) children.clone())

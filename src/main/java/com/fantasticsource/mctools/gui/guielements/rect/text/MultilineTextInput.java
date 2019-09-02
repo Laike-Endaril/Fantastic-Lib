@@ -11,6 +11,7 @@ public class MultilineTextInput extends GUIRectScrollView
 {
     public final double lineSpacing, margin;
     public Color color, hoverColor, activeColor, cursorColor, highlightColor;
+    protected int cursorX = 0, selectionStartY = -1;
 
     public MultilineTextInput(GUIScreen screen, double x, double y, double width, double height, String... lines)
     {
@@ -31,6 +32,8 @@ public class MultilineTextInput extends GUIRectScrollView
         margin = (double) FONT_RENDERER.FONT_HEIGHT / screen.height / 4;
         if (lines.length == 0) add("");
         else for (String line : lines) add(line);
+
+        cursorX = ((GUITextInputRect) children.get(0)).text.length();
     }
 
     @Override
@@ -75,6 +78,19 @@ public class MultilineTextInput extends GUIRectScrollView
                 element.y += lineSpacing + newElement.height;
             }
             return super.add(index, newElement);
+        }
+    }
+
+    @Override
+    public void keyTyped(char typedChar, int keyCode)
+    {
+        for (GUIElement element : children)
+        {
+            if (element.isActive())
+            {
+                element.keyTyped(typedChar, keyCode);
+                break;
+            }
         }
     }
 }

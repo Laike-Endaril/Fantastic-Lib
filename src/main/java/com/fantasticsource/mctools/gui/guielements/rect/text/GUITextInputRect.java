@@ -127,6 +127,8 @@ public class GUITextInputRect extends GUITextRect
         else selectorPosition = -1;
 
         cursorPosition = startPos;
+
+        if (parent instanceof MultilineTextInput) ((MultilineTextInput) parent).cursorX = cursorPosition;
     }
 
     protected void singleLineEnd()
@@ -141,6 +143,8 @@ public class GUITextInputRect extends GUITextRect
         else selectorPosition = -1;
 
         cursorPosition = endPos;
+
+        if (parent instanceof MultilineTextInput) ((MultilineTextInput) parent).cursorX = cursorPosition;
     }
 
     @Override
@@ -149,8 +153,6 @@ public class GUITextInputRect extends GUITextRect
         super.keyTyped(typedChar, keyCode);
 
         if (!active) return;
-
-        boolean wasUpDown = false;
 
         if (keyCode == Keyboard.KEY_RETURN)
         {
@@ -180,11 +182,14 @@ public class GUITextInputRect extends GUITextRect
                 GUITextInputRect element = (GUITextInputRect) ((MultilineTextInput) parent).add(parent.indexOf(this) + 1, tabbing + after.trim());
                 element.setActive(true);
                 element.cursorPosition = tabs;
+
+                ((MultilineTextInput) parent).cursorX = tabs;
             }
         }
         else if (keyCode == Keyboard.KEY_HOME)
         {
-            if (parent instanceof MultilineTextInput && GUIScreen.isCtrlKeyDown())
+            int index = parent.indexOf(this);
+            if (parent instanceof MultilineTextInput && index != 0 && GUIScreen.isCtrlKeyDown())
             {
                 if (GUIScreen.isShiftKeyDown())
                 {
@@ -192,21 +197,22 @@ public class GUITextInputRect extends GUITextRect
                 }
                 else
                 {
+                    selectorPosition = -1;
                     GUITextInputRect element = (GUITextInputRect) parent.get(0);
-                    if (element != this)
-                    {
-                        setActive(false);
-                        element.setActive(true);
-                    }
+                    setActive(false);
+                    element.setActive(true);
                     element.cursorPosition = 0;
                     element.selectorPosition = -1;
+
+                    ((MultilineTextInput) parent).cursorX = element.cursorPosition;
                 }
             }
             else singleLineHome();
         }
         else if (keyCode == Keyboard.KEY_END)
         {
-            if (parent instanceof MultilineTextInput && GUIScreen.isCtrlKeyDown())
+            int index = parent.indexOf(this);
+            if (parent instanceof MultilineTextInput && index != parent.size() - 1 && GUIScreen.isCtrlKeyDown())
             {
                 if (GUIScreen.isShiftKeyDown())
                 {
@@ -214,14 +220,14 @@ public class GUITextInputRect extends GUITextRect
                 }
                 else
                 {
+                    selectorPosition = -1;
                     GUITextInputRect element = (GUITextInputRect) parent.get(parent.size() - 1);
-                    if (element != this)
-                    {
-                        setActive(false);
-                        element.setActive(true);
-                    }
+                    setActive(false);
+                    element.setActive(true);
                     element.cursorPosition = element.text.length();
                     element.selectorPosition = -1;
+
+                    ((MultilineTextInput) parent).cursorX = element.cursorPosition;
                 }
             }
             else singleLineEnd();
@@ -232,6 +238,8 @@ public class GUITextInputRect extends GUITextRect
             {
                 selectorPosition = 0;
                 cursorPosition = text.length();
+
+                ((MultilineTextInput) parent).cursorX = cursorPosition;
             }
         }
         else if (GUIScreen.isCtrlKeyDown() && keyCode == Keyboard.KEY_X)
@@ -245,6 +253,8 @@ public class GUITextInputRect extends GUITextRect
                 text = text.substring(0, min) + text.substring(Tools.max(selectorPosition, cursorPosition));
                 selectorPosition = -1;
                 cursorPosition = min;
+
+                ((MultilineTextInput) parent).cursorX = cursorPosition;
             }
 
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(s), null);
@@ -268,6 +278,8 @@ public class GUITextInputRect extends GUITextRect
             text = before + text.substring(Tools.max(cursorPosition, selectorPosition));
             selectorPosition = -1;
             cursorPosition = before.length();
+
+            ((MultilineTextInput) parent).cursorX = cursorPosition;
         }
         else if (typedChar >= ' ' && typedChar <= '~')
         {
@@ -278,6 +290,8 @@ public class GUITextInputRect extends GUITextRect
             text = before + typedChar + after;
             selectorPosition = -1;
             cursorPosition = min + 1;
+
+            ((MultilineTextInput) parent).cursorX = cursorPosition;
         }
         else if (keyCode == Keyboard.KEY_BACK)
         {
@@ -293,6 +307,8 @@ public class GUITextInputRect extends GUITextRect
                 text = text.substring(0, cursorPosition - 1) + text.substring(cursorPosition);
                 cursorPosition--;
             }
+
+            ((MultilineTextInput) parent).cursorX = cursorPosition;
         }
         else if (keyCode == Keyboard.KEY_DELETE)
         {
@@ -307,6 +323,8 @@ public class GUITextInputRect extends GUITextRect
             {
                 text = text.substring(0, cursorPosition) + text.substring(cursorPosition + 1);
             }
+
+            ((MultilineTextInput) parent).cursorX = cursorPosition;
         }
         else if (keyCode == Keyboard.KEY_LEFT)
         {
@@ -326,6 +344,8 @@ public class GUITextInputRect extends GUITextRect
                     while (cursorPosition > 0 && charType(text.charAt(cursorPosition - 1)) == type) cursorPosition--;
                 }
             }
+
+            ((MultilineTextInput) parent).cursorX = cursorPosition;
         }
         else if (keyCode == Keyboard.KEY_RIGHT)
         {
@@ -345,6 +365,8 @@ public class GUITextInputRect extends GUITextRect
                     while (cursorPosition < text.length() && charType(text.charAt(cursorPosition)) == type) cursorPosition++;
                 }
             }
+
+            ((MultilineTextInput) parent).cursorX = cursorPosition;
         }
         else if (keyCode == Keyboard.KEY_UP)
         {
@@ -356,12 +378,12 @@ public class GUITextInputRect extends GUITextRect
                 }
                 else
                 {
-//                    selectorPosition = -1;
-//
-//                    GUITextInputRect element = (GUITextInputRect) parent.get(parent.indexOf(this) - 1);
-//                    setActive(false);
-//                    element.setActive(true);
-//                    element.cursorPosition = Tools.min(element.text.length(), ((MultilineTextInput) parent).cursorX);
+                    selectorPosition = -1;
+
+                    GUITextInputRect element = (GUITextInputRect) parent.get(parent.indexOf(this) - 1);
+                    setActive(false);
+                    element.setActive(true);
+                    element.cursorPosition = Tools.min(element.text.length(), ((MultilineTextInput) parent).cursorX);
                 }
             }
             else singleLineHome();
@@ -376,12 +398,12 @@ public class GUITextInputRect extends GUITextRect
                 }
                 else
                 {
-//                    selectorPosition = -1;
-//
-//                    GUITextInputRect element = (GUITextInputRect) parent.get(parent.indexOf(this) + 1);
-//                    setActive(false);
-//                    element.setActive(true);
-//                    element.cursorPosition = Tools.min(element.text.length(), ((MultilineTextInput) parent).cursorX);
+                    selectorPosition = -1;
+
+                    GUITextInputRect element = (GUITextInputRect) parent.get(parent.indexOf(this) + 1);
+                    setActive(false);
+                    element.setActive(true);
+                    element.cursorPosition = Tools.min(element.text.length(), ((MultilineTextInput) parent).cursorX);
                 }
             }
             else singleLineEnd();
