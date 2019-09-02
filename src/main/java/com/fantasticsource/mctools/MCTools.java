@@ -266,14 +266,21 @@ public class MCTools
 
     public static void printAITasks(EntityLiving living)
     {
+        for (String s : getAITaskData(living)) System.out.println(s);
+    }
+
+    public static ArrayList<String> getAITaskData(EntityLiving living)
+    {
+        ArrayList<String> result = new ArrayList<>();
+
         ExplicitPriorityQueue<EntityAIBase> queue = new ExplicitPriorityQueue<>();
         EntityAIBase ai;
         String str;
         double priority;
 
-        System.out.println("===================================");
-        System.out.println(living.getName());
-        System.out.println("===================================");
+        result.add("===================================");
+        result.add(living.getName());
+        result.add("===================================");
         for (EntityAITasks.EntityAITaskEntry task : living.targetTasks.taskEntries)
         {
             queue.add(task.action, task.priority);
@@ -285,9 +292,9 @@ public class MCTools
             str = ai.getClass().getSimpleName();
             if (str.equals("")) str = ai.getClass().getName();
             if (str.equals("")) str = ai.getClass().getPackage().getName() + ".???????";
-            System.out.println(priority + "\t" + str);
+            result.add(priority + "\t" + str);
         }
-        System.out.println("===================================");
+        result.add("===================================");
         for (EntityAITasks.EntityAITaskEntry task : living.tasks.taskEntries)
         {
             queue.add(task.action, task.priority);
@@ -308,9 +315,11 @@ public class MCTools
             if (str.equals("")) str = ai.getClass().getName();
             if (str.equals("")) str = ai.getClass().getPackage().getName() + ".???????";
 
-            System.out.println(priority + "\t" + (isNPE ? "NpeAttackTargetTaskHolder (" + str + ")" : str));
+            result.add(priority + "\t" + (isNPE ? "NpeAttackTargetTaskHolder (" + str + ")" : str));
         }
-        System.out.println("===================================");
-        System.out.println();
+        result.add("===================================");
+        result.add("");
+
+        return result;
     }
 }
