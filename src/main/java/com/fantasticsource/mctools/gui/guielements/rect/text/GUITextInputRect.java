@@ -55,6 +55,11 @@ public class GUITextInputRect extends GUITextRect
         filter = FilterNone.INSTANCE;
     }
 
+    public boolean hasSelectedText()
+    {
+        return selectorPosition != -1 && selectorPosition != cursorPosition;
+    }
+
     public int charType(char c)
     {
         if (Character.isWhitespace(c)) return 0;
@@ -110,12 +115,42 @@ public class GUITextInputRect extends GUITextRect
         throw new IllegalStateException("This should be impossible");
     }
 
+    protected void singleLineHome()
+    {
+        int startPos = isWhitespace() ? Tools.min(text.length(), tabs()) : nonWhitespaceStart();
+        if (cursorPosition == startPos) startPos = 0;
+
+        if (GUIScreen.isShiftKeyDown())
+        {
+            if (selectorPosition == -1 && cursorPosition != startPos) selectorPosition = cursorPosition;
+        }
+        else selectorPosition = -1;
+
+        cursorPosition = startPos;
+    }
+
+    protected void singleLineEnd()
+    {
+        int endPos = isWhitespace() ? Tools.min(text.length(), tabs()) : nonWhitespaceEnd();
+        if (cursorPosition == endPos) endPos = text.length();
+
+        if (GUIScreen.isShiftKeyDown())
+        {
+            if (selectorPosition == -1 && cursorPosition != endPos) selectorPosition = cursorPosition;
+        }
+        else selectorPosition = -1;
+
+        cursorPosition = endPos;
+    }
+
     @Override
     public void keyTyped(char typedChar, int keyCode)
     {
         super.keyTyped(typedChar, keyCode);
 
         if (!active) return;
+
+        boolean wasUpDown = false;
 
         if (keyCode == Keyboard.KEY_RETURN)
         {
@@ -167,19 +202,7 @@ public class GUITextInputRect extends GUITextRect
                     element.selectorPosition = -1;
                 }
             }
-            else
-            {
-                int startPos = isWhitespace() ? Tools.min(text.length(), tabs()) : nonWhitespaceStart();
-                if (cursorPosition == startPos) startPos = 0;
-
-                if (GUIScreen.isShiftKeyDown())
-                {
-                    if (selectorPosition == -1 && cursorPosition != startPos) selectorPosition = cursorPosition;
-                }
-                else selectorPosition = -1;
-
-                cursorPosition = startPos;
-            }
+            else singleLineHome();
         }
         else if (keyCode == Keyboard.KEY_END)
         {
@@ -201,19 +224,7 @@ public class GUITextInputRect extends GUITextRect
                     element.selectorPosition = -1;
                 }
             }
-            else
-            {
-                int endPos = isWhitespace() ? Tools.min(text.length(), tabs()) : nonWhitespaceEnd();
-                if (cursorPosition == endPos) endPos = text.length();
-
-                if (GUIScreen.isShiftKeyDown())
-                {
-                    if (selectorPosition == -1 && cursorPosition != endPos) selectorPosition = cursorPosition;
-                }
-                else selectorPosition = -1;
-
-                cursorPosition = endPos;
-            }
+            else singleLineEnd();
         }
         else if (GUIScreen.isCtrlKeyDown() && keyCode == Keyboard.KEY_A)
         {
@@ -227,7 +238,7 @@ public class GUITextInputRect extends GUITextRect
         {
             String s = "";
 
-            if (selectorPosition != -1 && selectorPosition != cursorPosition)
+            if (hasSelectedText())
             {
                 int min = Tools.min(selectorPosition, cursorPosition);
                 s = text.substring(min, Tools.max(cursorPosition, selectorPosition));
@@ -242,7 +253,7 @@ public class GUITextInputRect extends GUITextRect
         {
             String s = "";
 
-            if (selectorPosition != -1 && selectorPosition != cursorPosition)
+            if (hasSelectedText())
             {
                 s = text.substring(Tools.min(cursorPosition, selectorPosition), Tools.max(cursorPosition, selectorPosition));
             }
@@ -270,7 +281,7 @@ public class GUITextInputRect extends GUITextRect
         }
         else if (keyCode == Keyboard.KEY_BACK)
         {
-            if (selectorPosition != -1 && selectorPosition != cursorPosition)
+            if (hasSelectedText())
             {
                 int min = Tools.min(selectorPosition, cursorPosition);
                 text = text.substring(0, min) + text.substring(Tools.max(selectorPosition, cursorPosition));
@@ -285,7 +296,7 @@ public class GUITextInputRect extends GUITextRect
         }
         else if (keyCode == Keyboard.KEY_DELETE)
         {
-            if (selectorPosition != -1 && selectorPosition != cursorPosition)
+            if (hasSelectedText())
             {
                 int min = Tools.min(selectorPosition, cursorPosition);
                 text = text.substring(0, min) + text.substring(Tools.max(selectorPosition, cursorPosition));
@@ -334,6 +345,46 @@ public class GUITextInputRect extends GUITextRect
                     while (cursorPosition < text.length() && charType(text.charAt(cursorPosition)) == type) cursorPosition++;
                 }
             }
+        }
+        else if (keyCode == Keyboard.KEY_UP)
+        {
+            if (parent instanceof MultilineTextInput && parent.indexOf(this) > 0)
+            {
+                if (GUIScreen.isShiftKeyDown())
+                {
+                    //TODO Multiline selection
+                }
+                else
+                {
+//                    selectorPosition = -1;
+//
+//                    GUITextInputRect element = (GUITextInputRect) parent.get(parent.indexOf(this) - 1);
+//                    setActive(false);
+//                    element.setActive(true);
+//                    element.cursorPosition = Tools.min(element.text.length(), ((MultilineTextInput) parent).cursorX);
+                }
+            }
+            else singleLineHome();
+        }
+        else if (keyCode == Keyboard.KEY_DOWN)
+        {
+            if (parent instanceof MultilineTextInput && parent.indexOf(this) != parent.size() - 1)
+            {
+                if (GUIScreen.isShiftKeyDown())
+                {
+                    //TODO Multiline selection
+                }
+                else
+                {
+//                    selectorPosition = -1;
+//
+//                    GUITextInputRect element = (GUITextInputRect) parent.get(parent.indexOf(this) + 1);
+//                    setActive(false);
+//                    element.setActive(true);
+//                    element.cursorPosition = Tools.min(element.text.length(), ((MultilineTextInput) parent).cursorX);
+                }
+            }
+            else singleLineEnd();
         }
 
         cursorTime = System.currentTimeMillis();
