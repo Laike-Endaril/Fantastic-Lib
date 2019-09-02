@@ -55,6 +55,13 @@ public class GUITextInputRect extends GUITextRect
         filter = FilterNone.INSTANCE;
     }
 
+    public int charType(char c)
+    {
+        if (Character.isWhitespace(c)) return 0;
+        if (Character.isLetterOrDigit(c)) return 1;
+        return -1;
+    }
+
     public boolean isWhitespace()
     {
         for (char c : text.toCharArray()) if (c != ' ') return false;
@@ -298,7 +305,16 @@ public class GUITextInputRect extends GUITextRect
             }
             else selectorPosition = -1;
 
-            if (cursorPosition > 0) cursorPosition--;
+            if (cursorPosition > 0)
+            {
+                int type = charType(text.charAt(cursorPosition - 1));
+                cursorPosition--;
+
+                if (type != -1 && GUIScreen.isCtrlKeyDown())
+                {
+                    while (cursorPosition > 0 && charType(text.charAt(cursorPosition - 1)) == type) cursorPosition--;
+                }
+            }
         }
         else if (keyCode == Keyboard.KEY_RIGHT)
         {
@@ -308,7 +324,16 @@ public class GUITextInputRect extends GUITextRect
             }
             else selectorPosition = -1;
 
-            if (cursorPosition < text.length()) cursorPosition++;
+            if (cursorPosition < text.length())
+            {
+                int type = charType(text.charAt(cursorPosition));
+                cursorPosition++;
+
+                if (type != -1 && GUIScreen.isCtrlKeyDown())
+                {
+                    while (cursorPosition < text.length() && charType(text.charAt(cursorPosition)) == type) cursorPosition++;
+                }
+            }
         }
 
         cursorTime = System.currentTimeMillis();
