@@ -23,7 +23,7 @@ public class ServerTickTimer
         if (event.phase == TickEvent.Phase.END)
         {
             currentTick++;
-            runnables.entrySet().removeIf(e -> e.getKey() >= currentTick && execute(e.getValue()));
+            runnables.entrySet().removeIf(e -> currentTick >= e.getKey() && execute(e.getValue()));
         }
     }
 
