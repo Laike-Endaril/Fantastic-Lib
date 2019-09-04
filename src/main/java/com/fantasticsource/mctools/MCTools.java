@@ -11,7 +11,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.IThreadListener;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.MinecraftForge;
@@ -47,26 +46,6 @@ public class MCTools
         {
             crash(e, 700, false);
         }
-    }
-
-
-    public static void schedule(IThreadListener threadListener, Runnable runnable, String threadName, int millisDelay)
-    {
-        Thread thread = new Thread(() ->
-        {
-            try
-            {
-                Thread.sleep(millisDelay);
-            }
-            catch (InterruptedException e)
-            {
-                e.printStackTrace();
-            }
-            threadListener.addScheduledTask(runnable);
-        });
-
-        thread.setName(threadName);
-        thread.start();
     }
 
 
