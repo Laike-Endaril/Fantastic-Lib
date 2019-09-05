@@ -1,5 +1,6 @@
 package com.fantasticsource.mctools.gui.guielements.rect.text;
 
+import com.fantasticsource.mctools.MonoASCIIFontRenderer;
 import com.fantasticsource.mctools.gui.GUILeftClickEvent;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.guielements.GUIElement;
@@ -25,7 +26,7 @@ public class GUITextInputRect extends GUITextRect
     private static final Color T_WHITE = new Color(0xFFFFFF88);
 
     protected int cursorPosition, selectorPosition = -1;
-    protected Color cursorColor, highlightColor;
+    protected Color cursorColor, highlightColor, shadowColor;
     protected long cursorTime;
     private TextFilter filter;
 
@@ -37,22 +38,26 @@ public class GUITextInputRect extends GUITextRect
     {
         super(screen, x, y, text, filter.acceptable(text) ? GREEN : RED);
 
-        cursorPosition = text.length();
         this.filter = filter;
+
+        cursorPosition = text.length();
 
         cursorColor = WHITE;
         highlightColor = T_WHITE;
+        shadowColor = color.v() >= 64 ? BLACK : WHITE;
     }
 
     public GUITextInputRect(GUIScreen screen, double x, double y, String text, Color color, Color hoverColor, Color activeColor, Color cursorColor, Color hightlightColor)
     {
         super(screen, x, y, text, color, hoverColor, activeColor);
 
+        filter = FilterNone.INSTANCE;
+
         cursorPosition = text.length();
+
         this.cursorColor = cursorColor;
         this.highlightColor = hightlightColor;
-
-        filter = FilterNone.INSTANCE;
+        shadowColor = color.v() >= 64 ? BLACK : WHITE;
     }
 
     public boolean hasSelectedText()
@@ -526,25 +531,30 @@ public class GUITextInputRect extends GUITextRect
         //Highlight red if text does not pass filter
         if (!filter.acceptable(text))
         {
-            GlStateManager.disableTexture2D();
-            GlStateManager.color(1, 0, 0, 0.7f);
-            GlStateManager.glBegin(GL11.GL_LINES);
-            GlStateManager.glVertex3f(0, -0.5f, 0);
-            GlStateManager.glVertex3f(0, (float) (height * screenHeight), 0);
-            GlStateManager.glEnd();
+            //TODO
+//            GlStateManager.disableTexture2D();
+//            GlStateManager.color(1, 0, 0, 0.7f);
+//            GlStateManager.glBegin(GL11.GL_LINES);
+//            GlStateManager.glVertex3f(0, -0.5f, 0);
+//            GlStateManager.glVertex3f(0, (float) (height * screenHeight), 0);
+//            GlStateManager.glEnd();
         }
 
 
         //Actual text
         Color c = active ? activeColor : isMouseWithin() ? hoverColor : color;
-        if (text.length() > 0) FONT_RENDERER.drawString(text, 0, 0, (c.color() >> 8) | c.a() << 24, false);
+        if (text.length() > 0)
+        {
+            if (parent instanceof MultilineTextInput) MonoASCIIFontRenderer.draw(text, 0, 0, c, shadowColor);
+            else FONT_RENDERER.drawString(text, 0, 0, (c.color() >> 8) | c.a() << 24, false);
+        }
 
 
         //Cursor and selection highlight
         if (active)
         {
-            float cursorX = FONT_RENDERER.getStringWidth(text.substring(0, cursorPosition)) - 0.5f;
-            float selectorX = selectorPosition == -1 ? cursorX : FONT_RENDERER.getStringWidth(text.substring(0, selectorPosition)) - 0.5f;
+            float cursorX = parent instanceof MultilineTextInput ? MonoASCIIFontRenderer.getStringWidth(text.substring(0, cursorPosition)) : FONT_RENDERER.getStringWidth(text.substring(0, cursorPosition)) - 0.5f;
+            float selectorX = selectorPosition == -1 ? cursorX : (parent instanceof MultilineTextInput ? MonoASCIIFontRenderer.getStringWidth(text.substring(0, selectorPosition)) : FONT_RENDERER.getStringWidth(text.substring(0, selectorPosition))) - 0.5f;
 
             if (cursorX != selectorX)
             {
@@ -597,7 +607,7 @@ public class GUITextInputRect extends GUITextRect
         for (char c : text.toCharArray())
         {
             double lastDif = dif;
-            dif -= (double) FONT_RENDERER.getCharWidth(c) / screen.width;
+            dif -= (double) (parent instanceof MultilineTextInput ? MonoASCIIFontRenderer.CHAR_WIDTH : FONT_RENDERER.getCharWidth(c)) / screen.width;
             if (dif <= 0)
             {
                 if (Math.abs(dif) < lastDif) result++;

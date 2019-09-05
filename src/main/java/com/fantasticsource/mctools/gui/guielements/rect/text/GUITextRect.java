@@ -1,5 +1,6 @@
 package com.fantasticsource.mctools.gui.guielements.rect.text;
 
+import com.fantasticsource.mctools.MonoASCIIFontRenderer;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.guielements.GUIElement;
 import com.fantasticsource.mctools.gui.guielements.rect.GUIRectElement;
@@ -30,8 +31,8 @@ public class GUITextRect extends GUIRectElement
     @Override
     public GUIElement recalc()
     {
-        width = (double) (FONT_RENDERER.getStringWidth(text) - 1) / screen.width;
-        height = (double) (FONT_RENDERER.FONT_HEIGHT - 1) / screen.height;
+        width = (double) (parent instanceof MultilineTextInput ? MonoASCIIFontRenderer.getStringWidth(text) : FONT_RENDERER.getStringWidth(text) - 1) / screen.width;
+        height = (double) (parent instanceof MultilineTextInput ? MonoASCIIFontRenderer.CHAR_HEIGHT : FONT_RENDERER.FONT_HEIGHT - 1) / screen.height;
 
         return super.recalc();
     }

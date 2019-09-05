@@ -169,6 +169,7 @@ public abstract class GUIElement
     {
         element.parent = this;
         children.add(element);
+        element.recalc();
         return element;
     }
 
@@ -176,6 +177,7 @@ public abstract class GUIElement
     {
         element.parent = this;
         children.add(index, element);
+        element.recalc();
         return element;
     }
 

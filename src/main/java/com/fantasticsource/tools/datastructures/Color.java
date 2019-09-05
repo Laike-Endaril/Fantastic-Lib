@@ -318,4 +318,9 @@ public class Color
     {
         return hex();
     }
+
+    public int v()
+    {
+        return (int) ((double) (r + g + b) / 3);
+    }
 }
