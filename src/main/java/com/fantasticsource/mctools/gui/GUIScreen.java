@@ -143,6 +143,12 @@ public abstract class GUIScreen extends GuiScreen
         }
     }
 
+    public void close()
+    {
+        Minecraft mc = Minecraft.getMinecraft();
+        if (mc.currentScreen == this) mc.player.closeScreenAndDropStack();
+    }
+
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException
     {
