@@ -99,11 +99,12 @@ public abstract class GUIScreen extends GuiScreen
         mouseY = (double) (displayHeight - 1 - Mouse.getY()) / displayHeight;
 
 
+        GUIElement[] elements = guiElements.toArray(new GUIElement[0]);
         //Mouse wheel
         int delta = Mouse.getDWheel();
         if (delta != 0)
         {
-            for (GUIElement element : guiElements)
+            for (GUIElement element : elements)
             {
                 element.mouseWheel(mouseX, mouseY, delta);
             }
@@ -117,7 +118,7 @@ public abstract class GUIScreen extends GuiScreen
             if (Mouse.isButtonDown(btn))
             {
                 mouseButtons.add(btn);
-                for (GUIElement element : guiElements)
+                for (GUIElement element : elements)
                 {
                     element.mousePressed(mouseX, mouseY, btn);
                 }
@@ -125,7 +126,7 @@ public abstract class GUIScreen extends GuiScreen
             else
             {
                 mouseButtons.remove((Integer) btn); //Need to cast so it uses the object-based removal and not the index-based removal
-                for (GUIElement element : guiElements)
+                for (GUIElement element : elements)
                 {
                     element.mouseReleased(mouseX, mouseY, btn);
                 }
@@ -135,7 +136,7 @@ public abstract class GUIScreen extends GuiScreen
         {
             for (int b : mouseButtons)
             {
-                for (GUIElement element : guiElements)
+                for (GUIElement element : elements)
                 {
                     element.mouseDrag(mouseX, mouseY, b);
                 }
