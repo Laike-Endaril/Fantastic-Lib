@@ -179,6 +179,8 @@ public class GUITextInputRect extends GUITextRect
                     if (c == '{') tabs++;
                     else if (c == '}') tabs--;
                 }
+                String s = after.trim();
+                if (s.length() > 0 && s.charAt(0) == '}') tabs--;
 
                 StringBuilder tabbing = new StringBuilder();
                 for (int i = tabs; i > 0; i--) tabbing.append(" ");
