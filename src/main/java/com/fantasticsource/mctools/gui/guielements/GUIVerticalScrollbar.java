@@ -9,7 +9,6 @@ import com.fantasticsource.tools.datastructures.Color;
 
 public class GUIVerticalScrollbar extends GUIRectElement
 {
-    private double sliderHeight;
     private GUIGradientBorder background, slider;
     private GUIRectScrollView scrollView;
 
@@ -19,10 +18,8 @@ public class GUIVerticalScrollbar extends GUIRectElement
         this.scrollView = scrollView;
 
         background = new GUIGradientBorder(screen, x, y, width, height, 1d / 3, backgroundBorder, backgroundCenter);
-        height = background.height;
-        sliderHeight = height / 10;
 
-        slider = new GUIGradientBorder(screen, 0, 0, width, sliderHeight, 1d / 3, sliderBorder, sliderCenter);
+        slider = new GUIGradientBorder(screen, x, y, width, height / 10, 1d / 3, sliderBorder, sliderCenter);
     }
 
     @Override
@@ -32,7 +29,7 @@ public class GUIVerticalScrollbar extends GUIRectElement
 
         if (scrollView.progress >= 0 && scrollView.progress <= 1)
         {
-            slider.y = y + (this.height - sliderHeight) * scrollView.progress;
+            slider.y = y + (height - slider.height) * scrollView.progress;
             slider.draw();
         }
 
