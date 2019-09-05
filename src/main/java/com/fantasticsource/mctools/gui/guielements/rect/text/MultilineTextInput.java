@@ -62,7 +62,7 @@ public class MultilineTextInput extends GUIRectScrollView
         else
         {
             GUIElement element = children.get(children.size() - 1);
-            return super.add(new GUITextInputRect(screen, margin, element.y + element.height + lineSpacing, s, color, hoverColor, activeColor, cursorColor, highlightColor));
+            return super.add(new GUITextInputRect(screen, margin, element.y + element.height + lineSpacing + (1d / screen.height), s, color, hoverColor, activeColor, cursorColor, highlightColor));
         }
     }
 
@@ -71,11 +71,11 @@ public class MultilineTextInput extends GUIRectScrollView
         if (index == 0) return add(s);
         else
         {
-            GUIElement element = children.get(index - 1), newElement = new GUITextInputRect(screen, margin, element.y + element.height + lineSpacing, s, color, hoverColor, activeColor, cursorColor, highlightColor);
+            GUIElement element = children.get(index - 1), newElement = new GUITextInputRect(screen, margin, element.y + element.height + lineSpacing + (1d / screen.height), s, color, hoverColor, activeColor, cursorColor, highlightColor);
             for (int i = index; i < children.size(); i++)
             {
                 element = children.get(i);
-                element.y += lineSpacing + newElement.height;
+                element.y += lineSpacing + (1d / screen.height) + newElement.height;
             }
             return super.add(index, newElement);
         }
