@@ -473,6 +473,7 @@ public class GUITextInputRect extends GUITextRect
             }
 
             if (parent instanceof MultilineTextInput) ((MultilineTextInput) parent).cursorX = cursorPosition;
+            cursorTime = System.currentTimeMillis();
         }
         else setActive(false);
 
@@ -498,6 +499,8 @@ public class GUITextInputRect extends GUITextRect
             cursorPosition = findCursorPosition(mouseX());
             if (selectorPosition == cursorPosition) selectorPosition = -1;
         }
+
+        cursorTime = System.currentTimeMillis();
 
         super.mouseDrag(x, y, button);
     }
