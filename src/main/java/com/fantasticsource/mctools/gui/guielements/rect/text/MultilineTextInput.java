@@ -37,12 +37,6 @@ public class MultilineTextInput extends GUIRectScrollView
     }
 
     @Override
-    public GUIElement recalc()
-    {
-        return super.recalc();
-    }
-
-    @Override
     public GUIElement add(GUIElement element)
     {
         if (!(element instanceof GUITextInputRect)) throw new IllegalArgumentException("Multiline text inputs can only have text inputs added to them!");
@@ -75,7 +69,7 @@ public class MultilineTextInput extends GUIRectScrollView
             for (int i = index; i < children.size(); i++)
             {
                 element = children.get(i);
-                element.y += lineSpacing + (1d / screen.height) + newElement.height;
+                element.y += (lineSpacing + (1d / screen.height) + newElement.height) / height;
             }
             return super.add(index, newElement);
         }

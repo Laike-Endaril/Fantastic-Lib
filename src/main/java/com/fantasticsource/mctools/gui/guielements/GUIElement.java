@@ -169,7 +169,7 @@ public abstract class GUIElement
     {
         element.parent = this;
         children.add(element);
-        element.recalc();
+        recalc();
         return element;
     }
 
@@ -177,7 +177,7 @@ public abstract class GUIElement
     {
         element.parent = this;
         children.add(index, element);
-        element.recalc();
+        recalc();
         return element;
     }
 
@@ -185,12 +185,14 @@ public abstract class GUIElement
     {
         if (element.parent == this) element.parent = null;
         children.remove(element);
+        recalc();
     }
 
     public void remove(int index)
     {
         GUIElement element = children.remove(index);
         if (element.parent == this) element.parent = null;
+        recalc();
     }
 
     public int size()
@@ -202,6 +204,7 @@ public abstract class GUIElement
     {
         for (GUIElement child : (ArrayList<GUIElement>) children.clone()) if (child.parent == this) child.parent = null;
         children.clear();
+        recalc();
     }
 
     public GUIElement get(int index)
