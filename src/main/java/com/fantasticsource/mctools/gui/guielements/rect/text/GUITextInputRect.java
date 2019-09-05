@@ -471,6 +471,8 @@ public class GUITextInputRect extends GUITextRect
                 else selectorPosition = -1;
                 cursorPosition = findCursorPosition(mouseX());
             }
+
+            if (parent instanceof MultilineTextInput) ((MultilineTextInput) parent).cursorX = cursorPosition;
         }
         else setActive(false);
 
