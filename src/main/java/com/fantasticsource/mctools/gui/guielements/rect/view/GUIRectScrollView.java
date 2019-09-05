@@ -35,7 +35,7 @@ public class GUIRectScrollView extends GUIRectView
             if (element instanceof GUIRectElement)
             {
                 element.recalc();
-                internalHeight = Tools.max(internalHeight, element.y + element.height);
+                internalHeight = Tools.max(internalHeight, element.y * height + element.height);
             }
         }
 
