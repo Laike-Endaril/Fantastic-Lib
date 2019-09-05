@@ -246,7 +246,7 @@ public class GUITextInputRect extends GUITextRect
                 selectorPosition = 0;
                 cursorPosition = text.length();
 
-                ((MultilineTextInput) parent).cursorX = cursorPosition;
+                if (parent instanceof MultilineTextInput) ((MultilineTextInput) parent).cursorX = cursorPosition;
             }
         }
         else if (GUIScreen.isCtrlKeyDown() && keyCode == Keyboard.KEY_X)
@@ -261,7 +261,7 @@ public class GUITextInputRect extends GUITextRect
                 selectorPosition = -1;
                 cursorPosition = min;
 
-                ((MultilineTextInput) parent).cursorX = cursorPosition;
+                if (parent instanceof MultilineTextInput) ((MultilineTextInput) parent).cursorX = cursorPosition;
             }
 
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(s), null);
@@ -286,7 +286,7 @@ public class GUITextInputRect extends GUITextRect
             selectorPosition = -1;
             cursorPosition = before.length();
 
-            ((MultilineTextInput) parent).cursorX = cursorPosition;
+            if (parent instanceof MultilineTextInput) ((MultilineTextInput) parent).cursorX = cursorPosition;
         }
         else if (typedChar >= ' ' && typedChar <= '~')
         {
@@ -298,7 +298,7 @@ public class GUITextInputRect extends GUITextRect
             selectorPosition = -1;
             cursorPosition = min + 1;
 
-            ((MultilineTextInput) parent).cursorX = cursorPosition;
+            if (parent instanceof MultilineTextInput) ((MultilineTextInput) parent).cursorX = cursorPosition;
         }
         else if (keyCode == Keyboard.KEY_BACK)
         {
@@ -315,7 +315,7 @@ public class GUITextInputRect extends GUITextRect
                 cursorPosition--;
             }
 
-            ((MultilineTextInput) parent).cursorX = cursorPosition;
+            if (parent instanceof MultilineTextInput) ((MultilineTextInput) parent).cursorX = cursorPosition;
         }
         else if (keyCode == Keyboard.KEY_DELETE)
         {
@@ -331,7 +331,7 @@ public class GUITextInputRect extends GUITextRect
                 text = text.substring(0, cursorPosition) + text.substring(cursorPosition + 1);
             }
 
-            ((MultilineTextInput) parent).cursorX = cursorPosition;
+            if (parent instanceof MultilineTextInput) ((MultilineTextInput) parent).cursorX = cursorPosition;
         }
         else if (keyCode == Keyboard.KEY_LEFT)
         {
@@ -351,8 +351,12 @@ public class GUITextInputRect extends GUITextRect
                     while (cursorPosition > 0 && charType(text.charAt(cursorPosition - 1)) == type) cursorPosition--;
                 }
             }
+            else if (parent instanceof MultilineTextInput)
+            {
+                //TODO
+            }
 
-            ((MultilineTextInput) parent).cursorX = cursorPosition;
+            if (parent instanceof MultilineTextInput) ((MultilineTextInput) parent).cursorX = cursorPosition;
         }
         else if (keyCode == Keyboard.KEY_RIGHT)
         {
@@ -372,8 +376,12 @@ public class GUITextInputRect extends GUITextRect
                     while (cursorPosition < text.length() && charType(text.charAt(cursorPosition)) == type) cursorPosition++;
                 }
             }
+            else if (parent instanceof MultilineTextInput)
+            {
+                //TODO
+            }
 
-            ((MultilineTextInput) parent).cursorX = cursorPosition;
+            if (parent instanceof MultilineTextInput) ((MultilineTextInput) parent).cursorX = cursorPosition;
         }
         else if (keyCode == Keyboard.KEY_UP)
         {
