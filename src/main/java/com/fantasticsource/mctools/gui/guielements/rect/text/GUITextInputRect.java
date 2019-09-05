@@ -434,7 +434,7 @@ public class GUITextInputRect extends GUITextRect
         if (parent instanceof MultilineTextInput)
         {
             double yy = getScreenY();
-            return parent.isWithin(x, y) && yy <= y && y < yy + getScreenHeight();
+            return yy <= y && y < yy + getScreenHeight();
         }
         return super.isWithin(x, y);
     }

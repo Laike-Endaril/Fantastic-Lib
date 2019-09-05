@@ -11,7 +11,7 @@ public class MultilineTextInput extends GUIRectScrollView
 {
     public final double lineSpacing, margin;
     public Color color, hoverColor, activeColor, cursorColor, highlightColor;
-    protected int cursorX = 0, selectionStartY = -1;
+    protected int cursorX, selectionStartY = -1;
 
     public MultilineTextInput(GUIScreen screen, double x, double y, double width, double height, String... lines)
     {
