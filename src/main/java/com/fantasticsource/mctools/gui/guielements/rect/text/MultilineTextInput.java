@@ -15,7 +15,7 @@ public class MultilineTextInput extends GUIRectScrollView
 
     public MultilineTextInput(GUIScreen screen, double x, double y, double width, double height, String... lines)
     {
-        this(screen, x, y, width, height, GUIScreen.getColor(Color.GRAY), GUIScreen.getHover(Color.GRAY), Color.GRAY, Color.WHITE, Color.WHITE.copy().setAF(0.4f), lines);
+        this(screen, x, y, width, height, GUIScreen.getColor(Color.WHITE), GUIScreen.getHover(Color.WHITE), Color.WHITE, Color.WHITE, Color.WHITE.copy().setAF(0.4f), lines);
     }
 
     public MultilineTextInput(GUIScreen screen, double x, double y, double width, double height, Color color, Color hoverColor, Color activeColor, Color cursorColor, Color hightlightColor, String... lines)
