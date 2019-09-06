@@ -108,7 +108,7 @@ public class GUITextInputRect extends GUITextRect
         for (int index = 0; index < parent.size(); index++)
         {
             GUITextInputRect element = (GUITextInputRect) parent.get(index);
-            if (element == this) return tabbing;
+            if (element == this) return Tools.max(0, tabbing);
 
             for (char c : element.text.toCharArray())
             {
@@ -194,6 +194,7 @@ public class GUITextInputRect extends GUITextRect
                 }
                 String s = after.trim();
                 if (s.length() > 0 && s.charAt(0) == '}') tabs--;
+                tabs = Tools.max(0, tabs);
 
                 StringBuilder tabbing = new StringBuilder();
                 for (int i = tabs; i > 0; i--) tabbing.append(" ");
@@ -469,7 +470,7 @@ public class GUITextInputRect extends GUITextRect
 
                     if (element.y * multi.height + element.height > multi.bottom)
                     {
-                        multi.progress = Tools.min(1, (element.y + element.height - multi.height) * multi.height / (multi.internalHeight - multi.height));
+                        multi.progress = Tools.min(1, ((element.y + element.height - multi.height) * multi.height - multi.height * multi.height * multi.height) / (multi.internalHeight - multi.height));
                     }
                 }
             }
