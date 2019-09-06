@@ -11,7 +11,7 @@ import org.lwjgl.opengl.GL11;
 public class GUIRectScrollView extends GUIRectView
 {
     public double internalHeight, progress = -1;
-    private double top, bottom;
+    public double top, bottom;
 
     public GUIRectScrollView(GUIScreen screen, double x, double y, double width, double height, GUIRectElement... subElements)
     {

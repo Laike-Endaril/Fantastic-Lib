@@ -458,12 +458,19 @@ public class GUITextInputRect extends GUITextRect
                 }
                 else
                 {
+                    MultilineTextInput multi = (MultilineTextInput) parent;
+
                     deselectAll();
 
-                    GUITextInputRect element = (GUITextInputRect) parent.get(parent.indexOf(this) + 1);
+                    GUITextInputRect element = (GUITextInputRect) multi.get(multi.indexOf(this) + 1);
                     setActive(false);
                     element.setActive(true);
-                    element.cursorPosition = Tools.min(element.text.length(), ((MultilineTextInput) parent).cursorX);
+                    element.cursorPosition = Tools.min(element.text.length(), multi.cursorX);
+
+                    if (element.y * multi.height + element.height > multi.bottom)
+                    {
+                        multi.progress = Tools.min(1, (element.y + element.height - multi.height) * multi.height / (multi.internalHeight - multi.height));
+                    }
                 }
             }
             else singleLineEnd();
