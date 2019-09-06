@@ -18,7 +18,7 @@ public abstract class GUIElement
 
     public double x, y, width, height;
     public GUIElement parent = null;
-    protected ArrayList<GUIElement> children = new ArrayList<>();
+    public ArrayList<GUIElement> children = new ArrayList<>();
     protected GUIScreen screen;
     protected boolean active = false, externalDeactivation = false;
     private ArrayList<GUIElement> linkedMouseActivity = new ArrayList<>();
