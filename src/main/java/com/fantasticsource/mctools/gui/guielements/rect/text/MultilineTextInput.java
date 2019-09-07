@@ -8,7 +8,7 @@ import com.fantasticsource.tools.datastructures.Color;
 
 public class MultilineTextInput extends GUIRectScrollView
 {
-    public final double lineSpacing;
+    public final int lineSpacing = 0;
     public Color color, hoverColor, activeColor, cursorColor, highlightColor;
     protected int cursorX, selectionStartY = -1;
 
@@ -27,7 +27,6 @@ public class MultilineTextInput extends GUIRectScrollView
         this.cursorColor = cursorColor;
         this.highlightColor = hightlightColor;
 
-        lineSpacing = 0;
         if (lines.length == 0) add("");
         else for (String line : lines) add(line);
 
@@ -43,7 +42,7 @@ public class MultilineTextInput extends GUIRectScrollView
         {
             element.recalc();
             if (prev == null) element.y = 0;
-            else element.y = prev.y + prev.height / height + lineSpacing / height;
+            else element.y = prev.y + prev.height / height + (double) lineSpacing / screen.height / height;
             prev = element;
             internalHeight = Tools.max(internalHeight, element.y * height + element.height);
         }
@@ -73,7 +72,7 @@ public class MultilineTextInput extends GUIRectScrollView
         else
         {
             GUIElement element = children.get(children.size() - 1);
-            return super.add(new GUITextInputRect(screen, 0, element.y + (element.height + lineSpacing + (1d / screen.height)) / height, s, color, hoverColor, activeColor, cursorColor, highlightColor));
+            return super.add(new GUITextInputRect(screen, 0, element.y + (element.height + (double) lineSpacing / screen.height / height + (1d / screen.height)) / height, s, color, hoverColor, activeColor, cursorColor, highlightColor));
         }
     }
 
@@ -82,11 +81,11 @@ public class MultilineTextInput extends GUIRectScrollView
         if (index == 0) return add(s);
         else
         {
-            GUIElement element = children.get(index - 1), newElement = new GUITextInputRect(screen, 0, element.y + (element.height + lineSpacing + (1d / screen.height)) / height, s, color, hoverColor, activeColor, cursorColor, highlightColor);
+            GUIElement element = children.get(index - 1), newElement = new GUITextInputRect(screen, 0, element.y + (element.height + (double) lineSpacing / screen.height / height + (1d / screen.height)) / height, s, color, hoverColor, activeColor, cursorColor, highlightColor);
             for (int i = index; i < children.size(); i++)
             {
                 element = children.get(i);
-                element.y += (lineSpacing + (1d / screen.height) + newElement.height) / height;
+                element.y += ((double) lineSpacing / screen.height / height + (1d / screen.height) + newElement.height) / height;
             }
             return super.add(index, newElement);
         }

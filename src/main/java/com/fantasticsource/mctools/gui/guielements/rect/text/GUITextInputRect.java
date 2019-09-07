@@ -659,10 +659,10 @@ public class GUITextInputRect extends GUITextRect
                 GlStateManager.disableTexture2D();
                 GlStateManager.color(highlightColor.rf(), highlightColor.gf(), highlightColor.bf(), highlightColor.af());
                 GlStateManager.glBegin(GL11.GL_QUADS);
-                GlStateManager.glVertex3f(min, -0.5f, 0);
+                GlStateManager.glVertex3f(min, 0, 0);
                 GlStateManager.glVertex3f(min, (float) (height * screenHeight), 0);
                 GlStateManager.glVertex3f(max, (float) (height * screenHeight), 0);
-                GlStateManager.glVertex3f(max, -0.5f, 0);
+                GlStateManager.glVertex3f(max, 0, 0);
                 GlStateManager.glEnd();
             }
 
