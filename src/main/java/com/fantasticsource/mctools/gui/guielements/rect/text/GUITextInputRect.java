@@ -165,6 +165,38 @@ public class GUITextInputRect extends GUITextRect
         if (parent instanceof MultilineTextInput) ((MultilineTextInput) parent).cursorX = cursorPosition;
     }
 
+    protected GUITextInputRect multilineDelete()
+    {
+        if (!(parent instanceof MultilineTextInput) || ((MultilineTextInput) parent).selectionStartY == -1 || ((MultilineTextInput) parent).selectionStartY == parent.indexOf(this)) return null;
+
+        MultilineTextInput multi = (MultilineTextInput) parent;
+        int index = parent.indexOf(this);
+        int firstY = Tools.min(index, multi.selectionStartY);
+        int lastY = Tools.max(index, multi.selectionStartY);
+
+        GUITextInputRect element = (GUITextInputRect) multi.get(lastY);
+        String s = element.text.substring(Tools.max(element.cursorPosition, element.selectorPosition));
+
+        element = (GUITextInputRect) multi.get(firstY);
+        int nextCursorPos = Tools.min(element.selectorPosition, element.cursorPosition);
+        element.text = element.text.substring(0, nextCursorPos) + s;
+
+        setActive(false);
+        for (int i = lastY - firstY; i > 0; i--)
+        {
+            multi.remove(firstY + 1);
+        }
+        element.setActive(true);
+
+        element.selectorPosition = -1;
+        element.cursorPosition = nextCursorPos;
+
+        multi.cursorX = nextCursorPos;
+        multi.selectionStartY = -1;
+
+        return element;
+    }
+
     @Override
     public void keyTyped(char typedChar, int keyCode)
     {
@@ -379,36 +411,72 @@ public class GUITextInputRect extends GUITextRect
         }
         else if (keyCode == Keyboard.KEY_BACK)
         {
-            if (hasSelectedText())
+            if (multilineDelete() == null)
             {
-                int min = Tools.min(selectorPosition, cursorPosition);
-                text = text.substring(0, min) + text.substring(Tools.max(selectorPosition, cursorPosition));
-                deselectAll();
-                cursorPosition = min;
-            }
-            else if (cursorPosition > 0)
-            {
-                text = text.substring(0, cursorPosition - 1) + text.substring(cursorPosition);
-                cursorPosition--;
-            }
+                if (hasSelectedText())
+                {
+                    int min = Tools.min(selectorPosition, cursorPosition);
+                    text = text.substring(0, min) + text.substring(Tools.max(selectorPosition, cursorPosition));
+                    deselectAll();
+                    cursorPosition = min;
+                }
+                else if (cursorPosition > 0)
+                {
+                    text = text.substring(0, cursorPosition - 1) + text.substring(cursorPosition);
+                    cursorPosition--;
+                }
+                else if (parent instanceof MultilineTextInput)
+                {
+                    int index = parent.indexOf(this);
+                    if (index != 0)
+                    {
+                        GUITextInputRect other = (GUITextInputRect) parent.get(index - 1);
+                        text = other.text + text;
+                        cursorPosition = other.text.length();
+                        parent.remove(index - 1);
+                    }
+                }
 
-            if (parent instanceof MultilineTextInput) ((MultilineTextInput) parent).cursorX = cursorPosition;
+                if (parent instanceof MultilineTextInput)
+                {
+                    MultilineTextInput multi = (MultilineTextInput) parent;
+                    multi.cursorX = cursorPosition;
+                    multi.selectionStartY = -1;
+                }
+            }
         }
         else if (keyCode == Keyboard.KEY_DELETE)
         {
-            if (hasSelectedText())
+            if (multilineDelete() == null)
             {
-                int min = Tools.min(selectorPosition, cursorPosition);
-                text = text.substring(0, min) + text.substring(Tools.max(selectorPosition, cursorPosition));
-                deselectAll();
-                cursorPosition = min;
-            }
-            else if (cursorPosition < text.length())
-            {
-                text = text.substring(0, cursorPosition) + text.substring(cursorPosition + 1);
-            }
+                if (hasSelectedText())
+                {
+                    int min = Tools.min(selectorPosition, cursorPosition);
+                    text = text.substring(0, min) + text.substring(Tools.max(selectorPosition, cursorPosition));
+                    deselectAll();
+                    cursorPosition = min;
+                }
+                else if (cursorPosition < text.length())
+                {
+                    text = text.substring(0, cursorPosition) + text.substring(cursorPosition + 1);
+                }
+                else if (parent instanceof MultilineTextInput)
+                {
+                    int index = parent.indexOf(this);
+                    if (index != parent.size() - 1)
+                    {
+                        text = text + ((GUITextInputRect) parent.get(index + 1)).text;
+                        parent.remove(index + 1);
+                    }
+                }
 
-            if (parent instanceof MultilineTextInput) ((MultilineTextInput) parent).cursorX = cursorPosition;
+                if (parent instanceof MultilineTextInput)
+                {
+                    MultilineTextInput multi = (MultilineTextInput) parent;
+                    multi.cursorX = cursorPosition;
+                    multi.selectionStartY = -1;
+                }
+            }
         }
         else if (keyCode == Keyboard.KEY_LEFT)
         {
