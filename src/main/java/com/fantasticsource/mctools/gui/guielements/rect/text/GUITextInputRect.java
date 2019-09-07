@@ -178,7 +178,7 @@ public class GUITextInputRect extends GUITextRect
         String s = element.text.substring(Tools.max(element.cursorPosition, element.selectorPosition));
 
         element = (GUITextInputRect) multi.get(firstY);
-        int nextCursorPos = Tools.min(element.selectorPosition, element.cursorPosition);
+        int nextCursorPos = element.selectorPosition == -1 ? element.cursorPosition : Tools.min(element.selectorPosition, element.cursorPosition);
         element.text = element.text.substring(0, nextCursorPos) + s;
 
         setActive(false);
@@ -399,15 +399,23 @@ public class GUITextInputRect extends GUITextRect
         }
         else if (typedChar >= ' ' && typedChar <= '~')
         {
-            int min = Tools.min(cursorPosition, selectorPosition);
-            if (min == -1) min = cursorPosition;
-            String before = text.substring(0, min);
-            String after = text.substring(Tools.max(cursorPosition, selectorPosition));
-            text = before + typedChar + after;
-            deselectAll();
-            cursorPosition = min + 1;
+            GUITextInputRect element = multilineDelete();
+            if (element == null) element = this;
 
-            if (parent instanceof MultilineTextInput) ((MultilineTextInput) parent).cursorX = cursorPosition;
+            int min = Tools.min(element.cursorPosition, element.selectorPosition);
+            if (min == -1) min = element.cursorPosition;
+            String before = element.text.substring(0, min);
+            String after = element.text.substring(Tools.max(element.cursorPosition, element.selectorPosition));
+            element.text = before + typedChar + after;
+            deselectAll();
+            element.cursorPosition = min + 1;
+
+            if (parent instanceof MultilineTextInput)
+            {
+                MultilineTextInput multi = (MultilineTextInput) parent;
+                multi.cursorX = cursorPosition;
+                multi.selectionStartY = -1;
+            }
         }
         else if (keyCode == Keyboard.KEY_BACK)
         {
