@@ -638,10 +638,11 @@ public class GUITextInputRect extends GUITextRect
         }
 
 
-        //Cursor and selection highlight
+        //Draw cursor and selection highlight
         if (active)
         {
             float cursorX = parent instanceof MultilineTextInput ? MonoASCIIFontRenderer.getStringWidth(text.substring(0, cursorPosition)) : FONT_RENDERER.getStringWidth(text.substring(0, cursorPosition)) - 0.5f;
+            cursorX = Tools.max(cursorX, 1f / screen.width);
             float selectorX = selectorPosition == -1 ? cursorX : (parent instanceof MultilineTextInput ? MonoASCIIFontRenderer.getStringWidth(text.substring(0, selectorPosition)) : FONT_RENDERER.getStringWidth(text.substring(0, selectorPosition))) - 0.5f;
 
             if (cursorX != selectorX)
