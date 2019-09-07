@@ -377,14 +377,31 @@ public class GUITextInputRect extends GUITextRect
         }
         else if (GUIScreen.isCtrlKeyDown() && keyCode == Keyboard.KEY_C)
         {
-            String s = "";
+            StringBuilder s = new StringBuilder();
 
-            if (hasSelectedText())
+            if (parent instanceof MultilineTextInput && ((MultilineTextInput) parent).selectionStartY != -1 && ((MultilineTextInput) parent).selectionStartY != parent.indexOf(this))
             {
-                s = text.substring(Tools.min(cursorPosition, selectorPosition), Tools.max(cursorPosition, selectorPosition));
+                MultilineTextInput multi = (MultilineTextInput) parent;
+                int startY = Tools.min(multi.indexOf(this), multi.selectionStartY);
+                int endY = Tools.max(multi.indexOf(this), multi.selectionStartY);
+
+                GUITextInputRect element = (GUITextInputRect) multi.get(startY);
+                s.append(element.text.substring(element.selectorPosition == -1 ? element.cursorPosition : Tools.min(element.cursorPosition, element.selectorPosition)));
+
+                for (int i = startY + 1; i < endY; i++)
+                {
+                    s.append("\r\n").append(((GUITextInputRect) multi.get(i)).text);
+                }
+
+                element = (GUITextInputRect) multi.get(endY);
+                s.append("\r\n").append(element.text, 0, Tools.max(element.cursorPosition, element.selectorPosition));
+            }
+            else if (hasSelectedText())
+            {
+                s = new StringBuilder(text.substring(Tools.min(cursorPosition, selectorPosition), Tools.max(cursorPosition, selectorPosition)));
             }
 
-            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(s), null);
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(s.toString()), null);
         }
         else if (GUIScreen.isCtrlKeyDown() && keyCode == Keyboard.KEY_V)
         {
