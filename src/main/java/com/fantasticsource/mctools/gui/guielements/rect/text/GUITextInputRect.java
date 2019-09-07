@@ -470,7 +470,7 @@ public class GUITextInputRect extends GUITextRect
 
                     if (element.y * multi.height + element.height > multi.bottom)
                     {
-                        multi.progress = Tools.min(1, multi.height * (element.y + multi.height * (element.height - multi.height - 1)) / (multi.internalHeight - multi.height));
+                        multi.progress = (element.y * multi.height + element.height - multi.height) / (multi.internalHeight - multi.height);
                     }
                 }
             }
