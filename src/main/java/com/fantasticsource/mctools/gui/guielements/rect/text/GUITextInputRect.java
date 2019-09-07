@@ -388,14 +388,22 @@ public class GUITextInputRect extends GUITextRect
         }
         else if (GUIScreen.isCtrlKeyDown() && keyCode == Keyboard.KEY_V)
         {
-            int min = Tools.min(cursorPosition, selectorPosition);
-            if (min == -1) min = cursorPosition;
-            String before = text.substring(0, min) + removeIllegalChars(GUIScreen.getClipboardString());
-            text = before + text.substring(Tools.max(cursorPosition, selectorPosition));
-            deselectAll();
-            cursorPosition = before.length();
+            GUITextInputRect element = multilineDelete();
+            if (element == null) element = this;
 
-            if (parent instanceof MultilineTextInput) ((MultilineTextInput) parent).cursorX = cursorPosition;
+            int min = Tools.min(element.cursorPosition, element.selectorPosition);
+            if (min == -1) min = element.cursorPosition;
+            String before = element.text.substring(0, min) + removeIllegalChars(GUIScreen.getClipboardString());
+            element.text = before + element.text.substring(Tools.max(element.cursorPosition, element.selectorPosition));
+            deselectAll();
+            element.cursorPosition = before.length();
+
+            if (element.parent instanceof MultilineTextInput)
+            {
+                MultilineTextInput multi = (MultilineTextInput) element.parent;
+                multi.cursorX = element.cursorPosition;
+                multi.selectionStartY = -1;
+            }
         }
         else if (typedChar >= ' ' && typedChar <= '~')
         {
@@ -410,10 +418,10 @@ public class GUITextInputRect extends GUITextRect
             deselectAll();
             element.cursorPosition = min + 1;
 
-            if (parent instanceof MultilineTextInput)
+            if (element.parent instanceof MultilineTextInput)
             {
-                MultilineTextInput multi = (MultilineTextInput) parent;
-                multi.cursorX = cursorPosition;
+                MultilineTextInput multi = (MultilineTextInput) element.parent;
+                multi.cursorX = element.cursorPosition;
                 multi.selectionStartY = -1;
             }
         }
