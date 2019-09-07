@@ -217,20 +217,37 @@ public class GUITextInputRect extends GUITextRect
 
                 if (GUIScreen.isShiftKeyDown())
                 {
-                    //TODO multiline selection
+                    if (multi.selectionStartY == -1) multi.selectionStartY = index;
+
+                    for (int i = 0; i < parent.size(); i++)
+                    {
+                        GUITextInputRect element = (GUITextInputRect) parent.get(i);
+
+                        if (i > multi.selectionStartY) element.selectorPosition = -1;
+                        else if (i < multi.selectionStartY)
+                        {
+                            element.selectorPosition = element.text.length();
+                            element.cursorPosition = 0;
+                        }
+                        else
+                        {
+                            if (element.selectorPosition == -1) element.selectorPosition = element.cursorPosition;
+                            element.cursorPosition = 0;
+                        }
+                    }
                 }
                 else
                 {
                     deselectAll();
-
-                    setActive(false);
-                    first.setActive(true);
-
                     first.cursorPosition = 0;
-
-                    multi.cursorX = first.cursorPosition;
-                    multi.progress = 0;
                 }
+
+                setActive(false);
+                first.setActive(true);
+
+                multi.cursorX = first.cursorPosition;
+
+                multi.progress = 0;
             }
             else singleLineHome();
         }
