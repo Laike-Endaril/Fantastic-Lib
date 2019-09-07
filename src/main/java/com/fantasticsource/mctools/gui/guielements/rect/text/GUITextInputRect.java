@@ -454,19 +454,20 @@ public class GUITextInputRect extends GUITextRect
             if (parent instanceof MultilineTextInput && parent.indexOf(this) > 0)
             {
                 MultilineTextInput multi = (MultilineTextInput) parent;
+                int index = multi.indexOf(this);
 
                 if (GUIScreen.isShiftKeyDown())
                 {
-                    //TODO Multiline selection
+                    if (multi.selectionStartY == -1) multi.selectionStartY = index;
                 }
                 else
                 {
                     deselectAll();
 
-                    GUITextInputRect element = (GUITextInputRect) parent.get(parent.indexOf(this) - 1);
+                    GUITextInputRect element = (GUITextInputRect) parent.get(index - 1);
                     setActive(false);
                     element.setActive(true);
-                    element.cursorPosition = Tools.min(element.text.length(), ((MultilineTextInput) parent).cursorX);
+                    element.cursorPosition = Tools.min(element.text.length(), multi.cursorX);
 
                     if (element.y * multi.height < multi.top)
                     {
@@ -481,24 +482,36 @@ public class GUITextInputRect extends GUITextRect
             if (parent instanceof MultilineTextInput && parent.indexOf(this) != parent.size() - 1)
             {
                 MultilineTextInput multi = (MultilineTextInput) parent;
+                int index = multi.indexOf(this);
+                GUITextInputRect other = (GUITextInputRect) multi.get(index + 1);
 
                 if (GUIScreen.isShiftKeyDown())
                 {
-                    //TODO Multiline selection
-                }
-                else
-                {
-                    deselectAll();
+                    if (multi.selectionStartY == -1) multi.selectionStartY = index;
 
-                    GUITextInputRect element = (GUITextInputRect) multi.get(multi.indexOf(this) + 1);
-                    setActive(false);
-                    element.setActive(true);
-                    element.cursorPosition = Tools.min(element.text.length(), multi.cursorX);
-
-                    if (element.y * multi.height + element.height > multi.bottom)
+                    if (multi.selectionStartY < index)
                     {
-                        multi.progress = (element.y * multi.height + element.height - multi.height) / (multi.internalHeight - multi.height);
+                        selectorPosition = 0;
+                        cursorPosition = text.length();
+                        other.selectorPosition = 0;
                     }
+                    else if (multi.selectionStartY > index) selectorPosition = -1;
+                    else
+                    {
+                        if (selectorPosition == -1) selectorPosition = cursorPosition;
+                        other.selectorPosition = 0;
+                    }
+                }
+                else deselectAll();
+
+                setActive(false);
+                other.setActive(true);
+
+                other.cursorPosition = Tools.min(other.text.length(), multi.cursorX);
+
+                if (other.y * multi.height + other.height > multi.bottom)
+                {
+                    multi.progress = (other.y * multi.height + other.height - multi.height) / (multi.internalHeight - multi.height);
                 }
             }
             else singleLineEnd();
