@@ -383,6 +383,11 @@ public class GUITextInputRect extends GUITextRect
                         other.cursorPosition = other.text.length();
 
                         multi.cursorX = other.cursorPosition;
+
+                        if (other.y * multi.height < multi.top)
+                        {
+                            multi.progress = other.y * multi.height / (multi.internalHeight - multi.height);
+                        }
                     }
                     else multi.cursorX = cursorPosition;
                 }
@@ -426,6 +431,11 @@ public class GUITextInputRect extends GUITextRect
                         other.cursorPosition = 0;
 
                         multi.cursorX = other.cursorPosition;
+
+                        if (other.y * multi.height + other.height > multi.bottom)
+                        {
+                            multi.progress = (other.y * multi.height + other.height - multi.height) / (multi.internalHeight - multi.height);
+                        }
                     }
                     else multi.cursorX = cursorPosition;
                 }
