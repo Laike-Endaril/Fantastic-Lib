@@ -213,6 +213,7 @@ public class GUITextInputRect extends GUITextRect
             if (parent instanceof MultilineTextInput && index != 0 && GUIScreen.isCtrlKeyDown())
             {
                 MultilineTextInput multi = (MultilineTextInput) parent;
+                GUITextInputRect first = (GUITextInputRect) multi.get(0);
 
                 if (GUIScreen.isShiftKeyDown())
                 {
@@ -221,9 +222,10 @@ public class GUITextInputRect extends GUITextRect
                 else
                 {
                     deselectAll();
-                    GUITextInputRect first = (GUITextInputRect) multi.get(0);
+
                     setActive(false);
                     first.setActive(true);
+
                     first.cursorPosition = 0;
 
                     multi.cursorX = first.cursorPosition;
@@ -238,22 +240,41 @@ public class GUITextInputRect extends GUITextRect
             if (parent instanceof MultilineTextInput && index != parent.size() - 1 && GUIScreen.isCtrlKeyDown())
             {
                 MultilineTextInput multi = (MultilineTextInput) parent;
+                GUITextInputRect last = (GUITextInputRect) multi.get(multi.size() - 1);
 
                 if (GUIScreen.isShiftKeyDown())
                 {
-                    //TODO multiline selection
+                    if (multi.selectionStartY == -1) multi.selectionStartY = index;
+
+                    for (int i = 0; i < parent.size(); i++)
+                    {
+                        GUITextInputRect element = (GUITextInputRect) parent.get(i);
+
+                        if (i < multi.selectionStartY) element.selectorPosition = -1;
+                        else if (i > multi.selectionStartY)
+                        {
+                            element.selectorPosition = 0;
+                            element.cursorPosition = element.text.length();
+                        }
+                        else
+                        {
+                            if (element.selectorPosition == -1) element.selectorPosition = element.cursorPosition;
+                            element.cursorPosition = element.text.length();
+                        }
+                    }
                 }
                 else
                 {
                     deselectAll();
-                    GUITextInputRect last = (GUITextInputRect) multi.get(multi.size() - 1);
-                    setActive(false);
-                    last.setActive(true);
                     last.cursorPosition = last.text.length();
-
-                    multi.cursorX = last.cursorPosition;
-                    multi.progress = 1;
                 }
+
+                setActive(false);
+                last.setActive(true);
+
+                multi.cursorX = last.cursorPosition;
+
+                multi.progress = 1;
             }
             else singleLineEnd();
         }
