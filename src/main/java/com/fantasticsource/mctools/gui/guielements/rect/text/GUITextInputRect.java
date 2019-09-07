@@ -374,12 +374,16 @@ public class GUITextInputRect extends GUITextRect
                     int index = multi.indexOf(this);
                     if (index != 0)
                     {
-                        if (GUIScreen.isShiftKeyDown() && multi.selectionStartY == -1) multi.selectionStartY = index;
-
                         GUITextInputRect other = (GUITextInputRect) multi.get(index - 1);
+
+                        if (GUIScreen.isShiftKeyDown() && multi.selectionStartY == -1)
+                        {
+                            multi.selectionStartY = index;
+                            other.selectorPosition = -1;
+                        }
+
                         setActive(false);
                         other.setActive(true);
-                        other.selectorPosition = -1;
                         other.cursorPosition = other.text.length();
 
                         multi.cursorX = other.cursorPosition;
@@ -422,12 +426,16 @@ public class GUITextInputRect extends GUITextRect
                     int index = multi.indexOf(this);
                     if (index != parent.size() - 1)
                     {
-                        if (GUIScreen.isShiftKeyDown() && multi.selectionStartY == -1) multi.selectionStartY = index;
-
                         GUITextInputRect other = (GUITextInputRect) multi.get(index + 1);
+
+                        if (GUIScreen.isShiftKeyDown() && multi.selectionStartY == -1)
+                        {
+                            multi.selectionStartY = index;
+                            other.selectorPosition = -1;
+                        }
+
                         setActive(false);
                         other.setActive(true);
-                        other.selectorPosition = -1;
                         other.cursorPosition = 0;
 
                         multi.cursorX = other.cursorPosition;
