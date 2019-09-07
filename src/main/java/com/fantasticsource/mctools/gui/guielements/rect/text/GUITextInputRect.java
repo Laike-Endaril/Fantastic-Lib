@@ -433,6 +433,8 @@ public class GUITextInputRect extends GUITextRect
         {
             if (parent instanceof MultilineTextInput && parent.indexOf(this) > 0)
             {
+                MultilineTextInput multi = (MultilineTextInput) parent;
+
                 if (GUIScreen.isShiftKeyDown())
                 {
                     //TODO Multiline selection
@@ -445,6 +447,11 @@ public class GUITextInputRect extends GUITextRect
                     setActive(false);
                     element.setActive(true);
                     element.cursorPosition = Tools.min(element.text.length(), ((MultilineTextInput) parent).cursorX);
+
+                    if (element.y * multi.height < multi.top)
+                    {
+                        multi.progress = element.y * multi.height / (multi.internalHeight - multi.height);
+                    }
                 }
             }
             else singleLineHome();
@@ -453,14 +460,14 @@ public class GUITextInputRect extends GUITextRect
         {
             if (parent instanceof MultilineTextInput && parent.indexOf(this) != parent.size() - 1)
             {
+                MultilineTextInput multi = (MultilineTextInput) parent;
+
                 if (GUIScreen.isShiftKeyDown())
                 {
                     //TODO Multiline selection
                 }
                 else
                 {
-                    MultilineTextInput multi = (MultilineTextInput) parent;
-
                     deselectAll();
 
                     GUITextInputRect element = (GUITextInputRect) multi.get(multi.indexOf(this) + 1);
