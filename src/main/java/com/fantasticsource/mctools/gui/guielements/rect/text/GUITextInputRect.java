@@ -455,24 +455,36 @@ public class GUITextInputRect extends GUITextRect
             {
                 MultilineTextInput multi = (MultilineTextInput) parent;
                 int index = multi.indexOf(this);
+                GUITextInputRect other = (GUITextInputRect) multi.get(index - 1);
 
                 if (GUIScreen.isShiftKeyDown())
                 {
                     if (multi.selectionStartY == -1) multi.selectionStartY = index;
-                }
-                else
-                {
-                    deselectAll();
 
-                    GUITextInputRect element = (GUITextInputRect) parent.get(index - 1);
-                    setActive(false);
-                    element.setActive(true);
-                    element.cursorPosition = Tools.min(element.text.length(), multi.cursorX);
-
-                    if (element.y * multi.height < multi.top)
+                    if (multi.selectionStartY > index)
                     {
-                        multi.progress = element.y * multi.height / (multi.internalHeight - multi.height);
+                        selectorPosition = text.length();
+                        cursorPosition = 0;
+                        other.selectorPosition = other.text.length();
                     }
+                    else if (multi.selectionStartY < index) selectorPosition = -1;
+                    else
+                    {
+                        if (selectorPosition == -1) selectorPosition = cursorPosition;
+                        cursorPosition = 0;
+                        other.selectorPosition = other.text.length();
+                    }
+                }
+                else deselectAll();
+
+                setActive(false);
+                other.setActive(true);
+
+                other.cursorPosition = Tools.min(other.text.length(), multi.cursorX);
+
+                if (other.y * multi.height < multi.top)
+                {
+                    multi.progress = other.y * multi.height / (multi.internalHeight - multi.height);
                 }
             }
             else singleLineHome();
@@ -499,6 +511,7 @@ public class GUITextInputRect extends GUITextRect
                     else
                     {
                         if (selectorPosition == -1) selectorPosition = cursorPosition;
+                        cursorPosition = text.length();
                         other.selectorPosition = 0;
                     }
                 }
