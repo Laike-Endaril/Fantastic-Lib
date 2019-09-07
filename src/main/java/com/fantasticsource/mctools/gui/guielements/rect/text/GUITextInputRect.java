@@ -639,7 +639,7 @@ public class GUITextInputRect extends GUITextRect
 
 
         //Draw cursor and selection highlight
-        if (active)
+        if (active || parent instanceof MultilineTextInput)
         {
             float cursorX = parent instanceof MultilineTextInput ? MonoASCIIFontRenderer.getStringWidth(text.substring(0, cursorPosition)) : FONT_RENDERER.getStringWidth(text.substring(0, cursorPosition)) - 0.5f;
             cursorX = Tools.max(cursorX, 1f / screen.width);
@@ -658,7 +658,7 @@ public class GUITextInputRect extends GUITextRect
                 GlStateManager.glEnd();
             }
 
-            if ((System.currentTimeMillis() - cursorTime) % 1000 < 500)
+            if (active && (System.currentTimeMillis() - cursorTime) % 1000 < 500)
             {
                 GlStateManager.disableTexture2D();
                 GlStateManager.color(cursorColor.rf(), cursorColor.gf(), cursorColor.bf(), cursorColor.af());
