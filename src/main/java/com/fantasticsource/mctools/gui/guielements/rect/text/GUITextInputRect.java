@@ -212,6 +212,8 @@ public class GUITextInputRect extends GUITextRect
             int index = parent.indexOf(this);
             if (parent instanceof MultilineTextInput && index != 0 && GUIScreen.isCtrlKeyDown())
             {
+                MultilineTextInput multi = (MultilineTextInput) parent;
+
                 if (GUIScreen.isShiftKeyDown())
                 {
                     //TODO multiline selection
@@ -219,12 +221,13 @@ public class GUITextInputRect extends GUITextRect
                 else
                 {
                     deselectAll();
-                    GUITextInputRect element = (GUITextInputRect) parent.get(0);
+                    GUITextInputRect first = (GUITextInputRect) multi.get(0);
                     setActive(false);
-                    element.setActive(true);
-                    element.cursorPosition = 0;
+                    first.setActive(true);
+                    first.cursorPosition = 0;
 
-                    ((MultilineTextInput) parent).cursorX = element.cursorPosition;
+                    multi.cursorX = first.cursorPosition;
+                    multi.progress = 0;
                 }
             }
             else singleLineHome();
@@ -234,6 +237,8 @@ public class GUITextInputRect extends GUITextRect
             int index = parent.indexOf(this);
             if (parent instanceof MultilineTextInput && index != parent.size() - 1 && GUIScreen.isCtrlKeyDown())
             {
+                MultilineTextInput multi = (MultilineTextInput) parent;
+
                 if (GUIScreen.isShiftKeyDown())
                 {
                     //TODO multiline selection
@@ -241,12 +246,13 @@ public class GUITextInputRect extends GUITextRect
                 else
                 {
                     deselectAll();
-                    GUITextInputRect element = (GUITextInputRect) parent.get(parent.size() - 1);
+                    GUITextInputRect last = (GUITextInputRect) multi.get(multi.size() - 1);
                     setActive(false);
-                    element.setActive(true);
-                    element.cursorPosition = element.text.length();
+                    last.setActive(true);
+                    last.cursorPosition = last.text.length();
 
-                    ((MultilineTextInput) parent).cursorX = element.cursorPosition;
+                    multi.cursorX = last.cursorPosition;
+                    multi.progress = 1;
                 }
             }
             else singleLineEnd();
