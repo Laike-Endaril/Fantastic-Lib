@@ -381,9 +381,10 @@ public class GUITextInputRect extends GUITextRect
                         other.setActive(true);
                         other.selectorPosition = -1;
                         other.cursorPosition = other.text.length();
-                    }
 
-                    multi.cursorX = cursorPosition;
+                        multi.cursorX = other.cursorPosition;
+                    }
+                    else multi.cursorX = cursorPosition;
                 }
             }
         }
@@ -423,9 +424,10 @@ public class GUITextInputRect extends GUITextRect
                         other.setActive(true);
                         other.selectorPosition = -1;
                         other.cursorPosition = 0;
-                    }
 
-                    multi.cursorX = cursorPosition;
+                        multi.cursorX = other.cursorPosition;
+                    }
+                    else multi.cursorX = cursorPosition;
                 }
             }
         }
