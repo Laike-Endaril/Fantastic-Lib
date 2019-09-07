@@ -32,7 +32,7 @@ public class GUITextRect extends GUIRectElement
     public GUIElement recalc()
     {
         width = (double) (parent instanceof MultilineTextInput ? MonoASCIIFontRenderer.getStringWidth(text) : FONT_RENDERER.getStringWidth(text) - 1) / screen.width;
-        height = (double) (parent instanceof MultilineTextInput ? MonoASCIIFontRenderer.CHAR_HEIGHT : FONT_RENDERER.FONT_HEIGHT - 1) / screen.height;
+        height = (double) (parent instanceof MultilineTextInput ? MonoASCIIFontRenderer.LINE_HEIGHT + 2 : FONT_RENDERER.FONT_HEIGHT - 1) / screen.height;
 
         return super.recalc();
     }

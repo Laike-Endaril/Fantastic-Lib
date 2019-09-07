@@ -14,7 +14,8 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class MonoASCIIFontRenderer
 {
-    public static final int CHAR_WIDTH = 8, CHAR_HEIGHT = 8;
+    private static final int CHAR_WIDTH = 8, CHAR_HEIGHT = 8;
+    public static final int LINE_HEIGHT = CHAR_HEIGHT + 2;
 
     private static final TextureManager TEXTURE_MANAGER = Minecraft.getMinecraft().getTextureManager();
     private static final double CHAR_UV = 1d / 16, CHAR_U_TO_RIGHT = CHAR_UV - CHAR_UV / (CHAR_WIDTH << 1), CHAR_V_TO_BOTTOM = CHAR_UV - CHAR_UV / (CHAR_HEIGHT << 1);
@@ -36,20 +37,20 @@ public class MonoASCIIFontRenderer
 
         if (shadowColor.a() > 0)
         {
-            drawText(text, bufferBuilder, x - 1, y, shadowColor);
-            drawText(text, bufferBuilder, x + 1, y, shadowColor);
-            drawText(text, bufferBuilder, x, y - 1, shadowColor);
             drawText(text, bufferBuilder, x, y + 1, shadowColor);
+            drawText(text, bufferBuilder, x + 2, y + 1, shadowColor);
+            drawText(text, bufferBuilder, x + 1, y, shadowColor);
+            drawText(text, bufferBuilder, x + 1, y + 2, shadowColor);
         }
 
-        if (color.a() > 0) drawText(text, bufferBuilder, x, y, color);
+        if (color.a() > 0) drawText(text, bufferBuilder, x + 1, y + 1, color);
 
         tessellator.draw();
     }
 
     public static int getStringWidth(String text)
     {
-        return text.length() * CHAR_WIDTH;
+        return text.length() * (CHAR_WIDTH + 2);
     }
 
     private static void drawText(String text, BufferBuilder bufferBuilder, double left, double top, Color color)
@@ -57,7 +58,7 @@ public class MonoASCIIFontRenderer
         for (char c : text.toCharArray())
         {
             if (c < 256) drawChar(c, bufferBuilder, left, top, color.r(), color.g(), color.b(), color.a());
-            left += CHAR_WIDTH;
+            left += CHAR_WIDTH + 2;
         }
     }
 

@@ -704,7 +704,7 @@ public class GUITextInputRect extends GUITextRect
         for (char c : text.toCharArray())
         {
             double lastDif = dif;
-            dif -= (double) (parent instanceof MultilineTextInput ? MonoASCIIFontRenderer.CHAR_WIDTH : FONT_RENDERER.getCharWidth(c)) / screen.width;
+            dif -= (double) (parent instanceof MultilineTextInput ? MonoASCIIFontRenderer.LINE_HEIGHT : FONT_RENDERER.getCharWidth(c)) / screen.width;
             if (dif <= 0)
             {
                 if (Math.abs(dif) < lastDif) result++;
