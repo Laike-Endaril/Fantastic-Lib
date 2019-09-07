@@ -44,7 +44,7 @@ public class GUIRectScrollView extends GUIRectView
         return this;
     }
 
-    private void recalc2()
+    protected void recalc2()
     {
         if (internalHeight <= height)
         {
