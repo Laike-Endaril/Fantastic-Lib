@@ -117,7 +117,7 @@ public abstract class GUIScreen extends GuiScreen
         {
             if (Mouse.isButtonDown(btn))
             {
-                mouseButtons.add(btn);
+                if (!mouseButtons.contains(btn)) mouseButtons.add(btn);
                 for (GUIElement element : elements)
                 {
                     element.mousePressed(mouseX, mouseY, btn);
