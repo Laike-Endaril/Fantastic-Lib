@@ -204,19 +204,21 @@ public class GUITextInputRect extends GUITextRect
 
         if (!active) return;
 
-        if (keyCode == Keyboard.KEY_RETURN)
+        MultilineTextInput multi = parent instanceof MultilineTextInput ? (MultilineTextInput) parent : null;
+
+        if (keyCode == Keyboard.KEY_RETURN) //TODO multiline selection support
         {
-            if (parent instanceof MultilineTextInput)
+            if (multi != null)
             {
-                int min = Tools.min(cursorPosition, selectorPosition);
-                if (min == -1) min = cursorPosition;
+                GUITextInputRect element = multilineDelete();
 
-                String before = text.substring(0, min);
-                String after = text.substring(Tools.max(cursorPosition, selectorPosition));
+                int min = element.selectorPosition == -1 ? element.cursorPosition : Tools.min(element.cursorPosition, element.selectorPosition);
+                String before = element.text.substring(0, min);
+                String after = element.text.substring(Tools.max(element.cursorPosition, element.selectorPosition));
 
-                text = before;
+                element.text = before;
                 deselectAll();
-                cursorPosition = min;
+                element.cursorPosition = min;
 
                 int tabs = tabs();
                 for (char c : before.toCharArray())
@@ -232,19 +234,18 @@ public class GUITextInputRect extends GUITextRect
                 for (int i = tabs; i > 0; i--) tabbing.append(" ");
 
                 setActive(false);
-                GUITextInputRect element = (GUITextInputRect) ((MultilineTextInput) parent).add(parent.indexOf(this) + 1, tabbing + after.trim());
+                element = (GUITextInputRect) multi.add(multi.indexOf(this) + 1, tabbing + after.trim());
                 element.setActive(true);
                 element.cursorPosition = tabs;
 
-                ((MultilineTextInput) parent).cursorX = tabs;
+                multi.cursorX = tabs;
             }
         }
         else if (keyCode == Keyboard.KEY_HOME)
         {
             int index = parent.indexOf(this);
-            if (parent instanceof MultilineTextInput && index != 0 && GUIScreen.isCtrlKeyDown())
+            if (multi != null && index != 0 && GUIScreen.isCtrlKeyDown())
             {
-                MultilineTextInput multi = (MultilineTextInput) parent;
                 GUITextInputRect first = (GUITextInputRect) multi.get(0);
 
                 if (GUIScreen.isShiftKeyDown())
@@ -278,16 +279,14 @@ public class GUITextInputRect extends GUITextRect
                 first.setActive(true);
 
                 multi.cursorX = first.cursorPosition;
-                multi.progress = 0;
             }
             else singleLineHome();
         }
         else if (keyCode == Keyboard.KEY_END)
         {
             int index = parent.indexOf(this);
-            if (parent instanceof MultilineTextInput && index != parent.size() - 1 && GUIScreen.isCtrlKeyDown())
+            if (multi != null && index != parent.size() - 1 && GUIScreen.isCtrlKeyDown())
             {
-                MultilineTextInput multi = (MultilineTextInput) parent;
                 GUITextInputRect last = (GUITextInputRect) multi.get(multi.size() - 1);
 
                 if (GUIScreen.isShiftKeyDown())
@@ -321,15 +320,13 @@ public class GUITextInputRect extends GUITextRect
                 last.setActive(true);
 
                 multi.cursorX = last.cursorPosition;
-                multi.progress = 1;
             }
             else singleLineEnd();
         }
         else if (GUIScreen.isCtrlKeyDown() && keyCode == Keyboard.KEY_A)
         {
-            if (parent instanceof MultilineTextInput)
+            if (multi != null)
             {
-                MultilineTextInput multi = (MultilineTextInput) parent;
                 GUITextInputRect last = (GUITextInputRect) multi.get(multi.size() - 1);
 
                 for (GUIElement e : multi.children)
@@ -347,7 +344,6 @@ public class GUITextInputRect extends GUITextRect
 
                 multi.selectionStartY = 0;
                 multi.cursorX = last.cursorPosition;
-                multi.progress = 1;
             }
             else
             {
@@ -358,7 +354,7 @@ public class GUITextInputRect extends GUITextRect
                 }
             }
         }
-        else if (GUIScreen.isCtrlKeyDown() && keyCode == Keyboard.KEY_X)
+        else if (GUIScreen.isCtrlKeyDown() && keyCode == Keyboard.KEY_X) //TODO multiline selection support
         {
             String s = "";
 
@@ -370,7 +366,7 @@ public class GUITextInputRect extends GUITextRect
                 deselectAll();
                 cursorPosition = min;
 
-                if (parent instanceof MultilineTextInput) ((MultilineTextInput) parent).cursorX = cursorPosition;
+                if (multi != null) ((MultilineTextInput) parent).cursorX = cursorPosition;
             }
 
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(s), null);
@@ -379,9 +375,8 @@ public class GUITextInputRect extends GUITextRect
         {
             StringBuilder s = new StringBuilder();
 
-            if (parent instanceof MultilineTextInput && ((MultilineTextInput) parent).selectionStartY != -1 && ((MultilineTextInput) parent).selectionStartY != parent.indexOf(this))
+            if (multi != null && ((MultilineTextInput) parent).selectionStartY != -1 && ((MultilineTextInput) parent).selectionStartY != parent.indexOf(this))
             {
-                MultilineTextInput multi = (MultilineTextInput) parent;
                 int startY = Tools.min(multi.indexOf(this), multi.selectionStartY);
                 int endY = Tools.max(multi.indexOf(this), multi.selectionStartY);
 
@@ -405,9 +400,8 @@ public class GUITextInputRect extends GUITextRect
         }
         else if (GUIScreen.isCtrlKeyDown() && keyCode == Keyboard.KEY_V)
         {
-            if (parent instanceof MultilineTextInput)
+            if (multi != null)
             {
-                MultilineTextInput multi = (MultilineTextInput) parent;
                 GUITextInputRect element = multilineDelete();
                 if (element == null) element = this;
 
@@ -458,9 +452,8 @@ public class GUITextInputRect extends GUITextRect
             deselectAll();
             element.cursorPosition = min + 1;
 
-            if (element.parent instanceof MultilineTextInput)
+            if (multi != null)
             {
-                MultilineTextInput multi = (MultilineTextInput) element.parent;
                 multi.cursorX = element.cursorPosition;
                 multi.selectionStartY = -1;
             }
@@ -481,7 +474,7 @@ public class GUITextInputRect extends GUITextRect
                     text = text.substring(0, cursorPosition - 1) + text.substring(cursorPosition);
                     cursorPosition--;
                 }
-                else if (parent instanceof MultilineTextInput)
+                else if (multi != null)
                 {
                     int index = parent.indexOf(this);
                     if (index != 0)
@@ -493,9 +486,8 @@ public class GUITextInputRect extends GUITextRect
                     }
                 }
 
-                if (parent instanceof MultilineTextInput)
+                if (multi != null)
                 {
-                    MultilineTextInput multi = (MultilineTextInput) parent;
                     multi.cursorX = cursorPosition;
                     multi.selectionStartY = -1;
                 }
@@ -516,7 +508,7 @@ public class GUITextInputRect extends GUITextRect
                 {
                     text = text.substring(0, cursorPosition) + text.substring(cursorPosition + 1);
                 }
-                else if (parent instanceof MultilineTextInput)
+                else if (multi != null)
                 {
                     int index = parent.indexOf(this);
                     if (index != parent.size() - 1)
@@ -526,9 +518,8 @@ public class GUITextInputRect extends GUITextRect
                     }
                 }
 
-                if (parent instanceof MultilineTextInput)
+                if (multi != null)
                 {
-                    MultilineTextInput multi = (MultilineTextInput) parent;
                     multi.cursorX = cursorPosition;
                     multi.selectionStartY = -1;
                 }
@@ -552,14 +543,12 @@ public class GUITextInputRect extends GUITextRect
                     while (cursorPosition > 0 && charType(text.charAt(cursorPosition - 1)) == type) cursorPosition--;
                 }
 
-                if (parent instanceof MultilineTextInput) ((MultilineTextInput) parent).cursorX = cursorPosition;
+                if (multi != null) ((MultilineTextInput) parent).cursorX = cursorPosition;
             }
             else
             {
-                if (parent instanceof MultilineTextInput)
+                if (multi != null)
                 {
-                    MultilineTextInput multi = (MultilineTextInput) parent;
-
                     int index = multi.indexOf(this);
                     if (index != 0)
                     {
@@ -576,11 +565,6 @@ public class GUITextInputRect extends GUITextRect
                         other.cursorPosition = other.text.length();
 
                         multi.cursorX = other.cursorPosition;
-
-                        if (other.y * multi.height < multi.top)
-                        {
-                            multi.progress = other.y * multi.height / (multi.internalHeight - multi.height);
-                        }
                     }
                     else multi.cursorX = cursorPosition;
                 }
@@ -604,14 +588,12 @@ public class GUITextInputRect extends GUITextRect
                     while (cursorPosition < text.length() && charType(text.charAt(cursorPosition)) == type) cursorPosition++;
                 }
 
-                if (parent instanceof MultilineTextInput) ((MultilineTextInput) parent).cursorX = cursorPosition;
+                if (multi != null) ((MultilineTextInput) parent).cursorX = cursorPosition;
             }
             else
             {
-                if (parent instanceof MultilineTextInput)
+                if (multi != null)
                 {
-                    MultilineTextInput multi = (MultilineTextInput) parent;
-
                     int index = multi.indexOf(this);
                     if (index != parent.size() - 1)
                     {
@@ -628,11 +610,6 @@ public class GUITextInputRect extends GUITextRect
                         other.cursorPosition = 0;
 
                         multi.cursorX = other.cursorPosition;
-
-                        if (other.y * multi.height + other.height > multi.bottom)
-                        {
-                            multi.progress = (other.y * multi.height + other.height - multi.height) / (multi.internalHeight - multi.height);
-                        }
                     }
                     else multi.cursorX = cursorPosition;
                 }
@@ -640,9 +617,8 @@ public class GUITextInputRect extends GUITextRect
         }
         else if (keyCode == Keyboard.KEY_UP)
         {
-            if (parent instanceof MultilineTextInput && parent.indexOf(this) > 0)
+            if (multi != null && parent.indexOf(this) > 0)
             {
-                MultilineTextInput multi = (MultilineTextInput) parent;
                 int index = multi.indexOf(this);
                 GUITextInputRect other = (GUITextInputRect) multi.get(index - 1);
 
@@ -670,19 +646,13 @@ public class GUITextInputRect extends GUITextRect
                 other.setActive(true);
 
                 other.cursorPosition = Tools.min(other.text.length(), multi.cursorX);
-
-                if (other.y * multi.height < multi.top)
-                {
-                    multi.progress = other.y * multi.height / (multi.internalHeight - multi.height);
-                }
             }
             else singleLineHome();
         }
         else if (keyCode == Keyboard.KEY_DOWN)
         {
-            if (parent instanceof MultilineTextInput && parent.indexOf(this) != parent.size() - 1)
+            if (multi != null && parent.indexOf(this) != parent.size() - 1)
             {
-                MultilineTextInput multi = (MultilineTextInput) parent;
                 int index = multi.indexOf(this);
                 GUITextInputRect other = (GUITextInputRect) multi.get(index + 1);
 
@@ -710,14 +680,37 @@ public class GUITextInputRect extends GUITextRect
                 other.setActive(true);
 
                 other.cursorPosition = Tools.min(other.text.length(), multi.cursorX);
-
-                if (other.y * multi.height + other.height > multi.bottom)
-                {
-                    multi.progress = (other.y * multi.height + other.height - multi.height) / (multi.internalHeight - multi.height);
-                }
             }
             else singleLineEnd();
         }
+
+
+        if (multi != null)
+        {
+            GUITextInputRect element = null;
+            for (GUIElement e : multi.children)
+            {
+                if (e.isActive())
+                {
+                    element = (GUITextInputRect) e;
+                    break;
+                }
+            }
+
+            if (element != null)
+            {
+                if (element.y * multi.height < multi.top)
+                {
+                    multi.progress = element.y * multi.height / (multi.internalHeight - multi.height);
+                }
+
+                if (element.y * multi.height + element.height > multi.bottom)
+                {
+                    multi.progress = (element.y * multi.height + element.height - multi.height) / (multi.internalHeight - multi.height);
+                }
+            }
+        }
+
 
         cursorTime = System.currentTimeMillis();
 
