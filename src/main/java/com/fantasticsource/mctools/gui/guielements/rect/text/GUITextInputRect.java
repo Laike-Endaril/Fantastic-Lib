@@ -28,9 +28,10 @@ public class GUITextInputRect extends GUITextRect
     protected int cursorPosition, selectorPosition = -1;
     protected Color cursorColor, highlightColor, shadowColor;
     protected long cursorTime;
-    private TextFilter filter;
+    protected TextFilter filter;
 
     protected long lastClickTime;
+    protected int clicks = 1;
     protected int lastAbsMouseX;
 
 
@@ -767,11 +768,27 @@ public class GUITextInputRect extends GUITextRect
             long time = System.currentTimeMillis();
             int absMouseX = (int) (mouseX * screen.width);
 
-            if (time - lastClickTime <= 250 && Math.abs(lastAbsMouseX - absMouseX) < 3)
+            if (time - lastClickTime <= 250 && Math.abs(lastAbsMouseX - absMouseX) < 3) clicks++;
+            else clicks = 1;
+            
+            lastClickTime = time;
+
+            if (clicks == 1)
+            {
+                //Single-click
+                lastAbsMouseX = absMouseX;
+
+                if (isShiftKeyDown())
+                {
+                    if (selectorPosition == -1) selectorPosition = cursorPosition;
+                }
+                else deselectAll();
+                cursorPosition = findCursorPosition(mouseX());
+            }
+            else if (clicks == 2)
             {
                 //Double-click
                 deselectAll();
-                lastClickTime = 0;
 
                 cursorPosition = findCursorPosition(mouseX());
                 selectorPosition = cursorPosition;
@@ -785,16 +802,11 @@ public class GUITextInputRect extends GUITextRect
             }
             else
             {
-                //Single-click
-                lastClickTime = time;
-                lastAbsMouseX = absMouseX;
+                //Triple-click
+                deselectAll();
 
-                if (isShiftKeyDown())
-                {
-                    if (selectorPosition == -1) selectorPosition = cursorPosition;
-                }
-                else deselectAll();
-                cursorPosition = findCursorPosition(mouseX());
+                cursorPosition = text.length();
+                selectorPosition = 0;
             }
 
             cursorTime = System.currentTimeMillis();
