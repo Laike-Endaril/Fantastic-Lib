@@ -60,25 +60,25 @@ public class GUITextInputRect extends GUITextRect
         shadowColor = color.v() >= 64 ? BLACK : WHITE;
     }
 
-    public boolean hasSelectedText()
+    protected boolean hasSelectedText()
     {
         return selectorPosition != -1 && selectorPosition != cursorPosition;
     }
 
-    public int charType(char c)
+    protected int charType(char c)
     {
         if (Character.isWhitespace(c)) return 0;
-        if (Character.isLetterOrDigit(c)) return 1;
+        if (Character.isLetterOrDigit(c) || c == '_') return 1;
         return -1;
     }
 
-    public boolean isWhitespace()
+    protected boolean isWhitespace()
     {
         for (char c : text.toCharArray()) if (c != ' ') return false;
         return true;
     }
 
-    public int nonWhitespaceStart()
+    protected int nonWhitespaceStart()
     {
         int i = 0;
         for (char c : text.toCharArray())
@@ -89,7 +89,7 @@ public class GUITextInputRect extends GUITextRect
         return i;
     }
 
-    public int nonWhitespaceEnd()
+    protected int nonWhitespaceEnd()
     {
         char[] chars = text.toCharArray();
         int i = chars.length;
@@ -100,7 +100,7 @@ public class GUITextInputRect extends GUITextRect
         return i;
     }
 
-    public int tabs()
+    protected int tabs()
     {
         if (!(parent instanceof MultilineTextInput)) return 0;
 
@@ -195,6 +195,19 @@ public class GUITextInputRect extends GUITextRect
         multi.selectionStartY = -1;
 
         return element;
+    }
+
+    protected GUITextInputRect activeLine()
+    {
+        if (parent instanceof MultilineTextInput)
+        {
+            for (GUIElement element : parent.children)
+            {
+                if (element.isActive()) return (GUITextInputRect) element;
+            }
+        }
+
+        return isActive() ? this : null;
     }
 
     @Override
@@ -706,16 +719,7 @@ public class GUITextInputRect extends GUITextRect
 
         if (multi != null)
         {
-            GUITextInputRect element = null;
-            for (GUIElement e : multi.children)
-            {
-                if (e.isActive())
-                {
-                    element = (GUITextInputRect) e;
-                    break;
-                }
-            }
-
+            GUITextInputRect element = activeLine();
             if (element != null)
             {
                 if (element.y * multi.height < multi.top)
@@ -762,6 +766,7 @@ public class GUITextInputRect extends GUITextRect
             setActive(true);
             long time = System.currentTimeMillis();
             int absMouseX = (int) (mouseX * screen.width);
+
             if (time - lastClickTime <= 250 && Math.abs(lastAbsMouseX - absMouseX) < 3)
             {
                 //Double-click
@@ -772,8 +777,10 @@ public class GUITextInputRect extends GUITextRect
                 selectorPosition = cursorPosition;
 
                 char[] chars = text.toCharArray();
-                while (cursorPosition < chars.length && chars[cursorPosition] != ' ') cursorPosition++;
-                while (selectorPosition > 0 && chars[selectorPosition - 1] != ' ') selectorPosition--;
+                int type = charType(chars[cursorPosition == 0 ? 0 : cursorPosition - 1]);
+
+                while (cursorPosition < chars.length && charType(chars[cursorPosition]) == type) cursorPosition++;
+                while (selectorPosition > 0 && charType(chars[selectorPosition - 1]) == type) selectorPosition--;
                 if (selectorPosition == cursorPosition) selectorPosition = -1;
             }
             else
@@ -790,8 +797,9 @@ public class GUITextInputRect extends GUITextRect
                 cursorPosition = findCursorPosition(mouseX());
             }
 
-            if (parent instanceof MultilineTextInput) ((MultilineTextInput) parent).cursorX = cursorPosition;
             cursorTime = System.currentTimeMillis();
+
+            if (parent instanceof MultilineTextInput) ((MultilineTextInput) parent).cursorX = cursorPosition;
         }
         else setActive(false);
 
