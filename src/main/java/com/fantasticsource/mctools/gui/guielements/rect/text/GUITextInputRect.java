@@ -419,15 +419,15 @@ public class GUITextInputRect extends GUITextRect
         }
         else if (GUIScreen.isCtrlKeyDown() && keyCode == Keyboard.KEY_V)
         {
-            if (multi != null)
-            {
-                GUITextInputRect element = multilineDelete();
-                if (element == null) element = this;
+            String[] tokens = Tools.fixedSplit(GUIScreen.getClipboardString(), "\n");
+            GUITextInputRect element = multilineDelete();
+            if (element == null) element = this;
 
+            if (multi != null && tokens.length > 1)
+            {
                 int min = element.selectorPosition == -1 ? element.cursorPosition : Tools.min(element.cursorPosition, element.selectorPosition);
                 String before = element.text.substring(0, min);
                 String after = element.text.substring(Tools.max(element.cursorPosition, element.selectorPosition));
-                String[] tokens = Tools.fixedSplit(GUIScreen.getClipboardString(), "\n");
                 element.text = before + removeIllegalChars(tokens[0]);
                 element.setActive(false);
 
@@ -449,13 +449,13 @@ public class GUITextInputRect extends GUITextRect
             }
             else
             {
-                int min = Tools.min(cursorPosition, selectorPosition);
-                if (min == -1) min = cursorPosition;
-                String before = text.substring(0, min) + removeIllegalChars(GUIScreen.getClipboardString());
-                text = before + text.substring(Tools.max(cursorPosition, selectorPosition));
+                int min = Tools.min(element.cursorPosition, element.selectorPosition);
+                if (min == -1) min = element.cursorPosition;
+                String before = element.text.substring(0, min) + removeIllegalChars(GUIScreen.getClipboardString());
+                element.text = before + element.text.substring(Tools.max(element.cursorPosition, element.selectorPosition));
 
                 deselectAll();
-                cursorPosition = before.length();
+                element.cursorPosition = before.length();
             }
         }
         else if (typedChar >= ' ' && typedChar <= '~')
