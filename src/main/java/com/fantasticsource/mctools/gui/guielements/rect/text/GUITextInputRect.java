@@ -405,21 +405,44 @@ public class GUITextInputRect extends GUITextRect
         }
         else if (GUIScreen.isCtrlKeyDown() && keyCode == Keyboard.KEY_V)
         {
-            GUITextInputRect element = multilineDelete();
-            if (element == null) element = this;
-
-            int min = Tools.min(element.cursorPosition, element.selectorPosition);
-            if (min == -1) min = element.cursorPosition;
-            String before = element.text.substring(0, min) + removeIllegalChars(GUIScreen.getClipboardString());
-            element.text = before + element.text.substring(Tools.max(element.cursorPosition, element.selectorPosition));
-            deselectAll();
-            element.cursorPosition = before.length();
-
-            if (element.parent instanceof MultilineTextInput)
+            if (parent instanceof MultilineTextInput)
             {
-                MultilineTextInput multi = (MultilineTextInput) element.parent;
+                MultilineTextInput multi = (MultilineTextInput) parent;
+                GUITextInputRect element = multilineDelete();
+                if (element == null) element = this;
+
+                int min = element.selectorPosition == -1 ? element.cursorPosition : Tools.min(element.cursorPosition, element.selectorPosition);
+                String before = element.text.substring(0, min);
+                String after = element.text.substring(Tools.max(element.cursorPosition, element.selectorPosition));
+                String[] tokens = Tools.fixedSplit(GUIScreen.getClipboardString(), "\n");
+                element.text = before + removeIllegalChars(tokens[0]);
+                element.setActive(false);
+
+                int index = multi.indexOf(element) + 1;
+                for (int i = 1; i < tokens.length - 1; i++)
+                {
+                    multi.add(index++, removeIllegalChars(tokens[i]));
+                }
+
+                before = removeIllegalChars(tokens[tokens.length - 1]);
+                element = (GUITextInputRect) multi.add(index, before + after);
+
+                deselectAll();
+                element.setActive(true);
+                element.cursorPosition = before.length();
+
                 multi.cursorX = element.cursorPosition;
                 multi.selectionStartY = -1;
+            }
+            else
+            {
+                int min = Tools.min(cursorPosition, selectorPosition);
+                if (min == -1) min = cursorPosition;
+                String before = text.substring(0, min) + removeIllegalChars(GUIScreen.getClipboardString());
+                text = before + text.substring(Tools.max(cursorPosition, selectorPosition));
+
+                deselectAll();
+                cursorPosition = before.length();
             }
         }
         else if (typedChar >= ' ' && typedChar <= '~')
