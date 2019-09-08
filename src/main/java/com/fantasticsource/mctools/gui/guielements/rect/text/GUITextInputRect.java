@@ -206,11 +206,12 @@ public class GUITextInputRect extends GUITextRect
 
         MultilineTextInput multi = parent instanceof MultilineTextInput ? (MultilineTextInput) parent : null;
 
-        if (keyCode == Keyboard.KEY_RETURN) //TODO multiline selection support
+        if (keyCode == Keyboard.KEY_RETURN)
         {
             if (multi != null)
             {
                 GUITextInputRect element = multilineDelete();
+                if (element == null) element = this;
 
                 int min = element.selectorPosition == -1 ? element.cursorPosition : Tools.min(element.cursorPosition, element.selectorPosition);
                 String before = element.text.substring(0, min);
@@ -219,22 +220,22 @@ public class GUITextInputRect extends GUITextRect
                 element.text = before;
                 deselectAll();
                 element.cursorPosition = min;
+                element.setActive(false);
 
-                int tabs = tabs();
+                int tabs = element.tabs();
                 for (char c : before.toCharArray())
                 {
                     if (c == '{') tabs++;
                     else if (c == '}') tabs--;
                 }
-                String s = after.trim();
-                if (s.length() > 0 && s.charAt(0) == '}') tabs--;
+                String afterTrimmed = after.trim();
+                if (afterTrimmed.length() > 0 && afterTrimmed.charAt(0) == '}') tabs--;
                 tabs = Tools.max(0, tabs);
 
                 StringBuilder tabbing = new StringBuilder();
                 for (int i = tabs; i > 0; i--) tabbing.append(" ");
 
-                setActive(false);
-                element = (GUITextInputRect) multi.add(multi.indexOf(this) + 1, tabbing + after.trim());
+                element = (GUITextInputRect) multi.add(multi.indexOf(element) + 1, tabbing + afterTrimmed);
                 element.setActive(true);
                 element.cursorPosition = tabs;
 
