@@ -841,8 +841,8 @@ public class GUITextInputRect extends GUITextRect
                 if (multi.selectionStartY < index)
                 {
                     GUITextInputRect element = (GUITextInputRect) multi.get(multi.selectionStartY);
-                    element.cursorPosition = element.text.length();
                     if (element.selectorPosition == -1) element.selectorPosition = element.cursorPosition;
+                    element.cursorPosition = element.text.length();
 
                     for (int i = multi.selectionStartY + 1; i < index; i++)
                     {
@@ -865,8 +865,8 @@ public class GUITextInputRect extends GUITextRect
                 else
                 {
                     GUITextInputRect element = (GUITextInputRect) multi.get(multi.selectionStartY);
-                    element.cursorPosition = 0;
                     if (element.selectorPosition == -1) element.selectorPosition = element.cursorPosition;
+                    element.cursorPosition = 0;
 
                     for (int i = multi.selectionStartY - 1; i > index; i--)
                     {
@@ -908,6 +908,9 @@ public class GUITextInputRect extends GUITextRect
                     multi.cursorX = cursorPosition;
                 }
             }
+
+            activeLine().setActive(false);
+            setActive(true);
         }
 
         cursorTime = System.currentTimeMillis();
