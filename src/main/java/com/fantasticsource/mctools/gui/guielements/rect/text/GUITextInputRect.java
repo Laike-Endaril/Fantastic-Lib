@@ -355,14 +355,32 @@ public class GUITextInputRect extends GUITextRect
                 }
             }
         }
-        else if (GUIScreen.isCtrlKeyDown() && keyCode == Keyboard.KEY_X) //TODO multiline selection support
+        else if (GUIScreen.isCtrlKeyDown() && keyCode == Keyboard.KEY_X)
         {
-            String s = "";
+            StringBuilder s = new StringBuilder();
 
-            if (hasSelectedText())
+            if (multi != null && ((MultilineTextInput) parent).selectionStartY != -1 && ((MultilineTextInput) parent).selectionStartY != parent.indexOf(this))
+            {
+                int startY = Tools.min(multi.indexOf(this), multi.selectionStartY);
+                int endY = Tools.max(multi.indexOf(this), multi.selectionStartY);
+
+                GUITextInputRect element = (GUITextInputRect) multi.get(startY);
+                s.append(element.text.substring(element.selectorPosition == -1 ? element.cursorPosition : Tools.min(element.cursorPosition, element.selectorPosition)));
+
+                for (int i = startY + 1; i < endY; i++)
+                {
+                    s.append("\r\n").append(((GUITextInputRect) multi.get(i)).text);
+                }
+
+                element = (GUITextInputRect) multi.get(endY);
+                s.append("\r\n").append(element.text, 0, Tools.max(element.cursorPosition, element.selectorPosition));
+
+                multilineDelete();
+            }
+            else if (hasSelectedText())
             {
                 int min = Tools.min(selectorPosition, cursorPosition);
-                s = text.substring(min, Tools.max(cursorPosition, selectorPosition));
+                s.append(text, min, Tools.max(cursorPosition, selectorPosition));
                 text = text.substring(0, min) + text.substring(Tools.max(selectorPosition, cursorPosition));
                 deselectAll();
                 cursorPosition = min;
@@ -370,7 +388,7 @@ public class GUITextInputRect extends GUITextRect
                 if (multi != null) ((MultilineTextInput) parent).cursorX = cursorPosition;
             }
 
-            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(s), null);
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(s.toString()), null);
         }
         else if (GUIScreen.isCtrlKeyDown() && keyCode == Keyboard.KEY_C)
         {
