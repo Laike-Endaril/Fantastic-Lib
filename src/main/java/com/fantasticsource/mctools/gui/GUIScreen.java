@@ -70,6 +70,8 @@ public abstract class GUIScreen extends GuiScreen
 
     protected abstract void init();
 
+    public abstract void show();
+
     @Override
     public void onResize(Minecraft mcIn, int w, int h)
     {
