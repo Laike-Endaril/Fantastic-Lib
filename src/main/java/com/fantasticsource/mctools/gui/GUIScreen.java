@@ -68,9 +68,7 @@ public abstract class GUIScreen extends GuiScreen
         for (GUIElement element : guiElements) element.recalc();
     }
 
-    protected void init()
-    {
-    }
+    protected abstract void init();
 
     @Override
     public void onResize(Minecraft mcIn, int w, int h)
