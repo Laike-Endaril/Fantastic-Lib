@@ -110,18 +110,18 @@ public class GUIRectTabView extends GUIRectView
             double xx = 0, yy = 0;
             for (GUIRectElement tab : tabs)
             {
-                if (xx + tab.width > width)
+                if (xx + tab.width / width > 1)
                 {
-                    yy += tab.height;
+                    yy += tab.height / height;
                     xx = 0;
                 }
 
                 tab.x = xx;
                 tab.y = yy;
 
-                xx += tab.width;
+                xx += tab.width / width;
             }
-            yy += tabs[0].height;
+            yy += tabs[0].height / height;
 
             if (autocalcTabviews)
             {
