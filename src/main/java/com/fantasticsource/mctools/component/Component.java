@@ -12,6 +12,11 @@ public abstract class Component
     public Component holder = null;
     public ArrayList<Component> subComponents = new ArrayList<>();
 
+    public Component()
+    {
+        this(null);
+    }
+
     public Component(Component holder)
     {
         if (holder != null)
