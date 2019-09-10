@@ -1,5 +1,6 @@
 package com.fantasticsource.mctools.component;
 
+import com.fantasticsource.mctools.gui.guielements.GUIElement;
 import io.netty.buffer.ByteBuf;
 
 import java.io.FileInputStream;
@@ -63,5 +64,12 @@ public class CBoolean extends Component
     public CBoolean copy()
     {
         return new CBoolean(holder).set(value);
+    }
+
+    @Override
+    public GUIElement getGUIElement()
+    {
+        //TODO
+        return null;
     }
 }

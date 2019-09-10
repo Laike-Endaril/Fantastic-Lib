@@ -1,5 +1,6 @@
 package com.fantasticsource.mctools.component;
 
+import com.fantasticsource.mctools.gui.guielements.GUIElement;
 import io.netty.buffer.ByteBuf;
 
 import java.io.FileInputStream;
@@ -66,5 +67,12 @@ public class CDouble extends Component
     public CDouble copy()
     {
         return new CDouble(holder).set(value);
+    }
+
+    @Override
+    public GUIElement getGUIElement()
+    {
+        //TODO
+        return null;
     }
 }

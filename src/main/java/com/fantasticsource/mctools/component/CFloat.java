@@ -1,5 +1,6 @@
 package com.fantasticsource.mctools.component;
 
+import com.fantasticsource.mctools.gui.guielements.GUIElement;
 import io.netty.buffer.ByteBuf;
 
 import java.io.FileInputStream;
@@ -64,5 +65,12 @@ public class CFloat extends Component
     public CFloat copy()
     {
         return new CFloat(holder).set(value);
+    }
+
+    @Override
+    public GUIElement getGUIElement()
+    {
+        //TODO
+        return null;
     }
 }

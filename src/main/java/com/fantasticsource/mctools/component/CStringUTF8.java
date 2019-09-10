@@ -1,5 +1,6 @@
 package com.fantasticsource.mctools.component;
 
+import com.fantasticsource.mctools.gui.guielements.GUIElement;
 import io.netty.buffer.ByteBuf;
 
 import java.io.FileInputStream;
@@ -75,5 +76,12 @@ public class CStringUTF8 extends Component
     public CStringUTF8 copy()
     {
         return new CStringUTF8(holder).set(value);
+    }
+
+    @Override
+    public GUIElement getGUIElement()
+    {
+        //TODO
+        return null;
     }
 }

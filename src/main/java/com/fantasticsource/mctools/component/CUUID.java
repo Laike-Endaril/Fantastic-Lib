@@ -1,5 +1,6 @@
 package com.fantasticsource.mctools.component;
 
+import com.fantasticsource.mctools.gui.guielements.GUIElement;
 import io.netty.buffer.ByteBuf;
 
 import java.io.FileInputStream;
@@ -73,5 +74,12 @@ public class CUUID extends Component
     public CUUID copy()
     {
         return new CUUID(holder).set(new UUID(value.getMostSignificantBits(), value.getLeastSignificantBits()));
+    }
+
+    @Override
+    public GUIElement getGUIElement()
+    {
+        //TODO
+        return null;
     }
 }

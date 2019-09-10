@@ -1,16 +1,15 @@
 package com.fantasticsource.mctools.component;
 
+import com.fantasticsource.mctools.gui.guielements.GUIElement;
 import io.netty.buffer.ByteBuf;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 
 public abstract class Component
 {
-    public Component holder = null;
-    public ArrayList<Component> subComponents = new ArrayList<>();
+    public Component holder;
 
     public Component()
     {
@@ -19,52 +18,28 @@ public abstract class Component
 
     public Component(Component holder)
     {
-        if (holder != null)
-        {
-            this.holder = holder;
-            holder.subComponents.add(this);
-        }
+        this.holder = holder;
     }
 
-    public void write(ByteBuf buf)
-    {
-        for (Component component : subComponents) component.write(buf);
-    }
+    public abstract void write(ByteBuf buf);
 
-    public void read(ByteBuf buf)
-    {
-        for (Component component : subComponents) component.read(buf);
-    }
+    public abstract void read(ByteBuf buf);
 
-    public void save(FileOutputStream stream) throws IOException
-    {
-        for (Component component : subComponents) component.save(stream);
-    }
+    public abstract void save(FileOutputStream stream) throws IOException;
 
-    public void load(FileInputStream stream) throws IOException
-    {
-        for (Component component : subComponents) component.load(stream);
-    }
+    public abstract void load(FileInputStream stream) throws IOException;
 
     /**
      * Correlates to toString(), for use in GUI editing
      */
-    public void parse(String string)
-    {
-        for (Component component : subComponents) component.parse(string);
-    }
+    public abstract void parse(String string);
 
-    public Component copy()
-    {
-        for (Component component : subComponents) component.copy();
-        return this;
-    }
+    public abstract Component copy();
 
-    public final void copyTo(Component holder)
+    public void copyTo(Component holder)
     {
         Component c = copy();
         c.holder = holder;
-        holder.subComponents.add(c);
     }
 
     /**
@@ -74,4 +49,6 @@ public abstract class Component
     {
         return getClass().getSimpleName();
     }
+
+    public abstract GUIElement getGUIElement();
 }

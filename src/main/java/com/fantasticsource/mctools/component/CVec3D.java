@@ -1,5 +1,6 @@
 package com.fantasticsource.mctools.component;
 
+import com.fantasticsource.mctools.gui.guielements.GUIElement;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.math.Vec3d;
 
@@ -104,5 +105,12 @@ public class CVec3D extends Component
     public CVec3D copy()
     {
         return new CVec3D(holder).set(x.value, y.value, z.value);
+    }
+
+    @Override
+    public GUIElement getGUIElement()
+    {
+        //TODO
+        return null;
     }
 }
