@@ -1,6 +1,5 @@
-package com.fantasticsource.mctools.ecs.component;
+package com.fantasticsource.mctools.component;
 
-import com.fantasticsource.mctools.ecs.ECSEntity;
 import io.netty.buffer.ByteBuf;
 
 import java.io.FileInputStream;
@@ -13,9 +12,9 @@ public class CStringUTF8 extends Component
 {
     public String value;
 
-    public CStringUTF8(ECSEntity entity)
+    public CStringUTF8(Component holder)
     {
-        super(entity);
+        super(holder);
     }
 
     public CStringUTF8 set(String value)
@@ -75,6 +74,6 @@ public class CStringUTF8 extends Component
     @Override
     public CStringUTF8 copy()
     {
-        return new CStringUTF8(entity).set(value);
+        return new CStringUTF8(holder).set(value);
     }
 }

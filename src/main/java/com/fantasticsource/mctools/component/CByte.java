@@ -1,6 +1,5 @@
-package com.fantasticsource.mctools.ecs.component;
+package com.fantasticsource.mctools.component;
 
-import com.fantasticsource.mctools.ecs.ECSEntity;
 import io.netty.buffer.ByteBuf;
 
 import java.io.FileInputStream;
@@ -11,9 +10,9 @@ public class CByte extends Component
 {
     public byte value;
 
-    public CByte(ECSEntity entity)
+    public CByte(Component holder)
     {
-        super(entity);
+        super(holder);
     }
 
     public CByte set(byte value)
@@ -63,6 +62,6 @@ public class CByte extends Component
     @Override
     public CByte copy()
     {
-        return new CByte(entity).set(value);
+        return new CByte(holder).set(value);
     }
 }

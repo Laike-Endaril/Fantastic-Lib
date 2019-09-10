@@ -1,6 +1,5 @@
-package com.fantasticsource.mctools.ecs.component;
+package com.fantasticsource.mctools.component;
 
-import com.fantasticsource.mctools.ecs.ECSEntity;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.math.Vec3d;
 
@@ -12,12 +11,12 @@ public class CVec3D extends Component
 {
     public CDouble x, y, z;
 
-    public CVec3D(ECSEntity entity)
+    public CVec3D(Component holder)
     {
-        super(entity);
-        x = new CDouble(entity);
-        y = new CDouble(entity);
-        z = new CDouble(entity);
+        super(holder);
+        x = new CDouble(holder);
+        y = new CDouble(holder);
+        z = new CDouble(holder);
     }
 
     public double getX()
@@ -104,6 +103,6 @@ public class CVec3D extends Component
     @Override
     public CVec3D copy()
     {
-        return new CVec3D(entity).set(x.value, y.value, z.value);
+        return new CVec3D(holder).set(x.value, y.value, z.value);
     }
 }

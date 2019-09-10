@@ -1,6 +1,5 @@
-package com.fantasticsource.mctools.ecs.component;
+package com.fantasticsource.mctools.component;
 
-import com.fantasticsource.mctools.ecs.ECSEntity;
 import io.netty.buffer.ByteBuf;
 
 import java.io.FileInputStream;
@@ -11,9 +10,9 @@ public class CInt extends Component
 {
     public int value;
 
-    public CInt(ECSEntity entity)
+    public CInt(Component holder)
     {
-        super(entity);
+        super(holder);
     }
 
     public CInt set(int value)
@@ -63,6 +62,6 @@ public class CInt extends Component
     @Override
     public CInt copy()
     {
-        return new CInt(entity).set(value);
+        return new CInt(holder).set(value);
     }
 }

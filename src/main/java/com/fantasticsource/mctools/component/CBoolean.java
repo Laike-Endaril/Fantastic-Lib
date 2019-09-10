@@ -1,6 +1,5 @@
-package com.fantasticsource.mctools.ecs.component;
+package com.fantasticsource.mctools.component;
 
-import com.fantasticsource.mctools.ecs.ECSEntity;
 import io.netty.buffer.ByteBuf;
 
 import java.io.FileInputStream;
@@ -11,9 +10,9 @@ public class CBoolean extends Component
 {
     public boolean value;
 
-    public CBoolean(ECSEntity entity)
+    public CBoolean(Component holder)
     {
-        super(entity);
+        super(holder);
     }
 
     public CBoolean set(boolean value)
@@ -63,6 +62,6 @@ public class CBoolean extends Component
     @Override
     public CBoolean copy()
     {
-        return new CBoolean(entity).set(value);
+        return new CBoolean(holder).set(value);
     }
 }

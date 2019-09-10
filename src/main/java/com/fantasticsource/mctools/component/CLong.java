@@ -1,6 +1,5 @@
-package com.fantasticsource.mctools.ecs.component;
+package com.fantasticsource.mctools.component;
 
-import com.fantasticsource.mctools.ecs.ECSEntity;
 import io.netty.buffer.ByteBuf;
 
 import java.io.FileInputStream;
@@ -11,9 +10,9 @@ public class CLong extends Component
 {
     public long value;
 
-    public CLong(ECSEntity entity)
+    public CLong(Component holder)
     {
-        super(entity);
+        super(holder);
     }
 
     public CLong set(long value)
@@ -65,6 +64,6 @@ public class CLong extends Component
     @Override
     public CLong copy()
     {
-        return new CLong(entity).set(value);
+        return new CLong(holder).set(value);
     }
 }

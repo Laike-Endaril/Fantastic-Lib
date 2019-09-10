@@ -1,6 +1,5 @@
-package com.fantasticsource.mctools.ecs.component;
+package com.fantasticsource.mctools.component;
 
-import com.fantasticsource.mctools.ecs.ECSEntity;
 import io.netty.buffer.ByteBuf;
 
 import java.io.FileInputStream;
@@ -11,9 +10,9 @@ public class CDouble extends Component
 {
     public double value;
 
-    public CDouble(ECSEntity entity)
+    public CDouble(Component holder)
     {
-        super(entity);
+        super(holder);
     }
 
     public CDouble set(double value)
@@ -66,6 +65,6 @@ public class CDouble extends Component
     @Override
     public CDouble copy()
     {
-        return new CDouble(entity).set(value);
+        return new CDouble(holder).set(value);
     }
 }

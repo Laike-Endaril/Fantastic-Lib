@@ -1,6 +1,5 @@
-package com.fantasticsource.mctools.ecs.component;
+package com.fantasticsource.mctools.component;
 
-import com.fantasticsource.mctools.ecs.ECSEntity;
 import io.netty.buffer.ByteBuf;
 
 import java.io.FileInputStream;
@@ -12,9 +11,9 @@ public class CUUID extends Component
 {
     public UUID value;
 
-    public CUUID(ECSEntity entity)
+    public CUUID(Component holder)
     {
-        super(entity);
+        super(holder);
     }
 
     public CUUID set(UUID value)
@@ -73,6 +72,6 @@ public class CUUID extends Component
     @Override
     public CUUID copy()
     {
-        return new CUUID(entity).set(new UUID(value.getMostSignificantBits(), value.getLeastSignificantBits()));
+        return new CUUID(holder).set(new UUID(value.getMostSignificantBits(), value.getLeastSignificantBits()));
     }
 }

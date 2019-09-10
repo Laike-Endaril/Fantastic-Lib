@@ -1,6 +1,5 @@
-package com.fantasticsource.mctools.ecs.component;
+package com.fantasticsource.mctools.component;
 
-import com.fantasticsource.mctools.ecs.ECSEntity;
 import io.netty.buffer.ByteBuf;
 
 import java.io.FileInputStream;
@@ -11,9 +10,9 @@ public class CFloat extends Component
 {
     public float value;
 
-    public CFloat(ECSEntity entity)
+    public CFloat(Component holder)
     {
-        super(entity);
+        super(holder);
     }
 
     public CFloat set(float value)
@@ -64,6 +63,6 @@ public class CFloat extends Component
     @Override
     public CFloat copy()
     {
-        return new CFloat(entity).set(value);
+        return new CFloat(holder).set(value);
     }
 }
