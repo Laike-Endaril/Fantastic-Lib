@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import static com.fantasticsource.mctools.gui.GUIScreen.*;
 import static com.fantasticsource.tools.datastructures.Color.*;
 
-public class GUITextInput extends GUITextRect
+public class GUITextInput extends GUIText
 {
     private static final Color T_WHITE = new Color(0xFFFFFF88);
 

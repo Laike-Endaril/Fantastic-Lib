@@ -13,7 +13,7 @@ public class GUITextButton extends GUIGradientBorder
 {
     public static final double DEFAULT_PADDING = 0.5;
 
-    private GUITextRect textRect;
+    private GUIText textRect;
     private double padding;
 
     public GUITextButton(GUIScreen screen, double x, double y, String text)
@@ -42,7 +42,7 @@ public class GUITextButton extends GUIGradientBorder
 
         this.padding = padding;
 
-        textRect = new GUITextRect(screen, 0, 0, text, border, hoverBorder, activeBorder);
+        textRect = new GUIText(screen, 0, 0, text, border, hoverBorder, activeBorder);
         add(textRect);
         linkMouseActivity(textRect);
 

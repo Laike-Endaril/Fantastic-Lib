@@ -8,17 +8,17 @@ import net.minecraft.client.renderer.GlStateManager;
 
 import static com.fantasticsource.mctools.gui.GUIScreen.*;
 
-public class GUITextRect extends GUIElement
+public class GUIText extends GUIElement
 {
     public String text;
     protected Color color, hoverColor, activeColor;
 
-    public GUITextRect(GUIScreen screen, double x, double y, String text, Color color)
+    public GUIText(GUIScreen screen, double x, double y, String text, Color color)
     {
         this(screen, x, y, text, getColor(color), getHover(color), color);
     }
 
-    public GUITextRect(GUIScreen screen, double x, double y, String text, Color color, Color hoverColor, Color activeColor)
+    public GUIText(GUIScreen screen, double x, double y, String text, Color color, Color hoverColor, Color activeColor)
     {
         super(screen, x, y, (double) (FONT_RENDERER.getStringWidth(text) - 1) / screen.width, (double) (FONT_RENDERER.FONT_HEIGHT - 1) / screen.height);
         this.text = text;
