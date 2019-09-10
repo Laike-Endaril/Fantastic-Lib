@@ -1,5 +1,6 @@
 package com.fantasticsource.mctools.component;
 
+import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.guielements.GUIElement;
 import io.netty.buffer.ByteBuf;
 
@@ -68,7 +69,7 @@ public class CFloat extends Component
     }
 
     @Override
-    public GUIElement getGUIElement()
+    public GUIElement getGUIElement(GUIScreen screen)
     {
         //TODO
         return null;

@@ -1,5 +1,6 @@
 package com.fantasticsource.mctools.component;
 
+import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.guielements.GUIElement;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.math.Vec3d;
@@ -108,7 +109,7 @@ public class CVec3D extends Component
     }
 
     @Override
-    public GUIElement getGUIElement()
+    public GUIElement getGUIElement(GUIScreen screen)
     {
         //TODO
         return null;

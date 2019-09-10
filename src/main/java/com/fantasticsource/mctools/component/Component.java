@@ -1,5 +1,6 @@
 package com.fantasticsource.mctools.component;
 
+import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.guielements.GUIElement;
 import io.netty.buffer.ByteBuf;
 
@@ -50,7 +51,7 @@ public abstract class Component
         return getClass().getSimpleName();
     }
 
-    public abstract GUIElement getGUIElement();
+    public abstract GUIElement getGUIElement(GUIScreen screen);
 
     public abstract void setFromGUIElement(GUIElement element);
 }
