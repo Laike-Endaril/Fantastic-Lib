@@ -84,4 +84,10 @@ public class CStringUTF8 extends Component
         //TODO
         return null;
     }
+
+    @Override
+    public void setFromGUIElement(GUIElement element)
+    {
+        //TODO
+    }
 }

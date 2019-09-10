@@ -113,4 +113,10 @@ public class CVec3D extends Component
         //TODO
         return null;
     }
+
+    @Override
+    public void setFromGUIElement(GUIElement element)
+    {
+        //TODO
+    }
 }

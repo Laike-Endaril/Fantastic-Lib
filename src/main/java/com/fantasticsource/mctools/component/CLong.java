@@ -74,4 +74,10 @@ public class CLong extends Component
         //TODO
         return null;
     }
+
+    @Override
+    public void setFromGUIElement(GUIElement element)
+    {
+        //TODO
+    }
 }

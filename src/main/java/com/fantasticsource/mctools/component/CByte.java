@@ -72,4 +72,10 @@ public class CByte extends Component
         //TODO
         return null;
     }
+
+    @Override
+    public void setFromGUIElement(GUIElement element)
+    {
+        //TODO
+    }
 }

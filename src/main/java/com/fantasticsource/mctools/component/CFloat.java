@@ -73,4 +73,10 @@ public class CFloat extends Component
         //TODO
         return null;
     }
+
+    @Override
+    public void setFromGUIElement(GUIElement element)
+    {
+        //TODO
+    }
 }

@@ -51,4 +51,6 @@ public abstract class Component
     }
 
     public abstract GUIElement getGUIElement();
+
+    public abstract void setFromGUIElement(GUIElement element);
 }
