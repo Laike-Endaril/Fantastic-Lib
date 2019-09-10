@@ -14,9 +14,32 @@ public abstract class GUIElement
 {
     public static final Color T_GRAY = new Color(0xAAAAAA77);
 
+    public static final byte
+            AP_LEFT_TO_RIGHT_TOP_TO_BOTTOM = 0,
+            AP_RIGHT_TO_LEFT_TOP_TO_BOTTOM = 1,
+            AP_LEFT_TO_RIGHT_BOTTOM_TO_TOP = 2,
+            AP_RIGHT_TO_LEFT_BOTTOM_TO_TOP = 3,
+            AP_TOP_TO_BOTTOM_LEFT_TO_RIGHT = 4,
+            AP_TOP_TO_BOTTOM_RIGHT_TO_LEFT = 5,
+            AP_BOTTOM_TO_TOP_LEFT_TO_RIGHT = 6,
+            AP_BOTTOM_TO_TOP_RIGHT_TO_LEFT = 7;
+
+    public static final byte
+            HA_LEFT = 0,
+            HA_MIDDLE = 1,
+            HA_CENTER = 1,
+            HA_RIGHT = 2,
+            VA_TOP = 0,
+            VA_MIDDLE = 1,
+            VA_CENTER = 1,
+            VA_BOTTOM = 1;
+
+
     public int[] currentScissor = null;
 
     public double x, y, width, height;
+    protected boolean autoplace = false;
+    protected byte subElementAutoplaceMethod, hAlign, vAlign;
     public GUIElement parent = null;
     public ArrayList<GUIElement> children = new ArrayList<>();
     protected GUIScreen screen;
@@ -25,11 +48,53 @@ public abstract class GUIElement
     private ArrayList<GUIElement> linkedMouseActivityReverse = new ArrayList<>();
 
 
-    public GUIElement(GUIScreen screen, double x, double y)
+    public GUIElement(GUIScreen screen, double width, double height)
+    {
+        this(screen, width, height, HA_LEFT, VA_TOP, AP_LEFT_TO_RIGHT_TOP_TO_BOTTOM);
+    }
+
+    public GUIElement(GUIScreen screen, double width, double height, byte hAlign, byte vAlign)
+    {
+        this(screen, width, height, hAlign, vAlign, AP_LEFT_TO_RIGHT_TOP_TO_BOTTOM);
+    }
+
+    public GUIElement(GUIScreen screen, double width, double height, byte subElementAutoplaceMethod)
+    {
+        this(screen, width, height, HA_LEFT, VA_TOP, subElementAutoplaceMethod);
+    }
+
+    public GUIElement(GUIScreen screen, double width, double height, byte hAlign, byte vAlign, byte subElementAutoplaceMethod)
+    {
+        this(screen, 0, 0, width, height, hAlign, vAlign, subElementAutoplaceMethod);
+        autoplace = true;
+    }
+
+
+    public GUIElement(GUIScreen screen, double x, double y, double width, double height)
+    {
+        this(screen, x, y, width, height, HA_LEFT, VA_TOP, AP_LEFT_TO_RIGHT_TOP_TO_BOTTOM);
+    }
+
+    public GUIElement(GUIScreen screen, double x, double y, double width, double height, byte hAlign, byte vAlign)
+    {
+        this(screen, x, y, width, height, hAlign, vAlign, AP_LEFT_TO_RIGHT_TOP_TO_BOTTOM);
+    }
+
+    public GUIElement(GUIScreen screen, double x, double y, double width, double height, byte subElementAutoplaceMethod)
+    {
+        this(screen, x, y, width, height, HA_LEFT, VA_TOP, subElementAutoplaceMethod);
+    }
+
+    public GUIElement(GUIScreen screen, double x, double y, double width, double height, byte hAlign, byte vAlign, byte subElementAutoplaceMethod)
     {
         this.screen = screen;
         this.x = x;
         this.y = y;
+        this.width = width;
+        this.height = height;
+        this.hAlign = hAlign;
+        this.vAlign = vAlign;
+        this.subElementAutoplaceMethod = subElementAutoplaceMethod;
     }
 
     public abstract boolean isWithin(double x, double y);
@@ -167,6 +232,11 @@ public abstract class GUIElement
 
     public GUIElement add(GUIElement element)
     {
+        if (element.autoplace)
+        {
+            //TODO
+        }
+
         element.parent = this;
         children.add(element);
         recalc();
@@ -175,6 +245,11 @@ public abstract class GUIElement
 
     public GUIElement add(int index, GUIElement element)
     {
+        if (element.autoplace)
+        {
+            //TODO
+        }
+
         element.parent = this;
         children.add(index, element);
         recalc();

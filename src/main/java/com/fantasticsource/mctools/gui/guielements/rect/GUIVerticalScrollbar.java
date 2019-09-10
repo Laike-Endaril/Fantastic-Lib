@@ -1,4 +1,4 @@
-package com.fantasticsource.mctools.gui.guielements;
+package com.fantasticsource.mctools.gui.guielements.rect;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.guielements.rect.GUIGradientBorder;
