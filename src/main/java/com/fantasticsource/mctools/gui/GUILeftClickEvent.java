@@ -1,6 +1,6 @@
 package com.fantasticsource.mctools.gui;
 
-import com.fantasticsource.mctools.gui.guielements.GUIElement;
+import com.fantasticsource.mctools.gui.element.GUIElement;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 

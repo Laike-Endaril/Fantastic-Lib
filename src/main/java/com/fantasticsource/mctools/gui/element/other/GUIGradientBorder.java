@@ -1,6 +1,7 @@
-package com.fantasticsource.mctools.gui.guielements.rect;
+package com.fantasticsource.mctools.gui.element.other;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
+import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -10,7 +11,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 
-public class GUIGradientBorder extends GUIRectElement
+public class GUIGradientBorder extends GUIElement
 {
     public Color border, center, hoverBorder, hoverCenter, activeBorder, activeCenter;
     protected double thickness;

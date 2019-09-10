@@ -1,9 +1,9 @@
 package com.fantasticsource.mctools.component;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
-import com.fantasticsource.mctools.gui.guielements.GUIElement;
-import com.fantasticsource.mctools.gui.guielements.rect.text.GUITextInputRect;
-import com.fantasticsource.mctools.gui.guielements.rect.text.filter.FilterNone;
+import com.fantasticsource.mctools.gui.element.GUIElement;
+import com.fantasticsource.mctools.gui.element.text.GUITextInput;
+import com.fantasticsource.mctools.gui.element.text.filter.FilterNone;
 import io.netty.buffer.ByteBuf;
 
 import java.io.FileInputStream;
@@ -84,7 +84,7 @@ public class CStringUTF8 extends Component
     @Override
     public GUIElement getGUIElement(GUIScreen screen)
     {
-        return new GUITextInputRect(screen, 0, 0, value, FilterNone.INSTANCE);
+        return new GUITextInput(screen, 0, 0, value, FilterNone.INSTANCE);
     }
 
     @Override

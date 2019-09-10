@@ -1,18 +1,17 @@
-package com.fantasticsource.mctools.gui.guielements.rect;
+package com.fantasticsource.mctools.gui.element.other;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
-import com.fantasticsource.mctools.gui.guielements.rect.GUIGradientBorder;
-import com.fantasticsource.mctools.gui.guielements.rect.GUIRectElement;
-import com.fantasticsource.mctools.gui.guielements.rect.view.GUIRectScrollView;
+import com.fantasticsource.mctools.gui.element.GUIElement;
+import com.fantasticsource.mctools.gui.element.view.GUIScrollView;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 
-public class GUIVerticalScrollbar extends GUIRectElement
+public class GUIVerticalScrollbar extends GUIElement
 {
     private GUIGradientBorder background, slider;
-    private GUIRectScrollView scrollView;
+    private GUIScrollView scrollView;
 
-    public GUIVerticalScrollbar(GUIScreen screen, double x, double y, double width, double height, Color backgroundBorder, Color backgroundCenter, Color sliderBorder, Color sliderCenter, GUIRectScrollView scrollView)
+    public GUIVerticalScrollbar(GUIScreen screen, double x, double y, double width, double height, Color backgroundBorder, Color backgroundCenter, Color sliderBorder, Color sliderCenter, GUIScrollView scrollView)
     {
         super(screen, x, y, width, height);
         this.scrollView = scrollView;

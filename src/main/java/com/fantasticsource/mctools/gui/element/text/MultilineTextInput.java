@@ -1,12 +1,12 @@
-package com.fantasticsource.mctools.gui.guielements.rect.text;
+package com.fantasticsource.mctools.gui.element.text;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
-import com.fantasticsource.mctools.gui.guielements.GUIElement;
-import com.fantasticsource.mctools.gui.guielements.rect.view.GUIRectScrollView;
+import com.fantasticsource.mctools.gui.element.GUIElement;
+import com.fantasticsource.mctools.gui.element.view.GUIScrollView;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 
-public class MultilineTextInput extends GUIRectScrollView
+public class MultilineTextInput extends GUIScrollView
 {
     public final int lineSpacing = 0;
     public Color color, hoverColor, activeColor, cursorColor, highlightColor;
@@ -30,7 +30,7 @@ public class MultilineTextInput extends GUIRectScrollView
         if (lines.length == 0) add("");
         else for (String line : lines) add(line);
 
-        cursorX = ((GUITextInputRect) children.get(0)).text.length();
+        cursorX = ((GUITextInput) children.get(0)).text.length();
     }
 
     @Override
@@ -55,24 +55,24 @@ public class MultilineTextInput extends GUIRectScrollView
     @Override
     public GUIElement add(GUIElement element)
     {
-        if (!(element instanceof GUITextInputRect)) throw new IllegalArgumentException("Multiline text inputs can only have text inputs added to them!");
-        return add(((GUITextInputRect) element).text);
+        if (!(element instanceof GUITextInput)) throw new IllegalArgumentException("Multiline text inputs can only have text inputs added to them!");
+        return add(((GUITextInput) element).text);
     }
 
     @Override
     public GUIElement add(int index, GUIElement element)
     {
-        if (!(element instanceof GUITextInputRect)) throw new IllegalArgumentException("Multiline text inputs can only have text inputs added to them!");
-        return add(index, ((GUITextInputRect) element).text);
+        if (!(element instanceof GUITextInput)) throw new IllegalArgumentException("Multiline text inputs can only have text inputs added to them!");
+        return add(index, ((GUITextInput) element).text);
     }
 
     public GUIElement add(String s)
     {
-        if (children.size() == 0) return super.add(new GUITextInputRect(screen, 0, 0, s, color, hoverColor, activeColor, cursorColor, highlightColor));
+        if (children.size() == 0) return super.add(new GUITextInput(screen, 0, 0, s, color, hoverColor, activeColor, cursorColor, highlightColor));
         else
         {
             GUIElement element = children.get(children.size() - 1);
-            return super.add(new GUITextInputRect(screen, 0, element.y + (element.height + (double) lineSpacing / screen.height / height + (1d / screen.height)) / height, s, color, hoverColor, activeColor, cursorColor, highlightColor));
+            return super.add(new GUITextInput(screen, 0, element.y + (element.height + (double) lineSpacing / screen.height / height + (1d / screen.height)) / height, s, color, hoverColor, activeColor, cursorColor, highlightColor));
         }
     }
 
@@ -81,7 +81,7 @@ public class MultilineTextInput extends GUIRectScrollView
         if (index == 0) return add(s);
         else
         {
-            GUIElement element = children.get(index - 1), newElement = new GUITextInputRect(screen, 0, element.y + (element.height + (double) lineSpacing / screen.height / height + (1d / screen.height)) / height, s, color, hoverColor, activeColor, cursorColor, highlightColor);
+            GUIElement element = children.get(index - 1), newElement = new GUITextInput(screen, 0, element.y + (element.height + (double) lineSpacing / screen.height / height + (1d / screen.height)) / height, s, color, hoverColor, activeColor, cursorColor, highlightColor);
             for (int i = index; i < children.size(); i++)
             {
                 element = children.get(i);

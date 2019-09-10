@@ -1,8 +1,8 @@
-package com.fantasticsource.mctools.gui.guielements.rect.text;
+package com.fantasticsource.mctools.gui.element.text;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
-import com.fantasticsource.mctools.gui.guielements.GUIElement;
-import com.fantasticsource.mctools.gui.guielements.rect.GUIGradientBorder;
+import com.fantasticsource.mctools.gui.element.GUIElement;
+import com.fantasticsource.mctools.gui.element.other.GUIGradientBorder;
 import com.fantasticsource.tools.datastructures.Color;
 
 import static com.fantasticsource.mctools.gui.GUIScreen.getColor;

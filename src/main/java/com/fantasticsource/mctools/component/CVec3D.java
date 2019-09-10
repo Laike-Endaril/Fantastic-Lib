@@ -1,7 +1,7 @@
 package com.fantasticsource.mctools.component;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
-import com.fantasticsource.mctools.gui.guielements.GUIElement;
+import com.fantasticsource.mctools.gui.element.GUIElement;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.math.Vec3d;
 

@@ -1,31 +1,32 @@
-package com.fantasticsource.mctools.gui.guielements.rect;
+package com.fantasticsource.mctools.gui.element.other;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
+import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.renderer.GlStateManager;
 
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 
-public class GUIGradientRect extends GUIRectElement
+public class GUIGradient extends GUIElement
 {
     private Color[] colors, hoverColors, activeColors;
 
-    public GUIGradientRect(GUIScreen screen, double x, double y, double width, double height, Color color)
+    public GUIGradient(GUIScreen screen, double x, double y, double width, double height, Color color)
     {
         this(screen, x, y, width, height, color, color, color);
     }
 
-    public GUIGradientRect(GUIScreen screen, double x, double y, double width, double height, Color color, Color hover, Color active)
+    public GUIGradient(GUIScreen screen, double x, double y, double width, double height, Color color, Color hover, Color active)
     {
         this(screen, x, y, width, height, color, color, color, color, hover, hover, hover, hover, active, active, active, active);
     }
 
-    public GUIGradientRect(GUIScreen screen, double x, double y, double width, double height, Color topRight, Color topLeft, Color bottomLeft, Color bottomRight)
+    public GUIGradient(GUIScreen screen, double x, double y, double width, double height, Color topRight, Color topLeft, Color bottomLeft, Color bottomRight)
     {
         this(screen, x, y, width, height, topRight, topLeft, bottomLeft, bottomRight, topRight, topLeft, bottomLeft, bottomRight, topRight, topLeft, bottomLeft, bottomRight);
     }
 
-    public GUIGradientRect(GUIScreen screen, double x, double y, double width, double height, Color topRight, Color topLeft, Color bottomLeft, Color bottomRight, Color topRightHover, Color topLeftHover, Color bottomLeftHover, Color bottomRightHover, Color topRightActive, Color topLeftActive, Color bottomLeftActive, Color bottomRightActive)
+    public GUIGradient(GUIScreen screen, double x, double y, double width, double height, Color topRight, Color topLeft, Color bottomLeft, Color bottomRight, Color topRightHover, Color topLeftHover, Color bottomLeftHover, Color bottomRightHover, Color topRightActive, Color topLeftActive, Color bottomLeftActive, Color bottomRightActive)
     {
         super(screen, x, y, width, height);
 

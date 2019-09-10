@@ -1,25 +1,24 @@
-package com.fantasticsource.mctools.gui.guielements.rect.view;
+package com.fantasticsource.mctools.gui.element.view;
 
 import com.fantasticsource.mctools.gui.GUILeftClickEvent;
 import com.fantasticsource.mctools.gui.GUIScreen;
-import com.fantasticsource.mctools.gui.guielements.GUIElement;
-import com.fantasticsource.mctools.gui.guielements.rect.GUIGradientBorder;
-import com.fantasticsource.mctools.gui.guielements.rect.GUIRectElement;
-import com.fantasticsource.mctools.gui.guielements.rect.text.GUITextButton;
+import com.fantasticsource.mctools.gui.element.GUIElement;
+import com.fantasticsource.mctools.gui.element.other.GUIGradientBorder;
+import com.fantasticsource.mctools.gui.element.text.GUITextButton;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import static com.fantasticsource.tools.datastructures.Color.WHITE;
 
-public class GUIRectTabView extends GUIRectView
+public class GUITabView extends GUIView
 {
-    public GUIRectElement[] tabs;
-    public GUIRectView[] tabViews;
+    public GUIElement[] tabs;
+    public GUIView[] tabViews;
     private GUIElement tabBackground = null;
     private int current = 0;
     private boolean autocalcTabs = false, autocalcTabviews = false;
 
-    public GUIRectTabView(GUIScreen screen, double x, double y, double width, double height, String... tabNames)
+    public GUITabView(GUIScreen screen, double x, double y, double width, double height, String... tabNames)
     {
         this(screen, x, y, width, height, genTabs(screen, tabNames));
         autocalcTabs = true;
@@ -32,7 +31,7 @@ public class GUIRectTabView extends GUIRectView
         recalc();
     }
 
-    public GUIRectTabView(GUIScreen screen, double x, double y, double width, double height, String[] tabNames, GUIRectView... tabViews)
+    public GUITabView(GUIScreen screen, double x, double y, double width, double height, String[] tabNames, GUIView... tabViews)
     {
         this(screen, x, y, width, height, genTabs(screen, tabNames), tabViews);
         autocalcTabs = true;
@@ -44,7 +43,7 @@ public class GUIRectTabView extends GUIRectView
         recalc();
     }
 
-    public GUIRectTabView(GUIScreen screen, double x, double y, double width, double height, GUIRectElement[] tabs, GUIRectView... tabViews)
+    public GUITabView(GUIScreen screen, double x, double y, double width, double height, GUIElement[] tabs, GUIView... tabViews)
     {
         super(screen, x, y, width, height);
 
@@ -58,7 +57,7 @@ public class GUIRectTabView extends GUIRectView
         }
         else this.tabViews = tabViews;
 
-        for (GUIRectElement element : this.tabViews) element.parent = this;
+        for (GUIElement element : this.tabViews) element.parent = this;
         if (this.tabViews.length > 0)
         {
             tabs[0].setActive(true);
@@ -66,7 +65,7 @@ public class GUIRectTabView extends GUIRectView
         }
 
         this.tabs = tabs;
-        for (GUIRectElement element : tabs)
+        for (GUIElement element : tabs)
         {
             children.add(element);
             element.parent = this;
@@ -78,9 +77,9 @@ public class GUIRectTabView extends GUIRectView
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-    private static GUIRectElement[] genTabs(GUIScreen screen, String[] tabNames)
+    private static GUIElement[] genTabs(GUIScreen screen, String[] tabNames)
     {
-        GUIRectElement[] result = new GUIRectElement[tabNames.length];
+        GUIElement[] result = new GUIElement[tabNames.length];
 
         for (int i = 0; i < result.length; i++)
         {
@@ -90,13 +89,13 @@ public class GUIRectTabView extends GUIRectView
         return result;
     }
 
-    private static GUIRectView[] genTabViews(GUIScreen screen, GUIRectElement[] tabs)
+    private static GUIView[] genTabViews(GUIScreen screen, GUIElement[] tabs)
     {
-        GUIRectView[] result = new GUIRectView[tabs.length];
+        GUIView[] result = new GUIView[tabs.length];
 
         for (int i = 0; i < result.length; i++)
         {
-            result[i] = new GUIRectView(screen, 0, 0, 1, 1);
+            result[i] = new GUIView(screen, 0, 0, 1, 1);
         }
 
         return result;
@@ -108,7 +107,7 @@ public class GUIRectTabView extends GUIRectView
         if (autocalcTabs)
         {
             double xx = 0, yy = 0;
-            for (GUIRectElement tab : tabs)
+            for (GUIElement tab : tabs)
             {
                 if (xx + tab.width / width > 1)
                 {
@@ -125,7 +124,7 @@ public class GUIRectTabView extends GUIRectView
 
             if (autocalcTabviews)
             {
-                for (GUIRectView view : tabViews)
+                for (GUIView view : tabViews)
                 {
                     view.y = yy;
                     view.height = 1 - yy;

@@ -1,11 +1,11 @@
-package com.fantasticsource.mctools.gui.guielements.rect.text;
+package com.fantasticsource.mctools.gui.element.text;
 
 import com.fantasticsource.mctools.MonoASCIIFontRenderer;
 import com.fantasticsource.mctools.gui.GUILeftClickEvent;
 import com.fantasticsource.mctools.gui.GUIScreen;
-import com.fantasticsource.mctools.gui.guielements.GUIElement;
-import com.fantasticsource.mctools.gui.guielements.rect.text.filter.FilterNone;
-import com.fantasticsource.mctools.gui.guielements.rect.text.filter.TextFilter;
+import com.fantasticsource.mctools.gui.element.GUIElement;
+import com.fantasticsource.mctools.gui.element.text.filter.FilterNone;
+import com.fantasticsource.mctools.gui.element.text.filter.TextFilter;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.gui.ScaledResolution;
@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import static com.fantasticsource.mctools.gui.GUIScreen.*;
 import static com.fantasticsource.tools.datastructures.Color.*;
 
-public class GUITextInputRect extends GUITextRect
+public class GUITextInput extends GUITextRect
 {
     private static final Color T_WHITE = new Color(0xFFFFFF88);
 
@@ -35,7 +35,7 @@ public class GUITextInputRect extends GUITextRect
     protected int lastAbsMouseX;
 
 
-    public GUITextInputRect(GUIScreen screen, double x, double y, String text, TextFilter filter)
+    public GUITextInput(GUIScreen screen, double x, double y, String text, TextFilter filter)
     {
         super(screen, x, y, text, filter.acceptable(text) ? GREEN : RED);
 
@@ -48,7 +48,7 @@ public class GUITextInputRect extends GUITextRect
         shadowColor = color.v() >= 64 ? BLACK : WHITE;
     }
 
-    public GUITextInputRect(GUIScreen screen, double x, double y, String text, Color color, Color hoverColor, Color activeColor, Color cursorColor, Color hightlightColor)
+    public GUITextInput(GUIScreen screen, double x, double y, String text, Color color, Color hoverColor, Color activeColor, Color cursorColor, Color hightlightColor)
     {
         super(screen, x, y, text, color, hoverColor, activeColor);
 
@@ -108,7 +108,7 @@ public class GUITextInputRect extends GUITextRect
         int tabbing = 0;
         for (int index = 0; index < parent.size(); index++)
         {
-            GUITextInputRect element = (GUITextInputRect) parent.get(index);
+            GUITextInput element = (GUITextInput) parent.get(index);
             if (element == this) return Tools.max(0, tabbing);
 
             for (char c : element.text.toCharArray())
@@ -128,7 +128,7 @@ public class GUITextInputRect extends GUITextRect
             ((MultilineTextInput) parent).selectionStartY = -1;
             for (GUIElement element : parent.children)
             {
-                ((GUITextInputRect) element).selectorPosition = -1;
+                ((GUITextInput) element).selectorPosition = -1;
             }
         }
         else selectorPosition = -1;
@@ -166,7 +166,7 @@ public class GUITextInputRect extends GUITextRect
         if (parent instanceof MultilineTextInput) ((MultilineTextInput) parent).cursorX = cursorPosition;
     }
 
-    protected GUITextInputRect multilineDelete()
+    protected GUITextInput multilineDelete()
     {
         if (!(parent instanceof MultilineTextInput) || ((MultilineTextInput) parent).selectionStartY == -1 || ((MultilineTextInput) parent).selectionStartY == parent.indexOf(this)) return null;
 
@@ -175,10 +175,10 @@ public class GUITextInputRect extends GUITextRect
         int firstY = Tools.min(index, multi.selectionStartY);
         int lastY = Tools.max(index, multi.selectionStartY);
 
-        GUITextInputRect element = (GUITextInputRect) multi.get(lastY);
+        GUITextInput element = (GUITextInput) multi.get(lastY);
         String s = element.text.substring(Tools.max(element.cursorPosition, element.selectorPosition));
 
-        element = (GUITextInputRect) multi.get(firstY);
+        element = (GUITextInput) multi.get(firstY);
         int nextCursorPos = element.selectorPosition == -1 ? element.cursorPosition : Tools.min(element.selectorPosition, element.cursorPosition);
         element.text = element.text.substring(0, nextCursorPos) + s;
 
@@ -198,13 +198,13 @@ public class GUITextInputRect extends GUITextRect
         return element;
     }
 
-    protected GUITextInputRect activeLine()
+    protected GUITextInput activeLine()
     {
         if (parent instanceof MultilineTextInput)
         {
             for (GUIElement element : parent.children)
             {
-                if (element.isActive()) return (GUITextInputRect) element;
+                if (element.isActive()) return (GUITextInput) element;
             }
         }
 
@@ -224,7 +224,7 @@ public class GUITextInputRect extends GUITextRect
         {
             if (multi != null)
             {
-                GUITextInputRect element = multilineDelete();
+                GUITextInput element = multilineDelete();
                 if (element == null) element = this;
 
                 int min = element.selectorPosition == -1 ? element.cursorPosition : Tools.min(element.cursorPosition, element.selectorPosition);
@@ -249,7 +249,7 @@ public class GUITextInputRect extends GUITextRect
                 StringBuilder tabbing = new StringBuilder();
                 for (int i = tabs; i > 0; i--) tabbing.append(" ");
 
-                element = (GUITextInputRect) multi.add(multi.indexOf(element) + 1, tabbing + afterTrimmed);
+                element = (GUITextInput) multi.add(multi.indexOf(element) + 1, tabbing + afterTrimmed);
                 element.setActive(true);
                 element.cursorPosition = tabs;
 
@@ -261,7 +261,7 @@ public class GUITextInputRect extends GUITextRect
             int index = parent.indexOf(this);
             if (multi != null && index != 0 && GUIScreen.isCtrlKeyDown())
             {
-                GUITextInputRect first = (GUITextInputRect) multi.get(0);
+                GUITextInput first = (GUITextInput) multi.get(0);
 
                 if (GUIScreen.isShiftKeyDown())
                 {
@@ -269,7 +269,7 @@ public class GUITextInputRect extends GUITextRect
 
                     for (int i = 0; i < parent.size(); i++)
                     {
-                        GUITextInputRect element = (GUITextInputRect) parent.get(i);
+                        GUITextInput element = (GUITextInput) parent.get(i);
 
                         if (i > multi.selectionStartY) element.selectorPosition = -1;
                         else if (i < multi.selectionStartY)
@@ -302,7 +302,7 @@ public class GUITextInputRect extends GUITextRect
             int index = parent.indexOf(this);
             if (multi != null && index != parent.size() - 1 && GUIScreen.isCtrlKeyDown())
             {
-                GUITextInputRect last = (GUITextInputRect) multi.get(multi.size() - 1);
+                GUITextInput last = (GUITextInput) multi.get(multi.size() - 1);
 
                 if (GUIScreen.isShiftKeyDown())
                 {
@@ -310,7 +310,7 @@ public class GUITextInputRect extends GUITextRect
 
                     for (int i = 0; i < parent.size(); i++)
                     {
-                        GUITextInputRect element = (GUITextInputRect) parent.get(i);
+                        GUITextInput element = (GUITextInput) parent.get(i);
 
                         if (i < multi.selectionStartY) element.selectorPosition = -1;
                         else if (i > multi.selectionStartY)
@@ -342,11 +342,11 @@ public class GUITextInputRect extends GUITextRect
         {
             if (multi != null)
             {
-                GUITextInputRect last = (GUITextInputRect) multi.get(multi.size() - 1);
+                GUITextInput last = (GUITextInput) multi.get(multi.size() - 1);
 
                 for (GUIElement e : multi.children)
                 {
-                    GUITextInputRect element = (GUITextInputRect) e;
+                    GUITextInput element = (GUITextInput) e;
                     if (element.text.length() > 0)
                     {
                         element.selectorPosition = 0;
@@ -378,15 +378,15 @@ public class GUITextInputRect extends GUITextRect
                 int startY = Tools.min(multi.indexOf(this), multi.selectionStartY);
                 int endY = Tools.max(multi.indexOf(this), multi.selectionStartY);
 
-                GUITextInputRect element = (GUITextInputRect) multi.get(startY);
+                GUITextInput element = (GUITextInput) multi.get(startY);
                 s.append(element.text.substring(element.selectorPosition == -1 ? element.cursorPosition : Tools.min(element.cursorPosition, element.selectorPosition)));
 
                 for (int i = startY + 1; i < endY; i++)
                 {
-                    s.append("\r\n").append(((GUITextInputRect) multi.get(i)).text);
+                    s.append("\r\n").append(((GUITextInput) multi.get(i)).text);
                 }
 
-                element = (GUITextInputRect) multi.get(endY);
+                element = (GUITextInput) multi.get(endY);
                 s.append("\r\n").append(element.text, 0, Tools.max(element.cursorPosition, element.selectorPosition));
 
                 multilineDelete();
@@ -413,15 +413,15 @@ public class GUITextInputRect extends GUITextRect
                 int startY = Tools.min(multi.indexOf(this), multi.selectionStartY);
                 int endY = Tools.max(multi.indexOf(this), multi.selectionStartY);
 
-                GUITextInputRect element = (GUITextInputRect) multi.get(startY);
+                GUITextInput element = (GUITextInput) multi.get(startY);
                 s.append(element.text.substring(element.selectorPosition == -1 ? element.cursorPosition : Tools.min(element.cursorPosition, element.selectorPosition)));
 
                 for (int i = startY + 1; i < endY; i++)
                 {
-                    s.append("\r\n").append(((GUITextInputRect) multi.get(i)).text);
+                    s.append("\r\n").append(((GUITextInput) multi.get(i)).text);
                 }
 
-                element = (GUITextInputRect) multi.get(endY);
+                element = (GUITextInput) multi.get(endY);
                 s.append("\r\n").append(element.text, 0, Tools.max(element.cursorPosition, element.selectorPosition));
             }
             else if (hasSelectedText())
@@ -434,7 +434,7 @@ public class GUITextInputRect extends GUITextRect
         else if (GUIScreen.isCtrlKeyDown() && keyCode == Keyboard.KEY_V)
         {
             String[] tokens = Tools.fixedSplit(GUIScreen.getClipboardString(), "\n");
-            GUITextInputRect element = multilineDelete();
+            GUITextInput element = multilineDelete();
             if (element == null) element = this;
 
             if (multi != null && tokens.length > 1)
@@ -452,7 +452,7 @@ public class GUITextInputRect extends GUITextRect
                 }
 
                 before = removeIllegalChars(tokens[tokens.length - 1]);
-                element = (GUITextInputRect) multi.add(index, before + after);
+                element = (GUITextInput) multi.add(index, before + after);
 
                 deselectAll();
                 element.setActive(true);
@@ -474,7 +474,7 @@ public class GUITextInputRect extends GUITextRect
         }
         else if (typedChar >= ' ' && typedChar <= '~')
         {
-            GUITextInputRect element = multilineDelete();
+            GUITextInput element = multilineDelete();
             if (element == null) element = this;
 
             int min = Tools.min(element.cursorPosition, element.selectorPosition);
@@ -512,7 +512,7 @@ public class GUITextInputRect extends GUITextRect
                     int index = parent.indexOf(this);
                     if (index != 0)
                     {
-                        GUITextInputRect other = (GUITextInputRect) parent.get(index - 1);
+                        GUITextInput other = (GUITextInput) parent.get(index - 1);
                         text = other.text + text;
                         cursorPosition = other.text.length();
                         parent.remove(index - 1);
@@ -546,7 +546,7 @@ public class GUITextInputRect extends GUITextRect
                     int index = parent.indexOf(this);
                     if (index != parent.size() - 1)
                     {
-                        text = text + ((GUITextInputRect) parent.get(index + 1)).text;
+                        text = text + ((GUITextInput) parent.get(index + 1)).text;
                         parent.remove(index + 1);
                     }
                 }
@@ -585,7 +585,7 @@ public class GUITextInputRect extends GUITextRect
                     int index = multi.indexOf(this);
                     if (index != 0)
                     {
-                        GUITextInputRect other = (GUITextInputRect) multi.get(index - 1);
+                        GUITextInput other = (GUITextInput) multi.get(index - 1);
 
                         if (GUIScreen.isShiftKeyDown() && multi.selectionStartY == -1)
                         {
@@ -630,7 +630,7 @@ public class GUITextInputRect extends GUITextRect
                     int index = multi.indexOf(this);
                     if (index != parent.size() - 1)
                     {
-                        GUITextInputRect other = (GUITextInputRect) multi.get(index + 1);
+                        GUITextInput other = (GUITextInput) multi.get(index + 1);
 
                         if (GUIScreen.isShiftKeyDown() && multi.selectionStartY == -1)
                         {
@@ -653,7 +653,7 @@ public class GUITextInputRect extends GUITextRect
             if (multi != null && parent.indexOf(this) > 0)
             {
                 int index = multi.indexOf(this);
-                GUITextInputRect other = (GUITextInputRect) multi.get(index - 1);
+                GUITextInput other = (GUITextInput) multi.get(index - 1);
 
                 if (GUIScreen.isShiftKeyDown())
                 {
@@ -687,7 +687,7 @@ public class GUITextInputRect extends GUITextRect
             if (multi != null && parent.indexOf(this) != parent.size() - 1)
             {
                 int index = multi.indexOf(this);
-                GUITextInputRect other = (GUITextInputRect) multi.get(index + 1);
+                GUITextInput other = (GUITextInput) multi.get(index + 1);
 
                 if (GUIScreen.isShiftKeyDown())
                 {
@@ -720,7 +720,7 @@ public class GUITextInputRect extends GUITextRect
 
         if (multi != null)
         {
-            GUITextInputRect element = activeLine();
+            GUITextInput element = activeLine();
             if (element != null)
             {
                 if (element.y * multi.height < multi.top)
@@ -840,13 +840,13 @@ public class GUITextInputRect extends GUITextRect
 
                 if (multi.selectionStartY < index)
                 {
-                    GUITextInputRect element = (GUITextInputRect) multi.get(multi.selectionStartY);
+                    GUITextInput element = (GUITextInput) multi.get(multi.selectionStartY);
                     if (element.selectorPosition == -1) element.selectorPosition = element.cursorPosition;
                     element.cursorPosition = element.text.length();
 
                     for (int i = multi.selectionStartY + 1; i < index; i++)
                     {
-                        element = (GUITextInputRect) multi.get(i);
+                        element = (GUITextInput) multi.get(i);
                         element.selectorPosition = 0;
                         element.cursorPosition = element.text.length();
                     }
@@ -855,22 +855,22 @@ public class GUITextInputRect extends GUITextRect
 
                     for (int i = 0; i < multi.selectionStartY; i++)
                     {
-                        ((GUITextInputRect) multi.get(i)).selectorPosition = -1;
+                        ((GUITextInput) multi.get(i)).selectorPosition = -1;
                     }
                     for (int i = index + 1; i < multi.size(); i++)
                     {
-                        ((GUITextInputRect) multi.get(i)).selectorPosition = -1;
+                        ((GUITextInput) multi.get(i)).selectorPosition = -1;
                     }
                 }
                 else
                 {
-                    GUITextInputRect element = (GUITextInputRect) multi.get(multi.selectionStartY);
+                    GUITextInput element = (GUITextInput) multi.get(multi.selectionStartY);
                     if (element.selectorPosition == -1) element.selectorPosition = element.cursorPosition;
                     element.cursorPosition = 0;
 
                     for (int i = multi.selectionStartY - 1; i > index; i--)
                     {
-                        element = (GUITextInputRect) multi.get(i);
+                        element = (GUITextInput) multi.get(i);
                         element.selectorPosition = element.text.length();
                         element.cursorPosition = 0;
                     }
@@ -879,11 +879,11 @@ public class GUITextInputRect extends GUITextRect
 
                     for (int i = 0; i < index; i++)
                     {
-                        ((GUITextInputRect) multi.get(i)).selectorPosition = -1;
+                        ((GUITextInput) multi.get(i)).selectorPosition = -1;
                     }
                     for (int i = multi.selectionStartY + 1; i < multi.size(); i++)
                     {
-                        ((GUITextInputRect) multi.get(i)).selectorPosition = -1;
+                        ((GUITextInput) multi.get(i)).selectorPosition = -1;
                     }
                 }
 

@@ -1,4 +1,4 @@
-package com.fantasticsource.mctools.gui.guielements.rect.text.filter;
+package com.fantasticsource.mctools.gui.element.text.filter;
 
 public abstract class TextFilter
 {

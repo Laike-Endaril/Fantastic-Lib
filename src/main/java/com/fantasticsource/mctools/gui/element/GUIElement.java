@@ -1,4 +1,4 @@
-package com.fantasticsource.mctools.gui.guielements;
+package com.fantasticsource.mctools.gui.element;
 
 import com.fantasticsource.mctools.gui.GUILeftClickEvent;
 import com.fantasticsource.mctools.gui.GUIScreen;
@@ -38,10 +38,10 @@ public abstract class GUIElement
     public int[] currentScissor = null;
 
     public double x, y, width, height;
-    protected boolean autoplace = false;
-    protected byte subElementAutoplaceMethod, hAlign, vAlign;
     public GUIElement parent = null;
     public ArrayList<GUIElement> children = new ArrayList<>();
+    protected boolean autoplace = false;
+    protected byte subElementAutoplaceMethod, hAlign, vAlign;
     protected GUIScreen screen;
     protected boolean active = false, externalDeactivation = false;
     private ArrayList<GUIElement> linkedMouseActivity = new ArrayList<>();
@@ -97,7 +97,11 @@ public abstract class GUIElement
         this.subElementAutoplaceMethod = subElementAutoplaceMethod;
     }
 
-    public abstract boolean isWithin(double x, double y);
+    public boolean isWithin(double x, double y)
+    {
+        double xx = getScreenX(), yy = getScreenY();
+        return xx <= x && x < xx + getScreenWidth() && yy <= y && y < yy + getScreenHeight();
+    }
 
     public void draw()
     {
@@ -319,11 +323,6 @@ public abstract class GUIElement
         }
     }
 
-    public void setActive(boolean active)
-    {
-        setActive(active, false);
-    }
-
     public void setActive(boolean active, boolean external)
     {
         if (!active && externalDeactivation && !external) return;
@@ -335,6 +334,11 @@ public abstract class GUIElement
     public boolean isActive()
     {
         return active;
+    }
+
+    public void setActive(boolean active)
+    {
+        setActive(active, false);
     }
 
     public void keyTyped(char typedChar, int keyCode)

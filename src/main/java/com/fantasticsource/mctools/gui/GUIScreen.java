@@ -1,6 +1,6 @@
 package com.fantasticsource.mctools.gui;
 
-import com.fantasticsource.mctools.gui.guielements.GUIElement;
+import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;

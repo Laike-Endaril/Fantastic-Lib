@@ -1,23 +1,22 @@
-package com.fantasticsource.mctools.gui.guielements.rect.view;
+package com.fantasticsource.mctools.gui.element.view;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
-import com.fantasticsource.mctools.gui.guielements.GUIElement;
-import com.fantasticsource.mctools.gui.guielements.rect.GUIRectElement;
+import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.tools.Tools;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.GL11;
 
-public class GUIRectScrollView extends GUIRectView
+public class GUIScrollView extends GUIView
 {
     public double internalHeight, progress = -1;
     public double top, bottom;
 
-    public GUIRectScrollView(GUIScreen screen, double x, double y, double width, double height, GUIRectElement... subElements)
+    public GUIScrollView(GUIScreen screen, double x, double y, double width, double height, GUIElement... subElements)
     {
         super(screen, x, y, width, height);
 
-        for (GUIRectElement element : subElements)
+        for (GUIElement element : subElements)
         {
             children.add(element);
             element.parent = this;
@@ -32,7 +31,7 @@ public class GUIRectScrollView extends GUIRectView
         internalHeight = 0;
         for (GUIElement element : children)
         {
-            if (element instanceof GUIRectElement)
+            if (element instanceof GUIElement)
             {
                 element.recalc();
                 internalHeight = Tools.max(internalHeight, element.y * height + element.height);
