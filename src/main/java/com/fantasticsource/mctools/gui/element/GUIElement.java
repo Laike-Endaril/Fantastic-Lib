@@ -22,17 +22,9 @@ public abstract class GUIElement
             AP_TOP_TO_BOTTOM_LEFT_TO_RIGHT = 4,
             AP_TOP_TO_BOTTOM_RIGHT_TO_LEFT = 5,
             AP_BOTTOM_TO_TOP_LEFT_TO_RIGHT = 6,
-            AP_BOTTOM_TO_TOP_RIGHT_TO_LEFT = 7;
-
-    public static final byte
-            HA_LEFT = 0,
-            HA_MIDDLE = 1,
-            HA_CENTER = 1,
-            HA_RIGHT = 2,
-            VA_TOP = 0,
-            VA_MIDDLE = 1,
-            VA_CENTER = 1,
-            VA_BOTTOM = 1;
+            AP_BOTTOM_TO_TOP_RIGHT_TO_LEFT = 7,
+            AP_CENTER_H_CENTER_V = 8,
+            AP_CENTER_V_CENTER_H = 9;
 
 
     public int[] currentScissor = null;
@@ -41,7 +33,8 @@ public abstract class GUIElement
     public GUIElement parent = null;
     public ArrayList<GUIElement> children = new ArrayList<>();
     protected boolean autoplace = false;
-    protected byte subElementAutoplaceMethod, hAlign, vAlign;
+    protected double lastAutoX = 0, lastAutoY = 0;
+    protected byte subElementAutoplaceMethod;
     protected GUIScreen screen;
     protected boolean active = false, externalDeactivation = false;
     private ArrayList<GUIElement> linkedMouseActivity = new ArrayList<>();
@@ -50,50 +43,28 @@ public abstract class GUIElement
 
     public GUIElement(GUIScreen screen, double width, double height)
     {
-        this(screen, width, height, HA_LEFT, VA_TOP, AP_LEFT_TO_RIGHT_TOP_TO_BOTTOM);
-    }
-
-    public GUIElement(GUIScreen screen, double width, double height, byte hAlign, byte vAlign)
-    {
-        this(screen, width, height, hAlign, vAlign, AP_LEFT_TO_RIGHT_TOP_TO_BOTTOM);
+        this(screen, width, height, AP_LEFT_TO_RIGHT_TOP_TO_BOTTOM);
     }
 
     public GUIElement(GUIScreen screen, double width, double height, byte subElementAutoplaceMethod)
     {
-        this(screen, width, height, HA_LEFT, VA_TOP, subElementAutoplaceMethod);
-    }
-
-    public GUIElement(GUIScreen screen, double width, double height, byte hAlign, byte vAlign, byte subElementAutoplaceMethod)
-    {
-        this(screen, 0, 0, width, height, hAlign, vAlign, subElementAutoplaceMethod);
+        this(screen, 0, 0, width, height, subElementAutoplaceMethod);
         autoplace = true;
     }
 
 
     public GUIElement(GUIScreen screen, double x, double y, double width, double height)
     {
-        this(screen, x, y, width, height, HA_LEFT, VA_TOP, AP_LEFT_TO_RIGHT_TOP_TO_BOTTOM);
-    }
-
-    public GUIElement(GUIScreen screen, double x, double y, double width, double height, byte hAlign, byte vAlign)
-    {
-        this(screen, x, y, width, height, hAlign, vAlign, AP_LEFT_TO_RIGHT_TOP_TO_BOTTOM);
+        this(screen, x, y, width, height, AP_LEFT_TO_RIGHT_TOP_TO_BOTTOM);
     }
 
     public GUIElement(GUIScreen screen, double x, double y, double width, double height, byte subElementAutoplaceMethod)
-    {
-        this(screen, x, y, width, height, HA_LEFT, VA_TOP, subElementAutoplaceMethod);
-    }
-
-    public GUIElement(GUIScreen screen, double x, double y, double width, double height, byte hAlign, byte vAlign, byte subElementAutoplaceMethod)
     {
         this.screen = screen;
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-        this.hAlign = hAlign;
-        this.vAlign = vAlign;
         this.subElementAutoplaceMethod = subElementAutoplaceMethod;
     }
 
@@ -229,6 +200,42 @@ public abstract class GUIElement
 
     public GUIElement recalc()
     {
+        reposition();
+        switch (subElementAutoplaceMethod)
+        {
+            case AP_LEFT_TO_RIGHT_TOP_TO_BOTTOM:
+            case AP_TOP_TO_BOTTOM_LEFT_TO_RIGHT:
+                lastAutoX = 0;
+                lastAutoY = 0;
+                break;
+
+            case AP_RIGHT_TO_LEFT_TOP_TO_BOTTOM:
+            case AP_TOP_TO_BOTTOM_RIGHT_TO_LEFT:
+                lastAutoX = 1;
+                lastAutoY = 0;
+                break;
+
+            case AP_LEFT_TO_RIGHT_BOTTOM_TO_TOP:
+            case AP_BOTTOM_TO_TOP_LEFT_TO_RIGHT:
+                lastAutoX = 0;
+                lastAutoY = 1;
+                break;
+
+            case AP_RIGHT_TO_LEFT_BOTTOM_TO_TOP:
+            case AP_BOTTOM_TO_TOP_RIGHT_TO_LEFT:
+                lastAutoX = 1;
+                lastAutoY = 1;
+                break;
+
+            case AP_CENTER_H_CENTER_V:
+            case AP_CENTER_V_CENTER_H:
+                lastAutoX = 1;
+                lastAutoY = 1;
+                break;
+
+            default:
+                throw new IllegalArgumentException("Unknown autoplace type: " + subElementAutoplaceMethod);
+        }
         for (GUIElement child : (ArrayList<GUIElement>) children.clone()) child.recalc();
         return this;
     }
@@ -236,11 +243,6 @@ public abstract class GUIElement
 
     public GUIElement add(GUIElement element)
     {
-        if (element.autoplace)
-        {
-            //TODO
-        }
-
         element.parent = this;
         children.add(element);
         recalc();
@@ -249,15 +251,62 @@ public abstract class GUIElement
 
     public GUIElement add(int index, GUIElement element)
     {
-        if (element.autoplace)
-        {
-            //TODO
-        }
-
         element.parent = this;
         children.add(index, element);
         recalc();
         return element;
+    }
+
+    public void reposition()
+    {
+        if (autoplace && parent != null)
+        {
+            switch (parent.subElementAutoplaceMethod)
+            {
+                case AP_LEFT_TO_RIGHT_TOP_TO_BOTTOM:
+                    //TODO
+                    break;
+
+                case AP_TOP_TO_BOTTOM_LEFT_TO_RIGHT:
+                    //TODO
+                    break;
+
+                case AP_RIGHT_TO_LEFT_TOP_TO_BOTTOM:
+                    //TODO
+                    break;
+
+                case AP_TOP_TO_BOTTOM_RIGHT_TO_LEFT:
+                    //TODO
+                    break;
+
+                case AP_LEFT_TO_RIGHT_BOTTOM_TO_TOP:
+                    //TODO
+                    break;
+
+                case AP_BOTTOM_TO_TOP_LEFT_TO_RIGHT:
+                    //TODO
+                    break;
+
+                case AP_RIGHT_TO_LEFT_BOTTOM_TO_TOP:
+                    //TODO
+                    break;
+
+                case AP_BOTTOM_TO_TOP_RIGHT_TO_LEFT:
+                    //TODO
+                    break;
+
+                case AP_CENTER_H_CENTER_V:
+                    //TODO
+                    break;
+
+                case AP_CENTER_V_CENTER_H:
+                    //TODO
+                    break;
+
+                default:
+                    throw new IllegalArgumentException("Unknown autoplace type: " + subElementAutoplaceMethod);
+            }
+        }
     }
 
     public void remove(GUIElement element)
