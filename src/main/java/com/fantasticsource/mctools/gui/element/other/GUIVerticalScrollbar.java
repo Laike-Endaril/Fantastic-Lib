@@ -11,6 +11,16 @@ public class GUIVerticalScrollbar extends GUIElement
     private GUIGradientBorder background, slider;
     private GUIScrollView scrollView;
 
+    public GUIVerticalScrollbar(GUIScreen screen, double width, double height, Color backgroundBorder, Color backgroundCenter, Color sliderBorder, Color sliderCenter, GUIScrollView scrollView)
+    {
+        super(screen, width, height);
+        this.scrollView = scrollView;
+
+        background = new GUIGradientBorder(screen, x, y, width, height, 1d / 3, backgroundBorder, backgroundCenter);
+
+        slider = new GUIGradientBorder(screen, x, y, width, height / 10, 1d / 3, sliderBorder, sliderCenter);
+    }
+
     public GUIVerticalScrollbar(GUIScreen screen, double x, double y, double width, double height, Color backgroundBorder, Color backgroundCenter, Color sliderBorder, Color sliderCenter, GUIScrollView scrollView)
     {
         super(screen, x, y, width, height);

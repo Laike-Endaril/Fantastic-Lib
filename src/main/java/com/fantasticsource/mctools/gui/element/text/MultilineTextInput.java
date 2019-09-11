@@ -11,6 +11,27 @@ public class MultilineTextInput extends GUIScrollView
     public Color color, hoverColor, activeColor, cursorColor, highlightColor;
     protected int cursorX, selectionStartY = -1;
 
+    public MultilineTextInput(GUIScreen screen, double width, double height, String... lines)
+    {
+        this(screen, width, height, GUIScreen.getColor(Color.WHITE), GUIScreen.getHover(Color.WHITE), Color.WHITE, Color.WHITE, Color.WHITE.copy().setAF(0.4f), lines);
+    }
+
+    public MultilineTextInput(GUIScreen screen, double width, double height, Color color, Color hoverColor, Color activeColor, Color cursorColor, Color hightlightColor, String... lines)
+    {
+        super(screen, width, height);
+
+        this.color = color;
+        this.hoverColor = hoverColor;
+        this.activeColor = activeColor;
+        this.cursorColor = cursorColor;
+        this.highlightColor = hightlightColor;
+
+        if (lines.length == 0) add("");
+        else for (String line : lines) add(line);
+
+        cursorX = ((GUITextInput) children.get(0)).text.length();
+    }
+
     public MultilineTextInput(GUIScreen screen, double x, double y, double width, double height, String... lines)
     {
         this(screen, x, y, width, height, GUIScreen.getColor(Color.WHITE), GUIScreen.getHover(Color.WHITE), Color.WHITE, Color.WHITE, Color.WHITE.copy().setAF(0.4f), lines);

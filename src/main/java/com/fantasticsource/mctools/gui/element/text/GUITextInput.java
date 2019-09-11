@@ -35,6 +35,32 @@ public class GUITextInput extends GUIText
     protected int lastAbsMouseX;
 
 
+    public GUITextInput(GUIScreen screen, String text, TextFilter filter)
+    {
+        super(screen, text, filter.acceptable(text) ? GREEN : RED);
+
+        this.filter = filter;
+
+        cursorPosition = text.length();
+
+        cursorColor = WHITE;
+        highlightColor = T_WHITE;
+        shadowColor = color.v() >= 64 ? BLACK : WHITE;
+    }
+
+    public GUITextInput(GUIScreen screen, String text, Color color, Color hoverColor, Color activeColor, Color cursorColor, Color hightlightColor)
+    {
+        super(screen, text, color, hoverColor, activeColor);
+
+        filter = FilterNone.INSTANCE;
+
+        cursorPosition = text.length();
+
+        this.cursorColor = cursorColor;
+        this.highlightColor = hightlightColor;
+        shadowColor = color.v() >= 64 ? BLACK : WHITE;
+    }
+
     public GUITextInput(GUIScreen screen, double x, double y, String text, TextFilter filter)
     {
         super(screen, x, y, text, filter.acceptable(text) ? GREEN : RED);

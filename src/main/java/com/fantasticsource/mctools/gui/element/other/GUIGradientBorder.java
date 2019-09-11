@@ -16,6 +16,24 @@ public class GUIGradientBorder extends GUIElement
     public Color border, center, hoverBorder, hoverCenter, activeBorder, activeCenter;
     protected double thickness;
 
+    public GUIGradientBorder(GUIScreen screen, double width, double height, double borderThickness, Color border, Color center)
+    {
+        this(screen, width, height, borderThickness, border, center, border, center, border, center);
+    }
+
+    public GUIGradientBorder(GUIScreen screen, double width, double height, double borderThickness, Color border, Color center, Color hoverBorder, Color hoverCenter, Color activeBorder, Color activeCenter)
+    {
+        super(screen, width, height);
+        this.thickness = borderThickness;
+
+        this.border = border;
+        this.center = center;
+        this.hoverBorder = hoverBorder;
+        this.hoverCenter = hoverCenter;
+        this.activeBorder = activeBorder;
+        this.activeCenter = activeCenter;
+    }
+
     public GUIGradientBorder(GUIScreen screen, double x, double y, double width, double height, double borderThickness, Color border, Color center)
     {
         this(screen, x, y, width, height, borderThickness, border, center, border, center, border, center);

@@ -11,6 +11,30 @@ public class GUIGradient extends GUIElement
 {
     private Color[] colors, hoverColors, activeColors;
 
+    public GUIGradient(GUIScreen screen, double width, double height, Color color)
+    {
+        this(screen, width, height, color, color, color);
+    }
+
+    public GUIGradient(GUIScreen screen, double width, double height, Color color, Color hover, Color active)
+    {
+        this(screen, width, height, color, color, color, color, hover, hover, hover, hover, active, active, active, active);
+    }
+
+    public GUIGradient(GUIScreen screen, double width, double height, Color topRight, Color topLeft, Color bottomLeft, Color bottomRight)
+    {
+        this(screen, width, height, topRight, topLeft, bottomLeft, bottomRight, topRight, topLeft, bottomLeft, bottomRight, topRight, topLeft, bottomLeft, bottomRight);
+    }
+
+    public GUIGradient(GUIScreen screen, double width, double height, Color topRight, Color topLeft, Color bottomLeft, Color bottomRight, Color topRightHover, Color topLeftHover, Color bottomLeftHover, Color bottomRightHover, Color topRightActive, Color topLeftActive, Color bottomLeftActive, Color bottomRightActive)
+    {
+        super(screen, width, height);
+
+        colors = new Color[]{topRight, topLeft, bottomLeft, bottomRight};
+        hoverColors = new Color[]{topRightHover, topLeftHover, bottomLeftHover, bottomRightHover};
+        activeColors = new Color[]{topRightActive, topLeftActive, bottomLeftActive, bottomRightActive};
+    }
+
     public GUIGradient(GUIScreen screen, double x, double y, double width, double height, Color color)
     {
         this(screen, x, y, width, height, color, color, color);

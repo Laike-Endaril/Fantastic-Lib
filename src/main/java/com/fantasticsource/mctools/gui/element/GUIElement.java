@@ -33,7 +33,7 @@ public abstract class GUIElement
     public GUIElement parent = null;
     public ArrayList<GUIElement> children = new ArrayList<>();
     protected boolean autoplace = false;
-    protected double lastAutoX = 0, lastAutoY = 0;
+    protected double autoX = 0, autoY = 0, furthestX = 0, furthestY = 0;
     protected byte subElementAutoplaceMethod;
     protected GUIScreen screen;
     protected boolean active = false, externalDeactivation = false;
@@ -205,32 +205,32 @@ public abstract class GUIElement
         {
             case AP_LEFT_TO_RIGHT_TOP_TO_BOTTOM:
             case AP_TOP_TO_BOTTOM_LEFT_TO_RIGHT:
-                lastAutoX = 0;
-                lastAutoY = 0;
+                autoX = 0;
+                autoY = 0;
                 break;
 
             case AP_RIGHT_TO_LEFT_TOP_TO_BOTTOM:
             case AP_TOP_TO_BOTTOM_RIGHT_TO_LEFT:
-                lastAutoX = 1;
-                lastAutoY = 0;
+                autoX = 1;
+                autoY = 0;
                 break;
 
             case AP_LEFT_TO_RIGHT_BOTTOM_TO_TOP:
             case AP_BOTTOM_TO_TOP_LEFT_TO_RIGHT:
-                lastAutoX = 0;
-                lastAutoY = 1;
+                autoX = 0;
+                autoY = 1;
                 break;
 
             case AP_RIGHT_TO_LEFT_BOTTOM_TO_TOP:
             case AP_BOTTOM_TO_TOP_RIGHT_TO_LEFT:
-                lastAutoX = 1;
-                lastAutoY = 1;
+                autoX = 1;
+                autoY = 1;
                 break;
 
             case AP_CENTER_H_CENTER_V:
             case AP_CENTER_V_CENTER_H:
-                lastAutoX = 1;
-                lastAutoY = 1;
+                autoX = 1;
+                autoY = 1;
                 break;
 
             default:
@@ -264,7 +264,22 @@ public abstract class GUIElement
             switch (parent.subElementAutoplaceMethod)
             {
                 case AP_LEFT_TO_RIGHT_TOP_TO_BOTTOM:
-                    //TODO
+                    if (parent.autoX != 0 && parent.autoX + width > 1)
+                    {
+                        x = 0;
+                        y = parent.furthestY;
+                    }
+                    else
+                    {
+                        x = parent.autoX;
+                        y = parent.autoY;
+                    }
+
+                    parent.autoX = x + width;
+                    parent.autoY = y;
+
+                    parent.furthestX = Tools.max(parent.furthestX, x + width);
+                    parent.furthestY = Tools.max(parent.furthestY, y + height);
                     break;
 
                 case AP_TOP_TO_BOTTOM_LEFT_TO_RIGHT:

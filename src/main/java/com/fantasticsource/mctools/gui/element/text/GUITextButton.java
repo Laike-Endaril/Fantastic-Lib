@@ -16,6 +16,39 @@ public class GUITextButton extends GUIGradientBorder
     private GUIText textRect;
     private double padding;
 
+    public GUITextButton(GUIScreen screen, String text)
+    {
+        this(screen, text, WHITE);
+    }
+
+    public GUITextButton(GUIScreen screen, String text, Color color)
+    {
+        this(screen, text, color, getColor(color).setAF(color.af() * 0.4f));
+    }
+
+    public GUITextButton(GUIScreen screen, String text, Color border, Color center)
+    {
+        this(screen, text, DEFAULT_PADDING, border, center);
+    }
+
+    public GUITextButton(GUIScreen screen, String text, double padding, Color border, Color center)
+    {
+        this(screen, text, padding, getColor(border), getColor(center), getHover(border), getHover(center), border, center);
+    }
+
+    public GUITextButton(GUIScreen screen, String text, double padding, Color border, Color center, Color hoverBorder, Color hoverCenter, Color activeBorder, Color activeCenter)
+    {
+        super(screen, 0, 0, 0, border, center, hoverBorder, hoverCenter, activeBorder, activeCenter);
+
+        this.padding = padding;
+
+        textRect = new GUIText(screen, 0, 0, text, border, hoverBorder, activeBorder);
+        add(textRect);
+        linkMouseActivity(textRect);
+
+        recalc();
+    }
+
     public GUITextButton(GUIScreen screen, double x, double y, String text)
     {
         this(screen, x, y, text, WHITE);

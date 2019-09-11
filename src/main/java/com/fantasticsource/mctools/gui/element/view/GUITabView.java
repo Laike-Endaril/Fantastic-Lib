@@ -18,6 +18,65 @@ public class GUITabView extends GUIView
     private int current = 0;
     private boolean autocalcTabs = false, autocalcTabviews = false;
 
+    public GUITabView(GUIScreen screen, double width, double height, String... tabNames)
+    {
+        this(screen, width, height, genTabs(screen, tabNames));
+        autocalcTabs = true;
+        autocalcTabviews = true;
+
+        GUITextButton tab = (GUITextButton) tabs[0];
+        tabBackground = new GUIGradientBorder(screen, 0, 0, 1, 1, 0.1, tab.border, tab.center);
+        add(0, tabBackground);
+
+        recalc();
+    }
+
+    public GUITabView(GUIScreen screen, double width, double height, String[] tabNames, GUIView... tabViews)
+    {
+        this(screen, width, height, genTabs(screen, tabNames), tabViews);
+        autocalcTabs = true;
+
+        GUITextButton tab = (GUITextButton) tabs[0];
+        tabBackground = new GUIGradientBorder(screen, 0, 0, 1, 1, 0.1, tab.border, tab.center);
+        add(0, tabBackground);
+
+        recalc();
+    }
+
+    public GUITabView(GUIScreen screen, double width, double height, GUIElement[] tabs, GUIView... tabViews)
+    {
+        super(screen, width, height);
+
+        if (tabs.length != tabViews.length)
+        {
+            if (tabViews.length == 0)
+            {
+                this.tabViews = genTabViews(screen, tabs);
+            }
+            else throw new IllegalStateException("There must be the same number of tab names and tab elements!");
+        }
+        else this.tabViews = tabViews;
+
+        for (GUIElement element : this.tabViews) element.parent = this;
+        if (this.tabViews.length > 0)
+        {
+            tabs[0].setActive(true);
+            children.add(this.tabViews[0]);
+        }
+
+        this.tabs = tabs;
+        for (GUIElement element : tabs)
+        {
+            children.add(element);
+            element.parent = this;
+            element.setExternalDeactivation(true, true);
+        }
+
+        recalc();
+
+        MinecraftForge.EVENT_BUS.register(this);
+    }
+
     public GUITabView(GUIScreen screen, double x, double y, double width, double height, String... tabNames)
     {
         this(screen, x, y, width, height, genTabs(screen, tabNames));

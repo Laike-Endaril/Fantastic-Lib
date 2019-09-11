@@ -12,6 +12,19 @@ public class GUIScrollView extends GUIView
     public double internalHeight, progress = -1;
     public double top, bottom;
 
+    public GUIScrollView(GUIScreen screen, double width, double height, GUIElement... subElements)
+    {
+        super(screen, width, height);
+
+        for (GUIElement element : subElements)
+        {
+            children.add(element);
+            element.parent = this;
+        }
+
+        recalc();
+    }
+
     public GUIScrollView(GUIScreen screen, double x, double y, double width, double height, GUIElement... subElements)
     {
         super(screen, x, y, width, height);

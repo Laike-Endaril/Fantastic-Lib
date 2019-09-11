@@ -13,6 +13,20 @@ public class GUIText extends GUIElement
     public String text;
     protected Color color, hoverColor, activeColor;
 
+    public GUIText(GUIScreen screen, String text, Color color)
+    {
+        this(screen, text, getColor(color), getHover(color), color);
+    }
+
+    public GUIText(GUIScreen screen, String text, Color color, Color hoverColor, Color activeColor)
+    {
+        super(screen, (double) (FONT_RENDERER.getStringWidth(text) - 1) / screen.width, (double) (FONT_RENDERER.FONT_HEIGHT - 1) / screen.height);
+        this.text = text;
+        this.color = color;
+        this.hoverColor = hoverColor;
+        this.activeColor = activeColor;
+    }
+
     public GUIText(GUIScreen screen, double x, double y, String text, Color color)
     {
         this(screen, x, y, text, getColor(color), getHover(color), color);

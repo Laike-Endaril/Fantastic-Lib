@@ -14,9 +14,8 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class MonoASCIIFontRenderer
 {
-    private static final int CHAR_WIDTH = 8, CHAR_HEIGHT = 8;
     public static final int LINE_HEIGHT = CHAR_HEIGHT + 2;
-
+    private static final int CHAR_WIDTH = 8, CHAR_HEIGHT = 8;
     private static final TextureManager TEXTURE_MANAGER = Minecraft.getMinecraft().getTextureManager();
     private static final double CHAR_UV = 1d / 16, CHAR_U_TO_RIGHT = CHAR_UV - CHAR_UV / (CHAR_WIDTH << 1), CHAR_V_TO_BOTTOM = CHAR_UV - CHAR_UV / (CHAR_HEIGHT << 1);
     private static final ResourceLocation TEXTURE = new ResourceLocation(FantasticLib.MODID, "image/monospace.png");
