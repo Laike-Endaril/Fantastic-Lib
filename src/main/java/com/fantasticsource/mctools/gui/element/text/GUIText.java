@@ -72,25 +72,25 @@ public class GUIText extends GUIElement
         {
             words = Tools.fixedSplit(text, "[ \r\n]");
 
-            double wLimit = parent == null ? 1 : parent.getScreenWidth();
-            double wRatio = 1d / screen.width / wLimit;
-            double spaceW = (double) FONT_RENDERER.getCharWidth(' ') * wRatio;
+            double parentW = parent == null ? 1 : parent.getScreenWidth();
+            double wRatio = 1d / screen.width;
+            double spaceW = (double) FONT_RENDERER.getCharWidth(' ') / screen.width;
 
             StringBuilder line = new StringBuilder().append(words[0]);
             int index = 1;
-            double maxLineW = 0, lineW = (double) (FONT_RENDERER.getStringWidth(words[0]) - 1) * wRatio;
+            double maxLineW = 0, lineW = (double) (FONT_RENDERER.getStringWidth(words[0]) - 1) / screen.width;
             while (index < words.length)
             {
                 String word = words[index++];
-                double wordW = (double) FONT_RENDERER.getStringWidth(word) * wRatio;
+                double wordW = (double) FONT_RENDERER.getStringWidth(word) / screen.width;
 
-                if (lineW != -wRatio && lineW + spaceW + wordW > 1)
+                if (lineW != -wRatio && lineW + spaceW + wordW > parentW)
                 {
                     lines.add(line.toString());
                     line = new StringBuilder(word);
 
                     maxLineW = Tools.max(maxLineW, lineW);
-                    lineW = (double) (FONT_RENDERER.getStringWidth(word) - 1) * wRatio;
+                    lineW = (double) (FONT_RENDERER.getStringWidth(word) - 1) / screen.width;
                 }
                 else
                 {
