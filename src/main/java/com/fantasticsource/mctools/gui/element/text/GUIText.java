@@ -73,7 +73,6 @@ public class GUIText extends GUIElement
             words = Tools.fixedSplit(text, "[ \r\n]");
 
             double parentW = parent == null ? 1 : parent.getScreenWidth();
-            double wRatio = 1d / screen.width;
             double spaceW = (double) FONT_RENDERER.getCharWidth(' ') / screen.width;
 
             StringBuilder line = new StringBuilder().append(words[0]);
@@ -84,7 +83,7 @@ public class GUIText extends GUIElement
                 String word = words[index++];
                 double wordW = (double) FONT_RENDERER.getStringWidth(word) / screen.width;
 
-                if (lineW != -wRatio && lineW + spaceW + wordW > parentW)
+                if (lineW + spaceW + wordW > parentW)
                 {
                     lines.add(line.toString());
                     line = new StringBuilder(word);

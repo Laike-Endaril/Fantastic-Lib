@@ -13,7 +13,7 @@ public class GUITextButton extends GUIGradientBorder
 {
     public static final double DEFAULT_PADDING = 0.5;
 
-    private GUIText textRect;
+    private GUIText text;
     private double padding;
 
     public GUITextButton(GUIScreen screen, String text)
@@ -42,9 +42,9 @@ public class GUITextButton extends GUIGradientBorder
 
         this.padding = padding;
 
-        textRect = new GUIText(screen, 0, 0, text, border, hoverBorder, activeBorder);
-        add(textRect);
-        linkMouseActivity(textRect);
+        this.text = new GUIText(screen, 0, 0, text, border, hoverBorder, activeBorder);
+        add(this.text);
+        linkMouseActivity(this.text);
 
         recalc();
     }
@@ -75,9 +75,9 @@ public class GUITextButton extends GUIGradientBorder
 
         this.padding = padding;
 
-        textRect = new GUIText(screen, 0, 0, text, border, hoverBorder, activeBorder);
-        add(textRect);
-        linkMouseActivity(textRect);
+        this.text = new GUIText(screen, 0, 0, text, border, hoverBorder, activeBorder);
+        add(this.text);
+        linkMouseActivity(this.text);
 
         recalc();
     }
@@ -85,17 +85,18 @@ public class GUITextButton extends GUIGradientBorder
     @Override
     public GUIElement recalc()
     {
+        width = 1;
         super.recalc();
 
-        double scaledPadding = textRect.height * padding;
+        double scaledPadding = text.height * padding;
 
-        width = textRect.width + scaledPadding * 2;
-        height = textRect.height + scaledPadding * 2;
+        width = text.width + scaledPadding * 2;
+        height = text.height + scaledPadding * 2;
 
         thickness = scaledPadding / height;
 
-        textRect.x = scaledPadding / width;
-        textRect.y = scaledPadding / height;
+        text.x = scaledPadding / width;
+        text.y = scaledPadding / height;
 
         return this;
     }
