@@ -28,7 +28,7 @@ public class GUIChar extends GUIElement
     {
         super.recalc();
 
-        width = (double) FONT_RENDERER.getStringWidth("" + value) / screen.width;
+        width = (double) FONT_RENDERER.getCharWidth(value) / screen.width;
         height = (double) FONT_RENDERER.FONT_HEIGHT / screen.height;
 
         return this;

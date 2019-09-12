@@ -3,14 +3,19 @@ package com.fantasticsource.mctools.gui.element.text;
 import com.fantasticsource.mctools.MonoASCIIFontRenderer;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
+import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.renderer.GlStateManager;
 
-import static com.fantasticsource.mctools.gui.GUIScreen.*;
+import java.util.ArrayList;
+
+import static com.fantasticsource.mctools.gui.GUIScreen.FONT_RENDERER;
 
 public class GUIText extends GUIElement
 {
     public String text;
+    protected String[] words;
+    protected ArrayList<String> lines = new ArrayList<>();
     protected Color color, hoverColor, activeColor;
 
     public GUIText(GUIScreen screen, String text)
@@ -20,16 +25,17 @@ public class GUIText extends GUIElement
 
     public GUIText(GUIScreen screen, String text, Color color)
     {
-        this(screen, text, getColor(color), getHover(color), color);
+        this(screen, text, color, color, color);
     }
 
     public GUIText(GUIScreen screen, String text, Color color, Color hoverColor, Color activeColor)
     {
-        super(screen, (double) (FONT_RENDERER.getStringWidth(text) - 1) / screen.width, (double) (FONT_RENDERER.FONT_HEIGHT - 1) / screen.height);
+        super(screen, 0, 0);
         this.text = text;
         this.color = color;
         this.hoverColor = hoverColor;
         this.activeColor = activeColor;
+        recalc();
     }
 
     public GUIText(GUIScreen screen, double x, double y, String text)
@@ -39,23 +45,68 @@ public class GUIText extends GUIElement
 
     public GUIText(GUIScreen screen, double x, double y, String text, Color color)
     {
-        this(screen, x, y, text, getColor(color), getHover(color), color);
+        this(screen, x, y, text, color, color, color);
     }
 
     public GUIText(GUIScreen screen, double x, double y, String text, Color color, Color hoverColor, Color activeColor)
     {
-        super(screen, x, y, (double) (FONT_RENDERER.getStringWidth(text) - 1) / screen.width, (double) (FONT_RENDERER.FONT_HEIGHT - 1) / screen.height);
+        super(screen, x, y, 0, 0);
         this.text = text;
         this.color = color;
         this.hoverColor = hoverColor;
         this.activeColor = activeColor;
+        recalc();
     }
 
     @Override
     public GUIElement recalc()
     {
-        width = (double) (parent instanceof MultilineTextInput ? MonoASCIIFontRenderer.getStringWidth(text) : FONT_RENDERER.getStringWidth(text) - 1) / screen.width;
-        height = (double) (parent instanceof MultilineTextInput ? MonoASCIIFontRenderer.LINE_HEIGHT + 2 : FONT_RENDERER.FONT_HEIGHT - 1) / screen.height;
+        lines.clear();
+        if (parent instanceof MultilineTextInput)
+        {
+            lines.add(text);
+            width = (double) MonoASCIIFontRenderer.getStringWidth(text) / screen.width;
+            height = (double) (MonoASCIIFontRenderer.LINE_HEIGHT + 2) / screen.height;
+        }
+        else
+        {
+            words = Tools.fixedSplit(text, "[ \r\n]");
+
+            double spaceW = (double) FONT_RENDERER.getCharWidth(' ') / screen.width;
+            double wLimit = parent == null ? 1 : parent.getScreenWidth();
+
+            StringBuilder line = new StringBuilder().append(words[0]);
+            int index = 1;
+            double maxLineW = 0, lineW = -1d / screen.width;
+            while (index < words.length)
+            {
+                String word = words[index++];
+                double wordW = (double) FONT_RENDERER.getStringWidth(word) / screen.width;
+
+                if (lineW != -1d / screen.width && lineW + spaceW + wordW > wLimit)
+                {
+                    lines.add(line.toString());
+                    line = new StringBuilder(word);
+
+                    maxLineW = Tools.max(maxLineW, lineW);
+                    lineW = -1d / screen.width;
+                }
+                else
+                {
+                    line.append(" ").append(word);
+                    lineW += spaceW + wordW;
+                }
+            }
+
+            if (line.length() > 0)
+            {
+                lines.add(line.toString());
+                maxLineW = Tools.max(maxLineW, lineW);
+            }
+
+            width = maxLineW;
+            height = (double) (lines.size() * FONT_RENDERER.FONT_HEIGHT - 1) / screen.height;
+        }
 
         return super.recalc();
     }
@@ -72,7 +123,12 @@ public class GUIText extends GUIElement
         GlStateManager.scale(1d / screen.width, 1d / screen.height, 1);
 
         Color c = active ? activeColor : isMouseWithin() ? hoverColor : color;
-        FONT_RENDERER.drawString(text, 0, 0, (c.color() >> 8) | c.a() << 24, false);
+        int yy = 0;
+        for (String line : lines)
+        {
+            FONT_RENDERER.drawString(line, 0, yy, (c.color() >> 8) | c.a() << 24, false);
+            yy += FONT_RENDERER.FONT_HEIGHT;
+        }
 
         GlStateManager.popMatrix();
     }
