@@ -278,11 +278,49 @@ public abstract class GUIElement
                 }
                 break;
 
+            case AP_CENTER_V_CENTER_H:
+                if (size() <= 1 || startIndex != size() - 1)
+                {
+                    autoY = 0;
+                    furthestY = 0;
+
+                    for (int i = 0; i < startIndex; i++)
+                    {
+                        GUIElement element = get(i);
+                        if (element.autoplace)
+                        {
+                            autoY = element.y * height;
+                            furthestY = Tools.max(furthestY, autoY + element.height);
+                        }
+                    }
+                }
+
+                for (int i = startIndex; i < size(); i++)
+                {
+                    GUIElement element = get(i);
+                    element.recalc();
+                    if (element.autoplace)
+                    {
+                        element.x = 0.5 - element.width / 2;
+                        element.y = furthestY / height;
+
+                        autoY = element.y * height;
+                        furthestY = Tools.max(furthestY, autoY + element.height);
+                    }
+                }
+                break;
+
             //TODO add other AP types
 
             default:
-                throw new IllegalArgumentException("Unknown autoplace type: " + subElementAutoplaceMethod);
+                throw new IllegalArgumentException("Unimplemented autoplace type: " + subElementAutoplaceMethod);
         }
+    }
+
+    public void setSubElementAutoplaceMethod(byte subElementAutoplaceMethod)
+    {
+        this.subElementAutoplaceMethod = subElementAutoplaceMethod;
+        recalc();
     }
 
     public void remove(GUIElement element)
