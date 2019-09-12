@@ -200,43 +200,12 @@ public abstract class GUIElement
 
     public GUIElement recalc()
     {
-        reposition();
-        switch (subElementAutoplaceMethod)
-        {
-            case AP_LEFT_TO_RIGHT_TOP_TO_BOTTOM:
-            case AP_TOP_TO_BOTTOM_LEFT_TO_RIGHT:
-                autoX = 0;
-                autoY = 0;
-                break;
+        return recalc(0);
+    }
 
-            case AP_RIGHT_TO_LEFT_TOP_TO_BOTTOM:
-            case AP_TOP_TO_BOTTOM_RIGHT_TO_LEFT:
-                autoX = 1;
-                autoY = 0;
-                break;
-
-            case AP_LEFT_TO_RIGHT_BOTTOM_TO_TOP:
-            case AP_BOTTOM_TO_TOP_LEFT_TO_RIGHT:
-                autoX = 0;
-                autoY = 1;
-                break;
-
-            case AP_RIGHT_TO_LEFT_BOTTOM_TO_TOP:
-            case AP_BOTTOM_TO_TOP_RIGHT_TO_LEFT:
-                autoX = 1;
-                autoY = 1;
-                break;
-
-            case AP_CENTER_H_CENTER_V:
-            case AP_CENTER_V_CENTER_H:
-                autoX = 1;
-                autoY = 1;
-                break;
-
-            default:
-                throw new IllegalArgumentException("Unknown autoplace type: " + subElementAutoplaceMethod);
-        }
-        for (GUIElement child : (ArrayList<GUIElement>) children.clone()) child.recalc();
+    public GUIElement recalc(int subIndexChanged)
+    {
+        recalcAndRepositionSubElements(subIndexChanged);
         return this;
     }
 
@@ -245,7 +214,7 @@ public abstract class GUIElement
     {
         element.parent = this;
         children.add(element);
-        recalc();
+        recalc(size() - 1);
         return element;
     }
 
@@ -253,89 +222,82 @@ public abstract class GUIElement
     {
         element.parent = this;
         children.add(index, element);
-        recalc();
+        recalc(index);
         return element;
     }
 
-    public void reposition()
+    public void recalcAndRepositionSubElements(int startIndex)
     {
-        if (autoplace && parent != null)
+        switch (subElementAutoplaceMethod)
         {
-            switch (parent.subElementAutoplaceMethod)
-            {
-                case AP_LEFT_TO_RIGHT_TOP_TO_BOTTOM:
-                    if (parent.autoX != 0 && parent.autoX + width > 1)
+            case AP_LEFT_TO_RIGHT_TOP_TO_BOTTOM:
+                if (size() <= 1 || startIndex != size() - 1)
+                {
+                    autoX = 0;
+                    autoY = 0;
+                    furthestX = 0;
+                    furthestY = 0;
+
+                    for (int i = 0; i < startIndex; i++)
                     {
-                        x = 0;
-                        y = parent.furthestY;
+                        GUIElement element = get(i);
+                        if (element.autoplace)
+                        {
+                            autoX = element.x * width + element.width;
+                            autoY = element.y * height;
+
+                            furthestX = Tools.max(furthestX, autoX);
+                            furthestY = Tools.max(furthestY, autoY + element.height);
+                        }
                     }
-                    else
+                }
+
+                for (int i = startIndex; i < size(); i++)
+                {
+                    GUIElement element = get(i);
+                    element.recalc();
+                    if (element.autoplace)
                     {
-                        x = parent.autoX;
-                        y = parent.autoY;
+                        if (autoX != 0 && autoX + element.width > 1)
+                        {
+                            element.x = 0;
+                            element.y = furthestY / height;
+                        }
+                        else
+                        {
+                            element.x = autoX / width;
+                            element.y = autoY / height;
+                        }
+
+                        autoX = element.x * width + element.width;
+                        autoY = element.y * height;
+
+                        furthestX = Tools.max(furthestX, autoX);
+                        furthestY = Tools.max(furthestY, autoY + element.height);
                     }
+                }
+                break;
 
-                    parent.autoX = x + width;
-                    parent.autoY = y;
+            //TODO add other AP types
 
-                    parent.furthestX = Tools.max(parent.furthestX, x + width);
-                    parent.furthestY = Tools.max(parent.furthestY, y + height);
-                    break;
-
-                case AP_TOP_TO_BOTTOM_LEFT_TO_RIGHT:
-                    //TODO
-                    break;
-
-                case AP_RIGHT_TO_LEFT_TOP_TO_BOTTOM:
-                    //TODO
-                    break;
-
-                case AP_TOP_TO_BOTTOM_RIGHT_TO_LEFT:
-                    //TODO
-                    break;
-
-                case AP_LEFT_TO_RIGHT_BOTTOM_TO_TOP:
-                    //TODO
-                    break;
-
-                case AP_BOTTOM_TO_TOP_LEFT_TO_RIGHT:
-                    //TODO
-                    break;
-
-                case AP_RIGHT_TO_LEFT_BOTTOM_TO_TOP:
-                    //TODO
-                    break;
-
-                case AP_BOTTOM_TO_TOP_RIGHT_TO_LEFT:
-                    //TODO
-                    break;
-
-                case AP_CENTER_H_CENTER_V:
-                    //TODO
-                    break;
-
-                case AP_CENTER_V_CENTER_H:
-                    //TODO
-                    break;
-
-                default:
-                    throw new IllegalArgumentException("Unknown autoplace type: " + subElementAutoplaceMethod);
-            }
+            default:
+                throw new IllegalArgumentException("Unknown autoplace type: " + subElementAutoplaceMethod);
         }
     }
 
     public void remove(GUIElement element)
     {
+        int index = indexOf(element);
         if (element.parent == this) element.parent = null;
-        children.remove(element);
-        recalc();
+        children.remove(index);
+        recalc(index);
     }
 
     public void remove(int index)
     {
         GUIElement element = children.remove(index);
         if (element.parent == this) element.parent = null;
-        recalc();
+        recalc(index);
     }
 
     public int size()
