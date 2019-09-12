@@ -13,6 +13,11 @@ public class GUIText extends GUIElement
     public String text;
     protected Color color, hoverColor, activeColor;
 
+    public GUIText(GUIScreen screen, String text)
+    {
+        this(screen, text, Color.WHITE);
+    }
+
     public GUIText(GUIScreen screen, String text, Color color)
     {
         this(screen, text, getColor(color), getHover(color), color);
@@ -25,6 +30,11 @@ public class GUIText extends GUIElement
         this.color = color;
         this.hoverColor = hoverColor;
         this.activeColor = activeColor;
+    }
+
+    public GUIText(GUIScreen screen, double x, double y, String text)
+    {
+        this(screen, x, y, text, Color.WHITE);
     }
 
     public GUIText(GUIScreen screen, double x, double y, String text, Color color)
