@@ -51,7 +51,7 @@ public class CArrayList extends Component
     }
 
     @Override
-    public Component copy()
+    public CArrayList copy()
     {
         return new CArrayList().set(value);
     }

@@ -54,7 +54,7 @@ public class CChar extends Component
     }
 
     @Override
-    public Component copy()
+    public CChar copy()
     {
         return new CChar().set(value);
     }
