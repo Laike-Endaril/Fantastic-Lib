@@ -1,5 +1,6 @@
 package com.fantasticsource.mctools.gui;
 
+import com.fantasticsource.mctools.Render;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
@@ -9,6 +10,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.util.Display;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,7 +45,14 @@ public abstract class GUIScreen extends GuiScreen
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 
         GlStateManager.pushMatrix();
-        GlStateManager.scale(width, height, 1);
+        try
+        {
+            GlStateManager.scale(width - 1d / Render.getViewportWidth(), height - 1d / Render.getViewportHeight(), 1);
+        }
+        catch (IllegalAccessException e)
+        {
+            e.printStackTrace();
+        }
 
         for (GUIElement element : guiElements) element.draw();
 
