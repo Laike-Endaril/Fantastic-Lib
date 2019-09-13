@@ -12,11 +12,6 @@ public class CBoolean extends Component
 {
     public boolean value;
 
-    public CBoolean(Component holder)
-    {
-        super(holder);
-    }
-
     public CBoolean set(boolean value)
     {
         this.value = value;
@@ -64,7 +59,7 @@ public class CBoolean extends Component
     @Override
     public CBoolean copy()
     {
-        return new CBoolean(holder).set(value);
+        return new CBoolean().set(value);
     }
 
     @Override

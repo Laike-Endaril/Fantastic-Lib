@@ -12,11 +12,6 @@ public class CByte extends Component
 {
     public byte value;
 
-    public CByte(Component holder)
-    {
-        super(holder);
-    }
-
     public CByte set(byte value)
     {
         this.value = value;
@@ -64,7 +59,7 @@ public class CByte extends Component
     @Override
     public CByte copy()
     {
-        return new CByte(holder).set(value);
+        return new CByte().set(value);
     }
 
     @Override

@@ -12,11 +12,6 @@ public class CInt extends Component
 {
     public int value;
 
-    public CInt(Component holder)
-    {
-        super(holder);
-    }
-
     public CInt set(int value)
     {
         this.value = value;
@@ -64,7 +59,7 @@ public class CInt extends Component
     @Override
     public CInt copy()
     {
-        return new CInt(holder).set(value);
+        return new CInt().set(value);
     }
 
     @Override

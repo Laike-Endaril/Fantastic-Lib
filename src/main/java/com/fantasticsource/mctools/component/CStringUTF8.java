@@ -15,11 +15,6 @@ public class CStringUTF8 extends Component
 {
     public String value;
 
-    public CStringUTF8(Component holder)
-    {
-        super(holder);
-    }
-
     public CStringUTF8 set(String value)
     {
         this.value = value;
@@ -77,7 +72,7 @@ public class CStringUTF8 extends Component
     @Override
     public CStringUTF8 copy()
     {
-        return new CStringUTF8(holder).set(value);
+        return new CStringUTF8().set(value);
     }
 
     @Override

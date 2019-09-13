@@ -13,11 +13,6 @@ public class CUUID extends Component
 {
     public UUID value;
 
-    public CUUID(Component holder)
-    {
-        super(holder);
-    }
-
     public CUUID set(UUID value)
     {
         this.value = value;
@@ -74,7 +69,7 @@ public class CUUID extends Component
     @Override
     public CUUID copy()
     {
-        return new CUUID(holder).set(new UUID(value.getMostSignificantBits(), value.getLeastSignificantBits()));
+        return new CUUID().set(new UUID(value.getMostSignificantBits(), value.getLeastSignificantBits()));
     }
 
     @Override

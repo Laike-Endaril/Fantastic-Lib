@@ -2,72 +2,70 @@ package com.fantasticsource.mctools.component;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
-import com.fantasticsource.mctools.gui.element.text.GUIChar;
+import com.fantasticsource.mctools.gui.element.view.GUIScrollView;
 import io.netty.buffer.ByteBuf;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
-public class CChar extends Component
+public class CArrayList extends Component
 {
-    public char value;
+    public ArrayList<Component> value = new ArrayList<>();
 
-    public CChar set(char value)
+    public CArrayList set(ArrayList<Component> value)
     {
-        this.value = value;
+        this.value.clear();
+        this.value.addAll(value);
         return this;
     }
 
     @Override
     public void write(ByteBuf buf)
     {
-        buf.writeChar(value);
+        for (Component component : value) component.write(buf);
     }
 
     @Override
     public void read(ByteBuf buf)
     {
-        value = buf.readChar();
+        for (Component component : value) component.read(buf);
     }
 
     @Override
     public void save(FileOutputStream stream) throws IOException
     {
-        stream.write(("" + value).getBytes(UTF_8));
+        for (Component component : value) component.save(stream);
     }
 
     @Override
     public void load(FileInputStream stream) throws IOException
     {
-        byte[] bytes = new byte[2];
-        if (stream.read(bytes) < 2) throw new IOException("Reached end of file while reading!");
-        value = new String(bytes, UTF_8).charAt(0);
+        for (Component component : value) component.load(stream);
     }
 
     @Override
     public void parse(String string)
     {
-        value = string.charAt(0);
     }
 
     @Override
     public Component copy()
     {
-        return new CChar().set(value);
+        return new CArrayList().set(value);
     }
 
     @Override
     public GUIElement getGUIElement(GUIScreen screen)
     {
-        return new GUIChar(screen, value);
+        GUIScrollView result = new GUIScrollView(screen, 1, 1);
+        for (Component component : value) result.add(component.getGUIElement(screen));
+        return result;
     }
 
     @Override
     public void setFromGUIElement(GUIElement element)
     {
-        value = ((GUIChar) element).value;
     }
 }

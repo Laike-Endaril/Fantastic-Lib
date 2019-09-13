@@ -12,11 +12,6 @@ public class CDouble extends Component
 {
     public double value;
 
-    public CDouble(Component holder)
-    {
-        super(holder);
-    }
-
     public CDouble set(double value)
     {
         this.value = value;
@@ -67,7 +62,7 @@ public class CDouble extends Component
     @Override
     public CDouble copy()
     {
-        return new CDouble(holder).set(value);
+        return new CDouble().set(value);
     }
 
     @Override

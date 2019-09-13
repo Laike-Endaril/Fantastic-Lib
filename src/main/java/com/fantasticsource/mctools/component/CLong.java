@@ -12,11 +12,6 @@ public class CLong extends Component
 {
     public long value;
 
-    public CLong(Component holder)
-    {
-        super(holder);
-    }
-
     public CLong set(long value)
     {
         this.value = value;
@@ -66,7 +61,7 @@ public class CLong extends Component
     @Override
     public CLong copy()
     {
-        return new CLong(holder).set(value);
+        return new CLong().set(value);
     }
 
     @Override

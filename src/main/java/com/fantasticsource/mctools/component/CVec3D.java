@@ -11,15 +11,7 @@ import java.io.IOException;
 
 public class CVec3D extends Component
 {
-    public CDouble x, y, z;
-
-    public CVec3D(Component holder)
-    {
-        super(holder);
-        x = new CDouble(holder);
-        y = new CDouble(holder);
-        z = new CDouble(holder);
-    }
+    public CDouble x = new CDouble(), y = new CDouble(), z = new CDouble();
 
     public double getX()
     {
@@ -105,7 +97,7 @@ public class CVec3D extends Component
     @Override
     public CVec3D copy()
     {
-        return new CVec3D(holder).set(x.value, y.value, z.value);
+        return new CVec3D().set(x.value, y.value, z.value);
     }
 
     @Override

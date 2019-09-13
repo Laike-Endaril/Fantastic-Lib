@@ -10,18 +10,6 @@ import java.io.IOException;
 
 public abstract class Component
 {
-    public Component holder;
-
-    public Component()
-    {
-        this(null);
-    }
-
-    public Component(Component holder)
-    {
-        this.holder = holder;
-    }
-
     public abstract void write(ByteBuf buf);
 
     public abstract void read(ByteBuf buf);
@@ -36,12 +24,6 @@ public abstract class Component
     public abstract void parse(String string);
 
     public abstract Component copy();
-
-    public void copyTo(Component holder)
-    {
-        Component c = copy();
-        c.holder = holder;
-    }
 
     /**
      * The label for this component when editing it via GUI

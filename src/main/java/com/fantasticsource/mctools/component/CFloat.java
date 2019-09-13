@@ -12,11 +12,6 @@ public class CFloat extends Component
 {
     public float value;
 
-    public CFloat(Component holder)
-    {
-        super(holder);
-    }
-
     public CFloat set(float value)
     {
         this.value = value;
@@ -65,7 +60,7 @@ public class CFloat extends Component
     @Override
     public CFloat copy()
     {
-        return new CFloat(holder).set(value);
+        return new CFloat().set(value);
     }
 
     @Override
