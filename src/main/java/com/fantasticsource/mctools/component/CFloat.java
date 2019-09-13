@@ -19,30 +19,34 @@ public class CFloat extends Component
     }
 
     @Override
-    public void write(ByteBuf buf)
+    public CFloat write(ByteBuf buf)
     {
         buf.writeFloat(value);
+        return this;
     }
 
     @Override
-    public void read(ByteBuf buf)
+    public CFloat read(ByteBuf buf)
     {
         value = buf.readFloat();
+        return this;
     }
 
     @Override
-    public void save(FileOutputStream stream) throws IOException
+    public CFloat save(FileOutputStream stream) throws IOException
     {
         int i = Float.floatToRawIntBits(value);
         stream.write(new byte[]{(byte) (i >>> 24), (byte) (i >>> 16), (byte) (i >>> 8), (byte) i});
+        return this;
     }
 
     @Override
-    public void load(FileInputStream stream) throws IOException
+    public CFloat load(FileInputStream stream) throws IOException
     {
         byte[] bytes = new byte[4];
         if (stream.read(bytes) < 4) throw new IOException("Reached end of file while reading!");
         value = Float.intBitsToFloat(((bytes[0] & 0xFF) << 24) | ((bytes[1] & 0xFF) << 16) | ((bytes[2] & 0xFF) << 8) | (bytes[3] & 0xFF));
+        return this;
     }
 
     @Override
@@ -52,9 +56,10 @@ public class CFloat extends Component
     }
 
     @Override
-    public void parse(String string)
+    public CFloat parse(String string)
     {
         value = Float.parseFloat(string);
+        return this;
     }
 
     @Override
@@ -71,8 +76,9 @@ public class CFloat extends Component
     }
 
     @Override
-    public void setFromGUIElement(GUIElement element)
+    public CFloat setFromGUIElement(GUIElement element)
     {
         //TODO
+        return this;
     }
 }

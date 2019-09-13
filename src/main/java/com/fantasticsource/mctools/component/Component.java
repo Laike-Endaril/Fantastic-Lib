@@ -10,18 +10,18 @@ import java.io.IOException;
 
 public abstract class Component
 {
-    public abstract void write(ByteBuf buf);
+    public abstract Component write(ByteBuf buf);
 
-    public abstract void read(ByteBuf buf);
+    public abstract Component read(ByteBuf buf);
 
-    public abstract void save(FileOutputStream stream) throws IOException;
+    public abstract Component save(FileOutputStream stream) throws IOException;
 
-    public abstract void load(FileInputStream stream) throws IOException;
+    public abstract Component load(FileInputStream stream) throws IOException;
 
     /**
      * Correlates to toString(), for use in GUI editing
      */
-    public abstract void parse(String string);
+    public abstract Component parse(String string);
 
     public abstract Component copy();
 
@@ -35,5 +35,5 @@ public abstract class Component
 
     public abstract GUIElement getGUIElement(GUIScreen screen);
 
-    public abstract void setFromGUIElement(GUIElement element);
+    public abstract Component setFromGUIElement(GUIElement element);
 }

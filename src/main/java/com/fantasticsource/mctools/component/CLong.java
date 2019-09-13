@@ -19,31 +19,35 @@ public class CLong extends Component
     }
 
     @Override
-    public void write(ByteBuf buf)
+    public CLong write(ByteBuf buf)
     {
         buf.writeLong(value);
+        return this;
     }
 
     @Override
-    public void read(ByteBuf buf)
+    public CLong read(ByteBuf buf)
     {
         value = buf.readLong();
+        return this;
     }
 
     @Override
-    public void save(FileOutputStream stream) throws IOException
+    public CLong save(FileOutputStream stream) throws IOException
     {
         stream.write(new byte[]{(byte) (value >>> 56), (byte) (value >>> 48), (byte) (value >>> 40), (byte) (value >>> 32), (byte) (value >>> 24), (byte) (value >>> 16), (byte) (value >>> 8), (byte) value});
+        return this;
     }
 
     @Override
-    public void load(FileInputStream stream) throws IOException
+    public CLong load(FileInputStream stream) throws IOException
     {
         byte[] bytes = new byte[8];
         if (stream.read(bytes) < 8) throw new IOException("Reached end of file while reading!");
         int upper = ((bytes[0] & 0xFF) << 24) | ((bytes[1] & 0xFF) << 16) | ((bytes[2] & 0xFF) << 8) | (bytes[3] & 0xFF);
         int lower = ((bytes[4] & 0xFF) << 24) | ((bytes[5] & 0xFF) << 16) | ((bytes[6] & 0xFF) << 8) | (bytes[7] & 0xFF);
         value = ((upper & 0xffffffffL) << 32) | (lower & 0xffffffffL);
+        return this;
     }
 
     @Override
@@ -53,9 +57,10 @@ public class CLong extends Component
     }
 
     @Override
-    public void parse(String string)
+    public CLong parse(String string)
     {
         value = Long.parseLong(string);
+        return this;
     }
 
     @Override
@@ -72,8 +77,9 @@ public class CLong extends Component
     }
 
     @Override
-    public void setFromGUIElement(GUIElement element)
+    public CLong setFromGUIElement(GUIElement element)
     {
         //TODO
+        return this;
     }
 }

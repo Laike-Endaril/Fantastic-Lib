@@ -42,35 +42,39 @@ public class CVec3D extends Component
     }
 
     @Override
-    public void write(ByteBuf buf)
+    public CVec3D write(ByteBuf buf)
     {
         x.write(buf);
         y.write(buf);
         z.write(buf);
+        return this;
     }
 
     @Override
-    public void read(ByteBuf buf)
+    public CVec3D read(ByteBuf buf)
     {
         x.read(buf);
         y.read(buf);
         z.read(buf);
+        return this;
     }
 
     @Override
-    public void save(FileOutputStream stream) throws IOException
+    public CVec3D save(FileOutputStream stream) throws IOException
     {
         x.save(stream);
         y.save(stream);
         z.save(stream);
+        return this;
     }
 
     @Override
-    public void load(FileInputStream stream) throws IOException
+    public CVec3D load(FileInputStream stream) throws IOException
     {
         x.load(stream);
         y.load(stream);
         z.load(stream);
+        return this;
     }
 
     @Override
@@ -80,12 +84,13 @@ public class CVec3D extends Component
     }
 
     @Override
-    public void parse(String string)
+    public CVec3D parse(String string)
     {
         String[] tokens = string.split(",");
         x.parse(tokens[0].trim());
         y.parse(tokens[1].trim());
         z.parse(tokens[2].trim());
+        return this;
     }
 
     @Override
@@ -108,8 +113,9 @@ public class CVec3D extends Component
     }
 
     @Override
-    public void setFromGUIElement(GUIElement element)
+    public CVec3D setFromGUIElement(GUIElement element)
     {
         //TODO
+        return this;
     }
 }

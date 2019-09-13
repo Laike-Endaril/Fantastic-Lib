@@ -19,29 +19,33 @@ public class CBoolean extends Component
     }
 
     @Override
-    public void write(ByteBuf buf)
+    public CBoolean write(ByteBuf buf)
     {
         buf.writeBoolean(value);
+        return this;
     }
 
     @Override
-    public void read(ByteBuf buf)
+    public CBoolean read(ByteBuf buf)
     {
         value = buf.readBoolean();
+        return this;
     }
 
     @Override
-    public void save(FileOutputStream stream) throws IOException
+    public CBoolean save(FileOutputStream stream) throws IOException
     {
         stream.write(value ? (byte) 1 : (byte) 0);
+        return this;
     }
 
     @Override
-    public void load(FileInputStream stream) throws IOException
+    public CBoolean load(FileInputStream stream) throws IOException
     {
         byte[] bytes = new byte[1];
         if (stream.read(bytes) < 1) throw new IOException("Reached end of file while reading!");
         value = bytes[0] == 1;
+        return this;
     }
 
     @Override
@@ -51,9 +55,10 @@ public class CBoolean extends Component
     }
 
     @Override
-    public void parse(String string)
+    public CBoolean parse(String string)
     {
         value = Boolean.parseBoolean(string);
+        return this;
     }
 
     @Override
@@ -70,8 +75,9 @@ public class CBoolean extends Component
     }
 
     @Override
-    public void setFromGUIElement(GUIElement element)
+    public CBoolean setFromGUIElement(GUIElement element)
     {
         //TODO
+        return this;
     }
 }

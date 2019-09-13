@@ -19,29 +19,33 @@ public class CInt extends Component
     }
 
     @Override
-    public void write(ByteBuf buf)
+    public CInt write(ByteBuf buf)
     {
         buf.writeInt(value);
+        return this;
     }
 
     @Override
-    public void read(ByteBuf buf)
+    public CInt read(ByteBuf buf)
     {
         value = buf.readInt();
+        return this;
     }
 
     @Override
-    public void save(FileOutputStream stream) throws IOException
+    public CInt save(FileOutputStream stream) throws IOException
     {
         stream.write(new byte[]{(byte) (value >>> 24), (byte) (value >>> 16), (byte) (value >>> 8), (byte) value});
+        return this;
     }
 
     @Override
-    public void load(FileInputStream stream) throws IOException
+    public CInt load(FileInputStream stream) throws IOException
     {
         byte[] bytes = new byte[4];
         if (stream.read(bytes) < 4) throw new IOException("Reached end of file while reading!");
         value = ((bytes[0] & 0xFF) << 24) | ((bytes[1] & 0xFF) << 16) | ((bytes[2] & 0xFF) << 8) | (bytes[3] & 0xFF);
+        return this;
     }
 
     @Override
@@ -51,9 +55,10 @@ public class CInt extends Component
     }
 
     @Override
-    public void parse(String string)
+    public CInt parse(String string)
     {
         value = Integer.parseInt(string);
+        return this;
     }
 
     @Override
@@ -70,8 +75,9 @@ public class CInt extends Component
     }
 
     @Override
-    public void setFromGUIElement(GUIElement element)
+    public CInt setFromGUIElement(GUIElement element)
     {
         //TODO
+        return this;
     }
 }

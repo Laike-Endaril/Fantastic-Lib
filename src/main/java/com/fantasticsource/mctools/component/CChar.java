@@ -22,35 +22,40 @@ public class CChar extends Component
     }
 
     @Override
-    public void write(ByteBuf buf)
+    public CChar write(ByteBuf buf)
     {
         buf.writeChar(value);
+        return this;
     }
 
     @Override
-    public void read(ByteBuf buf)
+    public CChar read(ByteBuf buf)
     {
         value = buf.readChar();
+        return this;
     }
 
     @Override
-    public void save(FileOutputStream stream) throws IOException
+    public CChar save(FileOutputStream stream) throws IOException
     {
         stream.write(("" + value).getBytes(UTF_8));
+        return this;
     }
 
     @Override
-    public void load(FileInputStream stream) throws IOException
+    public CChar load(FileInputStream stream) throws IOException
     {
         byte[] bytes = new byte[2];
         if (stream.read(bytes) < 2) throw new IOException("Reached end of file while reading!");
         value = new String(bytes, UTF_8).charAt(0);
+        return this;
     }
 
     @Override
-    public void parse(String string)
+    public CChar parse(String string)
     {
         value = string.charAt(0);
+        return this;
     }
 
     @Override
@@ -66,8 +71,9 @@ public class CChar extends Component
     }
 
     @Override
-    public void setFromGUIElement(GUIElement element)
+    public CChar setFromGUIElement(GUIElement element)
     {
         value = ((GUIChar) element).value;
+        return this;
     }
 }

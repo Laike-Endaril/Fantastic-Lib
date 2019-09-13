@@ -19,29 +19,33 @@ public class CByte extends Component
     }
 
     @Override
-    public void write(ByteBuf buf)
+    public CByte write(ByteBuf buf)
     {
         buf.writeByte(value);
+        return this;
     }
 
     @Override
-    public void read(ByteBuf buf)
+    public CByte read(ByteBuf buf)
     {
         value = buf.readByte();
+        return this;
     }
 
     @Override
-    public void save(FileOutputStream stream) throws IOException
+    public CByte save(FileOutputStream stream) throws IOException
     {
         stream.write(value);
+        return this;
     }
 
     @Override
-    public void load(FileInputStream stream) throws IOException
+    public CByte load(FileInputStream stream) throws IOException
     {
         byte[] bytes = new byte[1];
         if (stream.read(bytes) < 1) throw new IOException("Reached end of file while reading!");
         value = bytes[0];
+        return this;
     }
 
     @Override
@@ -51,9 +55,10 @@ public class CByte extends Component
     }
 
     @Override
-    public void parse(String string)
+    public CByte parse(String string)
     {
         value = Byte.parseByte(string);
+        return this;
     }
 
     @Override
@@ -70,8 +75,9 @@ public class CByte extends Component
     }
 
     @Override
-    public void setFromGUIElement(GUIElement element)
+    public CByte setFromGUIElement(GUIElement element)
     {
         //TODO
+        return this;
     }
 }

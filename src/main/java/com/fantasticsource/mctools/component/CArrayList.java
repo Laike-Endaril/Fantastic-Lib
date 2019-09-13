@@ -22,32 +22,72 @@ public class CArrayList extends Component
     }
 
     @Override
-    public void write(ByteBuf buf)
+    public CArrayList write(ByteBuf buf)
     {
-        for (Component component : value) component.write(buf);
+        new CInt().set(value.size()).write(buf);
+        for (Component component : value)
+        {
+            new CStringUTF8().set(component.getClass().getName()).write(buf);
+            component.write(buf);
+        }
+        return this;
     }
 
     @Override
-    public void read(ByteBuf buf)
+    public CArrayList read(ByteBuf buf)
     {
-        for (Component component : value) component.read(buf);
+        value.clear();
+        for (int i = new CInt().read(buf).value; i > 0; i--)
+        {
+            String classname = new CStringUTF8().read(buf).value;
+            try
+            {
+                value.add(((Component) Class.forName(classname).newInstance()).read(buf));
+            }
+            catch (InstantiationException | IllegalAccessException | ClassNotFoundException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        return this;
     }
 
     @Override
-    public void save(FileOutputStream stream) throws IOException
+    public CArrayList save(FileOutputStream stream) throws IOException
     {
-        for (Component component : value) component.save(stream);
+        new CInt().set(value.size()).save(stream);
+        for (Component component : value)
+        {
+            new CStringUTF8().set(component.getClass().getName()).save(stream);
+            component.save(stream);
+        }
+        return this;
     }
 
     @Override
-    public void load(FileInputStream stream) throws IOException
+    public CArrayList load(FileInputStream stream) throws IOException
     {
-        for (Component component : value) component.load(stream);
+        value.clear();
+        for (int i = new CInt().load(stream).value; i > 0; i--)
+        {
+            String classname = new CStringUTF8().load(stream).value;
+            try
+            {
+                value.add(((Component) Class.forName(classname).newInstance()).load(stream));
+            }
+            catch (InstantiationException | IllegalAccessException | ClassNotFoundException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        return this;
     }
 
     @Override
-    public void parse(String string)
+    public CArrayList parse(String string)
     {
+        //TODO
+        return this;
     }
 
     @Override
@@ -65,7 +105,9 @@ public class CArrayList extends Component
     }
 
     @Override
-    public void setFromGUIElement(GUIElement element)
+    public CArrayList setFromGUIElement(GUIElement element)
     {
+        //TODO
+        return this;
     }
 }

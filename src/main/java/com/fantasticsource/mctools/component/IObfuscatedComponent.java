@@ -4,7 +4,7 @@ import io.netty.buffer.ByteBuf;
 
 public interface IObfuscatedComponent
 {
-    void writeObf(ByteBuf buf);
+    Component writeObf(ByteBuf buf);
 
-    void readObf(ByteBuf buf);
+    Component readObf(ByteBuf buf);
 }
