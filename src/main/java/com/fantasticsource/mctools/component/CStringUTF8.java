@@ -4,6 +4,7 @@ import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.text.GUIText;
 import io.netty.buffer.ByteBuf;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -24,17 +25,14 @@ public class CStringUTF8 extends Component
     @Override
     public CStringUTF8 write(ByteBuf buf)
     {
-        byte[] bytes = value.getBytes(UTF_8);
-        buf.writeInt(bytes.length);
-        buf.writeBytes(bytes);
+        ByteBufUtils.writeUTF8String(buf, value);
         return this;
     }
 
     @Override
     public CStringUTF8 read(ByteBuf buf)
     {
-        int length = buf.readInt();
-        value = buf.toString(buf.readerIndex(), length, UTF_8);
+        value = ByteBufUtils.readUTF8String(buf);
         return this;
     }
 
