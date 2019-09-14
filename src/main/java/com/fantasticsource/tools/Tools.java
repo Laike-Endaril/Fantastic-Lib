@@ -8,7 +8,6 @@ import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -35,64 +34,36 @@ public class Tools
     {
         if (string == null) return null;
 
-        if (string.equals("")) return new String[]{""};
+        if (regex == null) return new String[]{string};
 
-        String[] tokens = string.split(regex);
-        if (tokens.length == 0)
-        {
-            int i;
-            for (i = 0; string.length() > 0; i++)
-            {
-                string = string.replaceFirst(regex, "");
-            }
-            tokens = new String[i];
-            Arrays.fill(tokens, "");
-            return tokens;
-        }
-
-        String last = tokens[tokens.length - 1];
-        if (last.charAt(last.length() - 1) != string.charAt(string.length() - 1))
-        {
-            String[] tokens2 = new String[tokens.length + 1];
-            System.arraycopy(tokens, 0, tokens2, 0, tokens.length);
-            tokens2[tokens2.length - 1] = "";
-            return tokens2;
-        }
-
-        return tokens;
+        return preservedSplitSeparated(string, regex)[0];
     }
 
     public static String[] preservedSplit(String string, String regex, boolean interpolateResult)
     {
-        String[] tokens = fixedSplit(string, regex);
-        String[] result = new String[tokens.length * 2 - 1];
+        if (string == null) return null;
 
-        result[0] = tokens[0];
-        string = string.substring(result[0].length());
+        if (regex == null) return new String[]{string};
 
-        String token;
-        int index;
+        String[][] separated = preservedSplitSeparated(string, regex);
+        String[] tokens = separated[0];
+        String[] delimiters = separated[1];
+        String[] result = new String[tokens.length + delimiters.length];
+
         if (interpolateResult)
         {
-            for (int i = 1; i < tokens.length; i++)
+            int delimiterCount = delimiters.length;
+            for (int i = 0; i < delimiterCount; i++)
             {
-                token = tokens[i];
-                index = string.indexOf(token);
-                result[(i << 1) - 1] = string.substring(0, index);
-                result[i << 1] = token;
-                string = string.substring(string.indexOf(token) + token.length());
+                result[i << 1] = tokens[i];
+                result[(i << 1) + 1] = delimiters[i];
             }
+            result[result.length - 1] = tokens[tokens.length - 1];
         }
         else
         {
             System.arraycopy(tokens, 0, result, 0, tokens.length);
-            for (int i = 1; i < tokens.length; i++)
-            {
-                token = tokens[i];
-                index = string.indexOf(token);
-                result[tokens.length - 1 + i] = string.substring(0, index);
-                string = string.substring(string.indexOf(token) + token.length());
-            }
+            System.arraycopy(delimiters, 0, result, tokens.length, delimiters.length);
         }
 
         return result;
@@ -100,23 +71,35 @@ public class Tools
 
     public static String[][] preservedSplitSeparated(String string, String regex)
     {
-        String[][] result = new String[2][];
-        result[0] = fixedSplit(string, regex);
-        result[1] = new String[result[0].length - 1];
+        if (string == null) return null;
 
-        string = string.substring(result[0][0].length());
+        if (regex == null) return new String[][]{new String[]{string}, new String[]{}};
 
-        String token;
-        int index;
-        for (int i = 1; i < result[0].length; i++)
+        ArrayList<String> tokens = new ArrayList<>();
+        ArrayList<String> delimiters = new ArrayList<>();
+        String prev = string, current = string.replaceFirst(regex, "");
+        while (!prev.equals(current))
         {
-            token = result[0][i];
-            index = string.indexOf(token);
-            result[1][i - 1] = string.substring(0, index);
-            string = string.substring(string.indexOf(token) + token.length());
-        }
+            int lengthDif = prev.length() - current.length();
 
-        return result;
+            int prevIndex = prev.length() - 1;
+            int curIndex = current.length() - 1;
+            while (curIndex >= 0 && prev.charAt(prevIndex) == current.charAt(curIndex))
+            {
+                prevIndex--;
+                curIndex--;
+            }
+            int startIndex = prevIndex + 1 - lengthDif;
+
+            tokens.add(prev.substring(0, startIndex));
+            delimiters.add(prev.substring(startIndex, startIndex + lengthDif));
+
+            prev = prev.substring(startIndex + lengthDif);
+            current = prev.replaceFirst(regex, "");
+        }
+        tokens.add(current);
+
+        return new String[][]{tokens.toArray(new String[0]), delimiters.toArray(new String[0])};
     }
 
 
