@@ -131,6 +131,11 @@ public class MCTools
     }
 
 
+    public static String getWorldSaveDir(MinecraftServer server)
+    {
+        return server.worlds[0].getSaveHandler().getWorldDirectory() + File.separator;
+    }
+
     public static String getDataDir(MinecraftServer server)
     {
         return server.worlds[0].getSaveHandler().getWorldDirectory() + File.separator + "data" + File.separator;
