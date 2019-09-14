@@ -136,6 +136,11 @@ public class MCTools
         return server.worlds[0].getSaveHandler().getWorldDirectory() + File.separator + "data" + File.separator;
     }
 
+    public static String getPlayerDataDir(MinecraftServer server)
+    {
+        return server.worlds[0].getSaveHandler().getWorldDirectory() + File.separator + "playerdata" + File.separator;
+    }
+
     public static void crash(Exception e, int code, boolean hardExit)
     {
         e.printStackTrace();
