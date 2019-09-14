@@ -26,14 +26,14 @@ public abstract class Component
         }
     }
 
-    public static Component saveMarked(FileOutputStream stream, Component component) throws IOException
+    public static Component saveMarked(OutputStream stream, Component component) throws IOException
     {
         new CStringUTF8().set(component.getClass().getName()).save(stream);
         component.save(stream);
         return component;
     }
 
-    public static Component loadMarked(FileInputStream stream) throws IOException
+    public static Component loadMarked(InputStream stream) throws IOException
     {
         try
         {
