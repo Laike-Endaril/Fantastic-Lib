@@ -14,7 +14,6 @@ import static com.fantasticsource.mctools.gui.GUIScreen.FONT_RENDERER;
 public class GUIText extends GUIElement
 {
     public String text;
-    protected String[] words;
     protected ArrayList<String> lines = new ArrayList<>();
     protected Color color, hoverColor, activeColor;
 
@@ -70,7 +69,7 @@ public class GUIText extends GUIElement
         }
         else
         {
-            words = Tools.fixedSplit(text, "[ \r\n]");
+            String[] words = Tools.fixedSplit(text.replaceAll("\r", ""), "[ \n]");
 
             double parentW = parent == null ? 1 : parent.getScreenWidth();
             double spaceW = (double) FONT_RENDERER.getCharWidth(' ') / screen.width;
