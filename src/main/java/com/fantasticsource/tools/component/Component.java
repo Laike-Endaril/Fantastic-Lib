@@ -58,6 +58,14 @@ public abstract class Component
     {
         ByteArrayOutputStream os = new ByteArrayOutputStream(10240);
         save(os);
-        return load(new ByteArrayInputStream(os.toByteArray()));
+        try
+        {
+            return getClass().newInstance().load(new ByteArrayInputStream(os.toByteArray()));
+        }
+        catch (InstantiationException | IllegalAccessException e)
+        {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
