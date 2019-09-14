@@ -16,14 +16,14 @@ public class CItemStack extends Component
     public ItemStack stack = ItemStack.EMPTY;
 
     @Override
-    public Component write(ByteBuf buf)
+    public CItemStack write(ByteBuf buf)
     {
         new CStringUTF8().set(stack.serializeNBT().toString()).write(buf);
         return this;
     }
 
     @Override
-    public Component read(ByteBuf buf)
+    public CItemStack read(ByteBuf buf)
     {
         try
         {
@@ -38,14 +38,14 @@ public class CItemStack extends Component
     }
 
     @Override
-    public Component save(OutputStream stream) throws IOException
+    public CItemStack save(OutputStream stream) throws IOException
     {
         new CStringUTF8().set(stack.serializeNBT().toString()).save(stream);
         return this;
     }
 
     @Override
-    public Component load(InputStream stream) throws IOException
+    public CItemStack load(InputStream stream) throws IOException
     {
         try
         {
