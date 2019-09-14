@@ -1,12 +1,10 @@
-package com.fantasticsource.mctools.component;
+package com.fantasticsource.tools.component;
 
-import com.fantasticsource.mctools.gui.GUIScreen;
-import com.fantasticsource.mctools.gui.element.GUIElement;
 import io.netty.buffer.ByteBuf;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class CInt extends Component
 {
@@ -33,51 +31,18 @@ public class CInt extends Component
     }
 
     @Override
-    public CInt save(FileOutputStream stream) throws IOException
+    public CInt save(OutputStream stream) throws IOException
     {
         stream.write(new byte[]{(byte) (value >>> 24), (byte) (value >>> 16), (byte) (value >>> 8), (byte) value});
         return this;
     }
 
     @Override
-    public CInt load(FileInputStream stream) throws IOException
+    public CInt load(InputStream stream) throws IOException
     {
         byte[] bytes = new byte[4];
         if (stream.read(bytes) < 4) throw new IOException("Reached end of file while reading!");
         value = ((bytes[0] & 0xFF) << 24) | ((bytes[1] & 0xFF) << 16) | ((bytes[2] & 0xFF) << 8) | (bytes[3] & 0xFF);
-        return this;
-    }
-
-    @Override
-    public String toString()
-    {
-        return "" + value;
-    }
-
-    @Override
-    public CInt parse(String string)
-    {
-        value = Integer.parseInt(string);
-        return this;
-    }
-
-    @Override
-    public CInt copy()
-    {
-        return new CInt().set(value);
-    }
-
-    @Override
-    public GUIElement getGUIElement(GUIScreen screen)
-    {
-        //TODO
-        return null;
-    }
-
-    @Override
-    public CInt setFromGUIElement(GUIElement element)
-    {
-        //TODO
         return this;
     }
 }

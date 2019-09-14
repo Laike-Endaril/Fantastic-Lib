@@ -1,4 +1,4 @@
-package com.fantasticsource.mctools.component;
+package com.fantasticsource.tools.component;
 
 import io.netty.buffer.ByteBuf;
 

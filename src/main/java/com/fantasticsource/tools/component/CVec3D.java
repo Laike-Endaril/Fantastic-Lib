@@ -1,13 +1,11 @@
-package com.fantasticsource.mctools.component;
+package com.fantasticsource.tools.component;
 
-import com.fantasticsource.mctools.gui.GUIScreen;
-import com.fantasticsource.mctools.gui.element.GUIElement;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.math.Vec3d;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class CVec3D extends Component
 {
@@ -60,7 +58,7 @@ public class CVec3D extends Component
     }
 
     @Override
-    public CVec3D save(FileOutputStream stream) throws IOException
+    public CVec3D save(OutputStream stream) throws IOException
     {
         x.save(stream);
         y.save(stream);
@@ -69,53 +67,11 @@ public class CVec3D extends Component
     }
 
     @Override
-    public CVec3D load(FileInputStream stream) throws IOException
+    public CVec3D load(InputStream stream) throws IOException
     {
         x.load(stream);
         y.load(stream);
         z.load(stream);
-        return this;
-    }
-
-    @Override
-    public String toString()
-    {
-        return x + ", " + y + ", " + z;
-    }
-
-    @Override
-    public CVec3D parse(String string)
-    {
-        String[] tokens = string.split(",");
-        x.parse(tokens[0].trim());
-        y.parse(tokens[1].trim());
-        z.parse(tokens[2].trim());
-        return this;
-    }
-
-    @Override
-    public String label()
-    {
-        return "Position";
-    }
-
-    @Override
-    public CVec3D copy()
-    {
-        return new CVec3D().set(x.value, y.value, z.value);
-    }
-
-    @Override
-    public GUIElement getGUIElement(GUIScreen screen)
-    {
-        //TODO
-        return null;
-    }
-
-    @Override
-    public CVec3D setFromGUIElement(GUIElement element)
-    {
-        //TODO
         return this;
     }
 }

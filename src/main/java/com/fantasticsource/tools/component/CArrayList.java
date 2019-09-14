@@ -1,13 +1,10 @@
-package com.fantasticsource.mctools.component;
+package com.fantasticsource.tools.component;
 
-import com.fantasticsource.mctools.gui.GUIScreen;
-import com.fantasticsource.mctools.gui.element.GUIElement;
-import com.fantasticsource.mctools.gui.element.view.GUIScrollView;
 import io.netty.buffer.ByteBuf;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 public class CArrayList extends Component
@@ -53,7 +50,7 @@ public class CArrayList extends Component
     }
 
     @Override
-    public CArrayList save(FileOutputStream stream) throws IOException
+    public CArrayList save(OutputStream stream) throws IOException
     {
         new CInt().set(value.size()).save(stream);
         for (Component component : value)
@@ -65,7 +62,7 @@ public class CArrayList extends Component
     }
 
     @Override
-    public CArrayList load(FileInputStream stream) throws IOException
+    public CArrayList load(InputStream stream) throws IOException
     {
         value.clear();
         for (int i = new CInt().load(stream).value; i > 0; i--)
@@ -80,34 +77,6 @@ public class CArrayList extends Component
                 e.printStackTrace();
             }
         }
-        return this;
-    }
-
-    @Override
-    public CArrayList parse(String string)
-    {
-        //TODO
-        return this;
-    }
-
-    @Override
-    public CArrayList copy()
-    {
-        return new CArrayList().set(value);
-    }
-
-    @Override
-    public GUIElement getGUIElement(GUIScreen screen)
-    {
-        GUIScrollView result = new GUIScrollView(screen, 1, 1);
-        for (Component component : value) result.add(component.getGUIElement(screen));
-        return result;
-    }
-
-    @Override
-    public CArrayList setFromGUIElement(GUIElement element)
-    {
-        //TODO
         return this;
     }
 }
