@@ -72,39 +72,53 @@ public class GUIText extends GUIElement
             String[] words = Tools.preservedSplit(text.replaceAll("\r", ""), "[ \n]", true);
 
             double parentW = parent == null ? 1 : parent.getScreenWidth();
-            double spaceW = (double) FONT_RENDERER.getCharWidth(' ') / screen.width;
 
-            StringBuilder line = new StringBuilder().append(words[0]);
-            int index = 1;
-            double maxLineW = 0, lineW = (double) (FONT_RENDERER.getStringWidth(words[0]) - 1) / screen.width;
+            StringBuilder line = new StringBuilder();
+            boolean firstWordThisLine = true;
+            int index = 0;
+            double maxLineW = 0, lineW = -1d / screen.width;
             while (index < words.length)
             {
                 String word = words[index++];
+
+                if (word.equals("") || word.equals(" ")) continue;
 
                 if (word.equals("\n"))
                 {
                     lines.add(line.toString());
                     line = new StringBuilder();
 
-                    maxLineW = Tools.max(maxLineW, lineW);
+                    maxLineW = parentW;
                     lineW = -1d / screen.width;
+
+                    firstWordThisLine = true;
+                }
+                else if (word.contains("\n"))
+                {
+                    System.out.println("ERROR");
+                    for (char c : word.toCharArray()) System.out.println(c & 0xffff);
                 }
                 else
                 {
+                    if (firstWordThisLine) firstWordThisLine = false;
+                    else word = " " + word;
+
                     double wordW = (double) FONT_RENDERER.getStringWidth(word) / screen.width;
 
-                    if (lineW + spaceW + wordW > parentW && !word.equals(" "))
+                    if (lineW + wordW > parentW && !word.equals(" "))
                     {
                         lines.add(line.toString());
                         line = new StringBuilder(word);
 
-                        maxLineW = Tools.max(maxLineW, lineW);
+                        maxLineW = parentW;
                         lineW = (double) (FONT_RENDERER.getStringWidth(word) - 1) / screen.width;
+
+                        firstWordThisLine = true;
                     }
                     else
                     {
-                        line.append(" ").append(word);
-                        lineW += spaceW + wordW;
+                        line.append(word);
+                        lineW += wordW;
                     }
                 }
             }
