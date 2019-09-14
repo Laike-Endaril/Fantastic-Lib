@@ -64,7 +64,7 @@ public class Tools
 
     public static String[] preservedSplit(String string, String regex, boolean interpolateResult)
     {
-        String[] tokens = string.split(regex);
+        String[] tokens = fixedSplit(string, regex);
         String[] result = new String[tokens.length * 2 - 1];
 
         result[0] = tokens[0];
@@ -101,7 +101,7 @@ public class Tools
     public static String[][] preservedSplitSeparated(String string, String regex)
     {
         String[][] result = new String[2][];
-        result[0] = string.split(regex);
+        result[0] = fixedSplit(string, regex);
         result[1] = new String[result[0].length - 1];
 
         string = string.substring(result[0][0].length());

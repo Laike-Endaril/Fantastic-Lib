@@ -69,7 +69,7 @@ public class GUIText extends GUIElement
         }
         else
         {
-            String[] words = Tools.fixedSplit(text.replaceAll("\r", ""), "[ \n]");
+            String[] words = Tools.preservedSplit(text.replaceAll("\r", ""), "[ \n]", true);
 
             double parentW = parent == null ? 1 : parent.getScreenWidth();
             double spaceW = (double) FONT_RENDERER.getCharWidth(' ') / screen.width;
@@ -80,20 +80,32 @@ public class GUIText extends GUIElement
             while (index < words.length)
             {
                 String word = words[index++];
-                double wordW = (double) FONT_RENDERER.getStringWidth(word) / screen.width;
 
-                if (lineW + spaceW + wordW > parentW)
+                if (word.equals("\n"))
                 {
                     lines.add(line.toString());
-                    line = new StringBuilder(word);
+                    line = new StringBuilder();
 
                     maxLineW = Tools.max(maxLineW, lineW);
-                    lineW = (double) (FONT_RENDERER.getStringWidth(word) - 1) / screen.width;
+                    lineW = -1d / screen.width;
                 }
                 else
                 {
-                    line.append(" ").append(word);
-                    lineW += spaceW + wordW;
+                    double wordW = (double) FONT_RENDERER.getStringWidth(word) / screen.width;
+
+                    if (lineW + spaceW + wordW > parentW && !word.equals(" "))
+                    {
+                        lines.add(line.toString());
+                        line = new StringBuilder(word);
+
+                        maxLineW = Tools.max(maxLineW, lineW);
+                        lineW = (double) (FONT_RENDERER.getStringWidth(word) - 1) / screen.width;
+                    }
+                    else
+                    {
+                        line.append(" ").append(word);
+                        lineW += spaceW + wordW;
+                    }
                 }
             }
 
