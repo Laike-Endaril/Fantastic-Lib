@@ -8,6 +8,7 @@ import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -32,9 +33,22 @@ public class Tools
 
     public static String[] fixedSplit(String string, String regex)
     {
+        if (string == null) return null;
+
         if (string.equals("")) return new String[]{""};
 
         String[] tokens = string.split(regex);
+        if (tokens.length == 0)
+        {
+            int i;
+            for (i = 0; string.length() > 0; i++)
+            {
+                string = string.replaceFirst(regex, "");
+            }
+            tokens = new String[i];
+            Arrays.fill(tokens, "");
+            return tokens;
+        }
 
         String last = tokens[tokens.length - 1];
         if (last.charAt(last.length() - 1) != string.charAt(string.length() - 1))
