@@ -54,13 +54,13 @@ public abstract class Component
 
     public abstract Component load(InputStream stream) throws IOException;
 
-    public final <T extends Component> T copy() throws IOException
+    public final Component copy() throws IOException
     {
         ByteArrayOutputStream os = new ByteArrayOutputStream(10240);
         save(os);
         try
         {
-            return (T) getClass().newInstance().load(new ByteArrayInputStream(os.toByteArray()));
+            return getClass().newInstance().load(new ByteArrayInputStream(os.toByteArray()));
         }
         catch (InstantiationException | IllegalAccessException e)
         {
