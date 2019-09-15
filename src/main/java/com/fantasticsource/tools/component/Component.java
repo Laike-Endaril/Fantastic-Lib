@@ -57,15 +57,7 @@ public abstract class Component
     public final Component copy() throws IOException
     {
         ByteArrayOutputStream os = new ByteArrayOutputStream(10240);
-        save(os);
-        try
-        {
-            return getClass().newInstance().load(new ByteArrayInputStream(os.toByteArray()));
-        }
-        catch (InstantiationException | IllegalAccessException e)
-        {
-            e.printStackTrace();
-            return null;
-        }
+        saveMarked(os, this);
+        return loadMarked(new ByteArrayInputStream(os.toByteArray()));
     }
 }
