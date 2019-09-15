@@ -6,7 +6,7 @@ import java.io.*;
 
 public abstract class Component
 {
-    public static Component writeMarked(ByteBuf buf, Component component)
+    public static <T extends Component> T writeMarked(ByteBuf buf, T component)
     {
         new CStringUTF8().set(component.getClass().getName()).write(buf);
         component.write(buf);
@@ -26,7 +26,7 @@ public abstract class Component
         }
     }
 
-    public static Component saveMarked(OutputStream stream, Component component) throws IOException
+    public static <T extends Component> T saveMarked(OutputStream stream, T component) throws IOException
     {
         new CStringUTF8().set(component.getClass().getName()).save(stream);
         component.save(stream);
@@ -54,13 +54,13 @@ public abstract class Component
 
     public abstract Component load(InputStream stream) throws IOException;
 
-    public final Component copy() throws IOException
+    public final <T extends Component> T copy() throws IOException
     {
         ByteArrayOutputStream os = new ByteArrayOutputStream(10240);
         save(os);
         try
         {
-            return getClass().newInstance().load(new ByteArrayInputStream(os.toByteArray()));
+            return (T) getClass().newInstance().load(new ByteArrayInputStream(os.toByteArray()));
         }
         catch (InstantiationException | IllegalAccessException e)
         {
