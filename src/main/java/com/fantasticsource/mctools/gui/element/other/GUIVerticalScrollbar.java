@@ -1,46 +1,41 @@
 package com.fantasticsource.mctools.gui.element.other;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
-import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.view.GUIScrollView;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 
-public class GUIVerticalScrollbar extends GUIElement
+public class GUIVerticalScrollbar extends GUIGradientBorder
 {
-    private GUIGradientBorder background, slider;
+    private GUIGradientBorder slider;
     private GUIScrollView scrollView;
 
     public GUIVerticalScrollbar(GUIScreen screen, double width, double height, Color backgroundBorder, Color backgroundCenter, Color sliderBorder, Color sliderCenter, GUIScrollView scrollView)
     {
-        super(screen, width, height);
+        super(screen, width, height, 1d / 3, backgroundBorder, backgroundCenter);
         this.scrollView = scrollView;
 
-        background = new GUIGradientBorder(screen, x, y, width, height, 1d / 3, backgroundBorder, backgroundCenter);
-
-        slider = new GUIGradientBorder(screen, x, y, width, height / 10, 1d / 3, sliderBorder, sliderCenter);
+        slider = new GUIGradientBorder(screen, 0, -9999, 1, 1d / 10, 1d / 3, sliderBorder, sliderCenter);
+        add(slider);
     }
 
     public GUIVerticalScrollbar(GUIScreen screen, double x, double y, double width, double height, Color backgroundBorder, Color backgroundCenter, Color sliderBorder, Color sliderCenter, GUIScrollView scrollView)
     {
-        super(screen, x, y, width, height);
+        super(screen, x, y, width, height, 1d / 3, backgroundBorder, backgroundCenter);
         this.scrollView = scrollView;
 
-        background = new GUIGradientBorder(screen, x, y, width, height, 1d / 3, backgroundBorder, backgroundCenter);
-
-        slider = new GUIGradientBorder(screen, x, y, width, height / 10, 1d / 3, sliderBorder, sliderCenter);
+        slider = new GUIGradientBorder(screen, 0, -9999, 1, 1d / 10, 1d / 3, sliderBorder, sliderCenter);
+        add(slider);
     }
 
     @Override
     public void draw()
     {
-        background.draw();
-
         if (scrollView.progress >= 0 && scrollView.progress <= 1)
         {
             slider.y = y + (height - slider.height) * scrollView.progress;
-            slider.draw();
         }
+        else slider.y = -99999;
 
         super.draw();
     }
@@ -61,12 +56,6 @@ public class GUIVerticalScrollbar extends GUIElement
                 if (scrollView.progress < 0) scrollView.progress = 0;
             }
         }
-    }
-
-    @Override
-    public boolean isWithin(double x, double y)
-    {
-        return background.isWithin(x, y);
     }
 
     @Override

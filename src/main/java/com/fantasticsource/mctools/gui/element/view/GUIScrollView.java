@@ -88,7 +88,7 @@ public class GUIScrollView extends GUIView
 
             for (GUIElement element : children)
             {
-                if (element.y * height + element.height < top || element.y * height >= bottom) continue;
+                if (element.y * getScreenHeight() + element.height < top || element.y * getScreenHeight() >= bottom) continue;
                 element.draw();
             }
 
