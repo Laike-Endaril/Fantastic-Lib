@@ -80,8 +80,17 @@ public class GUIScrollView extends GUIView
             int mcScale = new ScaledResolution(screen.mc).getScaleFactor();
             double wScale = screenWidth * mcScale, hScale = screenHeight * mcScale;
 
+            currentScissor = new int[]{(int) (getScreenX() * wScale), (int) ((1 - (getScreenY() + getScreenHeight())) * hScale), (int) (getScreenWidth() * wScale), (int) (getScreenHeight() * hScale)};
+            if (parent != null && parent.currentScissor != null)
+            {
+                currentScissor[0] = Tools.max(currentScissor[0], parent.currentScissor[0]);
+                currentScissor[1] = Tools.max(currentScissor[1], parent.currentScissor[1]);
+                currentScissor[2] = Tools.min(currentScissor[2], parent.currentScissor[2]);
+                currentScissor[3] = Tools.min(currentScissor[3], parent.currentScissor[3]);
+            }
+
             GL11.glEnable(GL11.GL_SCISSOR_TEST);
-            GL11.glScissor((int) (x * wScale), (int) ((1 - (y + height)) * hScale), (int) (width * wScale), (int) (height * hScale));
+            GL11.glScissor(currentScissor[0], currentScissor[1], currentScissor[2], currentScissor[3]);
 
             GlStateManager.pushMatrix();
             GlStateManager.translate(0, -top, 0);
@@ -94,6 +103,7 @@ public class GUIScrollView extends GUIView
 
             GlStateManager.popMatrix();
 
+            currentScissor = null;
             GL11.glDisable(GL11.GL_SCISSOR_TEST);
         }
     }
