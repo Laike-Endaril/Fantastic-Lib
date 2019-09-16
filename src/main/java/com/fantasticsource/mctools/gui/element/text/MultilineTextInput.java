@@ -64,7 +64,7 @@ public class MultilineTextInput extends GUIScrollView
             if (prev == null) element.y = 0;
             else element.y = prev.y + prev.height / height;
             prev = element;
-            internalHeight = Tools.max(internalHeight, element.y * height + element.height);
+            internalHeight = Tools.max(internalHeight, (element.y + element.height) * getScreenHeight());
         }
 
         recalc2();

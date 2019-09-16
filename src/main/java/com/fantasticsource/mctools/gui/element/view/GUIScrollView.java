@@ -45,7 +45,7 @@ public class GUIScrollView extends GUIView
         super.recalc();
         for (GUIElement element : children)
         {
-            internalHeight = Tools.max(internalHeight, element.y * height + element.height);
+            internalHeight = Tools.max(internalHeight, (element.y + element.height) * getScreenHeight());
         }
 
         recalc2();
