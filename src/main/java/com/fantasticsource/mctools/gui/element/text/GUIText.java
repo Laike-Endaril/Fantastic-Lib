@@ -93,32 +93,31 @@ public class GUIText extends GUIElement
 
                     firstWordThisLine = true;
                 }
-                else if (word.contains("\n"))
-                {
-                    System.out.println("ERROR");
-                    for (char c : word.toCharArray()) System.out.println(c & 0xffff);
-                }
                 else
                 {
-                    if (firstWordThisLine) firstWordThisLine = false;
-                    else word = " " + word;
+                    String word2;
+                    if (firstWordThisLine)
+                    {
+                        firstWordThisLine = false;
+                        word2 = word;
+                    }
+                    else word2 = " " + word;
 
                     double wordW = (double) FONT_RENDERER.getStringWidth(word) / screen.width;
+                    double word2W = (double) FONT_RENDERER.getStringWidth(word2) / screen.width;
 
-                    if (lineW + wordW > parentW && !word.equals(" "))
+                    if (lineW + word2W > parentW && !word.equals(" "))
                     {
                         lines.add(line.toString());
                         line = new StringBuilder(word);
 
                         maxLineW = parentW;
                         lineW = (double) (FONT_RENDERER.getStringWidth(word) - 1) / screen.width;
-
-                        firstWordThisLine = true;
                     }
                     else
                     {
-                        line.append(word);
-                        lineW += wordW;
+                        line.append(word2);
+                        lineW += word2W;
                     }
                 }
             }
