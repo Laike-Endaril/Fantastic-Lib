@@ -69,19 +69,18 @@ public class GUIText extends GUIElement
         }
         else
         {
-            String[] words = Tools.preservedSplit(text.replaceAll("\r", ""), "[ \n]", true);
+            String[] words = Tools.preservedSplit(text, "[\r\n]|[ ]+", true);
 
             double parentW = parent == null ? 1 : parent.getScreenWidth();
 
             StringBuilder line = new StringBuilder();
-            boolean firstWordThisLine = true;
             int index = 0;
             double maxLineW = 0, lineW = -1d / screen.width;
             while (index < words.length)
             {
                 String word = words[index++];
 
-                if (word.equals("") || word.equals(" ")) continue;
+                if (word.equals("") || word.equals("\r")) continue;
 
                 if (word.equals("\n"))
                 {
@@ -90,24 +89,15 @@ public class GUIText extends GUIElement
 
                     maxLineW = parentW;
                     lineW = -1d / screen.width;
-
-                    firstWordThisLine = true;
                 }
                 else
                 {
-                    String word2;
-                    if (firstWordThisLine)
-                    {
-                        firstWordThisLine = false;
-                        word2 = word;
-                    }
-                    else word2 = " " + word;
-
                     double wordW = (double) FONT_RENDERER.getStringWidth(word) / screen.width;
-                    double word2W = (double) FONT_RENDERER.getStringWidth(word2) / screen.width;
 
-                    if (lineW + word2W > parentW && !word.equals(" "))
+                    if (lineW + wordW > parentW)
                     {
+                        if (word.trim().equals("")) continue;
+
                         lines.add(line.toString());
                         line = new StringBuilder(word);
 
@@ -116,8 +106,8 @@ public class GUIText extends GUIElement
                     }
                     else
                     {
-                        line.append(word2);
-                        lineW += word2W;
+                        line.append(word);
+                        lineW += wordW;
                     }
                 }
             }
