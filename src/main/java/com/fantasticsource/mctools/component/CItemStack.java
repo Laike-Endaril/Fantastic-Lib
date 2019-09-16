@@ -15,6 +15,21 @@ public class CItemStack extends Component
 {
     public ItemStack stack = ItemStack.EMPTY;
 
+    public CItemStack()
+    {
+    }
+
+    public CItemStack(ItemStack stack)
+    {
+        set(stack);
+    }
+
+    public CItemStack set(ItemStack stack)
+    {
+        this.stack = stack;
+        return this;
+    }
+
     @Override
     public CItemStack write(ByteBuf buf)
     {
