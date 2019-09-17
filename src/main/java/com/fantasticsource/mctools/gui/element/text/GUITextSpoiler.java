@@ -25,7 +25,7 @@ public class GUITextSpoiler extends GUIText
 
     public GUITextSpoiler(GUIScreen screen, String text, Color color, Color hoverColor, Color activeColor, GUIElement... hideableElements)
     {
-        super(screen, text, color, hoverColor, activeColor);
+        super(screen, text.charAt(text.length() - 1) == '\n' ? text : text + '\n', color, hoverColor, activeColor);
         add(hideableElements);
     }
 
@@ -42,7 +42,7 @@ public class GUITextSpoiler extends GUIText
 
     public GUITextSpoiler(GUIScreen screen, double x, double y, String text, Color color, Color hoverColor, Color activeColor, GUIElement... hideableElements)
     {
-        super(screen, x, y, text, color, hoverColor, activeColor);
+        super(screen, x, y, text.charAt(text.length() - 1) == '\n' ? text : text + '\n', color, hoverColor, activeColor);
         add(hideableElements);
     }
 
