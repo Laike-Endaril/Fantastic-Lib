@@ -49,6 +49,8 @@ public class GUITextSpoiler extends GUIText
     @Override
     public GUITextSpoiler add(GUIElement hideableElement)
     {
+        if (hideableElements == null) return null;
+
         boolean reshow = !hidden;
         if (reshow) hide();
         this.hideableElements.add(hideableElement);
@@ -59,6 +61,8 @@ public class GUITextSpoiler extends GUIText
     @Override
     public GUIElement add(int index, GUIElement hideableElement)
     {
+        if (hideableElements == null) return null;
+
         boolean reshow = !hidden;
         if (reshow) hide();
         this.hideableElements.add(index, hideableElement);
@@ -69,36 +73,42 @@ public class GUITextSpoiler extends GUIText
     @Override
     public void remove(GUIElement element)
     {
+        if (hideableElements == null) return;
         hideableElements.remove(element);
     }
 
     @Override
     public void remove(int index)
     {
+        if (hideableElements == null) return;
         hideableElements.remove(index);
     }
 
     @Override
     public int indexOf(GUIElement hideableElement)
     {
+        if (hideableElements == null) return -1;
         return hideableElements.indexOf(hideableElement);
     }
 
     @Override
     public void clear()
     {
+        if (hideableElements == null) return;
         hideableElements.clear();
     }
 
     @Override
     public int size()
     {
+        if (hideableElements == null) return 0;
         return hideableElements.size();
     }
 
     @Override
     public GUIElement get(int index)
     {
+        if (hideableElements == null) return null;
         return hideableElements.get(index);
     }
 
