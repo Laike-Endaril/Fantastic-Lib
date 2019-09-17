@@ -66,6 +66,42 @@ public class GUITextSpoiler extends GUIText
         return this;
     }
 
+    @Override
+    public void remove(GUIElement element)
+    {
+        hideableElements.remove(element);
+    }
+
+    @Override
+    public void remove(int index)
+    {
+        hideableElements.remove(index);
+    }
+
+    @Override
+    public int indexOf(GUIElement hideableElement)
+    {
+        return hideableElements.indexOf(hideableElement);
+    }
+
+    @Override
+    public void clear()
+    {
+        hideableElements.clear();
+    }
+
+    @Override
+    public int size()
+    {
+        return hideableElements.size();
+    }
+
+    @Override
+    public GUIElement get(int index)
+    {
+        return hideableElements.get(index);
+    }
+
 
     public void show()
     {
