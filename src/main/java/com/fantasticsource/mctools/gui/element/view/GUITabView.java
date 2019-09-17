@@ -214,7 +214,7 @@ public class GUITabView extends GUIView
         }
     }
 
-    private void setActiveTab(int index)
+    public void setActiveTab(int index)
     {
         if (index == current) return;
         GUIElement currentElement = tabs[index];
