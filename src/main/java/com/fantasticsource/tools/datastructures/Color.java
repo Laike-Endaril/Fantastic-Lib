@@ -326,6 +326,11 @@ public class Color
         return (int) ((double) (r + g + b) / 3);
     }
 
+    public float vf()
+    {
+        return rf + gf + bf / 3;
+    }
+
     public Color setV(int v)
     {
         v = v & 0xff;
