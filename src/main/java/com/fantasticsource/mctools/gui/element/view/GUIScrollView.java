@@ -68,6 +68,16 @@ public class GUIScrollView extends GUIView
         bottom = top + height;
     }
 
+    public void focus(GUIElement child)
+    {
+        if (!children.contains(child)) return;
+
+        if (internalHeight <= height) return;
+
+
+        progress = Tools.min(1, child.y * height / (internalHeight - height));
+    }
+
     @Override
     public void draw()
     {
