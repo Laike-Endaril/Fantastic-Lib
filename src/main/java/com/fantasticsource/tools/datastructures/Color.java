@@ -1,5 +1,7 @@
 package com.fantasticsource.tools.datastructures;
 
+import com.fantasticsource.tools.Tools;
+
 import static com.fantasticsource.tools.Tools.max;
 import static com.fantasticsource.tools.Tools.min;
 
@@ -322,5 +324,153 @@ public class Color
     public int v()
     {
         return (int) ((double) (r + g + b) / 3);
+    }
+
+    public Color setV(int v)
+    {
+        v = v & 0xff;
+
+        if (v == 0) setColor(0, 0, 0, a);
+        else if (v == 255) setColor(255, 255, 255, a);
+        else
+        {
+            int current = v();
+
+            int rr = r * (v / current);
+            int gg = g * (v / current);
+            int bb = b * (v / current);
+
+            if (rr >= 255)
+            {
+                if (gg >= 255)
+                {
+                    //1 or 0 non-max
+                    bb = Tools.min(255, rr + gg + bb - 510);
+                    rr = 255;
+                    gg = 255;
+                }
+                else if (bb >= 255)
+                {
+                    //1 or 0 non-max
+                    gg = Tools.min(255, rr + gg + bb - 510);
+                    rr = 255;
+                    bb = 255;
+                }
+                else
+                {
+                    //2 non-max
+                    int overflow = rr - 255;
+
+                    if (gg > bb)
+                    {
+                        double ratio = (double) gg / (bb + gg);
+                        int inc = (int) (overflow * ratio);
+                        gg += inc;
+                        if (gg > 255)
+                        {
+                            overflow += gg - 255;
+                            gg = 255;
+                        }
+                        bb = Tools.min(255, bb + overflow - inc);
+                    }
+                    else
+                    {
+                        double ratio = (double) bb / (bb + gg);
+                        int inc = (int) (overflow * ratio);
+                        bb += inc;
+                        if (bb > 255)
+                        {
+                            overflow += bb - 255;
+                            bb = 255;
+                        }
+                        gg = Tools.min(255, gg + overflow - inc);
+                    }
+                }
+            }
+            else
+            {
+                if (gg >= 255)
+                {
+                    if (bb >= 255)
+                    {
+                        //1 or 0 non-max
+                        rr = Tools.min(255, rr + gg + bb - 510);
+                        gg = 255;
+                        bb = 255;
+                    }
+                    else
+                    {
+                        //2 non-max
+                        int overflow = gg - 255;
+
+                        if (rr > bb)
+                        {
+                            double ratio = (double) rr / (bb + rr);
+                            int inc = (int) (overflow * ratio);
+                            rr += inc;
+                            if (rr > 255)
+                            {
+                                overflow += rr - 255;
+                                rr = 255;
+                            }
+                            bb = Tools.min(255, bb + overflow - inc);
+                        }
+                        else
+                        {
+                            double ratio = (double) bb / (bb + rr);
+                            int inc = (int) (overflow * ratio);
+                            bb += inc;
+                            if (bb > 255)
+                            {
+                                overflow += bb - 255;
+                                bb = 255;
+                            }
+                            rr = Tools.min(255, rr + overflow - inc);
+                        }
+                    }
+                }
+                else if (bb >= 255)
+                {
+                    //2 non-max
+                    int overflow = bb - 255;
+
+                    if (rr > gg)
+                    {
+                        double ratio = (double) rr / (gg + rr);
+                        int inc = (int) (overflow * ratio);
+                        rr += inc;
+                        if (rr > 255)
+                        {
+                            overflow += rr - 255;
+                            rr = 255;
+                        }
+                        gg = Tools.min(255, gg + overflow - inc);
+                    }
+                    else
+                    {
+                        double ratio = (double) gg / (gg + rr);
+                        int inc = (int) (overflow * ratio);
+                        gg += inc;
+                        if (gg > 255)
+                        {
+                            overflow += gg - 255;
+                            gg = 255;
+                        }
+                        rr = Tools.min(255, rr + overflow - inc);
+                    }
+                }
+            }
+
+            setR(rr);
+            setG(gg);
+            setB(bb);
+        }
+
+        return this;
+    }
+
+    public Color setVF(float vf)
+    {
+        return setV((int) (255 * vf));
     }
 }
