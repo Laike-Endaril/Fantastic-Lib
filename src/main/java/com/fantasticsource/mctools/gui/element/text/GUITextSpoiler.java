@@ -71,19 +71,24 @@ public class GUITextSpoiler extends GUIText
     {
         if (!hidden) return;
 
+        hidden = false;
+
         if (parent == null)
         {
             screen.guiElements.addAll(screen.guiElements.indexOf(this) + 1, hideableElements);
         }
         else
         {
-            parent.children.addAll(parent.indexOf(this) + 1, hideableElements);
+            int index = parent.indexOf(this);
+            for (GUIElement element : hideableElements) parent.add(++index, element);
         }
     }
 
     public void hide()
     {
         if (hidden) return;
+
+        hidden = true;
 
         if (parent == null)
         {
@@ -94,10 +99,7 @@ public class GUITextSpoiler extends GUIText
         }
         else
         {
-            for (GUIElement element : parent.children.toArray(new GUIElement[0]))
-            {
-                if (hideableElements.contains(element)) parent.children.remove(element);
-            }
+            for (GUIElement element : hideableElements) parent.remove(element);
         }
     }
 
