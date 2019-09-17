@@ -3,7 +3,6 @@ package com.fantasticsource.mctools.gui.element.text;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.tools.datastructures.Color;
-import scala.actors.threadpool.Arrays;
 
 import java.util.ArrayList;
 
@@ -26,7 +25,7 @@ public class GUITextSpoiler extends GUIText
     public GUITextSpoiler(GUIScreen screen, String text, Color color, Color hoverColor, Color activeColor, GUIElement... hideableElements)
     {
         super(screen, text.charAt(text.length() - 1) == '\n' ? text : text + '\n', color, hoverColor, activeColor);
-        add(hideableElements);
+        for (GUIElement element : hideableElements) add(element);
     }
 
 
@@ -43,18 +42,30 @@ public class GUITextSpoiler extends GUIText
     public GUITextSpoiler(GUIScreen screen, double x, double y, String text, Color color, Color hoverColor, Color activeColor, GUIElement... hideableElements)
     {
         super(screen, x, y, text.charAt(text.length() - 1) == '\n' ? text : text + '\n', color, hoverColor, activeColor);
-        add(hideableElements);
+        for (GUIElement element : hideableElements) add(element);
     }
 
 
-    public GUITextSpoiler add(GUIElement... hideableElements)
+    @Override
+    public GUITextSpoiler add(GUIElement hideableElement)
     {
         boolean reshow = !hidden;
         if (reshow) hide();
-        this.hideableElements.addAll(Arrays.asList(hideableElements));
+        this.hideableElements.add(hideableElement);
         if (reshow) show();
         return this;
     }
+
+    @Override
+    public GUIElement add(int index, GUIElement hideableElement)
+    {
+        boolean reshow = !hidden;
+        if (reshow) hide();
+        this.hideableElements.add(index, hideableElement);
+        if (reshow) show();
+        return this;
+    }
+
 
     public void show()
     {
