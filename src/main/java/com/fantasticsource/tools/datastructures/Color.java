@@ -365,6 +365,7 @@ public class Color
                 {
                     //2 non-max
                     int overflow = rr - 255;
+                    rr = 255;
 
                     if (gg > bb)
                     {
@@ -380,7 +381,7 @@ public class Color
                     }
                     else
                     {
-                        double ratio = (double) bb / (bb + gg);
+                        double ratio = (gg + bb == 0) ? 0.5 : (double) bb / (bb + gg);
                         int inc = (int) (ratio * overflow);
                         bb += inc;
                         if (bb > 255)
@@ -407,10 +408,11 @@ public class Color
                     {
                         //2 non-max
                         int overflow = gg - 255;
+                        gg = 255;
 
                         if (rr > bb)
                         {
-                            double ratio = (double) rr / (bb + rr);
+                            double ratio = (rr + bb == 0) ? 0.5 : (double) rr / (bb + rr);
                             int inc = (int) (ratio * overflow);
                             rr += inc;
                             if (rr > 255)
@@ -438,10 +440,11 @@ public class Color
                 {
                     //2 non-max
                     int overflow = bb - 255;
+                    bb = 255;
 
                     if (rr > gg)
                     {
-                        double ratio = (double) rr / (gg + rr);
+                        double ratio = (gg + rr == 0) ? 0.5 : (double) rr / (gg + rr);
                         int inc = (int) (ratio * overflow);
                         rr += inc;
                         if (rr > 255)
