@@ -328,7 +328,7 @@ public class Color
 
     public float vf()
     {
-        return rf + gf + bf / 3;
+        return (rf + gf + bf) / 3;
     }
 
     public Color setV(int v)
@@ -341,9 +341,9 @@ public class Color
         {
             int current = v();
 
-            int rr = r * (v / current);
-            int gg = g * (v / current);
-            int bb = b * (v / current);
+            int rr = (int) (((double) v / current) * r);
+            int gg = (int) (((double) v / current) * g);
+            int bb = (int) (((double) v / current) * b);
 
             if (rr >= 255)
             {
@@ -369,7 +369,7 @@ public class Color
                     if (gg > bb)
                     {
                         double ratio = (double) gg / (bb + gg);
-                        int inc = (int) (overflow * ratio);
+                        int inc = (int) (ratio * overflow);
                         gg += inc;
                         if (gg > 255)
                         {
@@ -381,7 +381,7 @@ public class Color
                     else
                     {
                         double ratio = (double) bb / (bb + gg);
-                        int inc = (int) (overflow * ratio);
+                        int inc = (int) (ratio * overflow);
                         bb += inc;
                         if (bb > 255)
                         {
@@ -411,7 +411,7 @@ public class Color
                         if (rr > bb)
                         {
                             double ratio = (double) rr / (bb + rr);
-                            int inc = (int) (overflow * ratio);
+                            int inc = (int) (ratio * overflow);
                             rr += inc;
                             if (rr > 255)
                             {
@@ -423,7 +423,7 @@ public class Color
                         else
                         {
                             double ratio = (double) bb / (bb + rr);
-                            int inc = (int) (overflow * ratio);
+                            int inc = (int) (ratio * overflow);
                             bb += inc;
                             if (bb > 255)
                             {
@@ -442,7 +442,7 @@ public class Color
                     if (rr > gg)
                     {
                         double ratio = (double) rr / (gg + rr);
-                        int inc = (int) (overflow * ratio);
+                        int inc = (int) (ratio * overflow);
                         rr += inc;
                         if (rr > 255)
                         {
@@ -454,7 +454,7 @@ public class Color
                     else
                     {
                         double ratio = (double) gg / (gg + rr);
-                        int inc = (int) (overflow * ratio);
+                        int inc = (int) (ratio * overflow);
                         gg += inc;
                         if (gg > 255)
                         {
@@ -476,6 +476,6 @@ public class Color
 
     public Color setVF(float vf)
     {
-        return setV((int) (255 * vf));
+        return setV((int) (vf * 255));
     }
 }
