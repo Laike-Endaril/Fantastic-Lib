@@ -6,7 +6,8 @@ import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIGradientBorder;
 import com.fantasticsource.mctools.gui.element.text.GUITextButton;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
+import java.util.ArrayList;
 
 import static com.fantasticsource.tools.datastructures.Color.WHITE;
 
@@ -73,8 +74,6 @@ public class GUITabView extends GUIView
         }
 
         recalc();
-
-        MinecraftForge.EVENT_BUS.register(this);
     }
 
     public GUITabView(GUIScreen screen, double x, double y, double width, double height, String... tabNames)
@@ -132,8 +131,6 @@ public class GUITabView extends GUIView
         }
 
         recalc();
-
-        MinecraftForge.EVENT_BUS.register(this);
     }
 
     private static GUIElement[] genTabs(GUIScreen screen, String[] tabNames)
@@ -200,20 +197,6 @@ public class GUITabView extends GUIView
         return super.recalc();
     }
 
-    @SubscribeEvent
-    public void tabClick(GUILeftClickEvent event)
-    {
-        GUIElement element = event.getElement();
-        for (int i = 0; i < tabs.length; i++)
-        {
-            if (tabs[i] == element)
-            {
-                setActiveTab(i);
-                break;
-            }
-        }
-    }
-
     public void setActiveTab(int index)
     {
         if (index == current) return;
@@ -228,9 +211,35 @@ public class GUITabView extends GUIView
     }
 
     @Override
-    protected void finalize() throws Throwable
+    public boolean mouseReleased(double x, double y, int button)
     {
-        super.finalize();
-        MinecraftForge.EVENT_BUS.unregister(this);
+        boolean result = false;
+        if (button == 0)
+        {
+            if (active && isMouseWithin())
+            {
+                MinecraftForge.EVENT_BUS.post(new GUILeftClickEvent(screen, this));
+                result = true;
+            }
+            setActive(false);
+        }
+
+        for (GUIElement child : (ArrayList<GUIElement>) children.clone())
+        {
+            if (child.mouseReleased(x - this.x, y - this.y, button))
+            {
+                for (int i = 0; i < tabs.length; i++)
+                {
+                    GUIElement tab = tabs[i];
+                    if (child == tab)
+                    {
+                        setActiveTab(i);
+                        break;
+                    }
+                }
+            }
+        }
+
+        return result;
     }
 }

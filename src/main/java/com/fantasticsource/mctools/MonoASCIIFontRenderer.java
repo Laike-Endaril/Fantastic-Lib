@@ -14,11 +14,20 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class MonoASCIIFontRenderer
 {
-    private static final int CHAR_WIDTH = 8, CHAR_HEIGHT = 8;
-    public static final int LINE_HEIGHT = CHAR_HEIGHT + 2;
+    public static final int LINE_HEIGHT;
+    private static final int CHAR_WIDTH, CHAR_HEIGHT;
     private static final TextureManager TEXTURE_MANAGER = Minecraft.getMinecraft().getTextureManager();
-    private static final double CHAR_UV = 1d / 16, CHAR_U_TO_RIGHT = CHAR_UV - CHAR_UV / (CHAR_WIDTH << 1), CHAR_V_TO_BOTTOM = CHAR_UV - CHAR_UV / (CHAR_HEIGHT << 1);
+    private static final double CHAR_UV = 1d / 16, CHAR_U_TO_RIGHT, CHAR_V_TO_BOTTOM;
     private static final ResourceLocation TEXTURE = new ResourceLocation(FantasticLib.MODID, "image/monospace.png");
+
+    static
+    {
+        CHAR_WIDTH = 8;
+        CHAR_HEIGHT = 8;
+        LINE_HEIGHT = CHAR_HEIGHT + 2;
+        CHAR_U_TO_RIGHT = CHAR_UV - CHAR_UV / (CHAR_WIDTH << 1);
+        CHAR_V_TO_BOTTOM = CHAR_UV - CHAR_UV / (CHAR_HEIGHT << 1);
+    }
 
     public static void draw(String text, double x, double y, Color color, Color shadowColor)
     {

@@ -10,7 +10,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.util.Display;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,7 +20,7 @@ public abstract class GUIScreen extends GuiScreen
     public static final FontRenderer FONT_RENDERER = Minecraft.getMinecraft().fontRenderer;
 
     public static double mouseX = 0.5, mouseY = 0.5;
-    protected ArrayList<GUIElement> guiElements = new ArrayList<>();
+    public ArrayList<GUIElement> guiElements = new ArrayList<>();
     private ArrayList<Integer> mouseButtons = new ArrayList<>();
     private boolean ready = false;
 

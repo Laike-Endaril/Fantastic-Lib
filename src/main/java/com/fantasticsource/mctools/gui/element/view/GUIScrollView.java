@@ -118,12 +118,12 @@ public class GUIScrollView extends GUIView
     }
 
     @Override
-    public void mouseReleased(double x, double y, int button)
+    public boolean mouseReleased(double x, double y, int button)
     {
         recalc2();
         y -= top;
 
-        super.mouseReleased(x, y, button);
+        return super.mouseReleased(x, y, button);
     }
 
     @Override

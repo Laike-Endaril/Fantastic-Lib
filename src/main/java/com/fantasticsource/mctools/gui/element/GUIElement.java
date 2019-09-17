@@ -120,15 +120,22 @@ public abstract class GUIElement
         return active;
     }
 
-    public void mouseReleased(double x, double y, int button)
+    public boolean mouseReleased(double x, double y, int button)
     {
+        boolean result = false;
         if (button == 0)
         {
-            if (active && isMouseWithin()) MinecraftForge.EVENT_BUS.post(new GUILeftClickEvent(screen, this));
+            if (active && isMouseWithin())
+            {
+                MinecraftForge.EVENT_BUS.post(new GUILeftClickEvent(screen, this));
+                result = true;
+            }
             setActive(false);
         }
 
         for (GUIElement child : (ArrayList<GUIElement>) children.clone()) child.mouseReleased(x - this.x, y - this.y, button);
+
+        return result;
     }
 
     public void mouseDrag(double x, double y, int button)
