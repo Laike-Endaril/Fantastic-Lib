@@ -49,7 +49,10 @@ public class GUITextSpoiler extends GUIText
 
     public GUITextSpoiler add(GUIElement... hideableElements)
     {
+        boolean reshow = !hidden;
+        if (reshow) hide();
         this.hideableElements.addAll(Arrays.asList(hideableElements));
+        if (reshow) show();
         return this;
     }
 
