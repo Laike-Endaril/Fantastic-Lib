@@ -57,6 +57,21 @@ public class GUIText extends GUIElement
         recalc();
     }
 
+
+    public GUIText setColor(Color color)
+    {
+        return setColor(color, color, color);
+    }
+
+    public GUIText setColor(Color color, Color hoverColor, Color activeColor)
+    {
+        this.color = color;
+        this.hoverColor = hoverColor;
+        this.activeColor = activeColor;
+        return this;
+    }
+
+
     @Override
     public GUIElement recalc()
     {
