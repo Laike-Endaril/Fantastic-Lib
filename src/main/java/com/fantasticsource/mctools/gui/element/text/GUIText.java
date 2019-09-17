@@ -102,7 +102,7 @@ public class GUIText extends GUIElement
                     lines.add(line.toString());
                     line = new StringBuilder();
 
-                    maxLineW = parentW;
+                    maxLineW = 1;
                     lineW = -1d / screen.width;
                 }
                 else
