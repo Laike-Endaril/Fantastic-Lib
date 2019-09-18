@@ -6,12 +6,15 @@ import com.fantasticsource.tools.TrigLookupTable;
 import com.fantasticsource.tools.datastructures.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.FOVUpdateEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -49,6 +52,16 @@ public class Render
         }
     }
 
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST, receiveCanceled = true)
+    public static void drawHUD(RenderGameOverlayEvent.Pre event)
+    {
+        if (event.getType() == RenderGameOverlayEvent.ElementType.HOTBAR)
+        {
+            MinecraftForge.EVENT_BUS.post(new RenderHUDEvent(event));
+        }
+        GlStateManager.color(1, 1, 1, 1);
+    }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void updateFOV(EntityViewRenderEvent.FOVModifier event)
@@ -211,5 +224,21 @@ public class Render
     public static Vec3d getCameraPosition()
     {
         return Minecraft.getMinecraft().player.getPositionVector().add(ActiveRenderInfo.getCameraPosition());
+    }
+
+
+    public static class RenderHUDEvent extends Event
+    {
+        RenderGameOverlayEvent.Pre parentEvent;
+
+        public RenderHUDEvent(RenderGameOverlayEvent.Pre parentEvent)
+        {
+            this.parentEvent = parentEvent;
+        }
+
+        public RenderGameOverlayEvent.Pre getParentEvent()
+        {
+            return parentEvent;
+        }
     }
 }
