@@ -5,6 +5,7 @@ import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.TrigLookupTable;
 import com.fantasticsource.tools.datastructures.Pair;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
@@ -30,6 +31,11 @@ import static com.fantasticsource.tools.Tools.radtodeg;
 @SideOnly(Side.CLIENT)
 public class Render
 {
+    public static final byte
+            SCALING_FULL = 0,
+            SCALING_MC_GUI = 1;
+
+
     private static Field activeRenderInfoViewportField, activeRenderInfoProjectionField, activeRenderInfoModelviewField, minecraftRenderPartialTicksPausedField;
 
     private static float fov, fovMultiplier;
@@ -58,7 +64,9 @@ public class Render
     {
         if (event.getType() == RenderGameOverlayEvent.ElementType.HOTBAR)
         {
+            GlStateManager.pushMatrix();
             MinecraftForge.EVENT_BUS.post(new RenderHUDEvent(event));
+            GlStateManager.popMatrix();
         }
         GlStateManager.color(1, 1, 1, 1);
     }
@@ -230,6 +238,9 @@ public class Render
     public static class RenderHUDEvent extends Event
     {
         RenderGameOverlayEvent.Pre parentEvent;
+        byte scalingMode = SCALING_MC_GUI;
+        ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
+        int width = sr.getScaledWidth(), height = sr.getScaledHeight();
 
         public RenderHUDEvent(RenderGameOverlayEvent.Pre parentEvent)
         {
@@ -239,6 +250,53 @@ public class Render
         public RenderGameOverlayEvent.Pre getParentEvent()
         {
             return parentEvent;
+        }
+
+        public void setScalingMode(byte scalingMode)
+        {
+            if (this.scalingMode == scalingMode) return;
+
+            double xRatio = width, yRatio = height;
+
+            try
+            {
+                switch (scalingMode)
+                {
+                    case SCALING_FULL:
+                        width = Render.getViewportWidth();
+                        height = Render.getViewportHeight();
+                        break;
+
+                    case SCALING_MC_GUI:
+                        width = sr.getScaledWidth();
+                        height = sr.getScaledHeight();
+                        break;
+
+                    default:
+                        return;
+                }
+
+                this.scalingMode = scalingMode;
+
+                xRatio /= width;
+                yRatio /= height;
+
+                GlStateManager.scale(xRatio, yRatio, 1);
+            }
+            catch (IllegalAccessException e)
+            {
+                e.printStackTrace();
+            }
+        }
+
+        public int getWidth()
+        {
+            return width;
+        }
+
+        public int getHeight()
+        {
+            return height;
         }
     }
 }
