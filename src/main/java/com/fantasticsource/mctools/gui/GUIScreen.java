@@ -22,7 +22,7 @@ public abstract class GUIScreen extends GuiScreen
     public static double mouseX = 0.5, mouseY = 0.5;
     public ArrayList<GUIElement> guiElements = new ArrayList<>();
     private ArrayList<Integer> mouseButtons = new ArrayList<>();
-    private boolean ready = false;
+    private boolean initialized = false;
 
     public static Color getColor(Color active)
     {
@@ -32,6 +32,11 @@ public abstract class GUIScreen extends GuiScreen
     public static Color getHover(Color active)
     {
         return new Color(active.rf() * 0.7f, active.gf() * 0.7f, active.bf() * 0.7f, active.af());
+    }
+
+    public boolean isInitialized()
+    {
+        return initialized;
     }
 
     @Override
@@ -66,9 +71,9 @@ public abstract class GUIScreen extends GuiScreen
     @Override
     public void initGui()
     {
-        if (!ready)
+        if (!initialized)
         {
-            ready = true;
+            initialized = true;
             init();
         }
 
