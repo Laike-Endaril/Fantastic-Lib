@@ -23,8 +23,8 @@ public abstract class GUIElement
             AP_TOP_TO_BOTTOM_RIGHT_TO_LEFT = 5,
             AP_BOTTOM_TO_TOP_LEFT_TO_RIGHT = 6,
             AP_BOTTOM_TO_TOP_RIGHT_TO_LEFT = 7,
-            AP_CENTER_H_CENTER_V = 8,
-            AP_CENTER_V_CENTER_H = 9;
+            AP_CENTERED_H_TOP_TO_BOTTOM = 8,
+            AP_CENTERED_V_LEFT_TO_RIGHT = 9;
 
 
     public int[] currentScissor = null;
@@ -285,7 +285,7 @@ public abstract class GUIElement
                 }
                 break;
 
-            case AP_CENTER_V_CENTER_H:
+            case AP_CENTERED_H_TOP_TO_BOTTOM:
                 if (size() <= 1 || startIndex != size() - 1)
                 {
                     autoY = 0;
@@ -308,7 +308,7 @@ public abstract class GUIElement
                     element.recalc();
                     if (element.autoplace)
                     {
-                        element.x = 0.5 - element.width / 2;
+                        element.x = 0.5 - element.width / 2 / width;
                         element.y = furthestY / height;
 
                         autoY = element.y * height;
