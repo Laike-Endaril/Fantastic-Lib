@@ -113,7 +113,7 @@ public class GUIText extends GUIElement
                     {
                         if (word.trim().equals("")) continue;
 
-                        if (lines.size() == 0 && line.length() == 0)
+                        if (line.length() == 0)
                         {
                             line.append(word);
                             lineW += wordW;
