@@ -112,4 +112,10 @@ public class GUITextButton extends GUIGradientBorder
     {
         return height;
     }
+
+    @Override
+    public String toString()
+    {
+        return text.text;
+    }
 }
