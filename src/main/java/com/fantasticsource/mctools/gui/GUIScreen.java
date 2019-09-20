@@ -39,6 +39,11 @@ public abstract class GUIScreen extends GuiScreen
         return initialized;
     }
 
+    public boolean isVisible()
+    {
+        return Minecraft.getMinecraft().currentScreen == this;
+    }
+
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
