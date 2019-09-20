@@ -113,11 +113,19 @@ public class GUIText extends GUIElement
                     {
                         if (word.trim().equals("")) continue;
 
-                        lines.add(line.toString());
-                        line = new StringBuilder(word);
+                        if (lines.size() == 0 && line.length() == 0)
+                        {
+                            line.append(word);
+                            lineW += wordW;
+                        }
+                        else
+                        {
+                            lines.add(line.toString());
+                            line = new StringBuilder(word);
 
-                        maxLineW = parentW;
-                        lineW = (double) (FONT_RENDERER.getStringWidth(word) - 1) / screen.width;
+                            maxLineW = parentW;
+                            lineW = (double) (FONT_RENDERER.getStringWidth(word) - 1) / screen.width;
+                        }
                     }
                     else
                     {
