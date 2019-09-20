@@ -199,10 +199,11 @@ public class GUITabView extends GUIView
 
     public void setActiveTab(int index)
     {
-        if (index == current) return;
         GUIElement currentElement = tabs[index];
-
         for (GUIElement element : tabs) element.setActive(element == currentElement, true);
+
+        if (index == current) return;
+
 
         int i = children.indexOf(tabViews[current]);
         children.remove(i);
@@ -224,6 +225,7 @@ public class GUITabView extends GUIView
             setActive(false);
         }
 
+        int index = -1;
         for (GUIElement child : (ArrayList<GUIElement>) children.clone())
         {
             if (child.mouseReleased(x - this.x, y - this.y, button))
@@ -233,12 +235,15 @@ public class GUITabView extends GUIView
                     GUIElement tab = tabs[i];
                     if (child == tab)
                     {
-                        setActiveTab(i);
+                        index = i;
                         break;
                     }
                 }
             }
         }
+
+        if (index != -1 && index != current) setActiveTab(index);
+        else setActiveTab(current);
 
         return result;
     }
