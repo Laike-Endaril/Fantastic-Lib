@@ -850,7 +850,7 @@ public class GUITextInput extends GUIText
     public boolean mouseReleased(double x, double y, int button)
     {
         boolean result = button == 0 && active && isMouseWithin();
-        if (result) MinecraftForge.EVENT_BUS.post(new GUILeftClickEvent(screen, this));
+        if (result && !MinecraftForge.EVENT_BUS.post(new GUILeftClickEvent(screen, this))) click();
 
         for (GUIElement child : (ArrayList<GUIElement>) children.clone()) child.mouseReleased(x - this.x, y - this.y, button);
         return result;

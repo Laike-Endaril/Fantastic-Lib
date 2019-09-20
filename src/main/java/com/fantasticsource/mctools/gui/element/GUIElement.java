@@ -127,7 +127,7 @@ public abstract class GUIElement
         {
             if (active && isMouseWithin())
             {
-                MinecraftForge.EVENT_BUS.post(new GUILeftClickEvent(screen, this));
+                if (!MinecraftForge.EVENT_BUS.post(new GUILeftClickEvent(screen, this))) click();
                 result = true;
             }
             setActive(false);
@@ -136,6 +136,10 @@ public abstract class GUIElement
         for (GUIElement child : (ArrayList<GUIElement>) children.clone()) child.mouseReleased(x - this.x, y - this.y, button);
 
         return result;
+    }
+
+    public void click()
+    {
     }
 
     public void mouseDrag(double x, double y, int button)

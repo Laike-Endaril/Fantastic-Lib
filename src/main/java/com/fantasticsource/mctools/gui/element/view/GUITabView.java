@@ -218,7 +218,7 @@ public class GUITabView extends GUIView
         {
             if (active && isMouseWithin())
             {
-                MinecraftForge.EVENT_BUS.post(new GUILeftClickEvent(screen, this));
+                if (!MinecraftForge.EVENT_BUS.post(new GUILeftClickEvent(screen, this))) click();
                 result = true;
             }
             setActive(false);

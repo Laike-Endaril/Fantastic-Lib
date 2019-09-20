@@ -156,12 +156,8 @@ public class GUITextSpoiler extends GUIText
     }
 
     @Override
-    public boolean mouseReleased(double x, double y, int button)
+    public void click()
     {
-        boolean result = super.mouseReleased(x, y, button);
-
-        if (result) toggle();
-
-        return result;
+        toggle();
     }
 }
