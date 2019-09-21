@@ -157,6 +157,11 @@ public class GUITabView extends GUIView
         return result;
     }
 
+    public int currentTab()
+    {
+        return current;
+    }
+
     @Override
     public GUIElement recalc()
     {
