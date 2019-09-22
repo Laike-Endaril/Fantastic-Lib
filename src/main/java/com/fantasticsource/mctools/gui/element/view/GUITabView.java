@@ -165,7 +165,9 @@ public class GUITabView extends GUIView
 
     public int addTab(String name)
     {
-        tabViews.add(new GUIView(screen, 0, 0, 1, 1));
+        GUIView view = new GUIView(screen, 0, 0, 1, 1);
+        tabViews.add(view);
+        view.parent = this;
 
         GUITextButton tab = new GUITextButton(screen, 0, 0, name, WHITE, T_GRAY);
         tabs.add(tab);
