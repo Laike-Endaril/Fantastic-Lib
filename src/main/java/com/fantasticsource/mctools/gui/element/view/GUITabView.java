@@ -14,8 +14,8 @@ import static com.fantasticsource.tools.datastructures.Color.WHITE;
 
 public class GUITabView extends GUIView
 {
-    public ArrayList<GUIElement> tabs;
-    public ArrayList<GUIView> tabViews;
+    public ArrayList<GUIElement> tabs = new ArrayList<>();
+    public ArrayList<GUIView> tabViews = new ArrayList<>();
     private GUIElement tabBackground = null;
     private int current = 0;
     private boolean autocalcTabs = false, autocalcTabviews = false;
@@ -57,7 +57,7 @@ public class GUITabView extends GUIView
             }
             else throw new IllegalStateException("There must be the same number of tab names and tab elements!");
         }
-        else this.tabViews = (ArrayList<GUIView>) Arrays.asList(tabViews);
+        else this.tabViews.addAll(Arrays.asList(tabViews));
 
         for (GUIElement element : this.tabViews) element.parent = this;
         if (this.tabViews.size() > 0)
@@ -66,7 +66,7 @@ public class GUITabView extends GUIView
             children.add(this.tabViews.get(0));
         }
 
-        this.tabs = (ArrayList<GUIElement>) Arrays.asList(tabs);
+        this.tabs.addAll(Arrays.asList(tabs));
         for (GUIElement element : tabs)
         {
             children.add(element);
@@ -114,7 +114,7 @@ public class GUITabView extends GUIView
             }
             else throw new IllegalStateException("There must be the same number of tab names and tab elements!");
         }
-        else this.tabViews = (ArrayList<GUIView>) Arrays.asList(tabViews);
+        else this.tabViews.addAll(Arrays.asList(tabViews));
 
         for (GUIElement element : this.tabViews) element.parent = this;
         if (this.tabViews.size() > 0)
@@ -123,7 +123,7 @@ public class GUITabView extends GUIView
             children.add(this.tabViews.get(0));
         }
 
-        this.tabs = (ArrayList<GUIElement>) Arrays.asList(tabs);
+        this.tabs.addAll(Arrays.asList(tabs));
         for (GUIElement element : tabs)
         {
             children.add(element);
