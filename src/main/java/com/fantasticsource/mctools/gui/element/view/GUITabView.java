@@ -169,7 +169,8 @@ public class GUITabView extends GUIView
 
         GUITextButton tab = new GUITextButton(screen, 0, 0, name, WHITE, T_GRAY);
         tabs.add(tab);
-        children.add(tab);
+        add(tab);
+        recalc();
 
         return tabs.size() - 1;
     }
@@ -181,11 +182,17 @@ public class GUITabView extends GUIView
         GUIElement tab = tabs.get(index);
         if (current == index) setActiveTab(0);
         tabs.remove(index);
-        children.remove(tab);
+        remove(tab);
     }
 
     @Override
     public GUIElement recalc()
+    {
+        return recalc(0);
+    }
+
+    @Override
+    public GUIElement recalc(int subIndexChanged)
     {
         if (autocalcTabs)
         {
@@ -221,7 +228,7 @@ public class GUITabView extends GUIView
             tabBackground.height = element.y + element.height;
         }
 
-        return super.recalc();
+        return super.recalc(0);
     }
 
     public void setActiveTab(int index)
