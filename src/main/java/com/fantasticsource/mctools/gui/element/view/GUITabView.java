@@ -165,18 +165,23 @@ public class GUITabView extends GUIView
 
     public int addTab(String name)
     {
-        tabs.add(new GUITextButton(screen, 0, 0, name, WHITE, T_GRAY));
         tabViews.add(new GUIView(screen, 0, 0, 1, 1));
-        recalc();
+
+        GUITextButton tab = new GUITextButton(screen, 0, 0, name, WHITE, T_GRAY);
+        tabs.add(tab);
+        children.add(tab);
+
         return tabs.size() - 1;
     }
 
     public void removeTab(int index)
     {
+        tabViews.remove(index);
+
+        GUIElement tab = tabs.get(index);
         if (current == index) setActiveTab(0);
         tabs.remove(index);
-        tabViews.remove(index);
-        recalc();
+        children.remove(tab);
     }
 
     @Override
