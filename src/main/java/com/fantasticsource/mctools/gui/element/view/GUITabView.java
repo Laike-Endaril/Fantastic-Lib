@@ -8,13 +8,14 @@ import com.fantasticsource.mctools.gui.element.text.GUITextButton;
 import net.minecraftforge.common.MinecraftForge;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static com.fantasticsource.tools.datastructures.Color.WHITE;
 
 public class GUITabView extends GUIView
 {
-    public GUIElement[] tabs;
-    public GUIView[] tabViews;
+    public ArrayList<GUIElement> tabs;
+    public ArrayList<GUIView> tabViews;
     private GUIElement tabBackground = null;
     private int current = 0;
     private boolean autocalcTabs = false, autocalcTabviews = false;
@@ -25,7 +26,7 @@ public class GUITabView extends GUIView
         autocalcTabs = true;
         autocalcTabviews = true;
 
-        GUITextButton tab = (GUITextButton) tabs[0];
+        GUITextButton tab = (GUITextButton) tabs.get(0);
         tabBackground = new GUIGradientBorder(screen, 0, 0, 1, 1, 0.1, tab.border, tab.center);
         add(0, tabBackground);
 
@@ -37,7 +38,7 @@ public class GUITabView extends GUIView
         this(screen, width, height, genTabs(screen, tabNames), tabViews);
         autocalcTabs = true;
 
-        GUITextButton tab = (GUITextButton) tabs[0];
+        GUITextButton tab = (GUITextButton) tabs.get(0);
         tabBackground = new GUIGradientBorder(screen, 0, 0, 1, 1, 0.1, tab.border, tab.center);
         add(0, tabBackground);
 
@@ -52,20 +53,20 @@ public class GUITabView extends GUIView
         {
             if (tabViews.length == 0)
             {
-                this.tabViews = genTabViews(screen, tabs);
+                this.tabViews = genTabViews(screen, tabs.length);
             }
             else throw new IllegalStateException("There must be the same number of tab names and tab elements!");
         }
-        else this.tabViews = tabViews;
+        else this.tabViews = (ArrayList<GUIView>) Arrays.asList(tabViews);
 
         for (GUIElement element : this.tabViews) element.parent = this;
-        if (this.tabViews.length > 0)
+        if (this.tabViews.size() > 0)
         {
             tabs[0].setActive(true);
-            children.add(this.tabViews[0]);
+            children.add(this.tabViews.get(0));
         }
 
-        this.tabs = tabs;
+        this.tabs = (ArrayList<GUIElement>) Arrays.asList(tabs);
         for (GUIElement element : tabs)
         {
             children.add(element);
@@ -82,7 +83,7 @@ public class GUITabView extends GUIView
         autocalcTabs = true;
         autocalcTabviews = true;
 
-        GUITextButton tab = (GUITextButton) tabs[0];
+        GUITextButton tab = (GUITextButton) tabs.get(0);
         tabBackground = new GUIGradientBorder(screen, 0, 0, 1, 1, 0.1, tab.border, tab.center);
         add(0, tabBackground);
 
@@ -94,7 +95,7 @@ public class GUITabView extends GUIView
         this(screen, x, y, width, height, genTabs(screen, tabNames), tabViews);
         autocalcTabs = true;
 
-        GUITextButton tab = (GUITextButton) tabs[0];
+        GUITextButton tab = (GUITextButton) tabs.get(0);
         tabBackground = new GUIGradientBorder(screen, 0, 0, 1, 1, 0.1, tab.border, tab.center);
         add(0, tabBackground);
 
@@ -109,20 +110,20 @@ public class GUITabView extends GUIView
         {
             if (tabViews.length == 0)
             {
-                this.tabViews = genTabViews(screen, tabs);
+                this.tabViews = genTabViews(screen, tabs.length);
             }
             else throw new IllegalStateException("There must be the same number of tab names and tab elements!");
         }
-        else this.tabViews = tabViews;
+        else this.tabViews = (ArrayList<GUIView>) Arrays.asList(tabViews);
 
         for (GUIElement element : this.tabViews) element.parent = this;
-        if (this.tabViews.length > 0)
+        if (this.tabViews.size() > 0)
         {
             tabs[0].setActive(true);
-            children.add(this.tabViews[0]);
+            children.add(this.tabViews.get(0));
         }
 
-        this.tabs = tabs;
+        this.tabs = (ArrayList<GUIElement>) Arrays.asList(tabs);
         for (GUIElement element : tabs)
         {
             children.add(element);
@@ -145,13 +146,13 @@ public class GUITabView extends GUIView
         return result;
     }
 
-    private static GUIView[] genTabViews(GUIScreen screen, GUIElement[] tabs)
+    private static ArrayList<GUIView> genTabViews(GUIScreen screen, int count)
     {
-        GUIView[] result = new GUIView[tabs.length];
+        ArrayList<GUIView> result = new ArrayList<>(count);
 
-        for (int i = 0; i < result.length; i++)
+        for (int i = 0; i < count; i++)
         {
-            result[i] = new GUIView(screen, 0, 0, 1, 1);
+            result.add(new GUIView(screen, 0, 0, 1, 1));
         }
 
         return result;
@@ -160,6 +161,22 @@ public class GUITabView extends GUIView
     public int currentTab()
     {
         return current;
+    }
+
+    public int addTab(String name)
+    {
+        tabs.add(new GUITextButton(screen, 0, 0, name, WHITE, T_GRAY));
+        tabViews.add(new GUIView(screen, 0, 0, 1, 1));
+        recalc();
+        return tabs.size() - 1;
+    }
+
+    public void removeTab(int index)
+    {
+        if (current == index) setActiveTab(0);
+        tabs.remove(index);
+        tabViews.remove(index);
+        recalc();
     }
 
     @Override
@@ -181,7 +198,7 @@ public class GUITabView extends GUIView
 
                 xx += tab.width / width;
             }
-            yy += tabs[0].height / height;
+            yy += tabs.get(0).height / height;
 
             if (autocalcTabviews)
             {
@@ -195,7 +212,7 @@ public class GUITabView extends GUIView
 
         if (tabBackground != null)
         {
-            GUIElement element = tabs[tabs.length - 1];
+            GUIElement element = tabs.get(tabs.size() - 1);
             tabBackground.height = element.y + element.height;
         }
 
@@ -204,16 +221,16 @@ public class GUITabView extends GUIView
 
     public void setActiveTab(int index)
     {
-        GUIElement currentElement = tabs[index];
+        GUIElement currentElement = tabs.get(index);
         for (GUIElement element : tabs) element.setActive(element == currentElement, true);
 
         if (index == current) return;
 
 
-        int i = children.indexOf(tabViews[current]);
+        int i = children.indexOf(tabViews.get(current));
         children.remove(i);
         current = index;
-        children.add(i, tabViews[current].recalc());
+        children.add(i, tabViews.get(current).recalc());
     }
 
     @Override
@@ -235,9 +252,9 @@ public class GUITabView extends GUIView
         {
             if (child.mouseReleased(x - this.x, y - this.y, button))
             {
-                for (int i = 0; i < tabs.length; i++)
+                for (int i = 0; i < tabs.size(); i++)
                 {
-                    GUIElement tab = tabs[i];
+                    GUIElement tab = tabs.get(i);
                     if (child == tab)
                     {
                         index = i;
