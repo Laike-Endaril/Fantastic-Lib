@@ -179,12 +179,12 @@ public class GUITabView extends GUIView
 
     public void removeTab(int index)
     {
-        tabViews.remove(index);
-
         GUIElement tab = tabs.get(index);
         if (current == index) setActiveTab(0);
         tabs.remove(index);
         remove(tab);
+
+        tabViews.remove(index);
     }
 
     @Override
