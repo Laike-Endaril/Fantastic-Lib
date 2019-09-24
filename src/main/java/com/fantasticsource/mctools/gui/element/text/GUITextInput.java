@@ -192,6 +192,11 @@ public class GUITextInput extends GUIText
         if (parent instanceof MultilineTextInput) ((MultilineTextInput) parent).cursorX = cursorPosition;
     }
 
+    public boolean valid()
+    {
+        return filter.acceptable(text);
+    }
+
     protected GUITextInput multilineDelete()
     {
         if (!(parent instanceof MultilineTextInput) || ((MultilineTextInput) parent).selectionStartY == -1 || ((MultilineTextInput) parent).selectionStartY == parent.indexOf(this)) return null;
@@ -1073,5 +1078,11 @@ public class GUITextInput extends GUIText
             result++;
         }
         return result;
+    }
+
+    @Override
+    public String toString()
+    {
+        return filter.transformInput(text);
     }
 }
