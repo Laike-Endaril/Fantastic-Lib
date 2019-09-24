@@ -12,8 +12,8 @@ public class FilterBoolean extends TextFilter
     public String transformInput(String input)
     {
         input = input.trim().toLowerCase();
-        if (input.equals("t")) input = "true";
-        else if (input.equals("f")) input = "false";
+        if (input.equals("t") || input.equals("y") || input.equals("yes")) input = "true";
+        else if (input.equals("f") || input.equals("n") || input.equals("no")) input = "false";
         return input;
     }
 
