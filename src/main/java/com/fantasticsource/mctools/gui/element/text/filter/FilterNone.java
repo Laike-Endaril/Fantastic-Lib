@@ -9,6 +9,12 @@ public class FilterNone extends TextFilter
     }
 
     @Override
+    public String transformInput(String input)
+    {
+        return input;
+    }
+
+    @Override
     public boolean acceptable(String input)
     {
         return true;
