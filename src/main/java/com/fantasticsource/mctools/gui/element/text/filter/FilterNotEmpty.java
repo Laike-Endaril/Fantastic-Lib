@@ -9,8 +9,14 @@ public class FilterNotEmpty extends TextFilter
     }
 
     @Override
+    public String transformInput(String input)
+    {
+        return input.trim();
+    }
+
+    @Override
     public boolean acceptable(String input)
     {
-        return !input.trim().equals("");
+        return !transformInput(input).equals("");
     }
 }
