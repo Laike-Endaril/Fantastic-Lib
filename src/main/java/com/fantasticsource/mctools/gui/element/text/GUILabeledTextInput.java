@@ -1,38 +1,39 @@
 package com.fantasticsource.mctools.gui.element.text;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
-import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.text.filter.TextFilter;
-import com.fantasticsource.tools.datastructures.Color;
+import com.fantasticsource.mctools.gui.element.view.GUIView;
 
-public class GUILabeledTextInput extends GUIElement
+public class GUILabeledTextInput extends GUIView
 {
-    public GUITextInput input;
-    private GUIText label;
+    public final GUIText label;
+    public final GUITextInput input;
 
-    public GUILabeledTextInput(GUIScreen screen, String labelText, String defaultText, TextFilter filter)
+    public GUILabeledTextInput(GUIScreen screen, String label, String defaultInput, TextFilter filter)
     {
-        super(screen, 1, 1);
+        super(screen, 1, new GUIText(screen, "").height);
 
-        label = new GUIText(screen, 0, y, labelText, Color.WHITE);
-        add(label);
+        this.label = new GUIText(screen, label);
+        add(this.label);
 
-        input = new GUITextInput(screen, label.width, 0, defaultText, filter);
+        input = new GUITextInput(screen, this.label.width, 0, defaultInput, filter);
         add(input);
-
-        recalc();
     }
 
-    public GUILabeledTextInput(GUIScreen screen, double x, double y, String labelText, String defaultText, TextFilter filter)
+    public GUILabeledTextInput(GUIScreen screen, double x, double y, String label, String defaultInput, TextFilter filter)
     {
-        super(screen, x, y, 1, 1);
+        super(screen, x, y, 1 - x, new GUIText(screen, "").height);
 
-        label = new GUIText(screen, 0, y, labelText, Color.WHITE);
-        add(label);
+        this.label = new GUIText(screen, label);
+        add(this.label);
 
-        input = new GUITextInput(screen, label.width, 0, defaultText, filter);
+        input = new GUITextInput(screen, this.label.width, 0, defaultInput, filter);
         add(input);
+    }
 
-        recalc();
+    @Override
+    public String toString()
+    {
+        return input.toString();
     }
 }

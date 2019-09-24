@@ -73,7 +73,7 @@ public class GUIText extends GUIElement
 
 
     @Override
-    public GUIElement recalc()
+    public GUIText recalc()
     {
         lines.clear();
         if (parent instanceof MultilineTextInput)
@@ -142,10 +142,11 @@ public class GUIText extends GUIElement
             }
 
             width = maxLineW;
-            height = (double) (lines.size() * FONT_RENDERER.FONT_HEIGHT - 1) / screen.height;
+            height = (double) (Tools.max(1, lines.size()) * FONT_RENDERER.FONT_HEIGHT - 1) / screen.height;
         }
 
-        return super.recalc();
+        super.recalc();
+        return this;
     }
 
     @Override

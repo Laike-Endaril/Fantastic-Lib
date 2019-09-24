@@ -775,6 +775,16 @@ public class GUITextInput extends GUIText
     }
 
     @Override
+    public GUITextInput recalc()
+    {
+        super.recalc();
+
+        if (!(parent instanceof MultilineTextInput)) width = 1 - x;
+
+        return this;
+    }
+
+    @Override
     public boolean isWithin(double x, double y)
     {
         if (parent instanceof MultilineTextInput)
