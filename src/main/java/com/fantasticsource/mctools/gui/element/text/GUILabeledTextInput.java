@@ -25,7 +25,7 @@ public class GUILabeledTextInput extends GUIView
         this.label = new GUIText(screen, label);
         add(this.label);
 
-        input = new GUITextInput(screen, this.label.width, 0, defaultInput, filter);
+        input = new GUITextInput(screen, 0, 0, defaultInput, filter);
         add(input);
     }
 
@@ -36,8 +36,20 @@ public class GUILabeledTextInput extends GUIView
         this.label = new GUIText(screen, label);
         add(this.label);
 
-        input = new GUITextInput(screen, this.label.width, 0, defaultInput, filter);
+        input = new GUITextInput(screen, 0, 0, defaultInput, filter);
         add(input);
+    }
+
+    @Override
+    public void recalcAndRepositionSubElements(int startIndex)
+    {
+        if (label != null && input != null)
+        {
+            label.recalc();
+            input.x = label.width / getScreenWidth();
+        }
+
+        super.recalcAndRepositionSubElements(startIndex);
     }
 
     @SubscribeEvent
