@@ -63,7 +63,7 @@ public abstract class GUIScreen extends GuiScreen
             e.printStackTrace();
         }
 
-        for (GUIElement element : guiElements) element.draw();
+        for (GUIElement element : (ArrayList<GUIElement>) guiElements.clone()) element.draw();
 
         GlStateManager.popMatrix();
 
