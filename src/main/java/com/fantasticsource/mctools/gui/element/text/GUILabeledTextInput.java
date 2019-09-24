@@ -1,13 +1,22 @@
 package com.fantasticsource.mctools.gui.element.text;
 
+import com.fantasticsource.mctools.gui.GUILeftClickEvent;
 import com.fantasticsource.mctools.gui.GUIScreen;
+import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.text.filter.TextFilter;
 import com.fantasticsource.mctools.gui.element.view.GUIView;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class GUILabeledTextInput extends GUIView
 {
     public final GUIText label;
     public final GUITextInput input;
+
+    static
+    {
+        MinecraftForge.EVENT_BUS.register(GUILabeledTextInput.class);
+    }
 
     public GUILabeledTextInput(GUIScreen screen, String label, String defaultInput, TextFilter filter)
     {
@@ -35,5 +44,22 @@ public class GUILabeledTextInput extends GUIView
     public String toString()
     {
         return input.toString();
+    }
+
+    @SubscribeEvent
+    public static void labelClick(GUILeftClickEvent event)
+    {
+        GUIElement element = event.getElement();
+        if (element.parent instanceof GUILabeledTextInput)
+        {
+            GUILabeledTextInput labeledInput = (GUILabeledTextInput) element.parent;
+            if (element == labeledInput.label)
+            {
+                GUITextInput input = labeledInput.input;
+                input.cursorPosition = 0;
+                input.selectorPosition = -1;
+                input.setActive(true);
+            }
+        }
     }
 }
