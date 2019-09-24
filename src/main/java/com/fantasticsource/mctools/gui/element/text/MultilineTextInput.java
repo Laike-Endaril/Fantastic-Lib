@@ -2,28 +2,28 @@ package com.fantasticsource.mctools.gui.element.text;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
+import com.fantasticsource.mctools.gui.element.text.filter.FilterNone;
 import com.fantasticsource.mctools.gui.element.view.GUIScrollView;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 
 public class MultilineTextInput extends GUIScrollView
 {
-    public Color color, hoverColor, activeColor, cursorColor, highlightColor;
+    public Color color, hoverColor, activeColor, highlightColor;
     protected int cursorX, selectionStartY = -1;
 
     public MultilineTextInput(GUIScreen screen, double width, double height, String... lines)
     {
-        this(screen, width, height, GUIScreen.getColor(Color.WHITE), GUIScreen.getHover(Color.WHITE), Color.WHITE, Color.WHITE, Color.WHITE.copy().setAF(0.4f), lines);
+        this(screen, width, height, GUIScreen.getIdleColor(Color.WHITE), GUIScreen.getHoverColor(Color.WHITE), Color.WHITE, Color.WHITE.copy().setAF(0.4f), lines);
     }
 
-    public MultilineTextInput(GUIScreen screen, double width, double height, Color color, Color hoverColor, Color activeColor, Color cursorColor, Color hightlightColor, String... lines)
+    public MultilineTextInput(GUIScreen screen, double width, double height, Color color, Color hoverColor, Color activeColor, Color hightlightColor, String... lines)
     {
         super(screen, width, height);
 
         this.color = color;
         this.hoverColor = hoverColor;
         this.activeColor = activeColor;
-        this.cursorColor = cursorColor;
         this.highlightColor = hightlightColor;
 
         if (lines.length == 0) add("");
@@ -34,17 +34,16 @@ public class MultilineTextInput extends GUIScrollView
 
     public MultilineTextInput(GUIScreen screen, double x, double y, double width, double height, String... lines)
     {
-        this(screen, x, y, width, height, GUIScreen.getColor(Color.WHITE), GUIScreen.getHover(Color.WHITE), Color.WHITE, Color.WHITE, Color.WHITE.copy().setAF(0.4f), lines);
+        this(screen, x, y, width, height, GUIScreen.getIdleColor(Color.WHITE), GUIScreen.getHoverColor(Color.WHITE), Color.WHITE, Color.WHITE.copy().setAF(0.4f), lines);
     }
 
-    public MultilineTextInput(GUIScreen screen, double x, double y, double width, double height, Color color, Color hoverColor, Color activeColor, Color cursorColor, Color hightlightColor, String... lines)
+    public MultilineTextInput(GUIScreen screen, double x, double y, double width, double height, Color color, Color hoverColor, Color activeColor, Color hightlightColor, String... lines)
     {
         super(screen, x, y, width, height);
 
         this.color = color;
         this.hoverColor = hoverColor;
         this.activeColor = activeColor;
-        this.cursorColor = cursorColor;
         this.highlightColor = hightlightColor;
 
         if (lines.length == 0) add("");
@@ -88,11 +87,11 @@ public class MultilineTextInput extends GUIScrollView
 
     public GUIElement add(String s)
     {
-        if (children.size() == 0) return super.add(new GUITextInput(screen, 0, 0, s, color, hoverColor, activeColor, cursorColor, highlightColor));
+        if (children.size() == 0) return super.add(new GUITextInput(screen, 0, 0, s, FilterNone.INSTANCE, activeColor));
         else
         {
             GUIElement element = children.get(children.size() - 1);
-            return super.add(new GUITextInput(screen, 0, element.y + (element.height + (1d / screen.height)) / height, s, color, hoverColor, activeColor, cursorColor, highlightColor));
+            return super.add(new GUITextInput(screen, 0, element.y + (element.height + (1d / screen.height)) / height, s, FilterNone.INSTANCE, activeColor));
         }
     }
 
@@ -101,7 +100,7 @@ public class MultilineTextInput extends GUIScrollView
         if (index == 0) return add(s);
         else
         {
-            GUIElement element = children.get(index - 1), newElement = new GUITextInput(screen, 0, element.y + (element.height + (1d / screen.height)) / height, s, color, hoverColor, activeColor, cursorColor, highlightColor);
+            GUIElement element = children.get(index - 1), newElement = new GUITextInput(screen, 0, element.y + (element.height + (1d / screen.height)) / height, s, FilterNone.INSTANCE, activeColor);
             for (int i = index; i < children.size(); i++)
             {
                 element = children.get(i);

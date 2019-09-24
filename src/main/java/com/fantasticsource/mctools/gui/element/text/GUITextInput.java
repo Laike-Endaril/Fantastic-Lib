@@ -4,7 +4,6 @@ import com.fantasticsource.mctools.MonoASCIIFontRenderer;
 import com.fantasticsource.mctools.gui.GUILeftClickEvent;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
-import com.fantasticsource.mctools.gui.element.text.filter.FilterNone;
 import com.fantasticsource.mctools.gui.element.text.filter.TextFilter;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
@@ -23,10 +22,9 @@ import static com.fantasticsource.tools.datastructures.Color.*;
 
 public class GUITextInput extends GUIText
 {
-    private static final Color T_WHITE = new Color(0xFFFFFF88);
+    private static final Color T_RED = RED.copy().setAF(0.4f);
 
     protected int cursorPosition, selectorPosition = -1;
-    protected Color cursorColor, highlightColor, shadowColor;
     protected long cursorTime;
     protected TextFilter filter;
 
@@ -37,54 +35,30 @@ public class GUITextInput extends GUIText
 
     public GUITextInput(GUIScreen screen, String text, TextFilter filter)
     {
-        super(screen, text, filter.acceptable(text) ? GREEN : RED);
+        this(screen, text, filter, WHITE);
+    }
+
+    public GUITextInput(GUIScreen screen, String text, TextFilter filter, Color activeColor)
+    {
+        super(screen, text, getIdleColor(activeColor), getHoverColor(activeColor), activeColor);
 
         this.filter = filter;
 
         cursorPosition = text.length();
-
-        cursorColor = WHITE;
-        highlightColor = T_WHITE;
-        shadowColor = color.v() >= 64 ? BLACK : WHITE;
-    }
-
-    public GUITextInput(GUIScreen screen, String text, Color color, Color hoverColor, Color activeColor, Color cursorColor, Color hightlightColor)
-    {
-        super(screen, text, color, hoverColor, activeColor);
-
-        filter = FilterNone.INSTANCE;
-
-        cursorPosition = text.length();
-
-        this.cursorColor = cursorColor;
-        this.highlightColor = hightlightColor;
-        shadowColor = color.v() >= 64 ? BLACK : WHITE;
     }
 
     public GUITextInput(GUIScreen screen, double x, double y, String text, TextFilter filter)
     {
-        super(screen, x, y, text, filter.acceptable(text) ? GREEN : RED);
+        this(screen, x, y, text, filter, WHITE);
+    }
+
+    public GUITextInput(GUIScreen screen, double x, double y, String text, TextFilter filter, Color activeColor)
+    {
+        super(screen, x, y, text, getIdleColor(activeColor), getHoverColor(activeColor), activeColor);
 
         this.filter = filter;
 
         cursorPosition = text.length();
-
-        cursorColor = WHITE;
-        highlightColor = T_WHITE;
-        shadowColor = color.v() >= 64 ? BLACK : WHITE;
-    }
-
-    public GUITextInput(GUIScreen screen, double x, double y, String text, Color color, Color hoverColor, Color activeColor, Color cursorColor, Color hightlightColor)
-    {
-        super(screen, x, y, text, color, hoverColor, activeColor);
-
-        filter = FilterNone.INSTANCE;
-
-        cursorPosition = text.length();
-
-        this.cursorColor = cursorColor;
-        this.highlightColor = hightlightColor;
-        shadowColor = color.v() >= 64 ? BLACK : WHITE;
     }
 
     protected boolean hasSelectedText()
@@ -769,13 +743,6 @@ public class GUITextInput extends GUIText
 
         cursorTime = System.currentTimeMillis();
 
-        if (filter.getClass() != FilterNone.class)
-        {
-            activeColor = filter.acceptable(text) ? GREEN : RED;
-            color = getColor(activeColor);
-            hoverColor = getHover(activeColor);
-        }
-
         recalc();
     }
 
@@ -982,8 +949,6 @@ public class GUITextInput extends GUIText
         }
 
 
-        GlStateManager.enableTexture2D();
-
         GlStateManager.pushMatrix();
         GlStateManager.translate(getScreenX(), getScreenY(), 0);
         GlStateManager.scale(1d / screen.width, 1d / screen.height, 1);
@@ -992,21 +957,25 @@ public class GUITextInput extends GUIText
         //Highlight red if text does not pass filter
         if (!filter.acceptable(text))
         {
-            //TODO
-//            GlStateManager.disableTexture2D();
-//            GlStateManager.color(1, 0, 0, 0.7f);
-//            GlStateManager.glBegin(GL11.GL_LINES);
-//            GlStateManager.glVertex3f(0, -0.5f, 0);
-//            GlStateManager.glVertex3f(0, (float) (height * screenHeight), 0);
-//            GlStateManager.glEnd();
+            GlStateManager.disableTexture2D();
+            GlStateManager.color(T_RED.rf(), T_RED.gf(), T_RED.bf(), T_RED.af());
+
+            GlStateManager.glBegin(GL11.GL_QUADS);
+            GlStateManager.glVertex3f(0, 0, 0);
+            GlStateManager.glVertex3f(0, (float) (height * screenHeight), 0);
+            GlStateManager.glVertex3f((float) (width * screenWidth), (float) (height * screenHeight), 0);
+            GlStateManager.glVertex3f((float) (width * screenWidth), 0, 0);
+            GlStateManager.glEnd();
         }
 
 
         //Actual text
+        GlStateManager.enableTexture2D();
+
         Color c = active ? activeColor : isMouseWithin() ? hoverColor : color;
         if (text.length() > 0)
         {
-            if (parent instanceof MultilineTextInput) MonoASCIIFontRenderer.draw(text, 0, 0, c, shadowColor);
+            if (parent instanceof MultilineTextInput) MonoASCIIFontRenderer.draw(text, 0, 0, c, BLACK);
             else FONT_RENDERER.drawString(text, 0, 0, (c.color() >> 8) | c.a() << 24, false);
         }
 
@@ -1022,7 +991,8 @@ public class GUITextInput extends GUIText
             {
                 float min = Tools.min(cursorX, selectorX), max = Tools.max(cursorX, selectorX);
                 GlStateManager.disableTexture2D();
-                GlStateManager.color(highlightColor.rf(), highlightColor.gf(), highlightColor.bf(), highlightColor.af());
+                GlStateManager.color(1, 1, 1, 0.3f);
+
                 GlStateManager.glBegin(GL11.GL_QUADS);
                 GlStateManager.glVertex3f(min, 0, 0);
                 GlStateManager.glVertex3f(min, (float) (height * screenHeight), 0);
@@ -1034,7 +1004,7 @@ public class GUITextInput extends GUIText
             if (active && (System.currentTimeMillis() - cursorTime) % 1000 < 500)
             {
                 GlStateManager.disableTexture2D();
-                GlStateManager.color(cursorColor.rf(), cursorColor.gf(), cursorColor.bf(), cursorColor.af());
+                GlStateManager.color(1, 1, 1, 1);
                 GlStateManager.glBegin(GL11.GL_LINES);
                 GlStateManager.glVertex3f(cursorX, -0.5f, 0);
                 GlStateManager.glVertex3f(cursorX, (float) (height * screenHeight), 0);

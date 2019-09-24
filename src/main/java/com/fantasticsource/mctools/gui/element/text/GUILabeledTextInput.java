@@ -10,13 +10,13 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class GUILabeledTextInput extends GUIView
 {
-    public final GUIText label;
-    public final GUITextInput input;
-
     static
     {
         MinecraftForge.EVENT_BUS.register(GUILabeledTextInput.class);
     }
+
+    public final GUIText label;
+    public final GUITextInput input;
 
     public GUILabeledTextInput(GUIScreen screen, String label, String defaultInput, TextFilter filter)
     {
@@ -40,12 +40,6 @@ public class GUILabeledTextInput extends GUIView
         add(input);
     }
 
-    @Override
-    public String toString()
-    {
-        return input.toString();
-    }
-
     @SubscribeEvent
     public static void labelClick(GUILeftClickEvent event)
     {
@@ -61,5 +55,11 @@ public class GUILabeledTextInput extends GUIView
                 input.setActive(true);
             }
         }
+    }
+
+    @Override
+    public String toString()
+    {
+        return input.toString();
     }
 }

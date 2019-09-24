@@ -24,14 +24,14 @@ public abstract class GUIScreen extends GuiScreen
     private ArrayList<Integer> mouseButtons = new ArrayList<>();
     private boolean initialized = false;
 
-    public static Color getColor(Color active)
+    public static Color getIdleColor(Color activeColor)
     {
-        return new Color(active.rf() * 0.6f, active.gf() * 0.6f, active.bf() * 0.6f, active.af());
+        return activeColor.copy().setVF(0.5f * activeColor.vf());
     }
 
-    public static Color getHover(Color active)
+    public static Color getHoverColor(Color activeColor)
     {
-        return new Color(active.rf() * 0.7f, active.gf() * 0.7f, active.bf() * 0.7f, active.af());
+        return activeColor.copy().setVF(0.75f * activeColor.vf());
     }
 
     public boolean isInitialized()

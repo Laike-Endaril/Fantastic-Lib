@@ -1,12 +1,11 @@
 package com.fantasticsource.mctools.gui.element.text;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
-import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIGradientBorder;
 import com.fantasticsource.tools.datastructures.Color;
 
-import static com.fantasticsource.mctools.gui.GUIScreen.getColor;
-import static com.fantasticsource.mctools.gui.GUIScreen.getHover;
+import static com.fantasticsource.mctools.gui.GUIScreen.getHoverColor;
+import static com.fantasticsource.mctools.gui.GUIScreen.getIdleColor;
 import static com.fantasticsource.tools.datastructures.Color.WHITE;
 
 public class GUITextButton extends GUIGradientBorder
@@ -23,7 +22,7 @@ public class GUITextButton extends GUIGradientBorder
 
     public GUITextButton(GUIScreen screen, String text, Color color)
     {
-        this(screen, text, color, getColor(color).setAF(color.af() * 0.4f));
+        this(screen, text, color, getIdleColor(color).setAF(color.af() * 0.4f));
     }
 
     public GUITextButton(GUIScreen screen, String text, Color border, Color center)
@@ -33,7 +32,7 @@ public class GUITextButton extends GUIGradientBorder
 
     public GUITextButton(GUIScreen screen, String text, double padding, Color border, Color center)
     {
-        this(screen, text, padding, getColor(border), getColor(center), getHover(border), getHover(center), border, center);
+        this(screen, text, padding, getIdleColor(border), getIdleColor(center), getHoverColor(border), getHoverColor(center), border, center);
     }
 
     public GUITextButton(GUIScreen screen, String text, double padding, Color border, Color center, Color hoverBorder, Color hoverCenter, Color activeBorder, Color activeCenter)
@@ -56,7 +55,7 @@ public class GUITextButton extends GUIGradientBorder
 
     public GUITextButton(GUIScreen screen, double x, double y, String text, Color color)
     {
-        this(screen, x, y, text, color, getColor(color).setAF(color.af() * 0.4f));
+        this(screen, x, y, text, color, getIdleColor(color).setAF(color.af() * 0.4f));
     }
 
     public GUITextButton(GUIScreen screen, double x, double y, String text, Color border, Color center)
@@ -66,7 +65,7 @@ public class GUITextButton extends GUIGradientBorder
 
     public GUITextButton(GUIScreen screen, double x, double y, String text, double padding, Color border, Color center)
     {
-        this(screen, x, y, text, padding, getColor(border), getColor(center), getHover(border), getHover(center), border, center);
+        this(screen, x, y, text, padding, getIdleColor(border), getIdleColor(center), getHoverColor(border), getHoverColor(center), border, center);
     }
 
     public GUITextButton(GUIScreen screen, double x, double y, String text, double padding, Color border, Color center, Color hoverBorder, Color hoverCenter, Color activeBorder, Color activeCenter)
