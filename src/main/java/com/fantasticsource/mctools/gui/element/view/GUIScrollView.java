@@ -2,9 +2,7 @@ package com.fantasticsource.mctools.gui.element.view;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
-import com.fantasticsource.mctools.gui.element.other.GUIGradient;
 import com.fantasticsource.tools.Tools;
-import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.GL11;
@@ -111,7 +109,7 @@ public class GUIScrollView extends GUIView
             GL11.glScissor(currentScissor[0], currentScissor[1], currentScissor[2], currentScissor[3]);
 
             GlStateManager.pushMatrix();
-            GlStateManager.translate(0, -top * getScreenHeight(), 0);
+            GlStateManager.translate(0, -childMouseYOffset(), 0);
 
             for (GUIElement element : children)
             {
@@ -130,7 +128,7 @@ public class GUIScrollView extends GUIView
     public boolean mousePressed(double x, double y, int button)
     {
         recalc2();
-        y -= top;
+        y -= childMouseYOffset();
 
         return super.mousePressed(x, y, button);
     }
@@ -139,7 +137,7 @@ public class GUIScrollView extends GUIView
     public boolean mouseReleased(double x, double y, int button)
     {
         recalc2();
-        y -= top;
+        y -= childMouseYOffset();
 
         return super.mouseReleased(x, y, button);
     }
@@ -148,7 +146,7 @@ public class GUIScrollView extends GUIView
     public void mouseDrag(double x, double y, int button)
     {
         recalc2();
-        y -= top;
+        y -= childMouseYOffset();
 
         super.mouseDrag(x, y, button);
     }
@@ -157,7 +155,7 @@ public class GUIScrollView extends GUIView
     public void mouseWheel(double x, double y, int delta)
     {
         recalc2();
-        y -= top;
+        y -= childMouseYOffset();
 
         super.mouseWheel(x, y, delta);
     }
@@ -165,6 +163,6 @@ public class GUIScrollView extends GUIView
     @Override
     public double childMouseYOffset()
     {
-        return top;
+        return top * getScreenHeight();
     }
 }
