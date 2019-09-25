@@ -201,18 +201,18 @@ public class GUITabView extends GUIView
             double xx = 0, yy = 0;
             for (GUIElement tab : tabs)
             {
-                if (xx + tab.width / width > 1)
+                if (xx + tab.width > 1)
                 {
-                    yy += tab.height / height;
+                    yy += tab.height;
                     xx = 0;
                 }
 
                 tab.x = xx;
                 tab.y = yy;
 
-                xx += tab.width / width;
+                xx += tab.width;
             }
-            yy += tabs.get(0).height / height;
+            yy += tabs.get(0).height;
 
             if (autocalcTabviews)
             {
