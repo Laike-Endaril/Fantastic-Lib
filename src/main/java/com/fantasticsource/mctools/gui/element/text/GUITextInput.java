@@ -728,14 +728,14 @@ public class GUITextInput extends GUIText
             GUITextInput element = activeLine();
             if (element != null)
             {
-                if (element.y * multi.height < multi.top)
+                if (element.y < multi.top)
                 {
-                    multi.progress = element.y * multi.height / (multi.internalHeight - multi.height);
+                    multi.progress = element.y / (multi.internalHeight - 1);
                 }
 
-                if (element.y * multi.height + element.height > multi.bottom)
+                if (element.y + element.height > multi.bottom)
                 {
-                    multi.progress = (element.y * multi.height + element.height - multi.height) / (multi.internalHeight - multi.height);
+                    multi.progress = (element.y + element.height - 1) / (multi.internalHeight - 1);
                 }
             }
         }
@@ -954,6 +954,8 @@ public class GUITextInput extends GUIText
         GlStateManager.scale(1d / screen.width, 1d / screen.height, 1);
 
 
+        float scaledHeight = (float) (height * screenHeight * (parent != null ? parent.absoluteHeight() : 1));
+
         //Highlight red if text does not pass filter
         if (!filter.acceptable(text))
         {
@@ -962,8 +964,8 @@ public class GUITextInput extends GUIText
 
             GlStateManager.glBegin(GL11.GL_QUADS);
             GlStateManager.glVertex3f(0, 0, 0);
-            GlStateManager.glVertex3f(0, (float) (height * screenHeight), 0);
-            GlStateManager.glVertex3f((float) (width * screenWidth), (float) (height * screenHeight), 0);
+            GlStateManager.glVertex3f(0, scaledHeight, 0);
+            GlStateManager.glVertex3f((float) (width * screenWidth), scaledHeight, 0);
             GlStateManager.glVertex3f((float) (width * screenWidth), 0, 0);
             GlStateManager.glEnd();
         }
@@ -995,8 +997,8 @@ public class GUITextInput extends GUIText
 
                 GlStateManager.glBegin(GL11.GL_QUADS);
                 GlStateManager.glVertex3f(min, 0, 0);
-                GlStateManager.glVertex3f(min, (float) (height * screenHeight), 0);
-                GlStateManager.glVertex3f(max, (float) (height * screenHeight), 0);
+                GlStateManager.glVertex3f(min, scaledHeight, 0);
+                GlStateManager.glVertex3f(max, scaledHeight, 0);
                 GlStateManager.glVertex3f(max, 0, 0);
                 GlStateManager.glEnd();
             }
@@ -1005,9 +1007,10 @@ public class GUITextInput extends GUIText
             {
                 GlStateManager.disableTexture2D();
                 GlStateManager.color(1, 1, 1, 1);
+
                 GlStateManager.glBegin(GL11.GL_LINES);
                 GlStateManager.glVertex3f(cursorX, -0.5f, 0);
-                GlStateManager.glVertex3f(cursorX, (float) (height * screenHeight), 0);
+                GlStateManager.glVertex3f(cursorX, scaledHeight, 0);
                 GlStateManager.glEnd();
             }
         }
