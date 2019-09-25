@@ -3,7 +3,6 @@ package com.fantasticsource.tools.component;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.math.Vec3d;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -60,34 +59,18 @@ public class CVec3D extends Component
     @Override
     public CVec3D save(OutputStream stream)
     {
-        try
-        {
-            x.save(stream);
-            y.save(stream);
-            z.save(stream);
-            return this;
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-            return null;
-        }
+        x.save(stream);
+        y.save(stream);
+        z.save(stream);
+        return this;
     }
 
     @Override
     public CVec3D load(InputStream stream)
     {
-        try
-        {
-            x.load(stream);
-            y.load(stream);
-            z.load(stream);
-            return this;
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-            return null;
-        }
+        x.load(stream);
+        y.load(stream);
+        z.load(stream);
+        return this;
     }
 }
