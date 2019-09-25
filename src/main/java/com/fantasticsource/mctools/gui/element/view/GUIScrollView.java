@@ -25,9 +25,6 @@ public class GUIScrollView extends GUIView
         }
 
         recalc();
-
-        add(new GUIGradient(screen, 0.25, 0, 0.5, 3, Color.RED));
-        add(new GUIGradient(screen, 0.26, 0.01, 0.48, 2.98, Color.BLUE));
     }
 
     public GUIScrollView(GUIScreen screen, double x, double y, double width, double height, GUIElement... subElements)
@@ -41,9 +38,6 @@ public class GUIScrollView extends GUIView
         }
 
         recalc();
-
-        add(new GUIGradient(screen, 0.25, 0, 0.5, 3, Color.RED));
-        add(new GUIGradient(screen, 0.26, 0.01, 0.48, 2.98, Color.BLUE));
     }
 
     @Override
