@@ -143,7 +143,12 @@ public class GUIText extends GUIElement
 
             width = maxLineW;
             height = (double) (Tools.max(1, lines.size()) * FONT_RENDERER.FONT_HEIGHT - 1) / screen.height;
-            if (parent != null) height /= parent.absoluteHeight();
+        }
+
+        if (parent != null)
+        {
+            width /= parent.absoluteWidth();
+            height /= parent.absoluteHeight();
         }
 
         super.recalc();
