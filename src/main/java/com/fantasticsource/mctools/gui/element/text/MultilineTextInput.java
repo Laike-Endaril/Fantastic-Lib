@@ -72,6 +72,12 @@ public class MultilineTextInput extends GUIScrollView
     }
 
     @Override
+    public GUIElement recalc(int subIndexChanged)
+    {
+        return recalc();
+    }
+
+    @Override
     public GUIElement add(GUIElement element)
     {
         if (!(element instanceof GUITextInput)) throw new IllegalArgumentException("Multiline text inputs can only have text inputs added to them!");

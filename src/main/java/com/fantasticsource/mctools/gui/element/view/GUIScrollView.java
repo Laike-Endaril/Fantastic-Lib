@@ -2,7 +2,9 @@ package com.fantasticsource.mctools.gui.element.view;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
+import com.fantasticsource.mctools.gui.element.other.GUIGradient;
 import com.fantasticsource.tools.Tools;
+import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.GL11;
@@ -23,6 +25,9 @@ public class GUIScrollView extends GUIView
         }
 
         recalc();
+
+        add(new GUIGradient(screen, 0.25, 0, 0.5, 3, Color.RED));
+        add(new GUIGradient(screen, 0.26, 0.01, 0.48, 2.98, Color.BLUE));
     }
 
     public GUIScrollView(GUIScreen screen, double x, double y, double width, double height, GUIElement... subElements)
@@ -36,21 +41,30 @@ public class GUIScrollView extends GUIView
         }
 
         recalc();
+
+        add(new GUIGradient(screen, 0.25, 0, 0.5, 3, Color.RED));
+        add(new GUIGradient(screen, 0.26, 0.01, 0.48, 2.98, Color.BLUE));
     }
 
     @Override
     public GUIElement recalc()
     {
         internalHeight = 0;
-        super.recalc();
+        super.recalc(0);
         for (GUIElement element : children)
         {
-            internalHeight = Tools.max(internalHeight, (element.y + element.height) * getScreenHeight());
+            internalHeight = Tools.max(internalHeight, element.y * getScreenHeight() + element.height);
         }
 
         recalc2();
 
         return this;
+    }
+
+    @Override
+    public GUIElement recalc(int subIndexChanged)
+    {
+        return recalc();
     }
 
     protected void recalc2()
