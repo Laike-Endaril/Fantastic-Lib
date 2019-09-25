@@ -761,7 +761,7 @@ public class GUITextInput extends GUIText
     {
         if (parent instanceof MultilineTextInput)
         {
-            double yy = getScreenY();
+            double yy = absoluteY();
             return yy <= y && y < yy + absoluteHeight();
         }
         return super.isWithin(x, y);
@@ -950,7 +950,7 @@ public class GUITextInput extends GUIText
 
 
         GlStateManager.pushMatrix();
-        GlStateManager.translate(getScreenX(), getScreenY(), 0);
+        GlStateManager.translate(absoluteX(), absoluteY(), 0);
         GlStateManager.scale(1d / screen.width, 1d / screen.height, 1);
 
 
@@ -1037,7 +1037,7 @@ public class GUITextInput extends GUIText
 
     protected int findCursorPosition(double x)
     {
-        double dif = x - getScreenX();
+        double dif = x - absoluteX();
         int result = 0;
         for (char c : text.toCharArray())
         {

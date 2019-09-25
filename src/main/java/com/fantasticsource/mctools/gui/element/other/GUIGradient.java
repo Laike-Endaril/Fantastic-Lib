@@ -65,8 +65,8 @@ public class GUIGradient extends GUIElement
         GlStateManager.disableTexture2D();
         GlStateManager.disableAlpha();
 
-        float x1 = (float) getScreenX();
-        float y1 = (float) getScreenY();
+        float x1 = (float) absoluteX();
+        float y1 = (float) absoluteY();
         float x2 = (float) (x1 + absoluteWidth());
         float y2 = (float) (y1 + absoluteHeight());
 

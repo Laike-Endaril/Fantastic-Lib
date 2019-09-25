@@ -70,7 +70,7 @@ public abstract class GUIElement
 
     public boolean isWithin(double x, double y)
     {
-        double xx = getScreenX(), yy = getScreenY();
+        double xx = absoluteX(), yy = absoluteY();
         return xx <= x && x < xx + absoluteWidth() && yy <= y && y < yy + absoluteHeight();
     }
 
@@ -83,7 +83,7 @@ public abstract class GUIElement
             int mcScale = new ScaledResolution(screen.mc).getScaleFactor();
             double wScale = screenWidth * mcScale, hScale = screenHeight * mcScale;
 
-            currentScissor = new int[]{(int) (getScreenX() * wScale), (int) ((1 - (getScreenY() + absoluteHeight())) * hScale), (int) (absoluteWidth() * wScale), (int) (absoluteHeight() * hScale)};
+            currentScissor = new int[]{(int) (absoluteX() * wScale), (int) ((1 - (absoluteY() + absoluteHeight())) * hScale), (int) (absoluteWidth() * wScale), (int) (absoluteHeight() * hScale)};
             if (parent != null && parent.currentScissor != null)
             {
                 currentScissor[0] = Tools.max(currentScissor[0], parent.currentScissor[0]);
@@ -147,16 +147,16 @@ public abstract class GUIElement
         for (GUIElement child : (ArrayList<GUIElement>) children.clone()) child.mouseDrag(x - this.x, y - this.y, button);
     }
 
-    public double getScreenX()
+    public double absoluteX()
     {
         if (parent == null) return x;
-        return parent.getScreenX() + x * parent.absoluteWidth();
+        return parent.absoluteX() + x * parent.absoluteWidth();
     }
 
-    public double getScreenY()
+    public double absoluteY()
     {
         if (parent == null) return y;
-        return parent.getScreenY() + y * parent.absoluteHeight();
+        return parent.absoluteY() + y * parent.absoluteHeight();
     }
 
     public double absoluteWidth()

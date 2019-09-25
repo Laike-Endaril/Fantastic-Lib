@@ -42,7 +42,7 @@ public class GUIChar extends GUIElement
         GlStateManager.enableTexture2D();
 
         GlStateManager.pushMatrix();
-        GlStateManager.translate(getScreenX(), getScreenY(), 0);
+        GlStateManager.translate(absoluteX(), absoluteY(), 0);
         GlStateManager.scale(1d / screen.width, 1d / screen.height, 1);
 
         Color c = Color.WHITE;

@@ -77,7 +77,7 @@ public class GUIGradientBorder extends GUIElement
         GlStateManager.disableTexture2D();
         GlStateManager.disableAlpha();
 
-        double x1 = getScreenX(), y1 = getScreenY();
+        double x1 = absoluteX(), y1 = absoluteY();
         double width = absoluteWidth(), height = absoluteHeight();
         double x2 = x1 + width, y2 = y1 + height;
 
