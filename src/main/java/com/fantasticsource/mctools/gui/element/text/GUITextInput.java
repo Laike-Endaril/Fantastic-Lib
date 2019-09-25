@@ -762,7 +762,7 @@ public class GUITextInput extends GUIText
         if (parent instanceof MultilineTextInput)
         {
             double yy = getScreenY();
-            return yy <= y && y < yy + getScreenHeight();
+            return yy <= y && y < yy + absoluteHeight();
         }
         return super.isWithin(x, y);
     }

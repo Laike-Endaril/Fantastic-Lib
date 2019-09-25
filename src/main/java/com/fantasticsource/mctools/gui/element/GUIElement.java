@@ -71,7 +71,7 @@ public abstract class GUIElement
     public boolean isWithin(double x, double y)
     {
         double xx = getScreenX(), yy = getScreenY();
-        return xx <= x && x < xx + getScreenWidth() && yy <= y && y < yy + getScreenHeight();
+        return xx <= x && x < xx + absoluteWidth() && yy <= y && y < yy + absoluteHeight();
     }
 
     public void draw()
@@ -83,7 +83,7 @@ public abstract class GUIElement
             int mcScale = new ScaledResolution(screen.mc).getScaleFactor();
             double wScale = screenWidth * mcScale, hScale = screenHeight * mcScale;
 
-            currentScissor = new int[]{(int) (getScreenX() * wScale), (int) ((1 - (getScreenY() + getScreenHeight())) * hScale), (int) (getScreenWidth() * wScale), (int) (getScreenHeight() * hScale)};
+            currentScissor = new int[]{(int) (getScreenX() * wScale), (int) ((1 - (getScreenY() + absoluteHeight())) * hScale), (int) (absoluteWidth() * wScale), (int) (absoluteHeight() * hScale)};
             if (parent != null && parent.currentScissor != null)
             {
                 currentScissor[0] = Tools.max(currentScissor[0], parent.currentScissor[0]);
@@ -150,25 +150,25 @@ public abstract class GUIElement
     public double getScreenX()
     {
         if (parent == null) return x;
-        return parent.getScreenX() + x * parent.getScreenWidth();
+        return parent.getScreenX() + x * parent.absoluteWidth();
     }
 
     public double getScreenY()
     {
         if (parent == null) return y;
-        return parent.getScreenY() + y * parent.getScreenHeight();
+        return parent.getScreenY() + y * parent.absoluteHeight();
     }
 
-    public double getScreenWidth()
+    public double absoluteWidth()
     {
         if (parent == null) return width;
-        return parent.getScreenWidth() * width;
+        return parent.absoluteWidth() * width;
     }
 
-    public double getScreenHeight()
+    public double absoluteHeight()
     {
         if (parent == null) return height;
-        return parent.getScreenHeight() * height;
+        return parent.absoluteHeight() * height;
     }
 
     public double mouseX()

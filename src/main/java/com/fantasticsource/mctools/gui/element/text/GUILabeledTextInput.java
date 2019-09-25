@@ -46,7 +46,7 @@ public class GUILabeledTextInput extends GUIView
         if (label != null && input != null)
         {
             label.recalc();
-            input.x = label.width / getScreenWidth();
+            input.x = label.width / absoluteWidth();
         }
 
         super.recalcAndRepositionSubElements(startIndex);

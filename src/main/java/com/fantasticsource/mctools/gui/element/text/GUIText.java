@@ -86,7 +86,7 @@ public class GUIText extends GUIElement
         {
             String[] words = Tools.preservedSplit(text, "[\r\n]|[ ]+", true);
 
-            double parentW = parent == null ? 1 : parent.getScreenWidth();
+            double parentW = parent == null ? 1 : parent.absoluteWidth();
 
             StringBuilder line = new StringBuilder();
             int index = 0;
@@ -143,7 +143,7 @@ public class GUIText extends GUIElement
 
             width = maxLineW;
             height = (double) (Tools.max(1, lines.size()) * FONT_RENDERER.FONT_HEIGHT - 1) / screen.height;
-            if (parent != null) height /= parent.getScreenHeight();
+            if (parent != null) height /= parent.absoluteHeight();
         }
 
         super.recalc();
@@ -179,13 +179,13 @@ public class GUIText extends GUIElement
     }
 
     @Override
-    public double getScreenWidth()
+    public double absoluteWidth()
     {
         return width;
     }
 
     @Override
-    public double getScreenHeight()
+    public double absoluteHeight()
     {
         return height;
     }

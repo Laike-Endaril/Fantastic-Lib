@@ -96,7 +96,7 @@ public class GUIScrollView extends GUIView
             int mcScale = new ScaledResolution(screen.mc).getScaleFactor();
             double wScale = screenWidth * mcScale, hScale = screenHeight * mcScale;
 
-            currentScissor = new int[]{(int) (getScreenX() * wScale), (int) ((1 - (getScreenY() + getScreenHeight())) * hScale), (int) (getScreenWidth() * wScale), (int) (getScreenHeight() * hScale)};
+            currentScissor = new int[]{(int) (getScreenX() * wScale), (int) ((1 - (getScreenY() + absoluteHeight())) * hScale), (int) (absoluteWidth() * wScale), (int) (absoluteHeight() * hScale)};
             if (parent != null && parent.currentScissor != null)
             {
                 currentScissor[0] = Tools.max(currentScissor[0], parent.currentScissor[0]);
@@ -163,6 +163,6 @@ public class GUIScrollView extends GUIView
     @Override
     public double childMouseYOffset()
     {
-        return top * getScreenHeight();
+        return top * absoluteHeight();
     }
 }

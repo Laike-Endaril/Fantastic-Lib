@@ -78,7 +78,7 @@ public class GUIGradientBorder extends GUIElement
         GlStateManager.disableAlpha();
 
         double x1 = getScreenX(), y1 = getScreenY();
-        double width = getScreenWidth(), height = getScreenHeight();
+        double width = absoluteWidth(), height = absoluteHeight();
         double x2 = x1 + width, y2 = y1 + height;
 
         double pxWidth = width * screenWidth, pxHeight = height * screenHeight;

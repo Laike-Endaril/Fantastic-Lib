@@ -101,13 +101,13 @@ public class GUITextButton extends GUIGradientBorder
     }
 
     @Override
-    public double getScreenWidth()
+    public double absoluteWidth()
     {
         return width;
     }
 
     @Override
-    public double getScreenHeight()
+    public double absoluteHeight()
     {
         return height;
     }
