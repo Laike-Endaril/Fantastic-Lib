@@ -254,8 +254,8 @@ public abstract class GUIElement
                         GUIElement element = get(i);
                         if (element.autoplace)
                         {
-                            autoX = element.x * width + element.width;
-                            autoY = element.y * height;
+                            autoX = element.x + element.width;
+                            autoY = element.y;
 
                             furthestX = Tools.max(furthestX, autoX);
                             furthestY = Tools.max(furthestY, autoY + element.height);
@@ -272,16 +272,16 @@ public abstract class GUIElement
                         if (autoX != 0 && autoX + element.width > 1)
                         {
                             element.x = 0;
-                            element.y = furthestY / height;
+                            element.y = furthestY;
                         }
                         else
                         {
-                            element.x = autoX / width;
-                            element.y = autoY / height;
+                            element.x = autoX;
+                            element.y = autoY;
                         }
 
-                        autoX = element.x * width + element.width;
-                        autoY = element.y * height;
+                        autoX = element.x + element.width;
+                        autoY = element.y;
 
                         furthestX = Tools.max(furthestX, autoX);
                         furthestY = Tools.max(furthestY, autoY + element.height);
@@ -300,7 +300,7 @@ public abstract class GUIElement
                         GUIElement element = get(i);
                         if (element.autoplace)
                         {
-                            autoY = element.y * height;
+                            autoY = element.y;
                             furthestY = Tools.max(furthestY, autoY + element.height);
                         }
                     }
@@ -312,10 +312,10 @@ public abstract class GUIElement
                     element.recalc();
                     if (element.autoplace)
                     {
-                        element.x = 0.5 - element.width / 2 / width;
-                        element.y = furthestY / height;
+                        element.x = 0.5 - element.width / 2;
+                        element.y = furthestY;
 
-                        autoY = element.y * height;
+                        autoY = element.y;
                         furthestY = Tools.max(furthestY, autoY + element.height);
                     }
                 }
