@@ -91,16 +91,13 @@ public class GUITextButton extends GUIGradientBorder
 
         double vPadding = text.height * padding;
 
-        double pxw1 = text.absoluteWidth() * screen.width, pxh1 = text.absoluteHeight() * screen.height;
+        double absH = text.absoluteHeight();
 
         height = text.height + vPadding * 2;
 
-        double pxp = (absoluteHeight() * screen.height - pxh1) / 2;
-        width = (text.absoluteWidth() * screen.width + pxp * 2) / absoluteWidth() / screen.width;
-        double hPadding = (width - text.width) / 2;
+        width = (text.absoluteWidth() + (absoluteHeight() - absH) * screen.height / screen.width) / absoluteWidth();
 
-        text.width = pxw1 / absoluteWidth();
-        text.height = pxh1 / absoluteHeight();
+        double hPadding = (width - text.width) / 2;
 
         thickness = vPadding / height;
 
