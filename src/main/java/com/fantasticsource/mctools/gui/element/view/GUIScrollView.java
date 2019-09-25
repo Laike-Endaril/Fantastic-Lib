@@ -53,7 +53,7 @@ public class GUIScrollView extends GUIView
         super.recalc(0);
         for (GUIElement element : children)
         {
-            internalHeight = Tools.max(internalHeight, element.y * getScreenHeight() + element.height);
+            internalHeight = Tools.max(internalHeight, element.y + element.height);
         }
 
         recalc2();
@@ -69,7 +69,7 @@ public class GUIScrollView extends GUIView
 
     protected void recalc2()
     {
-        if (internalHeight <= height)
+        if (internalHeight <= 1)
         {
             progress = -1;
             top = 0;
@@ -77,9 +77,9 @@ public class GUIScrollView extends GUIView
         else
         {
             if (progress == -1) progress = 0;
-            top = (internalHeight - height) * progress;
+            top = (internalHeight - 1) * progress;
         }
-        bottom = top + height;
+        bottom = top + 1;
     }
 
     public void focus(GUIElement child)
@@ -117,11 +117,11 @@ public class GUIScrollView extends GUIView
             GL11.glScissor(currentScissor[0], currentScissor[1], currentScissor[2], currentScissor[3]);
 
             GlStateManager.pushMatrix();
-            GlStateManager.translate(0, -top, 0);
+            GlStateManager.translate(0, -top * getScreenHeight(), 0);
 
             for (GUIElement element : children)
             {
-                if (element.y * getScreenHeight() + element.height < top || element.y * getScreenHeight() >= bottom) continue;
+                if (element.y + element.height < top || element.y >= bottom) continue;
                 element.draw();
             }
 
