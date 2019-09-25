@@ -33,7 +33,7 @@ public class GUIVerticalScrollbar extends GUIGradientBorder
     {
         if (scrollView.progress >= 0 && scrollView.progress <= 1)
         {
-            slider.y = y + (height - slider.height) * scrollView.progress;
+            slider.y = (1 - slider.height) * scrollView.progress;
         }
         else slider.y = -99999;
 
@@ -65,7 +65,7 @@ public class GUIVerticalScrollbar extends GUIGradientBorder
 
         if (active && scrollView.progress != -1)
         {
-            scrollView.progress = Tools.min(Tools.max((y - this.y - slider.height * 0.5) / (height - slider.height) / getScreenHeight(), 0), 1);
+            scrollView.progress = Tools.min(Tools.max((y - getScreenY() - slider.getScreenHeight() * 0.5) / (getScreenHeight() - slider.getScreenHeight()), 0), 1);
         }
 
         return active;
@@ -77,7 +77,7 @@ public class GUIVerticalScrollbar extends GUIGradientBorder
         if (active && button == 0)
         {
             if (scrollView.progress == -1) setActive(false);
-            else scrollView.progress = Tools.min(Tools.max((y - this.y - slider.height * 0.5) / (height - slider.height) / getScreenHeight(), 0), 1);
+            else scrollView.progress = Tools.min(Tools.max((y - getScreenY() - slider.getScreenHeight() * 0.5) / (getScreenHeight() - slider.getScreenHeight()), 0), 1);
         }
     }
 }
