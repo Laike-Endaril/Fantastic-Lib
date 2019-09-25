@@ -109,18 +109,6 @@ public class GUITextButton extends GUIGradientBorder
     }
 
     @Override
-    public double absoluteWidth()
-    {
-        return width;
-    }
-
-    @Override
-    public double absoluteHeight()
-    {
-        return height;
-    }
-
-    @Override
     public String toString()
     {
         return text.text;

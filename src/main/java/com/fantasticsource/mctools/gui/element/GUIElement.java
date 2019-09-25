@@ -159,13 +159,13 @@ public abstract class GUIElement
         return parent.absoluteY() + y * parent.absoluteHeight();
     }
 
-    public double absoluteWidth()
+    public final double absoluteWidth()
     {
         if (parent == null) return width;
         return parent.absoluteWidth() * width;
     }
 
-    public double absoluteHeight()
+    public final double absoluteHeight()
     {
         if (parent == null) return height;
         return parent.absoluteHeight() * height;
@@ -193,7 +193,7 @@ public abstract class GUIElement
         return 0;
     }
 
-    public boolean isMouseWithin()
+    public final boolean isMouseWithin()
     {
         for (GUIElement element : linkedMouseActivityReverse)
         {

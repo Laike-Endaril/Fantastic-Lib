@@ -182,16 +182,4 @@ public class GUIText extends GUIElement
     {
         return text;
     }
-
-    @Override
-    public double absoluteWidth()
-    {
-        return width;
-    }
-
-    @Override
-    public double absoluteHeight()
-    {
-        return height;
-    }
 }
