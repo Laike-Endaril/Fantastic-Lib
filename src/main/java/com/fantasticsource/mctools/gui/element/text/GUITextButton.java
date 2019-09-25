@@ -1,6 +1,7 @@
 package com.fantasticsource.mctools.gui.element.text;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
+import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIGradientBorder;
 import com.fantasticsource.tools.datastructures.Color;
 
@@ -37,7 +38,7 @@ public class GUITextButton extends GUIGradientBorder
 
     public GUITextButton(GUIScreen screen, String text, double padding, Color border, Color center, Color hoverBorder, Color hoverCenter, Color activeBorder, Color activeCenter)
     {
-        super(screen, 0, 0, 0, border, center, hoverBorder, hoverCenter, activeBorder, activeCenter);
+        super(screen, 1, 1, 0, border, center, hoverBorder, hoverCenter, activeBorder, activeCenter);
 
         this.padding = padding;
 
@@ -70,7 +71,7 @@ public class GUITextButton extends GUIGradientBorder
 
     public GUITextButton(GUIScreen screen, double x, double y, String text, double padding, Color border, Color center, Color hoverBorder, Color hoverCenter, Color activeBorder, Color activeCenter)
     {
-        super(screen, x, y, 0, 0, 0, border, center, hoverBorder, hoverCenter, activeBorder, activeCenter);
+        super(screen, x, y, 1, 1, 0, border, center, hoverBorder, hoverCenter, activeBorder, activeCenter);
 
         this.padding = padding;
 
@@ -85,7 +86,8 @@ public class GUITextButton extends GUIGradientBorder
     public GUITextButton recalc()
     {
         width = 1;
-        super.recalc();
+        height = 1;
+        super.recalc(0);
 
         double scaledPadding = text.height * padding;
 
@@ -98,6 +100,12 @@ public class GUITextButton extends GUIGradientBorder
         text.y = scaledPadding / height;
 
         return this;
+    }
+
+    @Override
+    public GUIElement recalc(int subIndexChanged)
+    {
+        return recalc();
     }
 
     @Override
