@@ -2,7 +2,10 @@ package com.fantasticsource.tools.component;
 
 import io.netty.buffer.ByteBuf;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public abstract class Component
 {
@@ -26,14 +29,14 @@ public abstract class Component
         }
     }
 
-    public static <T extends Component> T saveMarked(OutputStream stream, T component) throws IOException
+    public static <T extends Component> T saveMarked(OutputStream stream, T component)
     {
         new CStringUTF8().set(component.getClass().getName()).save(stream);
         component.save(stream);
         return component;
     }
 
-    public static Component loadMarked(InputStream stream) throws IOException
+    public static Component loadMarked(InputStream stream)
     {
         try
         {
@@ -50,11 +53,11 @@ public abstract class Component
 
     public abstract Component read(ByteBuf buf);
 
-    public abstract Component save(OutputStream stream) throws IOException;
+    public abstract Component save(OutputStream stream);
 
-    public abstract Component load(InputStream stream) throws IOException;
+    public abstract Component load(InputStream stream);
 
-    public final Component copy() throws IOException
+    public final Component copy()
     {
         ByteArrayOutputStream os = new ByteArrayOutputStream(10240);
         saveMarked(os, this);

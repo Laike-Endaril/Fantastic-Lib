@@ -33,18 +33,34 @@ public class CChar extends Component
     }
 
     @Override
-    public CChar save(OutputStream stream) throws IOException
+    public CChar save(OutputStream stream)
     {
-        stream.write(("" + value).getBytes(UTF_8));
-        return this;
+        try
+        {
+            stream.write(("" + value).getBytes(UTF_8));
+            return this;
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
-    public CChar load(InputStream stream) throws IOException
+    public CChar load(InputStream stream)
     {
-        byte[] bytes = new byte[2];
-        if (stream.read(bytes) < 2) throw new IOException("Reached end of file while reading!");
-        value = new String(bytes, UTF_8).charAt(0);
-        return this;
+        try
+        {
+            byte[] bytes = new byte[2];
+            if (stream.read(bytes) < 2) throw new IOException("Reached end of file while reading!");
+            value = new String(bytes, UTF_8).charAt(0);
+            return this;
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

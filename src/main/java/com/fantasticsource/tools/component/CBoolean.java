@@ -31,18 +31,34 @@ public class CBoolean extends Component
     }
 
     @Override
-    public CBoolean save(OutputStream stream) throws IOException
+    public CBoolean save(OutputStream stream)
     {
-        stream.write(value ? (byte) 1 : (byte) 0);
-        return this;
+        try
+        {
+            stream.write(value ? (byte) 1 : (byte) 0);
+            return this;
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
-    public CBoolean load(InputStream stream) throws IOException
+    public CBoolean load(InputStream stream)
     {
-        byte[] bytes = new byte[1];
-        if (stream.read(bytes) < 1) throw new IOException("Reached end of file while reading!");
-        value = bytes[0] == 1;
-        return this;
+        try
+        {
+            byte[] bytes = new byte[1];
+            if (stream.read(bytes) < 1) throw new IOException("Reached end of file while reading!");
+            value = bytes[0] == 1;
+            return this;
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

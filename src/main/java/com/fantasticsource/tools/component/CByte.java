@@ -31,18 +31,34 @@ public class CByte extends Component
     }
 
     @Override
-    public CByte save(OutputStream stream) throws IOException
+    public CByte save(OutputStream stream)
     {
-        stream.write(value);
-        return this;
+        try
+        {
+            stream.write(value);
+            return this;
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
-    public CByte load(InputStream stream) throws IOException
+    public CByte load(InputStream stream)
     {
-        byte[] bytes = new byte[1];
-        if (stream.read(bytes) < 1) throw new IOException("Reached end of file while reading!");
-        value = bytes[0];
-        return this;
+        try
+        {
+            byte[] bytes = new byte[1];
+            if (stream.read(bytes) < 1) throw new IOException("Reached end of file while reading!");
+            value = bytes[0];
+            return this;
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

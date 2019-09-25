@@ -40,18 +40,6 @@ public class GUILabeledTextInput extends GUIView
         add(input);
     }
 
-    @Override
-    public void recalcAndRepositionSubElements(int startIndex)
-    {
-        if (label != null && input != null)
-        {
-            label.recalc();
-            input.x = label.width / absoluteWidth();
-        }
-
-        super.recalcAndRepositionSubElements(startIndex);
-    }
-
     @SubscribeEvent
     public static void labelClick(GUILeftClickEvent event)
     {
@@ -67,6 +55,18 @@ public class GUILabeledTextInput extends GUIView
                 input.setActive(true);
             }
         }
+    }
+
+    @Override
+    public void recalcAndRepositionSubElements(int startIndex)
+    {
+        if (label != null && input != null)
+        {
+            label.recalc();
+            input.x = label.width / absoluteWidth();
+        }
+
+        super.recalcAndRepositionSubElements(startIndex);
     }
 
     @Override

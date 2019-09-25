@@ -31,19 +31,35 @@ public class CFloat extends Component
     }
 
     @Override
-    public CFloat save(OutputStream stream) throws IOException
+    public CFloat save(OutputStream stream)
     {
-        int i = Float.floatToRawIntBits(value);
-        stream.write(new byte[]{(byte) (i >>> 24), (byte) (i >>> 16), (byte) (i >>> 8), (byte) i});
-        return this;
+        try
+        {
+            int i = Float.floatToRawIntBits(value);
+            stream.write(new byte[]{(byte) (i >>> 24), (byte) (i >>> 16), (byte) (i >>> 8), (byte) i});
+            return this;
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
-    public CFloat load(InputStream stream) throws IOException
+    public CFloat load(InputStream stream)
     {
-        byte[] bytes = new byte[4];
-        if (stream.read(bytes) < 4) throw new IOException("Reached end of file while reading!");
-        value = Float.intBitsToFloat(((bytes[0] & 0xFF) << 24) | ((bytes[1] & 0xFF) << 16) | ((bytes[2] & 0xFF) << 8) | (bytes[3] & 0xFF));
-        return this;
+        try
+        {
+            byte[] bytes = new byte[4];
+            if (stream.read(bytes) < 4) throw new IOException("Reached end of file while reading!");
+            value = Float.intBitsToFloat(((bytes[0] & 0xFF) << 24) | ((bytes[1] & 0xFF) << 16) | ((bytes[2] & 0xFF) << 8) | (bytes[3] & 0xFF));
+            return this;
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

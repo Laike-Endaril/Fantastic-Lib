@@ -7,7 +7,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -53,14 +52,14 @@ public class CItemStack extends Component
     }
 
     @Override
-    public CItemStack save(OutputStream stream) throws IOException
+    public CItemStack save(OutputStream stream)
     {
         new CStringUTF8().set(stack.serializeNBT().toString()).save(stream);
         return this;
     }
 
     @Override
-    public CItemStack load(InputStream stream) throws IOException
+    public CItemStack load(InputStream stream)
     {
         try
         {

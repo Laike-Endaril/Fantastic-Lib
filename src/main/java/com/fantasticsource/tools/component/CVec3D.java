@@ -58,20 +58,36 @@ public class CVec3D extends Component
     }
 
     @Override
-    public CVec3D save(OutputStream stream) throws IOException
+    public CVec3D save(OutputStream stream)
     {
-        x.save(stream);
-        y.save(stream);
-        z.save(stream);
-        return this;
+        try
+        {
+            x.save(stream);
+            y.save(stream);
+            z.save(stream);
+            return this;
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
-    public CVec3D load(InputStream stream) throws IOException
+    public CVec3D load(InputStream stream)
     {
-        x.load(stream);
-        y.load(stream);
-        z.load(stream);
-        return this;
+        try
+        {
+            x.load(stream);
+            y.load(stream);
+            z.load(stream);
+            return this;
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

@@ -31,18 +31,34 @@ public class CInt extends Component
     }
 
     @Override
-    public CInt save(OutputStream stream) throws IOException
+    public CInt save(OutputStream stream)
     {
-        stream.write(new byte[]{(byte) (value >>> 24), (byte) (value >>> 16), (byte) (value >>> 8), (byte) value});
-        return this;
+        try
+        {
+            stream.write(new byte[]{(byte) (value >>> 24), (byte) (value >>> 16), (byte) (value >>> 8), (byte) value});
+            return this;
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
-    public CInt load(InputStream stream) throws IOException
+    public CInt load(InputStream stream)
     {
-        byte[] bytes = new byte[4];
-        if (stream.read(bytes) < 4) throw new IOException("Reached end of file while reading!");
-        value = ((bytes[0] & 0xFF) << 24) | ((bytes[1] & 0xFF) << 16) | ((bytes[2] & 0xFF) << 8) | (bytes[3] & 0xFF);
-        return this;
+        try
+        {
+            byte[] bytes = new byte[4];
+            if (stream.read(bytes) < 4) throw new IOException("Reached end of file while reading!");
+            value = ((bytes[0] & 0xFF) << 24) | ((bytes[1] & 0xFF) << 16) | ((bytes[2] & 0xFF) << 8) | (bytes[3] & 0xFF);
+            return this;
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

@@ -2,7 +2,6 @@ package com.fantasticsource.tools.component;
 
 import io.netty.buffer.ByteBuf;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -50,7 +49,7 @@ public class CArrayList extends Component
     }
 
     @Override
-    public CArrayList save(OutputStream stream) throws IOException
+    public CArrayList save(OutputStream stream)
     {
         new CInt().set(value.size()).save(stream);
         for (Component component : value)
@@ -62,7 +61,7 @@ public class CArrayList extends Component
     }
 
     @Override
-    public CArrayList load(InputStream stream) throws IOException
+    public CArrayList load(InputStream stream)
     {
         value.clear();
         for (int i = new CInt().load(stream).value; i > 0; i--)
