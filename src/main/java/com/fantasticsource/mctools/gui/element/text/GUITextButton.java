@@ -3,6 +3,7 @@ package com.fantasticsource.mctools.gui.element.text;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIGradientBorder;
+import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 
 import static com.fantasticsource.mctools.gui.GUIScreen.getHoverColor;
@@ -98,7 +99,7 @@ public class GUITextButton extends GUIGradientBorder
         height = 1;
         super.recalc(0);
 
-        double vPadding = text.height * padding;
+        double vPadding = text.height / Tools.max(1, text.lines.size()) * padding;
 
         double absH = text.absoluteHeight();
 
