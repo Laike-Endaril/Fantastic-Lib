@@ -447,16 +447,16 @@ public class GUITextInput extends GUIText
                 int min = element.selectorPosition == -1 ? element.cursorPosition : Tools.min(element.cursorPosition, element.selectorPosition);
                 String before = element.text.substring(0, min);
                 String after = element.text.substring(Tools.max(element.cursorPosition, element.selectorPosition));
-                element.text = before + removeIllegalChars(tokens[0]);
+                element.text = before + tokens[0];
                 element.setActive(false);
 
                 int index = multi.indexOf(element) + 1;
                 for (int i = 1; i < tokens.length - 1; i++)
                 {
-                    multi.add(index++, removeIllegalChars(tokens[i]));
+                    multi.add(index++, tokens[i]);
                 }
 
-                before = removeIllegalChars(tokens[tokens.length - 1]);
+                before = tokens[tokens.length - 1];
                 element = (GUITextInput) multi.add(index, before + after);
 
                 deselectAll();
@@ -470,7 +470,7 @@ public class GUITextInput extends GUIText
             {
                 int min = Tools.min(element.cursorPosition, element.selectorPosition);
                 if (min == -1) min = element.cursorPosition;
-                String before = element.text.substring(0, min) + removeIllegalChars(GUIScreen.getClipboardString());
+                String before = element.text.substring(0, min) + GUIScreen.getClipboardString();
                 element.text = before + element.text.substring(Tools.max(element.cursorPosition, element.selectorPosition));
 
                 deselectAll();
@@ -1023,16 +1023,6 @@ public class GUITextInput extends GUIText
     {
         if (active && !this.active) cursorTime = System.currentTimeMillis();
         super.setActive(active);
-    }
-
-    protected String removeIllegalChars(String text)
-    {
-        StringBuilder result = new StringBuilder();
-        for (char c : text.toCharArray())
-        {
-            if (c >= ' ' && c <= '~') result.append(c);
-        }
-        return result.toString();
     }
 
     protected int findCursorPosition(double x)
