@@ -15,6 +15,7 @@ public class GUITextButton extends GUIGradientBorder
 
     private GUIText text;
     private double padding;
+    private boolean autoThickness = true;
 
     public GUITextButton(GUIScreen screen, String text)
     {
@@ -83,6 +84,14 @@ public class GUITextButton extends GUIGradientBorder
     }
 
     @Override
+    public GUITextButton setThickness(double thickness)
+    {
+        autoThickness = false;
+        this.thickness = thickness;
+        return this;
+    }
+
+    @Override
     public GUITextButton recalc()
     {
         width = 1;
@@ -99,7 +108,7 @@ public class GUITextButton extends GUIGradientBorder
 
         double hPadding = (width - text.width) / 2;
 
-        thickness = vPadding / height;
+        if (autoThickness) thickness = vPadding / height;
 
         text.x = hPadding / width;
         text.y = vPadding / height;

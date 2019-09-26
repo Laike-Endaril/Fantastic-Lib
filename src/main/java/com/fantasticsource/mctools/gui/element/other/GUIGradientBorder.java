@@ -52,6 +52,12 @@ public class GUIGradientBorder extends GUIElement
         this.activeCenter = activeCenter;
     }
 
+    public GUIGradientBorder setThickness(double thickness)
+    {
+        this.thickness = thickness;
+        return this;
+    }
+
     @Override
     public void draw()
     {
