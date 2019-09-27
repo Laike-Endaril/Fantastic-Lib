@@ -20,7 +20,7 @@ public class GUILabeledTextInput extends GUIView
 
     public GUILabeledTextInput(GUIScreen screen, String label, String defaultInput, TextFilter filter)
     {
-        super(screen, 1, new GUIText(screen, "").height); //TODO height will be wrong here if later added to another sized element
+        super(screen, 1, new GUIText(screen, "").height);
 
         this.label = new GUIText(screen, label);
         add(this.label);
@@ -31,7 +31,7 @@ public class GUILabeledTextInput extends GUIView
 
     public GUILabeledTextInput(GUIScreen screen, double x, double y, String label, String defaultInput, TextFilter filter)
     {
-        super(screen, x, y, 1 - x, new GUIText(screen, "").height); //TODO height will be wrong here if later added to another sized element
+        super(screen, x, y, 1 - x, new GUIText(screen, "").height);
 
         this.label = new GUIText(screen, label);
         add(this.label);

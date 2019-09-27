@@ -841,7 +841,7 @@ public class GUITextInput extends GUIText
     @Override
     public void mouseDrag(double x, double y, int button)
     {
-        if (button == 0 && isMouseWithin())
+        if (button == 0 && ((parent instanceof MultilineTextInput && isMouseWithin()) || (!(parent instanceof MultilineTextInput) && active)))
         {
             if (parent instanceof MultilineTextInput && ((MultilineTextInput) parent).selectionStartY != -1 && ((MultilineTextInput) parent).selectionStartY != parent.indexOf(this))
             {
@@ -956,11 +956,24 @@ public class GUITextInput extends GUIText
 
         float scaledHeight = (float) (height * screenHeight * (parent != null ? parent.absoluteHeight() : 1));
 
-        //Highlight red if text does not pass filter
         if (!filter.acceptable(text))
         {
+            //Highlight red if text does not pass filter
             GlStateManager.disableTexture2D();
             GlStateManager.color(T_RED.rf(), T_RED.gf(), T_RED.bf(), T_RED.af());
+
+            GlStateManager.glBegin(GL11.GL_QUADS);
+            GlStateManager.glVertex3f(0, 0, 0);
+            GlStateManager.glVertex3f(0, scaledHeight, 0);
+            GlStateManager.glVertex3f((float) (width * screenWidth), scaledHeight, 0);
+            GlStateManager.glVertex3f((float) (width * screenWidth), 0, 0);
+            GlStateManager.glEnd();
+        }
+        else if (active)
+        {
+            //If we pass the filter, highlight gray if active
+            GlStateManager.disableTexture2D();
+            GlStateManager.color(GRAY.rf(), GRAY.gf(), GRAY.bf(), 0.2f);
 
             GlStateManager.glBegin(GL11.GL_QUADS);
             GlStateManager.glVertex3f(0, 0, 0);
