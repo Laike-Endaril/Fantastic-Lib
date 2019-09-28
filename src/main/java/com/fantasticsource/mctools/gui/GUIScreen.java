@@ -22,7 +22,7 @@ public abstract class GUIScreen extends GuiScreen
     private static final Stack<ScreenEntry> SCREEN_STACK = new Stack<>();
     private static boolean ignoreClosure = false;
 
-    public static boolean drawStack = true;
+    public boolean drawStack = true;
 
     public static final FontRenderer FONT_RENDERER = Minecraft.getMinecraft().fontRenderer;
 
