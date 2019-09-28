@@ -6,16 +6,29 @@ import com.fantasticsource.tools.Tools;
 
 public class GUIAutocroppedView extends GUIView
 {
-    private GUIElement background = null;
+    public GUIElement background;
+    public double padding;
 
     public GUIAutocroppedView(GUIScreen screen)
     {
-        super(screen, 1, 1);
+        this(screen, 0, null);
+    }
+
+    public GUIAutocroppedView(GUIScreen screen, double padding)
+    {
+        this(screen, padding, null);
     }
 
     public GUIAutocroppedView(GUIScreen screen, GUIElement background)
     {
+        this(screen, 0, background);
+    }
+
+    public GUIAutocroppedView(GUIScreen screen, double padding, GUIElement background)
+    {
         super(screen, 1, 1);
+
+        this.padding = padding;
 
         this.background = background;
         background.autoplace = false;
@@ -24,12 +37,24 @@ public class GUIAutocroppedView extends GUIView
 
     public GUIAutocroppedView(GUIScreen screen, double x, double y)
     {
-        super(screen, x, y, 1, 1);
+        this(screen, x, y, 0, null);
+    }
+
+    public GUIAutocroppedView(GUIScreen screen, double x, double y, double padding)
+    {
+        this(screen, x, y, padding, null);
     }
 
     public GUIAutocroppedView(GUIScreen screen, double x, double y, GUIElement background)
     {
+        this(screen, x, y, 0, background);
+    }
+
+    public GUIAutocroppedView(GUIScreen screen, double x, double y, double padding, GUIElement background)
+    {
         super(screen, x, y, 1, 1);
+
+        this.padding = padding;
 
         this.background = background;
         background.autoplace = false;
@@ -53,7 +78,22 @@ public class GUIAutocroppedView extends GUIView
                 height = Tools.max(height, element.y + element.height);
             }
         }
+
         super.recalc(0);
+
+        double xPad = padding / screen.width, yPad = padding / screen.height;
+        width += xPad * 2;
+        height += yPad * 2;
+        xPad = xPad / width;
+        yPad = yPad / height;
+        for (GUIElement element : children)
+        {
+            if (element != background)
+            {
+                element.x += (0.5 - element.x) * 2 * xPad;
+                element.y += (0.5 - element.y) * 2 * yPad;
+            }
+        }
 
         return this;
     }
