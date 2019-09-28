@@ -24,7 +24,8 @@ public abstract class GUIElement
             AP_BOTTOM_TO_TOP_LEFT_TO_RIGHT = 6,
             AP_BOTTOM_TO_TOP_RIGHT_TO_LEFT = 7,
             AP_CENTERED_H_TOP_TO_BOTTOM = 8,
-            AP_CENTERED_V_LEFT_TO_RIGHT = 9;
+            AP_CENTERED_V_LEFT_TO_RIGHT = 9,
+            AP_X_0_TOP_TO_BOTTOM = 10;
 
 
     public int[] currentScissor = null;
@@ -32,7 +33,7 @@ public abstract class GUIElement
     public double x, y, width, height;
     public GUIElement parent = null;
     public ArrayList<GUIElement> children = new ArrayList<>();
-    protected boolean autoplace = false;
+    public boolean autoplace = false;
     protected double autoX = 0, autoY = 0, furthestX = 0, furthestY = 0;
     protected byte subElementAutoplaceMethod;
     protected GUIScreen screen;
@@ -313,6 +314,38 @@ public abstract class GUIElement
                     if (element.autoplace)
                     {
                         element.x = 0.5 - element.width / 2;
+                        element.y = furthestY;
+
+                        autoY = element.y;
+                        furthestY = Tools.max(furthestY, autoY + element.height);
+                    }
+                }
+                break;
+
+            case AP_X_0_TOP_TO_BOTTOM:
+                if (size() <= 1 || startIndex != size() - 1)
+                {
+                    autoY = 0;
+                    furthestY = 0;
+
+                    for (int i = 0; i < startIndex; i++)
+                    {
+                        GUIElement element = get(i);
+                        if (element.autoplace)
+                        {
+                            autoY = element.y;
+                            furthestY = Tools.max(furthestY, autoY + element.height);
+                        }
+                    }
+                }
+
+                for (int i = startIndex; i < size(); i++)
+                {
+                    GUIElement element = get(i);
+                    element.recalc();
+                    if (element.autoplace)
+                    {
+                        element.x = 0;
                         element.y = furthestY;
 
                         autoY = element.y;

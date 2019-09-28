@@ -18,6 +18,7 @@ public class GUIAutocroppedView extends GUIView
         super(screen, 1, 1);
 
         this.background = background;
+        background.autoplace = false;
         add(background);
     }
 
@@ -31,6 +32,7 @@ public class GUIAutocroppedView extends GUIView
         super(screen, x, y, 1, 1);
 
         this.background = background;
+        background.autoplace = false;
         add(background);
     }
 
@@ -39,7 +41,7 @@ public class GUIAutocroppedView extends GUIView
     {
         width = 1;
         height = 1;
-        super.recalc(subIndexChanged);
+        super.recalc(0);
 
         width = 0;
         height = 0;
@@ -51,6 +53,7 @@ public class GUIAutocroppedView extends GUIView
                 height = Tools.max(height, element.y + element.height);
             }
         }
+        super.recalc(0);
 
         return this;
     }

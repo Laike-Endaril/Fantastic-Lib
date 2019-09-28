@@ -16,6 +16,7 @@ public class GUIItemStack extends GUIText
         super(screen, "(" + stack.getCount() + "x) " + stack.getDisplayName());
         this.stack = stack;
 
+        tooltip.setSubElementAutoplaceMethod(AP_X_0_TOP_TO_BOTTOM);
         Minecraft mc = Minecraft.getMinecraft();
         for (String line : stack.getTooltip(mc.player, mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL))
         {
@@ -27,6 +28,13 @@ public class GUIItemStack extends GUIText
     {
         super(screen, x, y, "(" + stack.getCount() + "x) " + stack.getDisplayName());
         this.stack = stack;
+
+        tooltip.setSubElementAutoplaceMethod(AP_X_0_TOP_TO_BOTTOM);
+        Minecraft mc = Minecraft.getMinecraft();
+        for (String line : stack.getTooltip(mc.player, mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL))
+        {
+            tooltip.add(new GUIText(screen, line));
+        }
     }
 
     @Override
