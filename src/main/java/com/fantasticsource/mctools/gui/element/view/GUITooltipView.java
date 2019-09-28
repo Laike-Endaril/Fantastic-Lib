@@ -6,6 +6,8 @@ import com.fantasticsource.tools.datastructures.Color;
 
 public class GUITooltipView extends GUIAutocroppedView
 {
+    private double offset = 0;
+
     public GUITooltipView(GUIScreen screen)
     {
         super(screen, 0, 0, new GUIGradient(screen, 1, 1, Color.BLACK.copy().setAF(0.7f)));
@@ -14,16 +16,26 @@ public class GUITooltipView extends GUIAutocroppedView
     @Override
     public void draw()
     {
-        x = mouseX();
+        x = mouseX() + offset;
         y = mouseY() - height / 2;
 
         if (y + height > 1) y = 1 - height;
         if (y < 0) y = 0;
 
-        if (x + width > 1) x = mouseX() - width;
+        if (x + width > 1) x = mouseX() - width - offset;
         if (x < 0) x = 1 - width;
         if (x < 0) x = 0;
 
         super.draw();
+    }
+
+    @Override
+    public GUITooltipView recalc(int subIndexChanged)
+    {
+        super.recalc(subIndexChanged);
+
+        offset = 12d / screen.width;
+
+        return this;
     }
 }
