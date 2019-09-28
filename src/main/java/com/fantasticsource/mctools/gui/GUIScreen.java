@@ -22,6 +22,8 @@ public abstract class GUIScreen extends GuiScreen
     private static final Stack<ScreenEntry> SCREEN_STACK = new Stack<>();
     private static boolean ignoreClosure = false;
 
+    public static boolean drawStack = true;
+
     public static final FontRenderer FONT_RENDERER = Minecraft.getMinecraft().fontRenderer;
 
     public static double mouseX = 0.5, mouseY = 0.5;
@@ -52,17 +54,21 @@ public abstract class GUIScreen extends GuiScreen
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
-        double mX = GUIScreen.mouseX, mY = GUIScreen.mouseY;
-
-        for (ScreenEntry entry : SCREEN_STACK)
+        if (drawStack)
         {
-            GUIScreen.mouseX = entry.mouseX;
-            GUIScreen.mouseY = entry.mouseY;
-            entry.screen.draw();
+            double mX = GUIScreen.mouseX, mY = GUIScreen.mouseY;
+
+            for (ScreenEntry entry : SCREEN_STACK)
+            {
+                GUIScreen.mouseX = entry.mouseX;
+                GUIScreen.mouseY = entry.mouseY;
+                entry.screen.draw();
+            }
+
+            GUIScreen.mouseX = mX;
+            GUIScreen.mouseY = mY;
         }
 
-        GUIScreen.mouseX = mX;
-        GUIScreen.mouseY = mY;
         draw();
     }
 
