@@ -5,6 +5,7 @@ import com.fantasticsource.mctools.gui.element.view.GUITooltipView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TextFormatting;
 
 public class GUIItemStack extends GUIText
 {
@@ -13,7 +14,7 @@ public class GUIItemStack extends GUIText
 
     public GUIItemStack(GUIScreen screen, ItemStack stack)
     {
-        super(screen, "(" + stack.getCount() + "x) " + stack.getDisplayName());
+        super(screen, "" + TextFormatting.GOLD + stack.getCount() + "x " + TextFormatting.RESET + stack.getDisplayName());
         this.stack = stack;
 
         tooltip.setSubElementAutoplaceMethod(AP_X_0_TOP_TO_BOTTOM);
@@ -26,7 +27,7 @@ public class GUIItemStack extends GUIText
 
     public GUIItemStack(GUIScreen screen, double x, double y, ItemStack stack)
     {
-        super(screen, x, y, "(" + stack.getCount() + "x) " + stack.getDisplayName());
+        super(screen, x, y, "" + TextFormatting.GOLD + stack.getCount() + "x " + TextFormatting.RESET + stack.getDisplayName());
         this.stack = stack;
 
         tooltip.setSubElementAutoplaceMethod(AP_X_0_TOP_TO_BOTTOM);
