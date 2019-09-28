@@ -59,19 +59,19 @@ public class GUITabView extends GUIView
         }
         else this.tabViews.addAll(Arrays.asList(tabViews));
 
-        for (GUIElement element : this.tabViews) element.parent = this;
-        if (this.tabViews.size() > 0)
-        {
-            tabs[0].setActive(true);
-            children.add(this.tabViews.get(0));
-        }
-
         this.tabs.addAll(Arrays.asList(tabs));
         for (GUIElement element : tabs)
         {
             children.add(element);
             element.parent = this;
             element.setExternalDeactivation(true, true);
+        }
+
+        for (GUIElement element : this.tabViews) element.parent = this;
+        if (this.tabViews.size() > 0)
+        {
+            tabs[0].setActive(true);
+            children.add(this.tabViews.get(0));
         }
 
         recalc();
@@ -116,19 +116,19 @@ public class GUITabView extends GUIView
         }
         else this.tabViews.addAll(Arrays.asList(tabViews));
 
-        for (GUIElement element : this.tabViews) element.parent = this;
-        if (this.tabViews.size() > 0)
-        {
-            tabs[0].setActive(true);
-            children.add(this.tabViews.get(0));
-        }
-
         this.tabs.addAll(Arrays.asList(tabs));
         for (GUIElement element : tabs)
         {
             children.add(element);
             element.parent = this;
             element.setExternalDeactivation(true, true);
+        }
+
+        for (GUIElement element : this.tabViews) element.parent = this;
+        if (this.tabViews.size() > 0)
+        {
+            tabs[0].setActive(true);
+            children.add(this.tabViews.get(0));
         }
 
         recalc();
