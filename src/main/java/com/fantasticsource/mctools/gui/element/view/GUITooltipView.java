@@ -1,0 +1,29 @@
+package com.fantasticsource.mctools.gui.element.view;
+
+import com.fantasticsource.mctools.gui.GUIScreen;
+import com.fantasticsource.mctools.gui.element.other.GUIGradient;
+import com.fantasticsource.tools.datastructures.Color;
+
+public class GUITooltipView extends GUIAutocroppedView
+{
+    public GUITooltipView(GUIScreen screen)
+    {
+        super(screen, 0, 0, new GUIGradient(screen, 1, 1, Color.BLACK.copy().setAF(0.7f)));
+    }
+
+    @Override
+    public void draw()
+    {
+        x = mouseX();
+        y = mouseY() - height / 2;
+
+        if (y + height > 1) y = 1 - height;
+        if (y < 0) y = 0;
+
+        if (x + width > 1) x = mouseX() - width;
+        if (x < 0) x = 1 - width;
+        if (x < 0) x = 0;
+
+        super.draw();
+    }
+}
