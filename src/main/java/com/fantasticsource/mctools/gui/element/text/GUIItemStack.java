@@ -14,7 +14,7 @@ public class GUIItemStack extends GUIText
 
     public GUIItemStack(GUIScreen screen, ItemStack stack)
     {
-        super(screen, "" + TextFormatting.GOLD + stack.getCount() + "x " + TextFormatting.RESET + stack.getDisplayName());
+        super(screen, stack == ItemStack.EMPTY ? TextFormatting.GOLD + "(Empty Slot)" : "" + TextFormatting.GOLD + stack.getCount() + "x " + TextFormatting.RESET + stack.getDisplayName());
         this.stack = stack;
 
         tooltip.setSubElementAutoplaceMethod(AP_X_0_TOP_TO_BOTTOM);
@@ -27,7 +27,7 @@ public class GUIItemStack extends GUIText
 
     public GUIItemStack(GUIScreen screen, double x, double y, ItemStack stack)
     {
-        super(screen, x, y, "" + TextFormatting.GOLD + stack.getCount() + "x " + TextFormatting.RESET + stack.getDisplayName());
+        super(screen, x, y, stack == ItemStack.EMPTY ? TextFormatting.GOLD + "(Empty Slot)" : "" + TextFormatting.GOLD + stack.getCount() + "x " + TextFormatting.RESET + stack.getDisplayName());
         this.stack = stack;
 
         tooltip.setSubElementAutoplaceMethod(AP_X_0_TOP_TO_BOTTOM);
