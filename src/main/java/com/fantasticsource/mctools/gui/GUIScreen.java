@@ -1,5 +1,6 @@
 package com.fantasticsource.mctools.gui;
 
+import com.fantasticsource.mctools.ClientTickTimer;
 import com.fantasticsource.mctools.Render;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.tools.datastructures.Color;
@@ -13,10 +14,13 @@ import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Stack;
 
 @SideOnly(Side.CLIENT)
 public abstract class GUIScreen extends GuiScreen
 {
+    private static final Stack<ScreenEntry> SCREEN_STACK = new Stack<>();
+
     public static final FontRenderer FONT_RENDERER = Minecraft.getMinecraft().fontRenderer;
 
     public static double mouseX = 0.5, mouseY = 0.5;
@@ -47,6 +51,17 @@ public abstract class GUIScreen extends GuiScreen
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
+        double mX = GUIScreen.mouseX, mY = GUIScreen.mouseY;
+        for (ScreenEntry entry : SCREEN_STACK)
+        {
+            GUIScreen.mouseX = entry.mouseX;
+            GUIScreen.mouseY = entry.mouseY;
+
+            entry.screen.drawScreen(mouseX, mouseY, partialTicks);
+        }
+        GUIScreen.mouseX = mX;
+        GUIScreen.mouseY = mY;
+
         GlStateManager.disableTexture2D();
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
@@ -71,6 +86,14 @@ public abstract class GUIScreen extends GuiScreen
         GlStateManager.disableBlend();
         GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();
+    }
+
+    public static void showStacked(GUIScreen screen)
+    {
+        GuiScreen current = Minecraft.getMinecraft().currentScreen;
+        if (current instanceof GUIScreen) SCREEN_STACK.push(new ScreenEntry((GUIScreen) current, mouseX, mouseY));
+
+        Minecraft.getMinecraft().displayGuiScreen(screen);
     }
 
     @Override
@@ -167,6 +190,29 @@ public abstract class GUIScreen extends GuiScreen
     }
 
     @Override
+    public final void onGuiClosed()
+    {
+        //Need minimum delay to keep buggy stuff from happening (see where this method is called from)
+        ClientTickTimer.schedule(0, this::onClosed);
+    }
+
+    public void onClosed()
+    {
+        if (!(Minecraft.getMinecraft().currentScreen instanceof GUIScreen))
+        {
+            if (SCREEN_STACK.size() > 0)
+            {
+                ScreenEntry entry = SCREEN_STACK.pop();
+                if (entry.screen.getClass() == getClass())
+                {
+                    if (SCREEN_STACK.size() > 0) mc.displayGuiScreen(SCREEN_STACK.peek().screen);
+                }
+                else SCREEN_STACK.clear();
+            }
+        }
+    }
+
+    @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException
     {
         super.keyTyped(typedChar, keyCode);
@@ -174,6 +220,19 @@ public abstract class GUIScreen extends GuiScreen
         for (GUIElement element : guiElements)
         {
             element.keyTyped(typedChar, keyCode);
+        }
+    }
+
+    public static class ScreenEntry
+    {
+        public final GUIScreen screen;
+        public final double mouseX, mouseY;
+
+        public ScreenEntry(GUIScreen screen, double mouseX, double mouseY)
+        {
+            this.screen = screen;
+            this.mouseX = mouseX;
+            this.mouseY = mouseY;
         }
     }
 }
