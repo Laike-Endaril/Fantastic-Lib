@@ -20,6 +20,7 @@ import java.util.Stack;
 public abstract class GUIScreen extends GuiScreen
 {
     private static final Stack<ScreenEntry> SCREEN_STACK = new Stack<>();
+    private static boolean ignoreClosure = false;
 
     public static final FontRenderer FONT_RENDERER = Minecraft.getMinecraft().fontRenderer;
 
@@ -93,10 +94,14 @@ public abstract class GUIScreen extends GuiScreen
         GlStateManager.enableTexture2D();
     }
 
-    public static void stackCurrent()
+    public static void showStacked(GUIScreen screen)
     {
         GuiScreen current = Minecraft.getMinecraft().currentScreen;
         if (current instanceof GUIScreen) SCREEN_STACK.push(new ScreenEntry((GUIScreen) current, mouseX, mouseY));
+
+        ignoreClosure = true;
+        Minecraft.getMinecraft().displayGuiScreen(screen);
+        ignoreClosure = false;
     }
 
     @Override
@@ -196,7 +201,7 @@ public abstract class GUIScreen extends GuiScreen
     public final void onGuiClosed()
     {
         //Need minimum delay to keep buggy stuff from happening (see where this method is called from)
-        ClientTickTimer.schedule(0, this::onClosed);
+        if (!ignoreClosure) ClientTickTimer.schedule(0, this::onClosed);
     }
 
     public void onClosed()
