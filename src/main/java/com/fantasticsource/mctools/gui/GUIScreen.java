@@ -52,16 +52,21 @@ public abstract class GUIScreen extends GuiScreen
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
         double mX = GUIScreen.mouseX, mY = GUIScreen.mouseY;
+
         for (ScreenEntry entry : SCREEN_STACK)
         {
             GUIScreen.mouseX = entry.mouseX;
             GUIScreen.mouseY = entry.mouseY;
-
-            entry.screen.drawScreen(mouseX, mouseY, partialTicks);
+            entry.screen.draw();
         }
+
         GUIScreen.mouseX = mX;
         GUIScreen.mouseY = mY;
+        draw();
+    }
 
+    public void draw()
+    {
         GlStateManager.disableTexture2D();
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
@@ -88,12 +93,10 @@ public abstract class GUIScreen extends GuiScreen
         GlStateManager.enableTexture2D();
     }
 
-    public static void showStacked(GUIScreen screen)
+    public static void stackCurrent()
     {
         GuiScreen current = Minecraft.getMinecraft().currentScreen;
         if (current instanceof GUIScreen) SCREEN_STACK.push(new ScreenEntry((GUIScreen) current, mouseX, mouseY));
-
-        Minecraft.getMinecraft().displayGuiScreen(screen);
     }
 
     @Override
@@ -198,18 +201,7 @@ public abstract class GUIScreen extends GuiScreen
 
     public void onClosed()
     {
-        if (!(Minecraft.getMinecraft().currentScreen instanceof GUIScreen))
-        {
-            if (SCREEN_STACK.size() > 0)
-            {
-                ScreenEntry entry = SCREEN_STACK.pop();
-                if (entry.screen.getClass() == getClass())
-                {
-                    if (SCREEN_STACK.size() > 0) mc.displayGuiScreen(SCREEN_STACK.peek().screen);
-                }
-                else SCREEN_STACK.clear();
-            }
-        }
+        if (SCREEN_STACK.size() > 0) mc.displayGuiScreen(SCREEN_STACK.pop().screen);
     }
 
     @Override
