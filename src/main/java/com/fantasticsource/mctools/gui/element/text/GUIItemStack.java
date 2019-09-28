@@ -9,7 +9,7 @@ import net.minecraft.util.text.TextFormatting;
 
 public class GUIItemStack extends GUIText
 {
-    public ItemStack stack;
+    private ItemStack stack;
     GUITooltipView tooltip = new GUITooltipView(screen);
 
     public GUIItemStack(GUIScreen screen, ItemStack stack)
@@ -36,6 +36,26 @@ public class GUIItemStack extends GUIText
         {
             tooltip.add(new GUIText(screen, line));
         }
+    }
+
+    public ItemStack getStack()
+    {
+        return stack;
+    }
+
+    public GUIItemStack setStack(ItemStack stack)
+    {
+        this.stack = stack;
+        text = stack == ItemStack.EMPTY ? TextFormatting.GOLD + "(Empty Slot)" : "" + TextFormatting.GOLD + stack.getCount() + "x " + TextFormatting.RESET + stack.getDisplayName();
+
+        tooltip.clear();
+        Minecraft mc = Minecraft.getMinecraft();
+        for (String line : stack.getTooltip(mc.player, mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL))
+        {
+            tooltip.add(new GUIText(screen, line));
+        }
+
+        return this;
     }
 
     @Override
