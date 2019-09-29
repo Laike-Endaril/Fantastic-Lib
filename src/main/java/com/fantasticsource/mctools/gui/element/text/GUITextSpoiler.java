@@ -158,7 +158,7 @@ public class GUITextSpoiler extends GUIText
     @Override
     public void click()
     {
-        super.click();
         toggle();
+        super.click();
     }
 }
