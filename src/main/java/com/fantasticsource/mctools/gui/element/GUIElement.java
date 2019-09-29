@@ -41,6 +41,8 @@ public abstract class GUIElement
     private ArrayList<GUIElement> linkedMouseActivity = new ArrayList<>();
     private ArrayList<GUIElement> linkedMouseActivityReverse = new ArrayList<>();
 
+    private Runnable action = null;
+
 
     public GUIElement(GUIScreen screen, double width, double height)
     {
@@ -141,6 +143,13 @@ public abstract class GUIElement
 
     public void click()
     {
+        if (action != null) action.run();
+    }
+
+    public GUIElement setAction(Runnable action)
+    {
+        this.action = action;
+        return this;
     }
 
     public void mouseDrag(double x, double y, int button)
