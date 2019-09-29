@@ -19,7 +19,7 @@ import java.util.Stack;
 @SideOnly(Side.CLIENT)
 public abstract class GUIScreen extends GuiScreen
 {
-    private static final Stack<ScreenEntry> SCREEN_STACK = new Stack<>();
+    public static final Stack<ScreenEntry> SCREEN_STACK = new Stack<>();
     private static boolean ignoreClosure = false;
 
     public boolean drawStack = true;
