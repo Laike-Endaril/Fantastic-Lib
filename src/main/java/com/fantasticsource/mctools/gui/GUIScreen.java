@@ -224,9 +224,9 @@ public abstract class GUIScreen extends GuiScreen
 
     public void onClosed()
     {
-        if (SCREEN_STACK.size() > 0) mc.displayGuiScreen(SCREEN_STACK.pop().screen);
-
         for (Runnable action : onClosedActions) action.run();
+
+        if (SCREEN_STACK.size() > 0) mc.displayGuiScreen(SCREEN_STACK.pop().screen);
     }
 
     @Override
