@@ -37,16 +37,19 @@ public class ItemSelectionGUI extends GUIScreen
 
         scrollView.add(new GUIText(this, "\n"));
 
+        //Current
         GUIItemStack stackElement = new GUIItemStack(this, clickedElement.getStack().copy());
         stackElement.text += "" + TextFormatting.RESET + TextFormatting.DARK_PURPLE + " (currently selected)";
         scrollView.add(stackElement);
         scrollView.add(new GUIText(this, "\n\n"));
 
+        //Remove
         stackElement = new GUIItemStack(this, ItemStack.EMPTY);
         stackElement.text = TextFormatting.DARK_PURPLE + "(Remove item)";
         scrollView.add(stackElement);
         scrollView.add(new GUIText(this, "\n\n\n"));
 
+        //Player inventory
         EntityPlayer player = Minecraft.getMinecraft().player;
         for (int i = 0; i < player.inventory.getSizeInventory(); i++)
         {
