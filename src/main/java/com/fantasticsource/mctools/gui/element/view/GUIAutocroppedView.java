@@ -31,8 +31,11 @@ public class GUIAutocroppedView extends GUIView
         this.padding = padding;
 
         this.background = background;
-        background.autoplace = false;
-        add(background);
+        if (background != null)
+        {
+            background.autoplace = false;
+            add(background);
+        }
     }
 
     public GUIAutocroppedView(GUIScreen screen, double x, double y)
@@ -57,8 +60,11 @@ public class GUIAutocroppedView extends GUIView
         this.padding = padding;
 
         this.background = background;
-        background.autoplace = false;
-        add(background);
+        if (background != null)
+        {
+            background.autoplace = false;
+            add(background);
+        }
     }
 
     @Override

@@ -2,16 +2,16 @@ package com.fantasticsource.mctools.gui.element.text;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.text.filter.TextFilter;
-import com.fantasticsource.mctools.gui.element.view.GUIView;
+import com.fantasticsource.mctools.gui.element.view.GUIAutocroppedView;
 
-public class GUILabeledTextInput extends GUIView
+public class GUILabeledTextInput extends GUIAutocroppedView
 {
     public final GUIText label;
     public final GUITextInput input;
 
     public GUILabeledTextInput(GUIScreen screen, String label, String defaultInput, TextFilter filter)
     {
-        super(screen, 1, new GUIText(screen, "").height);
+        super(screen);
 
         input = new GUITextInput(screen, 0, 0, defaultInput, filter);
 
@@ -28,7 +28,7 @@ public class GUILabeledTextInput extends GUIView
 
     public GUILabeledTextInput(GUIScreen screen, double x, double y, String label, String defaultInput, TextFilter filter)
     {
-        super(screen, x, y, 1 - x, new GUIText(screen, "").height);
+        super(screen, x, y);
 
         input = new GUITextInput(screen, 0, 0, defaultInput, filter);
 
