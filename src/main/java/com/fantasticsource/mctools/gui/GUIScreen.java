@@ -14,6 +14,7 @@ import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Stack;
 
 @SideOnly(Side.CLIENT)
@@ -250,5 +251,11 @@ public abstract class GUIScreen extends GuiScreen
             this.mouseX = mouseX;
             this.mouseY = mouseY;
         }
+    }
+
+    public GUIScreen addOnClosedActions(Runnable... actions)
+    {
+        onClosedActions.addAll(Arrays.asList(actions));
+        return this;
     }
 }
