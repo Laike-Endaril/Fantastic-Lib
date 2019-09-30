@@ -43,6 +43,7 @@ public abstract class GUIElement
     private ArrayList<GUIElement> linkedMouseActivityReverse = new ArrayList<>();
 
     public final ArrayList<Runnable> onClickActions = new ArrayList<>();
+    public final ArrayList<Runnable> onRecalcActions = new ArrayList<>();
 
 
     public GUIElement(GUIScreen screen, double width, double height)
@@ -153,6 +154,12 @@ public abstract class GUIElement
         return this;
     }
 
+    public GUIElement addRecalcActions(Runnable... actions)
+    {
+        onRecalcActions.addAll(Arrays.asList(actions));
+        return this;
+    }
+
     public void mouseDrag(double x, double y, int button)
     {
         for (GUIElement child : (ArrayList<GUIElement>) children.clone()) child.mouseDrag(x - this.x, y - this.y, button);
@@ -228,6 +235,9 @@ public abstract class GUIElement
     public GUIElement recalc(int subIndexChanged)
     {
         recalcAndRepositionSubElements(subIndexChanged);
+
+        for (Runnable action : onRecalcActions) action.run();
+
         return this;
     }
 

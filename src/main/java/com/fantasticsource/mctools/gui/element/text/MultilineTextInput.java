@@ -68,6 +68,8 @@ public class MultilineTextInput extends GUIScrollView
 
         recalc2();
 
+        for (Runnable action : onRecalcActions) action.run();
+
         return this;
     }
 
