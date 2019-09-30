@@ -31,6 +31,8 @@ public abstract class GUIScreen extends GuiScreen
     private ArrayList<Integer> mouseButtons = new ArrayList<>();
     private boolean initialized = false;
 
+    public final ArrayList<Runnable> onClosedActions = new ArrayList<>();
+
     public static Color getIdleColor(Color activeColor)
     {
         return activeColor.copy().setVF(0.5f * activeColor.vf());
@@ -222,6 +224,8 @@ public abstract class GUIScreen extends GuiScreen
     public void onClosed()
     {
         if (SCREEN_STACK.size() > 0) mc.displayGuiScreen(SCREEN_STACK.pop().screen);
+
+        for (Runnable action : onClosedActions) action.run();
     }
 
     @Override
