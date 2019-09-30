@@ -9,6 +9,7 @@ import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public abstract class GUIElement
 {
@@ -41,7 +42,7 @@ public abstract class GUIElement
     private ArrayList<GUIElement> linkedMouseActivity = new ArrayList<>();
     private ArrayList<GUIElement> linkedMouseActivityReverse = new ArrayList<>();
 
-    private Runnable action = null;
+    public final ArrayList<Runnable> onClickActions = new ArrayList<>();
 
 
     public GUIElement(GUIScreen screen, double width, double height)
@@ -143,12 +144,12 @@ public abstract class GUIElement
 
     public void click()
     {
-        if (action != null) action.run();
+        for (Runnable action : onClickActions) action.run();
     }
 
-    public GUIElement setAction(Runnable action)
+    public GUIElement addClickActions(Runnable... actions)
     {
-        this.action = action;
+        onClickActions.addAll(Arrays.asList(actions));
         return this;
     }
 
