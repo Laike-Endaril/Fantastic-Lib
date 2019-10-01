@@ -938,14 +938,25 @@ public class GUITextInput extends GUIText
 
         if (children.size() > 0 && width > 0 && height > 0)
         {
-            GL11.glEnable(GL11.GL_SCISSOR_TEST);
-            GL11.glScissor((int) (x * wScale), (int) ((1 - (y + height)) * hScale), (int) (width * wScale), (int) (height * hScale));
+            currentScissor = new int[]{(int) (x * wScale), (int) ((1 - (y + height)) * hScale), (int) (width * wScale), (int) (height * hScale)};
+            if (parent != null && parent.currentScissor != null)
+            {
+                currentScissor[0] = Tools.max(currentScissor[0], parent.currentScissor[0]);
+                currentScissor[1] = Tools.max(currentScissor[1], parent.currentScissor[1]);
+                currentScissor[2] = Tools.min(currentScissor[2], parent.currentScissor[2]);
+                currentScissor[3] = Tools.min(currentScissor[3], parent.currentScissor[3]);
+            }
+            else GL11.glEnable(GL11.GL_SCISSOR_TEST);
+
             for (GUIElement element : children)
             {
                 if (element.x + element.width < 0 || element.x > width || element.y + element.height < 0 || element.y >= height) continue;
+                GL11.glScissor(currentScissor[0], currentScissor[1], currentScissor[2], currentScissor[3]);
                 element.draw();
             }
-            GL11.glDisable(GL11.GL_SCISSOR_TEST);
+
+            if (parent == null) GL11.glDisable(GL11.GL_SCISSOR_TEST);
+            else GL11.glScissor(parent.currentScissor[0], parent.currentScissor[1], parent.currentScissor[2], parent.currentScissor[3]);
         }
 
 

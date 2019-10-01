@@ -96,18 +96,18 @@ public abstract class GUIElement
                 currentScissor[2] = Tools.min(currentScissor[2], parent.currentScissor[2]);
                 currentScissor[3] = Tools.min(currentScissor[3], parent.currentScissor[3]);
             }
-
-            GL11.glEnable(GL11.GL_SCISSOR_TEST);
-            GL11.glScissor(currentScissor[0], currentScissor[1], currentScissor[2], currentScissor[3]);
+            else GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
             for (GUIElement element : children)
             {
                 if (element.x + element.width < 0 || element.x > 1 || element.y + element.height < 0 || element.y >= 1) continue;
+                GL11.glScissor(currentScissor[0], currentScissor[1], currentScissor[2], currentScissor[3]);
                 element.draw();
             }
 
             currentScissor = null;
-            GL11.glDisable(GL11.GL_SCISSOR_TEST);
+            if (parent == null) GL11.glDisable(GL11.GL_SCISSOR_TEST);
+            else GL11.glScissor(parent.currentScissor[0], parent.currentScissor[1], parent.currentScissor[2], parent.currentScissor[3]);
         }
     }
 
