@@ -226,7 +226,12 @@ public abstract class GUIScreen extends GuiScreen
     {
         for (Runnable action : onClosedActions) action.run();
 
-        if (SCREEN_STACK.size() > 0) mc.displayGuiScreen(SCREEN_STACK.pop().screen);
+        if (SCREEN_STACK.size() > 0)
+        {
+            GUIScreen screen = SCREEN_STACK.pop().screen;
+            mc.displayGuiScreen(screen);
+            screen.onResize(Minecraft.getMinecraft(), width, height);
+        }
     }
 
     @Override
