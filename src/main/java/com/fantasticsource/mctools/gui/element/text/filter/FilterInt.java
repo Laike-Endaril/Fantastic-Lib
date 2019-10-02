@@ -1,6 +1,6 @@
 package com.fantasticsource.mctools.gui.element.text.filter;
 
-public class FilterInt extends TextFilter
+public class FilterInt extends TextFilter<Integer>
 {
     public static final FilterInt INSTANCE = new FilterInt();
 
@@ -25,5 +25,11 @@ public class FilterInt extends TextFilter
         }
 
         return true;
+    }
+
+    @Override
+    public Integer parse(String input)
+    {
+        return !acceptable(input) ? null : Integer.parseInt(input);
     }
 }

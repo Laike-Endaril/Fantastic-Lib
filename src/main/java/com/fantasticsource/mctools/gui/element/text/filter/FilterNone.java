@@ -1,6 +1,6 @@
 package com.fantasticsource.mctools.gui.element.text.filter;
 
-public class FilterNone extends TextFilter
+public class FilterNone extends TextFilter<String>
 {
     public static final FilterNone INSTANCE = new FilterNone();
 
@@ -18,5 +18,11 @@ public class FilterNone extends TextFilter
     public boolean acceptable(String input)
     {
         return true;
+    }
+
+    @Override
+    public String parse(String input)
+    {
+        return input;
     }
 }

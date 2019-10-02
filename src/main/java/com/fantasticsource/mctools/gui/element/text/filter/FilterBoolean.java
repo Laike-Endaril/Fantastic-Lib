@@ -1,6 +1,6 @@
 package com.fantasticsource.mctools.gui.element.text.filter;
 
-public class FilterBoolean extends TextFilter
+public class FilterBoolean extends TextFilter<Boolean>
 {
     public static final FilterBoolean INSTANCE = new FilterBoolean();
 
@@ -22,5 +22,11 @@ public class FilterBoolean extends TextFilter
     {
         String s = transformInput(input);
         return s.equals("true") || s.equals("false");
+    }
+
+    @Override
+    public Boolean parse(String input)
+    {
+        return !acceptable(input) ? null : Boolean.parseBoolean(transformInput(input));
     }
 }
