@@ -939,7 +939,7 @@ public class GUITextInput extends GUIText
         if (children.size() > 0 && width > 0 && height > 0)
         {
             currentScissor = new int[]{(int) (x * wScale), (int) ((1 - (y + height)) * hScale), (int) (width * wScale), (int) (height * hScale)};
-            if (parent != null && parent.currentScissor != null)
+            if (parent != null)
             {
                 currentScissor[0] = Tools.max(currentScissor[0], parent.currentScissor[0]);
                 currentScissor[1] = Tools.max(currentScissor[1], parent.currentScissor[1]);

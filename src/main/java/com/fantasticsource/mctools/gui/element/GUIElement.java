@@ -2,6 +2,7 @@ package com.fantasticsource.mctools.gui.element;
 
 import com.fantasticsource.mctools.gui.GUILeftClickEvent;
 import com.fantasticsource.mctools.gui.GUIScreen;
+import com.fantasticsource.mctools.gui.element.view.GUIView;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.gui.ScaledResolution;
@@ -89,7 +90,7 @@ public abstract class GUIElement
             double wScale = screenWidth * mcScale, hScale = screenHeight * mcScale;
 
             currentScissor = new int[]{(int) (absoluteX() * wScale), (int) ((1 - (absoluteY() + absoluteHeight())) * hScale), (int) (absoluteWidth() * wScale), (int) (absoluteHeight() * hScale)};
-            if (parent != null && parent.currentScissor != null)
+            if (parent != null)
             {
                 currentScissor[0] = Tools.max(currentScissor[0], parent.currentScissor[0]);
                 currentScissor[1] = Tools.max(currentScissor[1], parent.currentScissor[1]);
