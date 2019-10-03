@@ -121,6 +121,7 @@ public class GUIScrollView extends GUIView
 
             currentScissor = null;
             if (!parentScissor) GL11.glDisable(GL11.GL_SCISSOR_TEST);
+            else GL11.glScissor(parent.currentScissor[0], parent.currentScissor[1], parent.currentScissor[2], parent.currentScissor[3]);
         }
     }
 
