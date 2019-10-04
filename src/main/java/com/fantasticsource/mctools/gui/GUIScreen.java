@@ -7,11 +7,11 @@ import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
@@ -42,15 +42,8 @@ public abstract class GUIScreen extends GuiScreen
 
     public GUIScreen()
     {
-        try
-        {
-            pxWidth = Render.getViewportWidth();
-            pxHeight = Render.getViewportHeight();
-        }
-        catch (IllegalAccessException e)
-        {
-            e.printStackTrace();
-        }
+        pxWidth = Display.getWidth();
+        pxHeight = Display.getHeight();
 
         root = new GUIView(this, 1, 1);
     }
@@ -79,6 +72,8 @@ public abstract class GUIScreen extends GuiScreen
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
+        if (pxWidth != Display.getWidth() || pxHeight != Display.getHeight()) recalc();
+
         if (drawStack)
         {
             double mX = GUIScreen.mouseX, mY = GUIScreen.mouseY;
@@ -120,8 +115,113 @@ public abstract class GUIScreen extends GuiScreen
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 
         //Matrix
-        GlStateManager.pushMatrix();
-        GlStateManager.scale(width - 1d / pxWidth, height - 1d / pxHeight, 1);
+        Render.startOrtho();
+//        GlStateManager.scale(1d / pxWidth, 1d / pxHeight, 1);
+//        GlStateManager.pushMatrix();
+//        GlStateManager.scale(width / 2d - 1d / pxWidth, height / 2d - 1d / pxHeight, 1);
+
+
+        GlStateManager.color(1, 0, 0, 1);
+        GlStateManager.glBegin(GL11.GL_POINTS);
+        GlStateManager.glVertex3f(50, 0, 0);
+        GlStateManager.glEnd();
+
+        GlStateManager.color(1, 0, 0, 1);
+        GlStateManager.glBegin(GL11.GL_POINTS);
+        GlStateManager.glVertex3f(5, 5, 0);
+        GlStateManager.glVertex3f(pxWidth - 1 - 5, pxHeight - 1 - 5, 0);
+        GlStateManager.glVertex3f(pxWidth - 1 - 5, 5, 0);
+        GlStateManager.glVertex3f(5, pxHeight - 1 - 5, 0);
+        GlStateManager.glEnd();
+
+        GlStateManager.color(1, 0, 1, 1);
+        GlStateManager.glBegin(GL11.GL_POINTS);
+        GlStateManager.glVertex3f(4, 4, 0);
+        GlStateManager.glVertex3f(pxWidth - 1 - 4, pxHeight - 1 - 4, 0);
+        GlStateManager.glVertex3f(pxWidth - 1 - 4, 4, 0);
+        GlStateManager.glVertex3f(4, pxHeight - 1 - 4, 0);
+        GlStateManager.glEnd();
+
+        GlStateManager.color(1, 1, 0, 1);
+        GlStateManager.glBegin(GL11.GL_POINTS);
+        GlStateManager.glVertex3f(3, 3, 0);
+        GlStateManager.glVertex3f(pxWidth - 1 - 3, pxHeight - 1 - 3, 0);
+        GlStateManager.glVertex3f(pxWidth - 1 - 3, 3, 0);
+        GlStateManager.glVertex3f(3, pxHeight - 1 - 3, 0);
+        GlStateManager.glEnd();
+
+        GlStateManager.color(0, 0, 1, 1);
+        GlStateManager.glBegin(GL11.GL_POINTS);
+        GlStateManager.glVertex3f(2, 2, 0);
+        GlStateManager.glVertex3f(pxWidth - 1 - 2, pxHeight - 1 - 2, 0);
+        GlStateManager.glVertex3f(pxWidth - 1 - 2, 2, 0);
+        GlStateManager.glVertex3f(2, pxHeight - 1 - 2, 0);
+        GlStateManager.glEnd();
+
+        GlStateManager.color(0, 1, 0, 1);
+        GlStateManager.glBegin(GL11.GL_POINTS);
+        GlStateManager.glVertex3f(1, 1, 0);
+        GlStateManager.glVertex3f(pxWidth - 1 - 1, pxHeight - 1 - 1, 0);
+        GlStateManager.glVertex3f(pxWidth - 1 - 1, 1, 0);
+        GlStateManager.glVertex3f(1, pxHeight - 1 - 1, 0);
+        GlStateManager.glEnd();
+
+        GlStateManager.color(1, 1, 1, 1);
+        GlStateManager.glBegin(GL11.GL_POINTS);
+        GlStateManager.glVertex3f(0, 0, 0);
+        GlStateManager.glVertex3f(pxWidth - 1, pxHeight - 1, 0);
+        GlStateManager.glVertex3f(pxWidth - 1, 0, 0);
+        GlStateManager.glVertex3f(0, pxHeight - 1, 0);
+        GlStateManager.glEnd();
+//
+//
+//        GlStateManager.color(1, 0, 0, 1);
+//        GlStateManager.glBegin(GL11.GL_POINTS);
+//        GlStateManager.glVertex3f(5f / pxWidth, 5f / pxHeight, 0);
+//        GlStateManager.glVertex3f(1f - 5f / pxWidth, 1f - 5f / pxHeight, 0);
+//        GlStateManager.glVertex3f(1f - 5f / pxWidth, 5f / pxHeight, 0);
+//        GlStateManager.glVertex3f(5f / pxWidth, 1f - 5f / pxHeight, 0);
+//        GlStateManager.glEnd();
+//
+//        GlStateManager.color(1, 0, 1, 1);
+//        GlStateManager.glBegin(GL11.GL_POINTS);
+//        GlStateManager.glVertex3f(4f / pxWidth, 4f / pxHeight, 0);
+//        GlStateManager.glVertex3f(1f - 4f / pxWidth, 1f - 4f / pxHeight, 0);
+//        GlStateManager.glVertex3f(1f - 4f / pxWidth, 4f / pxHeight, 0);
+//        GlStateManager.glVertex3f(4f / pxWidth, 1f - 4f / pxHeight, 0);
+//        GlStateManager.glEnd();
+//
+//        GlStateManager.color(1, 1, 0, 1);
+//        GlStateManager.glBegin(GL11.GL_POINTS);
+//        GlStateManager.glVertex3f(3f / pxWidth, 3f / pxHeight, 0);
+//        GlStateManager.glVertex3f(1f - 3f / pxWidth, 1f - 3f / pxHeight, 0);
+//        GlStateManager.glVertex3f(1f - 3f / pxWidth, 3f / pxHeight, 0);
+//        GlStateManager.glVertex3f(3f / pxWidth, 1f - 3f / pxHeight, 0);
+//        GlStateManager.glEnd();
+//
+//        GlStateManager.color(0, 0, 1, 1);
+//        GlStateManager.glBegin(GL11.GL_POINTS);
+//        GlStateManager.glVertex3f(2f / pxWidth, 2f / pxHeight, 0);
+//        GlStateManager.glVertex3f(1f - 2f / pxWidth, 1f - 2f / pxHeight, 0);
+//        GlStateManager.glVertex3f(1f - 2f / pxWidth, 2f / pxHeight, 0);
+//        GlStateManager.glVertex3f(2f / pxWidth, 1f - 2f / pxHeight, 0);
+//        GlStateManager.glEnd();
+//
+//        GlStateManager.color(0, 1, 0, 1);
+//        GlStateManager.glBegin(GL11.GL_POINTS);
+//        GlStateManager.glVertex3f(1f / pxWidth, 1f / pxHeight, 0);
+//        GlStateManager.glVertex3f(1f - 1f / pxWidth, 1f - 1f / pxHeight, 0);
+//        GlStateManager.glVertex3f(1f - 1f / pxWidth, 1f / pxHeight, 0);
+//        GlStateManager.glVertex3f(1f / pxWidth, 1f - 1f / pxHeight, 0);
+//        GlStateManager.glEnd();
+//
+//        GlStateManager.color(1, 1, 1, 1);
+//        GlStateManager.glBegin(GL11.GL_POINTS);
+//        GlStateManager.glVertex3f(0, 0, 0);
+//        GlStateManager.glVertex3f(1, 1, 0);
+//        GlStateManager.glVertex3f(1, 0, 0);
+//        GlStateManager.glVertex3f(0, 1, 0);
+//        GlStateManager.glEnd();
 
         //Scissor
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
@@ -134,7 +234,8 @@ public abstract class GUIScreen extends GuiScreen
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
         //Undo matrix
-        GlStateManager.popMatrix();
+        Render.endOrtho();
+//        GlStateManager.popMatrix();
 
         //Undo misc GL settings
         GlStateManager.shadeModel(7424);
@@ -181,12 +282,16 @@ public abstract class GUIScreen extends GuiScreen
     public void onResize(Minecraft mcIn, int w, int h)
     {
         if (w == width && h == height) return;
-
         super.onResize(mcIn, w, h);
+        recalc();
+    }
 
-        int scale = new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
-        pxWidth = w * scale;
-        pxHeight = h * scale;
+    private void recalc()
+    {
+        pxWidth = Display.getWidth();
+        pxHeight = Display.getHeight();
+
+        System.out.println(pxWidth + ", " + pxHeight);
 
         root.recalc();
     }
