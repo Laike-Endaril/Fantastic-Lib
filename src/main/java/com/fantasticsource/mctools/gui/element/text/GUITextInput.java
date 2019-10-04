@@ -7,6 +7,8 @@ import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.text.filter.TextFilter;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
@@ -933,6 +935,8 @@ public class GUITextInput extends GUIText
         GlStateManager.disableTexture2D();
 
 
+        double scale = new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
+
         if (!filter.acceptable(text))
         {
             //Highlight red if text does not pass filter
@@ -965,11 +969,11 @@ public class GUITextInput extends GUIText
             GlStateManager.enableTexture2D();
 
             GlStateManager.pushMatrix();
-            GlStateManager.scale(1d / absolutePxWidth(), 1d / absolutePxHeight(), 1);
+            GlStateManager.scale(scale / absolutePxWidth(), scale / absolutePxHeight(), 1);
 
             Color c = active ? activeColor : isMouseWithin() ? hoverColor : color;
             if (parent instanceof MultilineTextInput) MonoASCIIFontRenderer.draw(text, 0, 0, c, BLACK);
-            else FONT_RENDERER.drawString(text, 0, 0, (c.color() >> 8) | c.a() << 24, false);
+            else FONT_RENDERER.drawString(text, 1, 0, (c.color() >> 8) | c.a() << 24, false);
 
             GlStateManager.popMatrix();
 
@@ -980,11 +984,11 @@ public class GUITextInput extends GUIText
         //Draw cursor and selection highlight
         if (active || parent instanceof MultilineTextInput)
         {
-            float cursorX = parent instanceof MultilineTextInput ? MonoASCIIFontRenderer.getStringWidth(text.substring(0, cursorPosition)) : FONT_RENDERER.getStringWidth(text.substring(0, cursorPosition)) - 0.5f;
+            float cursorX = parent instanceof MultilineTextInput ? MonoASCIIFontRenderer.getStringWidth(text.substring(0, cursorPosition)) : FONT_RENDERER.getStringWidth(text.substring(0, cursorPosition)) + 0.5f;
             float selectorX = selectorPosition == -1 ? cursorX : (parent instanceof MultilineTextInput ? MonoASCIIFontRenderer.getStringWidth(text.substring(0, selectorPosition)) : FONT_RENDERER.getStringWidth(text.substring(0, selectorPosition))) - 0.5f;
 
-            cursorX /= absolutePxWidth();
-            selectorX /= absolutePxWidth();
+            cursorX *= scale / absolutePxWidth();
+            selectorX *= scale / absolutePxWidth();
 
             if (cursorX != selectorX)
             {
