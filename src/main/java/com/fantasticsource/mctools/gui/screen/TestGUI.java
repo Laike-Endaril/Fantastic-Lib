@@ -32,7 +32,17 @@ public class TestGUI extends GUIScreen
         switch (test)
         {
             default:
-                test = 7;
+                test = 8;
+
+            case 8:
+            {
+                GUIView view = new GUIView(this, 1d / pxWidth, 1d / pxHeight, 10d / pxWidth, 10d / pxHeight);
+                root.add(view);
+                view.add(new GUIGradient(this, -0.1, -0.1, 1.2, 1.2, Color.RED));
+                view.add(new GUIGradient(this, 0, 0, 1, 1, Color.GREEN));
+                view.add(new GUIGradient(this, 0.1, 0.1, 0.8, 0.8, Color.YELLOW));
+                break;
+            }
 
             case 7:
             {

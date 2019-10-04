@@ -92,7 +92,6 @@ public class Render
         GlStateManager.pushMatrix();
         GlStateManager.loadIdentity();
         GlStateManager.ortho(0, Display.getWidth(), Display.getHeight(), 0, -1, 1);
-        GlStateManager.translate(0, 1, 0);
         GlStateManager.matrixMode(GL11.GL_MODELVIEW);
         GlStateManager.pushMatrix();
         GlStateManager.loadIdentity();

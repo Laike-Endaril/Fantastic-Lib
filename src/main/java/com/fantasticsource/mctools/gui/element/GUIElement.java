@@ -90,8 +90,8 @@ public abstract class GUIElement
 
         GUIScreen.currentScissor[0] = Tools.max(GUIScreen.currentScissor[0], absolutePxX());
         GUIScreen.currentScissor[1] = Tools.max(GUIScreen.currentScissor[1], absolutePxY());
-        GUIScreen.currentScissor[2] = Tools.min(GUIScreen.currentScissor[2], absolutePxX() + absolutePxWidth());
-        GUIScreen.currentScissor[3] = Tools.min(GUIScreen.currentScissor[3], absolutePxY() + absolutePxHeight());
+        GUIScreen.currentScissor[2] = (int) Tools.min(GUIScreen.currentScissor[2], absolutePxX() + absolutePxWidth());
+        GUIScreen.currentScissor[3] = (int) Tools.min(GUIScreen.currentScissor[3], absolutePxY() + absolutePxHeight());
 
         //Attempt scissor
         if (!screen.scissor())
@@ -211,12 +211,12 @@ public abstract class GUIElement
 
     public final int absolutePxX()
     {
-        return (int) (absoluteX() * screen.pxWidth);
+        return (int) Math.round(absoluteX() * (screen.pxWidth - 1));
     }
 
     public final int absolutePxY()
     {
-        return (int) (absoluteY() * screen.pxHeight);
+        return (int) Math.round(absoluteY() * (screen.pxHeight - 1));
     }
 
     public final double absoluteWidth()
@@ -233,12 +233,12 @@ public abstract class GUIElement
 
     public final int absolutePxWidth()
     {
-        return (int) (absoluteWidth() * screen.pxWidth);
+        return (int) Math.round(absoluteWidth() * (screen.pxWidth - 1));
     }
 
     public final int absolutePxHeight()
     {
-        return (int) (absoluteHeight() * screen.pxHeight);
+        return (int) Math.round(absoluteHeight() * (screen.pxHeight - 1));
     }
 
     public final double mouseX()
