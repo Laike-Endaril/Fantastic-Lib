@@ -29,7 +29,7 @@ public abstract class GUIScreen extends GuiScreen
 
     public static final FontRenderer FONT_RENDERER = Minecraft.getMinecraft().fontRenderer;
 
-    public static int pxWidth, pxHeight;
+    public int pxWidth, pxHeight;
     public static int[] currentScissor;
 
     public static double mouseX = 0.5, mouseY = 0.5;
@@ -97,12 +97,12 @@ public abstract class GUIScreen extends GuiScreen
         draw();
     }
 
-    public static boolean scissor()
+    public boolean scissor()
     {
         int w = currentScissor[2] - currentScissor[0], h = currentScissor[3] - currentScissor[1];
         if (w < 0 || h < 0)
         {
-            System.out.println("Scissor width or height is negative: " + w + ", " + h);
+            System.out.println("Scissor width and/or height is negative: " + w + ", " + h);
             return false;
         }
 

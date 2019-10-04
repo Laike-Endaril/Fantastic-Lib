@@ -85,16 +85,26 @@ public abstract class GUIElement
         GlStateManager.scale(width, height, 1);
 
         //Scissor setup
-        int[] lastScissor = GUIScreen.currentScissor;
+        int[] lastScissor = new int[4];
+        System.arraycopy(GUIScreen.currentScissor, 0, lastScissor, 0, 4);
+
         GUIScreen.currentScissor[0] = Tools.max(GUIScreen.currentScissor[0], absolutePxX());
         GUIScreen.currentScissor[1] = Tools.max(GUIScreen.currentScissor[1], absolutePxY());
         GUIScreen.currentScissor[2] = Tools.min(GUIScreen.currentScissor[2], absolutePxX() + absolutePxWidth());
         GUIScreen.currentScissor[3] = Tools.min(GUIScreen.currentScissor[3], absolutePxY() + absolutePxHeight());
 
         //Attempt scissor
-        if (!GUIScreen.scissor())
+        if (!screen.scissor())
         {
+//            System.out.println(toString());
+//            System.out.println(x + ", " + y + ", " + width + ", " + height);
+//            System.out.println(absolutePxX() + ", " + absolutePxY() + ", " + (absolutePxX() + absolutePxWidth()) + ", " + (absolutePxY() + absolutePxHeight()));
+
             GUIScreen.currentScissor = lastScissor;
+
+//            System.out.println(GUIScreen.currentScissor[0] + ", " + GUIScreen.currentScissor[1] + ", " + GUIScreen.currentScissor[2] + ", " + GUIScreen.currentScissor[3]);
+//            System.out.println();
+
             GlStateManager.popMatrix();
             return null;
         }
@@ -201,12 +211,12 @@ public abstract class GUIElement
 
     public final int absolutePxX()
     {
-        return (int) (absoluteX() * GUIScreen.pxWidth);
+        return (int) (absoluteX() * screen.pxWidth);
     }
 
     public final int absolutePxY()
     {
-        return (int) (absoluteY() * GUIScreen.pxHeight);
+        return (int) (absoluteY() * screen.pxHeight);
     }
 
     public final double absoluteWidth()
@@ -223,12 +233,12 @@ public abstract class GUIElement
 
     public final int absolutePxWidth()
     {
-        return (int) (absoluteWidth() * GUIScreen.pxWidth);
+        return (int) (absoluteWidth() * screen.pxWidth);
     }
 
     public final int absolutePxHeight()
     {
-        return (int) (absoluteHeight() * GUIScreen.pxHeight);
+        return (int) (absoluteHeight() * screen.pxHeight);
     }
 
     public final double mouseX()

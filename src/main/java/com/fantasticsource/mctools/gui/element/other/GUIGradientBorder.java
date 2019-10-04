@@ -82,7 +82,7 @@ public class GUIGradientBorder extends GUIElement
         GlStateManager.disableAlpha();
 
         double min = Tools.min(0.5, thickness) * Tools.min(absolutePxWidth(), absolutePxHeight());
-        double xThickness = min / GUIScreen.pxWidth, yThickness = min / GUIScreen.pxHeight;
+        double xThickness = min / screen.pxWidth, yThickness = min / screen.pxHeight;
 
 
         Tessellator tessellator = Tessellator.getInstance();
