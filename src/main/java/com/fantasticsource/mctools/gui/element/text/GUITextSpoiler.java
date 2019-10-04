@@ -119,15 +119,8 @@ public class GUITextSpoiler extends GUIText
 
         hidden = false;
 
-        if (parent == null)
-        {
-            screen.guiElements.addAll(screen.guiElements.indexOf(this) + 1, hideableElements);
-        }
-        else
-        {
-            int index = parent.indexOf(this);
-            for (GUIElement element : hideableElements) parent.add(++index, element);
-        }
+        int index = parent.indexOf(this);
+        for (GUIElement element : hideableElements) parent.add(++index, element);
     }
 
     public void hide()
@@ -136,17 +129,7 @@ public class GUITextSpoiler extends GUIText
 
         hidden = true;
 
-        if (parent == null)
-        {
-            for (GUIElement element : screen.guiElements.toArray(new GUIElement[0]))
-            {
-                if (hideableElements.contains(element)) screen.guiElements.remove(element);
-            }
-        }
-        else
-        {
-            for (GUIElement element : hideableElements) parent.remove(element);
-        }
+        for (GUIElement element : hideableElements) parent.remove(element);
     }
 
     public void toggle()

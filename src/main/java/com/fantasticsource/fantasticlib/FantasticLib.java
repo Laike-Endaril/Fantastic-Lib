@@ -2,6 +2,7 @@ package com.fantasticsource.fantasticlib;
 
 import com.fantasticsource.fantasticlib.config.FantasticConfig;
 import com.fantasticsource.mctools.*;
+import com.fantasticsource.mctools.gui.screen.TestGUI;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
@@ -19,6 +20,10 @@ public class FantasticLib
     public static final String NAME = "Fantastic Lib";
     public static final String VERSION = "1.12.2.022";
 
+
+    private static final boolean DEBUG_GUI = true;
+
+
     public FantasticLib()
     {
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
@@ -26,6 +31,7 @@ public class FantasticLib
             //Physical client
             if (FantasticConfig.entityRenderFixer) MinecraftForge.EVENT_BUS.register(EntityRenderFixer.class);
             MinecraftForge.EVENT_BUS.register(TooltipFixer.class);
+            if (DEBUG_GUI) MinecraftForge.EVENT_BUS.register(TestGUI.class);
         }
 
         MinecraftForge.EVENT_BUS.register(PlayerData.class);

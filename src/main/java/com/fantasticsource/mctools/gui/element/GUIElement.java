@@ -2,12 +2,11 @@ package com.fantasticsource.mctools.gui.element;
 
 import com.fantasticsource.mctools.gui.GUILeftClickEvent;
 import com.fantasticsource.mctools.gui.GUIScreen;
-import com.fantasticsource.mctools.gui.element.view.GUIView;
+import com.fantasticsource.mctools.gui.element.view.GUIScrollView;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
-import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.common.MinecraftForge;
-import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,8 +28,6 @@ public abstract class GUIElement
             AP_CENTERED_V_LEFT_TO_RIGHT = 9,
             AP_X_0_TOP_TO_BOTTOM = 10;
 
-
-    public int[] currentScissor = null;
 
     public double x, y, width, height;
     public GUIElement parent = null;
@@ -80,37 +77,49 @@ public abstract class GUIElement
         return xx <= x && x < xx + absoluteWidth() && yy <= y && y < yy + absoluteHeight();
     }
 
-    public void draw()
+    private int[] preDraw()
+    {
+        //Matrix
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(x, y, 0);
+        GlStateManager.scale(width, height, 1);
+
+        //Scissor
+        int[] lastScissor = GUIScreen.currentScissor;
+        GUIScreen.currentScissor[0] = Tools.max(GUIScreen.currentScissor[0], absolutePxX());
+        GUIScreen.currentScissor[1] = Tools.max(GUIScreen.currentScissor[1], absolutePxY());
+        GUIScreen.currentScissor[2] = Tools.min(GUIScreen.currentScissor[2], absolutePxX() + absolutePxWidth());
+        GUIScreen.currentScissor[3] = Tools.min(GUIScreen.currentScissor[3], absolutePxY() + absolutePxHeight());
+        GUIScreen.scissor();
+
+        return lastScissor;
+    }
+
+    protected final void drawChildren()
     {
         if (children.size() > 0 && width > 0 && height > 0)
         {
-            double screenWidth = screen.width, screenHeight = screen.height;
-
-            int mcScale = new ScaledResolution(screen.mc).getScaleFactor();
-            double wScale = screenWidth * mcScale, hScale = screenHeight * mcScale;
-
-            currentScissor = new int[]{(int) (absoluteX() * wScale), (int) ((1 - (absoluteY() + absoluteHeight())) * hScale), (int) (absoluteWidth() * wScale), (int) (absoluteHeight() * hScale)};
-            if (parent != null)
-            {
-                currentScissor[0] = Tools.max(currentScissor[0], parent.currentScissor[0]);
-                currentScissor[1] = Tools.max(currentScissor[1], parent.currentScissor[1]);
-                currentScissor[2] = Tools.min(currentScissor[2], parent.currentScissor[2]);
-                currentScissor[3] = Tools.min(currentScissor[3], parent.currentScissor[3]);
-            }
-            else GL11.glEnable(GL11.GL_SCISSOR_TEST);
-
             for (GUIElement element : children)
             {
                 if (element.x + element.width < 0 || element.x > 1 || element.y + element.height < 0 || element.y >= 1) continue;
-                GL11.glScissor(currentScissor[0], currentScissor[1], currentScissor[2], currentScissor[3]);
-                element.draw();
-            }
 
-            currentScissor = null;
-            if (parent == null) GL11.glDisable(GL11.GL_SCISSOR_TEST);
-            else GL11.glScissor(parent.currentScissor[0], parent.currentScissor[1], parent.currentScissor[2], parent.currentScissor[3]);
+                int[] lastScissor = element.preDraw();
+                element.draw();
+                element.postDraw(lastScissor);
+            }
         }
     }
+
+    private void postDraw(int[] lastScissor)
+    {
+        //Undo scissor
+        GUIScreen.currentScissor = lastScissor;
+
+        //Undo matrix
+        GlStateManager.popMatrix();
+    }
+
+    public abstract void draw();
 
     public void mouseWheel(double x, double y, int delta)
     {
@@ -166,16 +175,29 @@ public abstract class GUIElement
         for (GUIElement child : (ArrayList<GUIElement>) children.clone()) child.mouseDrag(x - this.x, y - this.y, button);
     }
 
-    public double absoluteX()
+    public final double absoluteX()
     {
         if (parent == null) return x;
         return parent.absoluteX() + x * parent.absoluteWidth();
     }
 
-    public double absoluteY()
+    public final double absoluteY()
     {
         if (parent == null) return y;
+
+        if (parent instanceof GUIScrollView) return parent.absoluteY() + (y - ((GUIScrollView) parent).top) * parent.absoluteHeight();
+
         return parent.absoluteY() + y * parent.absoluteHeight();
+    }
+
+    public final int absolutePxX()
+    {
+        return (int) (absoluteX() * GUIScreen.pxWidth);
+    }
+
+    public final int absolutePxY()
+    {
+        return (int) (absoluteY() * GUIScreen.pxHeight);
     }
 
     public final double absoluteWidth()
@@ -190,13 +212,23 @@ public abstract class GUIElement
         return parent.absoluteHeight() * height;
     }
 
-    public double mouseX()
+    public final int absolutePxWidth()
+    {
+        return (int) (absoluteWidth() * GUIScreen.pxWidth);
+    }
+
+    public final int absolutePxHeight()
+    {
+        return (int) (absoluteHeight() * GUIScreen.pxHeight);
+    }
+
+    public final double mouseX()
     {
         if (parent == null) return GUIScreen.mouseX;
         return parent.mouseX() + parent.childMouseXOffset();
     }
 
-    public double mouseY()
+    public final double mouseY()
     {
         if (parent == null) return GUIScreen.mouseY;
         return parent.mouseY() + parent.childMouseYOffset();

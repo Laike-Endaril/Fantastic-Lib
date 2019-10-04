@@ -37,18 +37,17 @@ public class GUIChar extends GUIElement
     @Override
     public void draw()
     {
-        super.draw();
-
         GlStateManager.enableTexture2D();
 
         GlStateManager.pushMatrix();
-        GlStateManager.translate(absoluteX(), absoluteY(), 0);
-        GlStateManager.scale(1d / screen.width, 1d / screen.height, 1);
+        GlStateManager.scale(1d / absolutePxWidth(), 1d / absolutePxHeight(), 1);
 
         Color c = Color.WHITE;
         FONT_RENDERER.drawString("" + value, 0, 0, (c.color() >> 8) | c.a() << 24, false);
 
         GlStateManager.popMatrix();
-    }
 
+
+        drawChildren();
+    }
 }

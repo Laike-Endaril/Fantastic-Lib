@@ -26,7 +26,7 @@ public class GUITooltipView extends GUIAutocroppedView
         if (x < 0) x = 1 - width;
         if (x < 0) x = 0;
 
-        super.draw();
+        drawChildren();
     }
 
     @Override

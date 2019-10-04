@@ -61,8 +61,6 @@ public class GUIGradientBorder extends GUIElement
     @Override
     public void draw()
     {
-        double screenWidth = screen.width, screenHeight = screen.height;
-
         Color b, c;
         if (active)
         {
@@ -83,13 +81,8 @@ public class GUIGradientBorder extends GUIElement
         GlStateManager.disableTexture2D();
         GlStateManager.disableAlpha();
 
-        double x1 = absoluteX(), y1 = absoluteY();
-        double width = absoluteWidth(), height = absoluteHeight();
-        double x2 = x1 + width, y2 = y1 + height;
-
-        double pxWidth = width * screenWidth, pxHeight = height * screenHeight;
-        double min = Tools.min(0.5, thickness) * Tools.min(pxWidth, pxHeight);
-        double xThickness = min / screenWidth, yThickness = min / screenHeight;
+        double min = Tools.min(0.5, thickness) * Tools.min(absolutePxWidth(), absolutePxHeight());
+        double xThickness = min / GUIScreen.pxWidth, yThickness = min / GUIScreen.pxHeight;
 
 
         Tessellator tessellator = Tessellator.getInstance();
@@ -97,58 +90,59 @@ public class GUIGradientBorder extends GUIElement
         bufferbuilder.begin(GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 
 
-        bufferbuilder.pos(x2 - xThickness, y1 + yThickness, 0).color(c.r(), c.g(), c.b(), c.a()).endVertex();
-        bufferbuilder.pos(x1 + xThickness, y1 + yThickness, 0).color(c.r(), c.g(), c.b(), c.a()).endVertex();
-        bufferbuilder.pos(x1 + xThickness, y2 - yThickness, 0).color(c.r(), c.g(), c.b(), c.a()).endVertex();
-        bufferbuilder.pos(x2 - xThickness, y2 - yThickness, 0).color(c.r(), c.g(), c.b(), c.a()).endVertex();
+        bufferbuilder.pos(1 - xThickness, yThickness, 0).color(c.r(), c.g(), c.b(), c.a()).endVertex();
+        bufferbuilder.pos(xThickness, yThickness, 0).color(c.r(), c.g(), c.b(), c.a()).endVertex();
+        bufferbuilder.pos(xThickness, 1 - yThickness, 0).color(c.r(), c.g(), c.b(), c.a()).endVertex();
+        bufferbuilder.pos(1 - xThickness, 1 - yThickness, 0).color(c.r(), c.g(), c.b(), c.a()).endVertex();
 
 
-        bufferbuilder.pos(x2 - xThickness, y1, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
-        bufferbuilder.pos(x1 + xThickness, y1, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
-        bufferbuilder.pos(x1 + xThickness, y1 + yThickness, 0).color(c.r(), c.g(), c.b(), c.a()).endVertex();
-        bufferbuilder.pos(x2 - xThickness, y1 + yThickness, 0).color(c.r(), c.g(), c.b(), c.a()).endVertex();
+        bufferbuilder.pos(1 - xThickness, 0, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
+        bufferbuilder.pos(xThickness, 0, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
+        bufferbuilder.pos(xThickness, yThickness, 0).color(c.r(), c.g(), c.b(), c.a()).endVertex();
+        bufferbuilder.pos(1 - xThickness, yThickness, 0).color(c.r(), c.g(), c.b(), c.a()).endVertex();
 
-        bufferbuilder.pos(x2 - xThickness, y2 - yThickness, 0).color(c.r(), c.g(), c.b(), c.a()).endVertex();
-        bufferbuilder.pos(x1 + xThickness, y2 - yThickness, 0).color(c.r(), c.g(), c.b(), c.a()).endVertex();
-        bufferbuilder.pos(x1 + xThickness, y2, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
-        bufferbuilder.pos(x2 - xThickness, y2, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
+        bufferbuilder.pos(1 - xThickness, 1 - yThickness, 0).color(c.r(), c.g(), c.b(), c.a()).endVertex();
+        bufferbuilder.pos(xThickness, 1 - yThickness, 0).color(c.r(), c.g(), c.b(), c.a()).endVertex();
+        bufferbuilder.pos(xThickness, 1, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
+        bufferbuilder.pos(1 - xThickness, 1, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
 
-        bufferbuilder.pos(x2, y1 + yThickness, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
-        bufferbuilder.pos(x2 - xThickness, y1 + yThickness, 0).color(c.r(), c.g(), c.b(), c.a()).endVertex();
-        bufferbuilder.pos(x2 - xThickness, y2 - yThickness, 0).color(c.r(), c.g(), c.b(), c.a()).endVertex();
-        bufferbuilder.pos(x2, y2 - yThickness, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
+        bufferbuilder.pos(1, yThickness, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
+        bufferbuilder.pos(1 - xThickness, yThickness, 0).color(c.r(), c.g(), c.b(), c.a()).endVertex();
+        bufferbuilder.pos(1 - xThickness, 1 - yThickness, 0).color(c.r(), c.g(), c.b(), c.a()).endVertex();
+        bufferbuilder.pos(1, 1 - yThickness, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
 
-        bufferbuilder.pos(x1 + xThickness, y1 + yThickness, 0).color(c.r(), c.g(), c.b(), c.a()).endVertex();
-        bufferbuilder.pos(x1, y1 + yThickness, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
-        bufferbuilder.pos(x1, y2 - yThickness, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
-        bufferbuilder.pos(x1 + xThickness, y2 - yThickness, 0).color(c.r(), c.g(), c.b(), c.a()).endVertex();
+        bufferbuilder.pos(xThickness, yThickness, 0).color(c.r(), c.g(), c.b(), c.a()).endVertex();
+        bufferbuilder.pos(0, yThickness, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
+        bufferbuilder.pos(0, 1 - yThickness, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
+        bufferbuilder.pos(xThickness, 1 - yThickness, 0).color(c.r(), c.g(), c.b(), c.a()).endVertex();
 
 
         //Mind the vertex ordering; not only the winding order, but the specific order of corners matters here to correctly interpolate the compound gradients for corners
 
-        bufferbuilder.pos(x2, y1, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
-        bufferbuilder.pos(x2 - xThickness, y1, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
-        bufferbuilder.pos(x2 - xThickness, y1 + yThickness, 0).color(c.r(), c.g(), c.b(), c.a()).endVertex();
-        bufferbuilder.pos(x2, y1 + yThickness, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
+        bufferbuilder.pos(1, 0, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
+        bufferbuilder.pos(1 - xThickness, 0, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
+        bufferbuilder.pos(1 - xThickness, yThickness, 0).color(c.r(), c.g(), c.b(), c.a()).endVertex();
+        bufferbuilder.pos(1, yThickness, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
 
-        bufferbuilder.pos(x1 + xThickness, y2 - yThickness, 0).color(c.r(), c.g(), c.b(), c.a()).endVertex();
-        bufferbuilder.pos(x1, y2 - yThickness, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
-        bufferbuilder.pos(x1, y2, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
-        bufferbuilder.pos(x1 + xThickness, y2, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
+        bufferbuilder.pos(xThickness, 1 - yThickness, 0).color(c.r(), c.g(), c.b(), c.a()).endVertex();
+        bufferbuilder.pos(0, 1 - yThickness, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
+        bufferbuilder.pos(0, 1, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
+        bufferbuilder.pos(xThickness, 1, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
 
-        bufferbuilder.pos(x2 - xThickness, y2 - yThickness, 0).color(c.r(), c.g(), c.b(), c.a()).endVertex();
-        bufferbuilder.pos(x2 - xThickness, y2, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
-        bufferbuilder.pos(x2, y2, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
-        bufferbuilder.pos(x2, y2 - yThickness, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
+        bufferbuilder.pos(1 - xThickness, 1 - yThickness, 0).color(c.r(), c.g(), c.b(), c.a()).endVertex();
+        bufferbuilder.pos(1 - xThickness, 1, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
+        bufferbuilder.pos(1, 1, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
+        bufferbuilder.pos(1, 1 - yThickness, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
 
-        bufferbuilder.pos(x1, y1, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
-        bufferbuilder.pos(x1, y1 + yThickness, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
-        bufferbuilder.pos(x1 + xThickness, y1 + yThickness, 0).color(c.r(), c.g(), c.b(), c.a()).endVertex();
-        bufferbuilder.pos(x1 + xThickness, y1, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
+        bufferbuilder.pos(0, 0, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
+        bufferbuilder.pos(0, yThickness, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
+        bufferbuilder.pos(xThickness, yThickness, 0).color(c.r(), c.g(), c.b(), c.a()).endVertex();
+        bufferbuilder.pos(xThickness, 0, 0).color(b.r(), b.g(), b.b(), b.a()).endVertex();
 
 
         tessellator.draw();
 
-        super.draw();
+
+        drawChildren();
     }
 }

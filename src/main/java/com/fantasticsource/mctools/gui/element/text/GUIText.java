@@ -16,7 +16,6 @@ public class GUIText extends GUIElement
     public String text;
     protected ArrayList<String> lines = new ArrayList<>();
     protected Color color, hoverColor, activeColor;
-    protected double scale;
 
 
     public GUIText(GUIScreen screen, String text)
@@ -24,31 +23,15 @@ public class GUIText extends GUIElement
         this(screen, text, Color.WHITE);
     }
 
-    public GUIText(GUIScreen screen, String text, double scale)
-    {
-        this(screen, text, scale, Color.WHITE);
-    }
-
     public GUIText(GUIScreen screen, String text, Color color)
     {
-        this(screen, text, 1, color);
-    }
-
-    public GUIText(GUIScreen screen, String text, double scale, Color color)
-    {
-        this(screen, text, scale, color, color, color);
+        this(screen, text, color, color, color);
     }
 
     public GUIText(GUIScreen screen, String text, Color color, Color hoverColor, Color activeColor)
     {
-        this(screen, text, 1, color, hoverColor, activeColor);
-    }
-
-    public GUIText(GUIScreen screen, String text, double scale, Color color, Color hoverColor, Color activeColor)
-    {
         super(screen, 0, 0);
         this.text = text;
-        this.scale = scale;
         this.color = color;
         this.hoverColor = hoverColor;
         this.activeColor = activeColor;
@@ -61,30 +44,14 @@ public class GUIText extends GUIElement
         this(screen, x, y, text, Color.WHITE);
     }
 
-    public GUIText(GUIScreen screen, double x, double y, String text, double scale)
-    {
-        this(screen, x, y, text, scale, Color.WHITE);
-    }
-
     public GUIText(GUIScreen screen, double x, double y, String text, Color color)
     {
-        this(screen, x, y, text, 1, color);
-    }
-
-    public GUIText(GUIScreen screen, double x, double y, String text, double scale, Color color)
-    {
-        this(screen, x, y, text, scale, color, color, color);
+        this(screen, x, y, text, color, color, color);
     }
 
     public GUIText(GUIScreen screen, double x, double y, String text, Color color, Color hoverColor, Color activeColor)
     {
-        this(screen, x, y, text, 1, color, hoverColor, activeColor);
-    }
-
-    public GUIText(GUIScreen screen, double x, double y, String text, double scale, Color color, Color hoverColor, Color activeColor)
-    {
         super(screen, x, y, 0, 0);
-        this.scale = scale;
         this.text = text;
         this.color = color;
         this.hoverColor = hoverColor;
@@ -180,9 +147,6 @@ public class GUIText extends GUIElement
             height = (double) (Tools.max(1, lines.size()) * FONT_RENDERER.FONT_HEIGHT - 1) / screen.height;
         }
 
-        width *= scale;
-        height *= scale;
-
         if (parent != null)
         {
             width /= parent.absoluteWidth();
@@ -196,13 +160,10 @@ public class GUIText extends GUIElement
     @Override
     public void draw()
     {
-        super.draw();
-
         GlStateManager.enableTexture2D();
 
         GlStateManager.pushMatrix();
-        GlStateManager.translate(absoluteX(), absoluteY(), 0);
-        GlStateManager.scale(scale / screen.width, scale / screen.height, 1);
+        GlStateManager.scale(1d / absolutePxWidth(), 1d / absolutePxHeight(), 1);
 
         Color c = active ? activeColor : isMouseWithin() ? hoverColor : color;
         int yy = 0;
@@ -213,6 +174,9 @@ public class GUIText extends GUIElement
         }
 
         GlStateManager.popMatrix();
+
+
+        drawChildren();
     }
 
     @Override

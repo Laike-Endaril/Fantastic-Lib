@@ -3,9 +3,6 @@ package com.fantasticsource.mctools.gui.element.view;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.tools.Tools;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
-import org.lwjgl.opengl.GL11;
 
 public class GUIScrollView extends GUIView
 {
@@ -89,39 +86,7 @@ public class GUIScrollView extends GUIView
     {
         recalc2();
 
-        if (children.size() > 0 && width > 0 && height > 0)
-        {
-            double screenWidth = screen.width, screenHeight = screen.height;
-
-            int mcScale = new ScaledResolution(screen.mc).getScaleFactor();
-            double wScale = screenWidth * mcScale, hScale = screenHeight * mcScale;
-
-            currentScissor = new int[]{(int) (absoluteX() * wScale), (int) ((1 - (absoluteY() + absoluteHeight())) * hScale), (int) (absoluteWidth() * wScale), (int) (absoluteHeight() * hScale)};
-            if (parent != null)
-            {
-                currentScissor[0] = Tools.max(currentScissor[0], parent.currentScissor[0]);
-                currentScissor[1] = Tools.max(currentScissor[1], parent.currentScissor[1]);
-                currentScissor[2] = Tools.min(currentScissor[2], parent.currentScissor[2]);
-                currentScissor[3] = Tools.min(currentScissor[3], parent.currentScissor[3]);
-            }
-            else GL11.glEnable(GL11.GL_SCISSOR_TEST);
-            GL11.glScissor(currentScissor[0], currentScissor[1], currentScissor[2], currentScissor[3]);
-
-            GlStateManager.pushMatrix();
-            GlStateManager.translate(0, -childMouseYOffset(), 0);
-
-            for (GUIElement element : children)
-            {
-                if (element.y + element.height < top || element.y >= bottom) continue;
-                element.draw();
-            }
-
-            GlStateManager.popMatrix();
-
-            currentScissor = null;
-            if (parent == null) GL11.glDisable(GL11.GL_SCISSOR_TEST);
-            else GL11.glScissor(parent.currentScissor[0], parent.currentScissor[1], parent.currentScissor[2], parent.currentScissor[3]);
-        }
+        drawChildren();
     }
 
     @Override

@@ -2,15 +2,17 @@ package com.fantasticsource.mctools.gui;
 
 import com.fantasticsource.mctools.ClientTickTimer;
 import com.fantasticsource.mctools.Render;
-import com.fantasticsource.mctools.gui.element.GUIElement;
+import com.fantasticsource.mctools.gui.element.view.GUIView;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,12 +29,32 @@ public abstract class GUIScreen extends GuiScreen
 
     public static final FontRenderer FONT_RENDERER = Minecraft.getMinecraft().fontRenderer;
 
+    public static int pxWidth, pxHeight;
+    public static int[] currentScissor;
+
     public static double mouseX = 0.5, mouseY = 0.5;
-    public ArrayList<GUIElement> guiElements = new ArrayList<>();
+    public final GUIView root;
     private ArrayList<Integer> mouseButtons = new ArrayList<>();
     private boolean initialized = false;
 
     public final ArrayList<Runnable> onClosedActions = new ArrayList<>();
+
+
+    public GUIScreen()
+    {
+        try
+        {
+            pxWidth = Render.getViewportWidth();
+            pxHeight = Render.getViewportHeight();
+        }
+        catch (IllegalAccessException e)
+        {
+            e.printStackTrace();
+        }
+
+        root = new GUIView(this, 1, 1);
+    }
+
 
     public static Color getIdleColor(Color activeColor)
     {
@@ -75,28 +97,38 @@ public abstract class GUIScreen extends GuiScreen
         draw();
     }
 
+    public static void scissor()
+    {
+        GL11.glScissor(currentScissor[0], pxHeight - currentScissor[3], currentScissor[2] - currentScissor[0], currentScissor[3] - currentScissor[1]);
+    }
+
     public void draw()
     {
+        //Misc GL settings
         GlStateManager.disableTexture2D();
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
         GlStateManager.shadeModel(7425);
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 
+        //Matrix
         GlStateManager.pushMatrix();
-        try
-        {
-            GlStateManager.scale(width - 1d / Render.getViewportWidth(), height - 1d / Render.getViewportHeight(), 1);
-        }
-        catch (IllegalAccessException e)
-        {
-            e.printStackTrace();
-        }
+        GlStateManager.scale(width - 1d / pxWidth, height - 1d / pxHeight, 1);
 
-        for (GUIElement element : (ArrayList<GUIElement>) guiElements.clone()) element.draw();
+        //Scissor
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        currentScissor = new int[]{0, 0, pxWidth, pxHeight};
 
+        //Draw
+        root.draw();
+
+        //Undo scissor
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+
+        //Undo matrix
         GlStateManager.popMatrix();
 
+        //Undo misc GL settings
         GlStateManager.shadeModel(7424);
         GlStateManager.disableBlend();
         GlStateManager.enableAlpha();
@@ -132,7 +164,7 @@ public abstract class GUIScreen extends GuiScreen
         }
 
         mouseButtons.clear();
-        for (GUIElement element : guiElements) element.recalc();
+        root.recalc();
     }
 
     protected abstract void init();
@@ -143,7 +175,12 @@ public abstract class GUIScreen extends GuiScreen
         if (w == width && h == height) return;
 
         super.onResize(mcIn, w, h);
-        for (GUIElement element : guiElements) element.recalc();
+
+        int scale = new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
+        pxWidth = w * scale;
+        pxHeight = h * scale;
+
+        root.recalc();
     }
 
     @Override
@@ -164,16 +201,9 @@ public abstract class GUIScreen extends GuiScreen
         mouseY = (double) (displayHeight - 1 - Mouse.getY()) / displayHeight;
 
 
-        GUIElement[] elements = guiElements.toArray(new GUIElement[0]);
         //Mouse wheel
         int delta = Mouse.getDWheel();
-        if (delta != 0)
-        {
-            for (GUIElement element : elements)
-            {
-                element.mouseWheel(mouseX, mouseY, delta);
-            }
-        }
+        if (delta != 0) root.mouseWheel(mouseX, mouseY, delta);
 
 
         //Mouse press, release, and drag
@@ -183,28 +213,19 @@ public abstract class GUIScreen extends GuiScreen
             if (Mouse.isButtonDown(btn))
             {
                 if (!mouseButtons.contains(btn)) mouseButtons.add(btn);
-                for (GUIElement element : elements)
-                {
-                    element.mousePressed(mouseX, mouseY, btn);
-                }
+                root.mousePressed(mouseX, mouseY, btn);
             }
             else
             {
                 mouseButtons.remove((Integer) btn); //Need to cast so it uses the object-based removal and not the index-based removal
-                for (GUIElement element : elements)
-                {
-                    element.mouseReleased(mouseX, mouseY, btn);
-                }
+                root.mouseReleased(mouseX, mouseY, btn);
             }
         }
         else
         {
             for (int b : mouseButtons)
             {
-                for (GUIElement element : elements)
-                {
-                    element.mouseDrag(mouseX, mouseY, b);
-                }
+                root.mouseDrag(mouseX, mouseY, b);
             }
         }
     }
@@ -238,11 +259,7 @@ public abstract class GUIScreen extends GuiScreen
     protected void keyTyped(char typedChar, int keyCode) throws IOException
     {
         super.keyTyped(typedChar, keyCode);
-
-        for (GUIElement element : guiElements)
-        {
-            element.keyTyped(typedChar, keyCode);
-        }
+        root.keyTyped(typedChar, keyCode);
     }
 
     public static class ScreenEntry

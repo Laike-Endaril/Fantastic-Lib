@@ -65,24 +65,20 @@ public class GUIGradient extends GUIElement
         GlStateManager.disableTexture2D();
         GlStateManager.disableAlpha();
 
-        float x1 = (float) absoluteX();
-        float y1 = (float) absoluteY();
-        float x2 = (float) (x1 + absoluteWidth());
-        float y2 = (float) (y1 + absoluteHeight());
-
         Color[] colors = active ? activeColors : isMouseWithin() ? hoverColors : this.colors;
 
         GlStateManager.glBegin(GL_QUADS);
         GlStateManager.color(colors[0].rf(), colors[0].gf(), colors[0].bf(), colors[0].af());
-        GlStateManager.glVertex3f(x2, y1, 0);
+        GlStateManager.glVertex3f(1, 0, 0);
         GlStateManager.color(colors[1].rf(), colors[1].gf(), colors[1].bf(), colors[1].af());
-        GlStateManager.glVertex3f(x1, y1, 0);
+        GlStateManager.glVertex3f(0, 0, 0);
         GlStateManager.color(colors[2].rf(), colors[2].gf(), colors[2].bf(), colors[2].af());
-        GlStateManager.glVertex3f(x1, y2, 0);
+        GlStateManager.glVertex3f(0, 1, 0);
         GlStateManager.color(colors[3].rf(), colors[3].gf(), colors[3].bf(), colors[3].af());
-        GlStateManager.glVertex3f(x2, y2, 0);
+        GlStateManager.glVertex3f(1, 1, 0);
         GlStateManager.glEnd();
 
-        super.draw();
+
+        drawChildren();
     }
 }

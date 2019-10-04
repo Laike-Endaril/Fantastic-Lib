@@ -7,7 +7,6 @@ import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.text.filter.TextFilter;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
@@ -931,78 +930,50 @@ public class GUITextInput extends GUIText
     @Override
     public void draw()
     {
-        double screenWidth = screen.width, screenHeight = screen.height;
+        GlStateManager.disableTexture2D();
 
-        int mcScale = new ScaledResolution(screen.mc).getScaleFactor();
-        double wScale = screenWidth * mcScale, hScale = screenHeight * mcScale;
-
-        if (children.size() > 0 && width > 0 && height > 0)
-        {
-            currentScissor = new int[]{(int) (x * wScale), (int) ((1 - (y + height)) * hScale), (int) (width * wScale), (int) (height * hScale)};
-            if (parent != null)
-            {
-                currentScissor[0] = Tools.max(currentScissor[0], parent.currentScissor[0]);
-                currentScissor[1] = Tools.max(currentScissor[1], parent.currentScissor[1]);
-                currentScissor[2] = Tools.min(currentScissor[2], parent.currentScissor[2]);
-                currentScissor[3] = Tools.min(currentScissor[3], parent.currentScissor[3]);
-            }
-            else GL11.glEnable(GL11.GL_SCISSOR_TEST);
-
-            for (GUIElement element : children)
-            {
-                if (element.x + element.width < 0 || element.x > width || element.y + element.height < 0 || element.y >= height) continue;
-                GL11.glScissor(currentScissor[0], currentScissor[1], currentScissor[2], currentScissor[3]);
-                element.draw();
-            }
-
-            if (parent == null) GL11.glDisable(GL11.GL_SCISSOR_TEST);
-            else GL11.glScissor(parent.currentScissor[0], parent.currentScissor[1], parent.currentScissor[2], parent.currentScissor[3]);
-        }
-
-
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(absoluteX(), absoluteY(), 0);
-        GlStateManager.scale(1d / screen.width, 1d / screen.height, 1);
-
-
-        float scaledHeight = (float) (height * screenHeight * (parent != null ? parent.absoluteHeight() : 1));
 
         if (!filter.acceptable(text))
         {
             //Highlight red if text does not pass filter
-            GlStateManager.disableTexture2D();
             GlStateManager.color(T_RED.rf(), T_RED.gf(), T_RED.bf(), T_RED.af());
 
             GlStateManager.glBegin(GL11.GL_QUADS);
             GlStateManager.glVertex3f(0, 0, 0);
-            GlStateManager.glVertex3f(0, scaledHeight, 0);
-            GlStateManager.glVertex3f((float) (width * screenWidth), scaledHeight, 0);
-            GlStateManager.glVertex3f((float) (width * screenWidth), 0, 0);
+            GlStateManager.glVertex3f(0, 1, 0);
+            GlStateManager.glVertex3f(1, 1, 0);
+            GlStateManager.glVertex3f(1, 0, 0);
             GlStateManager.glEnd();
         }
         else if (active)
         {
             //If we pass the filter, highlight gray if active
-            GlStateManager.disableTexture2D();
             GlStateManager.color(GRAY.rf(), GRAY.gf(), GRAY.bf(), 0.2f);
 
             GlStateManager.glBegin(GL11.GL_QUADS);
             GlStateManager.glVertex3f(0, 0, 0);
-            GlStateManager.glVertex3f(0, scaledHeight, 0);
-            GlStateManager.glVertex3f((float) (width * screenWidth), scaledHeight, 0);
-            GlStateManager.glVertex3f((float) (width * screenWidth), 0, 0);
+            GlStateManager.glVertex3f(0, 1, 0);
+            GlStateManager.glVertex3f(1, 1, 0);
+            GlStateManager.glVertex3f(1, 0, 0);
             GlStateManager.glEnd();
         }
 
 
         //Actual text
-        GlStateManager.enableTexture2D();
-
-        Color c = active ? activeColor : isMouseWithin() ? hoverColor : color;
         if (text.length() > 0)
         {
+            GlStateManager.enableTexture2D();
+
+            GlStateManager.pushMatrix();
+            GlStateManager.scale(1d / absolutePxWidth(), 1d / absolutePxHeight(), 1);
+
+            Color c = active ? activeColor : isMouseWithin() ? hoverColor : color;
             if (parent instanceof MultilineTextInput) MonoASCIIFontRenderer.draw(text, 0, 0, c, BLACK);
             else FONT_RENDERER.drawString(text, 0, 0, (c.color() >> 8) | c.a() << 24, false);
+
+            GlStateManager.popMatrix();
+
+            GlStateManager.disableTexture2D();
         }
 
 
@@ -1010,36 +981,37 @@ public class GUITextInput extends GUIText
         if (active || parent instanceof MultilineTextInput)
         {
             float cursorX = parent instanceof MultilineTextInput ? MonoASCIIFontRenderer.getStringWidth(text.substring(0, cursorPosition)) : FONT_RENDERER.getStringWidth(text.substring(0, cursorPosition)) - 0.5f;
-            cursorX = Tools.max(cursorX, 1f / screen.width);
             float selectorX = selectorPosition == -1 ? cursorX : (parent instanceof MultilineTextInput ? MonoASCIIFontRenderer.getStringWidth(text.substring(0, selectorPosition)) : FONT_RENDERER.getStringWidth(text.substring(0, selectorPosition))) - 0.5f;
+
+            cursorX /= absolutePxWidth();
+            selectorX /= absolutePxWidth();
 
             if (cursorX != selectorX)
             {
                 float min = Tools.min(cursorX, selectorX), max = Tools.max(cursorX, selectorX);
-                GlStateManager.disableTexture2D();
                 GlStateManager.color(1, 1, 1, 0.3f);
 
                 GlStateManager.glBegin(GL11.GL_QUADS);
                 GlStateManager.glVertex3f(min, 0, 0);
-                GlStateManager.glVertex3f(min, scaledHeight, 0);
-                GlStateManager.glVertex3f(max, scaledHeight, 0);
+                GlStateManager.glVertex3f(min, 1, 0);
+                GlStateManager.glVertex3f(max, 1, 0);
                 GlStateManager.glVertex3f(max, 0, 0);
                 GlStateManager.glEnd();
             }
 
             if (active && (System.currentTimeMillis() - cursorTime) % 1000 < 500)
             {
-                GlStateManager.disableTexture2D();
                 GlStateManager.color(1, 1, 1, 1);
 
                 GlStateManager.glBegin(GL11.GL_LINES);
-                GlStateManager.glVertex3f(cursorX, -0.5f, 0);
-                GlStateManager.glVertex3f(cursorX, scaledHeight, 0);
+                GlStateManager.glVertex3f(cursorX, 0, 0);
+                GlStateManager.glVertex3f(cursorX, 1, 0);
                 GlStateManager.glEnd();
             }
         }
 
-        GlStateManager.popMatrix();
+
+        drawChildren();
     }
 
     @Override

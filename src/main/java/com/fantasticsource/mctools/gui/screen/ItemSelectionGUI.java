@@ -29,11 +29,11 @@ public class ItemSelectionGUI extends GUIScreen
         selection = clickedElement.getStack();
 
 
-        guiElements.add(new GUIGradient(this, 0, 0, 1, 1, Color.BLACK.copy().setAF(0.7f)));
+        root.add(new GUIGradient(this, 0, 0, 1, 1, Color.BLACK.copy().setAF(0.7f)));
 
         GUIScrollView scrollView = new GUIScrollView(this, 0.02, 0, 0.94, 1);
-        guiElements.add(scrollView);
-        guiElements.add(new GUIVerticalScrollbar(this, 0.98, 0, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, scrollView));
+        root.add(scrollView);
+        root.add(new GUIVerticalScrollbar(this, 0.98, 0, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, scrollView));
 
         scrollView.add(new GUIText(this, "\n"));
 
