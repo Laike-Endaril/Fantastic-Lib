@@ -5,6 +5,8 @@ import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 
 import java.util.ArrayList;
@@ -163,7 +165,8 @@ public class GUIText extends GUIElement
         GlStateManager.enableTexture2D();
 
         GlStateManager.pushMatrix();
-        GlStateManager.scale(1d / absolutePxWidth(), 1d / absolutePxHeight(), 1);
+        double scale = new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
+        GlStateManager.scale(scale / absolutePxWidth(), scale / absolutePxHeight(), 1);
 
         Color c = active ? activeColor : isMouseWithin() ? hoverColor : color;
         int yy = 0;
