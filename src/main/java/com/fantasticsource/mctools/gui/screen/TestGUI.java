@@ -39,8 +39,8 @@ public class TestGUI extends GUIScreen
                 GUIAutocroppedView view = new GUIAutocroppedView(this, 0.5);
                 root.add(view);
                 view.add(new GUIText(this, "Test"));
-                root.add(new GUIText(this, "Test2\n"));
-                root.add(new GUIText(this, "Test3333333333333333333333333333333"));
+                root.add(new GUIText(this, "Test2"));
+                root.add(new GUIText(this, "Test3\n"));
                 break;
             }
 
