@@ -87,9 +87,12 @@ public class GUIAutocroppedView extends GUIView
 
         super.recalc(0);
 
-        double xPad = padding / screen.width, yPad = padding / screen.height;
+        double min = Tools.min(screen.pxWidth * absoluteWidth(), screen.pxHeight * absoluteHeight());
+        double xPad = padding * min / screen.pxWidth, yPad = padding * min / screen.pxHeight;
+
         width += xPad * 2;
         height += yPad * 2;
+
         xPad = xPad / width;
         yPad = yPad / height;
         for (GUIElement element : children)

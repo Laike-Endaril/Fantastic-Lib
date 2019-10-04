@@ -32,21 +32,11 @@ public class TestGUI extends GUIScreen
         switch (test)
         {
             default:
-                test = 8;
-
-            case 8:
-            {
-                GUIAutocroppedView view = new GUIAutocroppedView(this, 0.5);
-                root.add(view);
-                view.add(new GUIText(this, "Test"));
-                root.add(new GUIText(this, "Test2"));
-                root.add(new GUIText(this, "Test3\n"));
-                break;
-            }
+                test = 7;
 
             case 7:
             {
-                GUIAutocroppedView view = new GUIAutocroppedView(this, 0.25, 0.25, 0.1, new GUIGradientBorder(this, 1, 1, 0.3, Color.WHITE, Color.BLANK));
+                GUIAutocroppedView view = new GUIAutocroppedView(this, 0.25, 0.25, 0.5, new GUIGradientBorder(this, 1, 1, 0.5 / 1.5 / 2, Color.WHITE, getIdleColor(Color.WHITE).setAF(0.4f)));
                 root.add(view);
                 view.add(new GUIText(this, "Test"));
                 break;
