@@ -84,14 +84,20 @@ public abstract class GUIElement
         GlStateManager.translate(x, y, 0);
         GlStateManager.scale(width, height, 1);
 
-        //Scissor
+        //Scissor setup
         int[] lastScissor = GUIScreen.currentScissor;
         GUIScreen.currentScissor[0] = Tools.max(GUIScreen.currentScissor[0], absolutePxX());
         GUIScreen.currentScissor[1] = Tools.max(GUIScreen.currentScissor[1], absolutePxY());
         GUIScreen.currentScissor[2] = Tools.min(GUIScreen.currentScissor[2], absolutePxX() + absolutePxWidth());
         GUIScreen.currentScissor[3] = Tools.min(GUIScreen.currentScissor[3], absolutePxY() + absolutePxHeight());
-        GUIScreen.scissor();
 
+        //Attempt scissor
+        if (!GUIScreen.scissor())
+        {
+            GUIScreen.currentScissor = lastScissor;
+            GlStateManager.popMatrix();
+            return null;
+        }
         return lastScissor;
     }
 
@@ -104,8 +110,11 @@ public abstract class GUIElement
                 if (element.x + element.width < 0 || element.x > 1 || element.y + element.height < 0 || element.y >= 1) continue;
 
                 int[] lastScissor = element.preDraw();
-                element.draw();
-                element.postDraw(lastScissor);
+                if (lastScissor != null)
+                {
+                    element.draw();
+                    element.postDraw(lastScissor);
+                }
             }
         }
     }

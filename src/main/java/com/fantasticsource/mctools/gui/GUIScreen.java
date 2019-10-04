@@ -97,9 +97,17 @@ public abstract class GUIScreen extends GuiScreen
         draw();
     }
 
-    public static void scissor()
+    public static boolean scissor()
     {
-        GL11.glScissor(currentScissor[0], pxHeight - currentScissor[3], currentScissor[2] - currentScissor[0], currentScissor[3] - currentScissor[1]);
+        int w = currentScissor[2] - currentScissor[0], h = currentScissor[3] - currentScissor[1];
+        if (w < 0 || h < 0)
+        {
+            System.out.println("Scissor width or height is negative: " + w + ", " + h);
+            return false;
+        }
+
+        GL11.glScissor(currentScissor[0], pxHeight - currentScissor[3], w, h);
+        return true;
     }
 
     public void draw()

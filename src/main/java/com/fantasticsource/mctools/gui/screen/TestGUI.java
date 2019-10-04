@@ -7,6 +7,7 @@ import com.fantasticsource.mctools.gui.element.text.GUIText;
 import com.fantasticsource.mctools.gui.element.text.GUITextButton;
 import com.fantasticsource.mctools.gui.element.text.GUITextInput;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterNotEmpty;
+import com.fantasticsource.mctools.gui.element.view.GUIAutocroppedView;
 import com.fantasticsource.mctools.gui.element.view.GUIView;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
@@ -31,7 +32,14 @@ public class TestGUI extends GUIScreen
         switch (test)
         {
             default:
-                test = 6;
+                test = 7;
+
+            case 7:
+            {
+                GUIAutocroppedView view = new GUIAutocroppedView(this, 0.25, 0.25, 0.1, new GUIGradientBorder(this, 1, 1, 0.3, Color.WHITE, Color.BLANK));
+                root.add(view);
+                view.add(new GUITextInput(this, "Test", FilterNotEmpty.INSTANCE));
+            }
 
             case 6:
                 root.add(new GUITextButton(this, "Test"));
