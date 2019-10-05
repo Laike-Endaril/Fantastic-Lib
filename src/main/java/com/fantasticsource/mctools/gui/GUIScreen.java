@@ -120,7 +120,7 @@ public abstract class GUIScreen extends GuiScreen
         GlStateManager.scale(pxWidth, pxHeight, 1);
 
         //Scissor
-//        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
         currentScissor = new int[]{0, 0, pxWidth, pxHeight};
 
         //Draw
