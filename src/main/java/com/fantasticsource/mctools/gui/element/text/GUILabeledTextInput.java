@@ -18,8 +18,10 @@ public class GUILabeledTextInput extends GUIAutocroppedView
         this.label = new GUIText(screen, label);
         add(this.label.addClickActions(() ->
         {
-            input.cursorPosition = 0;
-            input.selectorPosition = -1;
+            int length = input.text.length();
+            input.cursorPosition = length;
+            input.selectorPosition = length == 0 ? -1 : 0;
+
             input.setActive(true);
         }));
 
@@ -35,8 +37,10 @@ public class GUILabeledTextInput extends GUIAutocroppedView
         this.label = new GUIText(screen, label);
         add(this.label.addClickActions(() ->
         {
-            input.cursorPosition = 0;
-            input.selectorPosition = -1;
+            int length = input.text.length();
+            input.cursorPosition = length;
+            input.selectorPosition = length == 0 ? -1 : 0;
+
             input.setActive(true);
         }));
 
