@@ -78,7 +78,6 @@ public class GUIScrollView extends GUIView
 
         if (internalHeight <= height) return;
 
-
         progress = Tools.min(1, child.y * height / (internalHeight - height));
     }
 
@@ -88,7 +87,7 @@ public class GUIScrollView extends GUIView
         recalc2();
 
         GlStateManager.pushMatrix();
-        GlStateManager.translate(0, -top * height, 0);
+        GlStateManager.translate(0, -top, 0);
 
         drawChildren();
 

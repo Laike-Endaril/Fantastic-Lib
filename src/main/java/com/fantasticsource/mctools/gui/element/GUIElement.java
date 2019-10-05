@@ -117,8 +117,6 @@ public abstract class GUIElement
         {
             for (GUIElement element : children)
             {
-                if (element.x + element.width < 0 || element.x > 1 || element.y + element.height < 0 || element.y >= 1) continue;
-
                 int[] lastScissor = element.preDraw();
                 if (lastScissor != null)
                 {

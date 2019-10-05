@@ -100,11 +100,7 @@ public abstract class GUIScreen extends GuiScreen
     public boolean scissor()
     {
         int w = currentScissor[2] - currentScissor[0], h = currentScissor[3] - currentScissor[1];
-        if (w < 0 || h < 0)
-        {
-            System.out.println("Scissor width and/or height is negative: " + w + ", " + h);
-            return false;
-        }
+        if (w < 0 || h < 0) return false;
 
         GL11.glScissor(currentScissor[0], pxHeight - currentScissor[3], w, h);
         return true;
@@ -124,7 +120,7 @@ public abstract class GUIScreen extends GuiScreen
         GlStateManager.scale(pxWidth, pxHeight, 1);
 
         //Scissor
-        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+//        GL11.glEnable(GL11.GL_SCISSOR_TEST);
         currentScissor = new int[]{0, 0, pxWidth, pxHeight};
 
         //Draw

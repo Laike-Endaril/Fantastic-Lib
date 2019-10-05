@@ -31,12 +31,12 @@ public class TestGUI extends GUIScreen
                 test = 1;
 
             case 1:
-                root.add(new GUIGradient(this, 1, 0.3, Color.BLACK.copy().setAF(0.3f)));
+                root.add(new GUIGradient(this, 1, 0.3, Color.BLACK.copy().setAF(0.4f)));
                 GUIScrollView view = new GUIScrollView(this, 0.98, 0.4);
                 root.add(view);
                 root.add(new GUIVerticalScrollbar(this, 0.02, 0.4, Color.WHITE, Color.GRAY, Color.WHITE, Color.BLANK, view));
-                root.add(new GUIGradient(this, 1, 0.3, Color.BLACK.copy().setAF(0.3f)));
-                for (double i = 0; i <= 1; i += 0.1) view.add(new GUIText(this, 0, i, "" + i));
+                root.add(new GUIGradient(this, 1, 0.3, Color.BLACK.copy().setAF(0.4f)));
+                for (double i = 0; i <= 2; i += 0.1) view.add(new GUIText(this, 0, i, "" + i));
                 break;
 
             case 0:
