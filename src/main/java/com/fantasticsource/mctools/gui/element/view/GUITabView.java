@@ -27,7 +27,7 @@ public class GUITabView extends GUIView
         autocalcTabviews = true;
 
         GUITextButton tab = (GUITextButton) tabs.get(0);
-        tabBackground = new GUIGradientBorder(screen, 0, 0, 1, 1, 0.1, tab.border, tab.center);
+        tabBackground = new GUIGradientBorder(screen, 0, 0, 1, 1, 0.1, ((GUIGradientBorder) tab.background).border, ((GUIGradientBorder) tab.background).center);
         add(0, tabBackground);
 
         recalc();
@@ -39,7 +39,7 @@ public class GUITabView extends GUIView
         autocalcTabs = true;
 
         GUITextButton tab = (GUITextButton) tabs.get(0);
-        tabBackground = new GUIGradientBorder(screen, 0, 0, 1, 1, 0.1, tab.border, tab.center);
+        tabBackground = new GUIGradientBorder(screen, 0, 0, 1, 1, 0.1, ((GUIGradientBorder) tab.background).border, ((GUIGradientBorder) tab.background).center);
         add(0, tabBackground);
 
         recalc();
@@ -84,7 +84,7 @@ public class GUITabView extends GUIView
         autocalcTabviews = true;
 
         GUITextButton tab = (GUITextButton) tabs.get(0);
-        tabBackground = new GUIGradientBorder(screen, 0, 0, 1, 1, 0.1, tab.border, tab.center);
+        tabBackground = new GUIGradientBorder(screen, 0, 0, 1, 1, 0.1, ((GUIGradientBorder) tab.background).border, ((GUIGradientBorder) tab.background).center);
         add(0, tabBackground);
 
         recalc();
@@ -96,7 +96,7 @@ public class GUITabView extends GUIView
         autocalcTabs = true;
 
         GUITextButton tab = (GUITextButton) tabs.get(0);
-        tabBackground = new GUIGradientBorder(screen, 0, 0, 1, 1, 0.1, tab.border, tab.center);
+        tabBackground = new GUIGradientBorder(screen, 0, 0, 1, 1, 0.1, ((GUIGradientBorder) tab.background).border, ((GUIGradientBorder) tab.background).center);
         add(0, tabBackground);
 
         recalc();
