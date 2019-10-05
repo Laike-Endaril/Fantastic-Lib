@@ -3,6 +3,7 @@ package com.fantasticsource.mctools.gui.element.view;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.tools.Tools;
+import net.minecraft.client.renderer.GlStateManager;
 
 public class GUIScrollView extends GUIView
 {
@@ -86,7 +87,12 @@ public class GUIScrollView extends GUIView
     {
         recalc2();
 
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(0, -top * height, 0);
+
         drawChildren();
+
+        GlStateManager.popMatrix();
     }
 
     @Override
