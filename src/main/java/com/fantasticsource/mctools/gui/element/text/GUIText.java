@@ -80,7 +80,7 @@ public class GUIText extends GUIElement
     public GUIText recalc()
     {
         lines.clear();
-        if (parent instanceof MultilineTextInput)
+        if (parent instanceof CodeInput)
         {
             lines.add(text);
             width = (double) MonoASCIIFontRenderer.getStringWidth(text) / screen.width;

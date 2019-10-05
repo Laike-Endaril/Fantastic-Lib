@@ -7,17 +7,17 @@ import com.fantasticsource.mctools.gui.element.view.GUIScrollView;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 
-public class MultilineTextInput extends GUIScrollView
+public class CodeInput extends GUIScrollView
 {
     public Color color, hoverColor, activeColor, highlightColor;
     protected int cursorX, selectionStartY = -1;
 
-    public MultilineTextInput(GUIScreen screen, double width, double height, String... lines)
+    public CodeInput(GUIScreen screen, double width, double height, String... lines)
     {
         this(screen, width, height, GUIScreen.getIdleColor(Color.WHITE), GUIScreen.getHoverColor(Color.WHITE), Color.WHITE, Color.WHITE.copy().setAF(0.4f), lines);
     }
 
-    public MultilineTextInput(GUIScreen screen, double width, double height, Color color, Color hoverColor, Color activeColor, Color hightlightColor, String... lines)
+    public CodeInput(GUIScreen screen, double width, double height, Color color, Color hoverColor, Color activeColor, Color hightlightColor, String... lines)
     {
         super(screen, width, height);
 
@@ -32,12 +32,12 @@ public class MultilineTextInput extends GUIScrollView
         cursorX = ((GUITextInput) children.get(0)).text.length();
     }
 
-    public MultilineTextInput(GUIScreen screen, double x, double y, double width, double height, String... lines)
+    public CodeInput(GUIScreen screen, double x, double y, double width, double height, String... lines)
     {
         this(screen, x, y, width, height, GUIScreen.getIdleColor(Color.WHITE), GUIScreen.getHoverColor(Color.WHITE), Color.WHITE, Color.WHITE.copy().setAF(0.4f), lines);
     }
 
-    public MultilineTextInput(GUIScreen screen, double x, double y, double width, double height, Color color, Color hoverColor, Color activeColor, Color hightlightColor, String... lines)
+    public CodeInput(GUIScreen screen, double x, double y, double width, double height, Color color, Color hoverColor, Color activeColor, Color hightlightColor, String... lines)
     {
         super(screen, x, y, width, height);
 
