@@ -1,7 +1,8 @@
-Fix autocropped view padding when parent's normalized width/height are not the same
 Fix labeled text input spacing between label and input, seems to differ based on label width
 
 Fix scrollbars staying active if you release click while outside window
+
+Fix sliiiiight overclipping, usually at higher resolutions
 
 
 

@@ -7,7 +7,7 @@ import com.fantasticsource.tools.Tools;
 public class GUIAutocroppedView extends GUIView
 {
     public GUIElement background;
-    public double padding;
+    protected double padding;
 
     public GUIAutocroppedView(GUIScreen screen)
     {
@@ -28,7 +28,7 @@ public class GUIAutocroppedView extends GUIView
     {
         super(screen, 1, 1);
 
-        this.padding = padding;
+        this.padding = Math.min(padding, 0.5);
 
         this.background = background;
         if (background != null)
@@ -57,7 +57,7 @@ public class GUIAutocroppedView extends GUIView
     {
         super(screen, x, y, 1, 1);
 
-        this.padding = padding;
+        this.padding = Math.min(padding, 0.5);
 
         this.background = background;
         if (background != null)
@@ -72,6 +72,9 @@ public class GUIAutocroppedView extends GUIView
     {
         width = 1;
         height = 1;
+        if (parent == null) return this;
+
+
         super.recalc(0);
 
         width = 0;
@@ -87,8 +90,8 @@ public class GUIAutocroppedView extends GUIView
 
         super.recalc(0);
 
-        double min = Tools.min(screen.pxWidth * absoluteWidth(), screen.pxHeight * absoluteHeight());
-        double xPad = padding * min / screen.pxWidth, yPad = padding * min / screen.pxHeight;
+        double paddingPx = Tools.min(absolutePxWidth(), absolutePxHeight()) * padding;
+        double xPad = paddingPx / parent.absolutePxWidth(), yPad = paddingPx / parent.absolutePxHeight();
 
         width += xPad * 2;
         height += yPad * 2;
