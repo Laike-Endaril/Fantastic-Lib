@@ -992,7 +992,7 @@ public class GUITextInput extends GUIText
             cursorX *= scale / absolutePxWidth();
             selectorX *= scale / absolutePxWidth();
 
-            if (cursorX != selectorX)
+            if (selectorPosition != -1 && cursorX != selectorX)
             {
                 float min = Tools.min(cursorX, selectorX), max = Tools.max(cursorX, selectorX);
                 GlStateManager.color(1, 1, 1, 0.3f);
