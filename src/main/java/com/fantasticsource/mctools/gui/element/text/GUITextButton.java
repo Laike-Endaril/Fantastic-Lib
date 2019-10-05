@@ -32,6 +32,7 @@ public class GUITextButton extends GUIAutocroppedView
         this.text = new GUIText(screen, text, getIdleColor(border), getHoverColor(border), border);
         add(this.text);
         linkMouseActivity(this.text);
+        linkMouseActivity(this.background);
 
         recalc();
     }
@@ -53,6 +54,7 @@ public class GUITextButton extends GUIAutocroppedView
         this.text = new GUIText(screen, text, getIdleColor(border), getHoverColor(border), border);
         add(this.text);
         linkMouseActivity(this.text);
+        linkMouseActivity(this.background);
 
         recalc();
     }
