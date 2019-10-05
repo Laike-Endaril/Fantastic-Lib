@@ -1,10 +1,4 @@
-Add customizable text input filters (if the current text doesn't pass the filter, show in red)
-
-Add GUI element tooltips (GUIScreen.drawHoveringText())
-
 Fix scrollbars staying active if you release click while outside window
-
-Add mouse interactions to text input cursor/selections
 
 
 

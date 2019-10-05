@@ -439,7 +439,7 @@ public class GUITextInput extends GUIText
         }
         else if (GUIScreen.isCtrlKeyDown() && keyCode == Keyboard.KEY_V)
         {
-            String[] tokens = Tools.fixedSplit(GUIScreen.getClipboardString(), "\n");
+            String[] tokens = Tools.fixedSplit(GUIScreen.getClipboardString().replaceAll("\r", ""), "\n");
             GUITextInput element = multilineDelete();
             if (element == null) element = this;
 
