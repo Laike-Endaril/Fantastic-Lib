@@ -13,7 +13,7 @@ public class GUILabeledTextInput extends GUIAutocroppedView
     {
         super(screen);
 
-        input = new GUITextInput(screen, 0, 0, defaultInput, filter);
+        input = new GUITextInput(screen, defaultInput, filter);
 
         this.label = new GUIText(screen, label);
         add(this.label.addClickActions(() ->
@@ -30,7 +30,7 @@ public class GUILabeledTextInput extends GUIAutocroppedView
     {
         super(screen, x, y);
 
-        input = new GUITextInput(screen, 0, 0, defaultInput, filter);
+        input = new GUITextInput(screen, defaultInput, filter);
 
         this.label = new GUIText(screen, label);
         add(this.label.addClickActions(() ->
@@ -46,13 +46,14 @@ public class GUILabeledTextInput extends GUIAutocroppedView
     @Override
     public void recalcAndRepositionSubElements(int startIndex)
     {
+        super.recalcAndRepositionSubElements(startIndex);
+
         if (label != null && input != null)
         {
             label.recalc();
-            input.x = label.width / absoluteWidth();
+            input.x = label.width;
+            input.y = 0;
         }
-
-        super.recalcAndRepositionSubElements(startIndex);
     }
 
     @Override
