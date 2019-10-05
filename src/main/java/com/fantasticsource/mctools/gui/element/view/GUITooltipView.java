@@ -10,7 +10,7 @@ public class GUITooltipView extends GUIAutocroppedView
 
     public GUITooltipView(GUIScreen screen)
     {
-        super(screen, 0, 0, 5, new GUIGradient(screen, 1, 1, Color.BLACK.copy().setAF(0.85f)));
+        super(screen, 0, 0, 0, new GUIGradient(screen, 1, 1, Color.BLACK.copy().setAF(0.85f)));
     }
 
     @Override

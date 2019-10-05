@@ -1,6 +1,7 @@
 package com.fantasticsource.mctools.gui.element.text;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
+import com.fantasticsource.mctools.gui.element.view.GUIAutocroppedView;
 import com.fantasticsource.mctools.gui.element.view.GUITooltipView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
@@ -10,18 +11,21 @@ import net.minecraft.util.text.TextFormatting;
 public class GUIItemStack extends GUIText
 {
     private ItemStack stack;
-    GUITooltipView tooltip = new GUITooltipView(screen);
 
     public GUIItemStack(GUIScreen screen, ItemStack stack)
     {
         super(screen, stack.isEmpty() ? "(Empty Slot)" : stack.getCount() + " " + TextFormatting.RESET + stack.getDisplayName());
         this.stack = stack;
 
+        tooltip = new GUITooltipView(screen);
         tooltip.setSubElementAutoplaceMethod(AP_X_0_TOP_TO_BOTTOM);
         Minecraft mc = Minecraft.getMinecraft();
-        for (String line : stack.getTooltip(mc.player, mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL))
+
+        for (String line : stack.getTooltip(mc.player, ITooltipFlag.TooltipFlags.ADVANCED))
         {
-            tooltip.add(new GUIText(screen, line));
+            GUIAutocroppedView view = new GUIAutocroppedView(screen, 0.3);
+            view.add(new GUIText(screen, line));
+            tooltip.add(view);
         }
     }
 
@@ -30,11 +34,15 @@ public class GUIItemStack extends GUIText
         super(screen, x, y, stack.isEmpty() ? "(Empty Slot)" : stack.getCount() + " " + TextFormatting.RESET + stack.getDisplayName());
         this.stack = stack;
 
+        tooltip = new GUITooltipView(screen);
         tooltip.setSubElementAutoplaceMethod(AP_X_0_TOP_TO_BOTTOM);
         Minecraft mc = Minecraft.getMinecraft();
-        for (String line : stack.getTooltip(mc.player, mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL))
+
+        for (String line : stack.getTooltip(mc.player, ITooltipFlag.TooltipFlags.ADVANCED))
         {
-            tooltip.add(new GUIText(screen, line));
+            GUIAutocroppedView view = new GUIAutocroppedView(screen, 0.3);
+            view.add(new GUIText(screen, line));
+            tooltip.add(view);
         }
     }
 
@@ -50,19 +58,14 @@ public class GUIItemStack extends GUIText
 
         tooltip.clear();
         Minecraft mc = Minecraft.getMinecraft();
-        for (String line : stack.getTooltip(mc.player, mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL))
+
+        for (String line : stack.getTooltip(mc.player, ITooltipFlag.TooltipFlags.ADVANCED))
         {
-            tooltip.add(new GUIText(screen, line));
+            GUIAutocroppedView view = new GUIAutocroppedView(screen, 0.3);
+            view.add(new GUIText(screen, line));
+            tooltip.add(view);
         }
 
         return this;
-    }
-
-    @Override
-    public void draw()
-    {
-        super.draw();
-
-        if (isMouseWithin()) tooltip.draw();
     }
 }

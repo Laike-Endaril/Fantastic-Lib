@@ -23,23 +23,17 @@ import java.util.Stack;
 public abstract class GUIScreen extends GuiScreen
 {
     public static final Stack<ScreenEntry> SCREEN_STACK = new Stack<>();
-    private static boolean ignoreClosure = false;
-
-    public boolean drawStack = true;
-
     public static final FontRenderer FONT_RENDERER = Minecraft.getMinecraft().fontRenderer;
-
+    public static int[] currentScissor;
+    public static double mouseX = 0.5, mouseY = 0.5;
+    private static boolean ignoreClosure = false;
+    public final GUIView root, tooltips;
+    public final ArrayList<Runnable> onClosedActions = new ArrayList<>();
+    public boolean drawStack = true;
     public int pxWidth, pxHeight;
     public float xPixel, yPixel;
-
-    public static int[] currentScissor;
-
-    public static double mouseX = 0.5, mouseY = 0.5;
-    public final GUIView root;
     private ArrayList<Integer> mouseButtons = new ArrayList<>();
     private boolean initialized = false;
-
-    public final ArrayList<Runnable> onClosedActions = new ArrayList<>();
 
 
     public GUIScreen()
@@ -51,6 +45,7 @@ public abstract class GUIScreen extends GuiScreen
         yPixel = 1f / pxHeight;
 
         root = new GUIView(this, 1, 1);
+        tooltips = new GUIView(this, 1, 1);
     }
 
 
@@ -62,6 +57,16 @@ public abstract class GUIScreen extends GuiScreen
     public static Color getHoverColor(Color activeColor)
     {
         return activeColor.copy().setVF(0.75f * activeColor.vf());
+    }
+
+    public static void showStacked(GUIScreen screen)
+    {
+        GuiScreen current = Minecraft.getMinecraft().currentScreen;
+        if (current instanceof GUIScreen) SCREEN_STACK.push(new ScreenEntry((GUIScreen) current, mouseX, mouseY));
+
+        ignoreClosure = true;
+        Minecraft.getMinecraft().displayGuiScreen(screen);
+        ignoreClosure = false;
     }
 
     public boolean isInitialized()
@@ -123,8 +128,15 @@ public abstract class GUIScreen extends GuiScreen
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         currentScissor = new int[]{0, 0, pxWidth, pxHeight};
 
-        //Draw
+
+        //Draw normal elements
         root.draw();
+
+        //Draw and clear tooltips
+        currentScissor = new int[]{0, 0, pxWidth, pxHeight};
+        tooltips.draw();
+        tooltips.clear();
+
 
         //Undo scissor
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
@@ -137,16 +149,6 @@ public abstract class GUIScreen extends GuiScreen
         GlStateManager.disableBlend();
         GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();
-    }
-
-    public static void showStacked(GUIScreen screen)
-    {
-        GuiScreen current = Minecraft.getMinecraft().currentScreen;
-        if (current instanceof GUIScreen) SCREEN_STACK.push(new ScreenEntry((GUIScreen) current, mouseX, mouseY));
-
-        ignoreClosure = true;
-        Minecraft.getMinecraft().displayGuiScreen(screen);
-        ignoreClosure = false;
     }
 
     @Override
@@ -271,6 +273,12 @@ public abstract class GUIScreen extends GuiScreen
         root.keyTyped(typedChar, keyCode);
     }
 
+    public GUIScreen addOnClosedActions(Runnable... actions)
+    {
+        onClosedActions.addAll(Arrays.asList(actions));
+        return this;
+    }
+
     public static class ScreenEntry
     {
         public final GUIScreen screen;
@@ -282,11 +290,5 @@ public abstract class GUIScreen extends GuiScreen
             this.mouseX = mouseX;
             this.mouseY = mouseY;
         }
-    }
-
-    public GUIScreen addOnClosedActions(Runnable... actions)
-    {
-        onClosedActions.addAll(Arrays.asList(actions));
-        return this;
     }
 }

@@ -3,6 +3,7 @@ package com.fantasticsource.mctools.gui.element;
 import com.fantasticsource.mctools.gui.GUILeftClickEvent;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.view.GUIScrollView;
+import com.fantasticsource.mctools.gui.element.view.GUITooltipView;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.renderer.GlStateManager;
@@ -27,11 +28,12 @@ public abstract class GUIElement
             AP_CENTERED_H_TOP_TO_BOTTOM = 8,
             AP_CENTERED_V_LEFT_TO_RIGHT = 9,
             AP_X_0_TOP_TO_BOTTOM = 10;
-
-
+    public final ArrayList<Runnable> onClickActions = new ArrayList<>();
+    public final ArrayList<Runnable> onRecalcActions = new ArrayList<>();
     public double x, y, width, height;
     public GUIElement parent = null;
     public ArrayList<GUIElement> children = new ArrayList<>();
+    public GUITooltipView tooltip = null;
     public boolean autoplace = false;
     protected double autoX = 0, autoY = 0, furthestX = 0, furthestY = 0;
     protected byte subElementAutoplaceMethod;
@@ -39,9 +41,6 @@ public abstract class GUIElement
     protected boolean active = false, externalDeactivation = false;
     private ArrayList<GUIElement> linkedMouseActivity = new ArrayList<>();
     private ArrayList<GUIElement> linkedMouseActivityReverse = new ArrayList<>();
-
-    public final ArrayList<Runnable> onClickActions = new ArrayList<>();
-    public final ArrayList<Runnable> onRecalcActions = new ArrayList<>();
 
 
     public GUIElement(GUIScreen screen, double width, double height)
@@ -125,6 +124,8 @@ public abstract class GUIElement
                 }
             }
         }
+
+        if (isMouseWithin() && tooltip != null) screen.tooltips.add(tooltip);
     }
 
     private void postDraw(int[] lastScissor)
