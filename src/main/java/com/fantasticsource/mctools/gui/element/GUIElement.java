@@ -95,14 +95,7 @@ public abstract class GUIElement
         //Attempt scissor
         if (!screen.scissor())
         {
-//            System.out.println(toString());
-//            System.out.println(x + ", " + y + ", " + width + ", " + height);
-//            System.out.println(absolutePxX() + ", " + absolutePxY() + ", " + (absolutePxX() + absolutePxWidth()) + ", " + (absolutePxY() + absolutePxHeight()));
-
             GUIScreen.currentScissor = lastScissor;
-
-//            System.out.println(GUIScreen.currentScissor[0] + ", " + GUIScreen.currentScissor[1] + ", " + GUIScreen.currentScissor[2] + ", " + GUIScreen.currentScissor[3]);
-//            System.out.println();
 
             GlStateManager.popMatrix();
             return null;
@@ -242,24 +235,12 @@ public abstract class GUIElement
 
     public final double mouseX()
     {
-        if (parent == null) return GUIScreen.mouseX;
-        return parent.mouseX() + parent.childMouseXOffset();
+        return GUIScreen.mouseX;
     }
 
     public final double mouseY()
     {
-        if (parent == null) return GUIScreen.mouseY;
-        return parent.mouseY() + parent.childMouseYOffset();
-    }
-
-    public double childMouseXOffset()
-    {
-        return 0;
-    }
-
-    public double childMouseYOffset()
-    {
-        return 0;
+        return GUIScreen.mouseY;
     }
 
     public final boolean isMouseWithin()

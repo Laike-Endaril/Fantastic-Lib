@@ -129,10 +129,4 @@ public class GUIScrollView extends GUIView
 
         super.mouseWheel(x, y, delta);
     }
-
-    @Override
-    public double childMouseYOffset()
-    {
-        return top * absoluteHeight();
-    }
 }
