@@ -98,8 +98,6 @@ public class GUIScrollView extends GUIView
     public boolean mousePressed(double x, double y, int button)
     {
         recalc2();
-        y -= childMouseYOffset();
-
         return super.mousePressed(x, y, button);
     }
 
@@ -107,8 +105,6 @@ public class GUIScrollView extends GUIView
     public boolean mouseReleased(double x, double y, int button)
     {
         recalc2();
-        y -= childMouseYOffset();
-
         return super.mouseReleased(x, y, button);
     }
 
@@ -116,8 +112,6 @@ public class GUIScrollView extends GUIView
     public void mouseDrag(double x, double y, int button)
     {
         recalc2();
-        y -= childMouseYOffset();
-
         super.mouseDrag(x, y, button);
     }
 
@@ -125,8 +119,6 @@ public class GUIScrollView extends GUIView
     public void mouseWheel(double x, double y, int delta)
     {
         recalc2();
-        y -= childMouseYOffset();
-
         super.mouseWheel(x, y, delta);
     }
 }
