@@ -1034,7 +1034,7 @@ public class GUITextInput extends GUIText
         for (char c : text.toCharArray())
         {
             double lastDif = dif;
-            dif -= (double) (parent instanceof CodeInput ? MonoASCIIFontRenderer.LINE_HEIGHT : FONT_RENDERER.getCharWidth(c)) / screen.width;
+            dif -= (double) (parent instanceof CodeInput ? (MonoASCIIFontRenderer.CHAR_WIDTH + 2) : FONT_RENDERER.getCharWidth(c)) / screen.width;
             if (dif <= 0)
             {
                 if (Math.abs(dif) < lastDif) result++;
