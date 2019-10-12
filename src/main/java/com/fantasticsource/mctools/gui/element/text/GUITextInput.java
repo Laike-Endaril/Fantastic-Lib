@@ -124,9 +124,9 @@ public class GUITextInput extends GUIText
 
     protected void deselectAll()
     {
-        if (parent instanceof CodeInput)
+        if (parent instanceof MultilineTextInput)
         {
-            ((CodeInput) parent).selectionStartY = -1;
+            ((MultilineTextInput) parent).selectionStartY = -1;
             for (GUIElement element : parent.children)
             {
                 ((GUITextInput) element).selectorPosition = -1;
@@ -148,7 +148,7 @@ public class GUITextInput extends GUIText
 
         cursorPosition = startPos;
 
-        if (parent instanceof CodeInput) ((CodeInput) parent).cursorX = cursorPosition;
+        if (parent instanceof MultilineTextInput) ((MultilineTextInput) parent).cursorX = cursorPosition;
     }
 
     protected void singleLineEnd()
@@ -164,7 +164,7 @@ public class GUITextInput extends GUIText
 
         cursorPosition = endPos;
 
-        if (parent instanceof CodeInput) ((CodeInput) parent).cursorX = cursorPosition;
+        if (parent instanceof MultilineTextInput) ((MultilineTextInput) parent).cursorX = cursorPosition;
     }
 
     public boolean valid()
@@ -174,9 +174,9 @@ public class GUITextInput extends GUIText
 
     protected GUITextInput multilineDelete()
     {
-        if (!(parent instanceof CodeInput) || ((CodeInput) parent).selectionStartY == -1 || ((CodeInput) parent).selectionStartY == parent.indexOf(this)) return null;
+        if (!(parent instanceof MultilineTextInput) || ((MultilineTextInput) parent).selectionStartY == -1 || ((MultilineTextInput) parent).selectionStartY == parent.indexOf(this)) return null;
 
-        CodeInput multi = (CodeInput) parent;
+        MultilineTextInput multi = (MultilineTextInput) parent;
         int index = parent.indexOf(this);
         int firstY = Tools.min(index, multi.selectionStartY);
         int lastY = Tools.max(index, multi.selectionStartY);
@@ -206,7 +206,7 @@ public class GUITextInput extends GUIText
 
     protected GUITextInput activeLine()
     {
-        if (parent instanceof CodeInput)
+        if (parent instanceof MultilineTextInput)
         {
             for (GUIElement element : parent.children)
             {
@@ -224,7 +224,7 @@ public class GUITextInput extends GUIText
 
         if (!active) return;
 
-        CodeInput multi = parent instanceof CodeInput ? (CodeInput) parent : null;
+        MultilineTextInput multi = parent instanceof MultilineTextInput ? (MultilineTextInput) parent : null;
 
         if (keyCode == Keyboard.KEY_RETURN)
         {
@@ -379,7 +379,7 @@ public class GUITextInput extends GUIText
         {
             StringBuilder s = new StringBuilder();
 
-            if (multi != null && ((CodeInput) parent).selectionStartY != -1 && ((CodeInput) parent).selectionStartY != parent.indexOf(this))
+            if (multi != null && ((MultilineTextInput) parent).selectionStartY != -1 && ((MultilineTextInput) parent).selectionStartY != parent.indexOf(this))
             {
                 int startY = Tools.min(multi.indexOf(this), multi.selectionStartY);
                 int endY = Tools.max(multi.indexOf(this), multi.selectionStartY);
@@ -405,7 +405,7 @@ public class GUITextInput extends GUIText
                 deselectAll();
                 cursorPosition = min;
 
-                if (multi != null) ((CodeInput) parent).cursorX = cursorPosition;
+                if (multi != null) ((MultilineTextInput) parent).cursorX = cursorPosition;
             }
 
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(s.toString()), null);
@@ -414,7 +414,7 @@ public class GUITextInput extends GUIText
         {
             StringBuilder s = new StringBuilder();
 
-            if (multi != null && ((CodeInput) parent).selectionStartY != -1 && ((CodeInput) parent).selectionStartY != parent.indexOf(this))
+            if (multi != null && ((MultilineTextInput) parent).selectionStartY != -1 && ((MultilineTextInput) parent).selectionStartY != parent.indexOf(this))
             {
                 int startY = Tools.min(multi.indexOf(this), multi.selectionStartY);
                 int endY = Tools.max(multi.indexOf(this), multi.selectionStartY);
@@ -582,7 +582,7 @@ public class GUITextInput extends GUIText
                     while (cursorPosition > 0 && charType(text.charAt(cursorPosition - 1)) == type) cursorPosition--;
                 }
 
-                if (multi != null) ((CodeInput) parent).cursorX = cursorPosition;
+                if (multi != null) ((MultilineTextInput) parent).cursorX = cursorPosition;
             }
             else
             {
@@ -627,7 +627,7 @@ public class GUITextInput extends GUIText
                     while (cursorPosition < text.length() && charType(text.charAt(cursorPosition)) == type) cursorPosition++;
                 }
 
-                if (multi != null) ((CodeInput) parent).cursorX = cursorPosition;
+                if (multi != null) ((MultilineTextInput) parent).cursorX = cursorPosition;
             }
             else
             {
@@ -752,7 +752,7 @@ public class GUITextInput extends GUIText
     {
         super.recalc();
 
-        if (parent instanceof CodeInput) width = Tools.max(width, 2d / parent.absolutePxWidth());
+        if (parent instanceof MultilineTextInput) width = Tools.max(width, 2d / parent.absolutePxWidth());
         else width = 1 - x;
 
         return this;
@@ -761,7 +761,7 @@ public class GUITextInput extends GUIText
     @Override
     public boolean isWithin(double x, double y)
     {
-        if (parent instanceof CodeInput)
+        if (parent instanceof MultilineTextInput)
         {
             double yy = absoluteY();
             return yy <= y && y < yy + absoluteHeight();
@@ -795,7 +795,7 @@ public class GUITextInput extends GUIText
 
                 cursorPosition = findCursorPosition(mouseX());
 
-                if (parent instanceof CodeInput && ((CodeInput) parent).selectionStartY == -1) ((CodeInput) parent).selectionStartY = parent.indexOf(this);
+                if (parent instanceof MultilineTextInput && ((MultilineTextInput) parent).selectionStartY == -1) ((MultilineTextInput) parent).selectionStartY = parent.indexOf(this);
             }
             else if (clicks == 2)
             {
@@ -821,7 +821,7 @@ public class GUITextInput extends GUIText
 
             cursorTime = System.currentTimeMillis();
 
-            if (parent instanceof CodeInput) ((CodeInput) parent).cursorX = cursorPosition;
+            if (parent instanceof MultilineTextInput) ((MultilineTextInput) parent).cursorX = cursorPosition;
         }
         else setActive(false);
 
@@ -843,11 +843,11 @@ public class GUITextInput extends GUIText
     @Override
     public void mouseDrag(double x, double y, int button)
     {
-        if (button == 0 && ((parent instanceof CodeInput && isMouseWithin()) || (!(parent instanceof CodeInput) && active)))
+        if (button == 0 && ((parent instanceof MultilineTextInput && isMouseWithin()) || (!(parent instanceof MultilineTextInput) && active)))
         {
-            if (parent instanceof CodeInput && ((CodeInput) parent).selectionStartY != -1 && ((CodeInput) parent).selectionStartY != parent.indexOf(this))
+            if (parent instanceof MultilineTextInput && ((MultilineTextInput) parent).selectionStartY != -1 && ((MultilineTextInput) parent).selectionStartY != parent.indexOf(this))
             {
-                CodeInput multi = (CodeInput) parent;
+                MultilineTextInput multi = (MultilineTextInput) parent;
                 int index = multi.indexOf(this);
 
                 if (multi.selectionStartY < index)
@@ -913,9 +913,9 @@ public class GUITextInput extends GUIText
                 selectorPosition = sp;
                 cursorPosition = cp;
 
-                if (parent instanceof CodeInput)
+                if (parent instanceof MultilineTextInput)
                 {
-                    CodeInput multi = (CodeInput) parent;
+                    MultilineTextInput multi = (MultilineTextInput) parent;
                     multi.selectionStartY = multi.indexOf(this);
                     multi.cursorX = cursorPosition;
                 }
@@ -973,7 +973,7 @@ public class GUITextInput extends GUIText
             GlStateManager.scale(scale / absolutePxWidth(), scale / absolutePxHeight(), 1);
 
             Color c = active ? activeColor : isMouseWithin() ? hoverColor : color;
-            if (parent instanceof CodeInput) MonoASCIIFontRenderer.draw(text, 0, 0, c, BLACK);
+            if (parent instanceof MultilineTextInput) MonoASCIIFontRenderer.draw(text, 0, 0, c, BLACK);
             else FONT_RENDERER.drawString(text, 1, 0, (c.color() >> 8) | c.a() << 24, false);
 
             GlStateManager.popMatrix();
@@ -983,10 +983,10 @@ public class GUITextInput extends GUIText
 
 
         //Draw cursor and selection highlight
-        if (active || parent instanceof CodeInput)
+        if (active || parent instanceof MultilineTextInput)
         {
-            float cursorX = parent instanceof CodeInput ? MonoASCIIFontRenderer.getStringWidth(text.substring(0, cursorPosition)) : FONT_RENDERER.getStringWidth(text.substring(0, cursorPosition)) + 0.5f;
-            float selectorX = selectorPosition == -1 ? cursorX : (parent instanceof CodeInput ? MonoASCIIFontRenderer.getStringWidth(text.substring(0, selectorPosition)) : FONT_RENDERER.getStringWidth(text.substring(0, selectorPosition))) - 0.5f;
+            float cursorX = parent instanceof MultilineTextInput ? MonoASCIIFontRenderer.getStringWidth(text.substring(0, cursorPosition)) : FONT_RENDERER.getStringWidth(text.substring(0, cursorPosition)) + 0.5f;
+            float selectorX = selectorPosition == -1 ? cursorX : (parent instanceof MultilineTextInput ? MonoASCIIFontRenderer.getStringWidth(text.substring(0, selectorPosition)) : FONT_RENDERER.getStringWidth(text.substring(0, selectorPosition))) - 0.5f;
 
             cursorX = Tools.max(cursorX, 1f / absolutePxWidth());
             cursorX *= scale / absolutePxWidth();
