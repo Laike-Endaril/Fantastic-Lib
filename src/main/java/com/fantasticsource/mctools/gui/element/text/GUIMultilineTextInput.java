@@ -96,39 +96,115 @@ public class GUIMultilineTextInput extends GUITextInput
 
             //Calculate cursor position
             float cursorX = 0;
-            int lineStart = 0;
             int cursorLine = 0;
-            for (String fullLine : fullLines)
             {
-                if (cursorPosition <= lineStart + fullLine.length())
+                int lineStart = 0;
+                for (String fullLine : fullLines)
                 {
-                    cursorX = FONT_RENDERER.getStringWidth(fullLine.replace("\n", "").substring(0, cursorPosition - lineStart)) + 0.5f;
-                    break;
-                }
+                    if (cursorPosition <= lineStart + fullLine.length())
+                    {
+                        cursorX = FONT_RENDERER.getStringWidth(fullLine.substring(0, cursorPosition - lineStart).replace("\n", "")) + 0.5f;
+                        break;
+                    }
 
-                cursorLine++;
-                lineStart += fullLine.length();
+                    cursorLine++;
+                    lineStart += fullLine.length();
+                }
             }
+            cursorX = Tools.max(cursorX, 1f / absolutePxWidth());
+            cursorX *= scale / absolutePxWidth();
 
 
             if (selectorPosition != -1 && selectorPosition != cursorPosition)
             {
                 //Selection highlight
-//                float selectorX = selectorPosition == -1 ? cursorX : FONT_RENDERER.getStringWidth(text.substring(0, selectorPosition)) - 0.5f;
-//
-//                float min = Tools.min(cursorX, selectorX), max = Tools.max(cursorX, selectorX);
-//                GlStateManager.color(1, 1, 1, 0.3f);
-//
-//                GlStateManager.glBegin(GL11.GL_QUADS);
-//                GlStateManager.glVertex3f(min, 0, 0);
-//                GlStateManager.glVertex3f(min, 1, 0);
-//                GlStateManager.glVertex3f(max, 1, 0);
-//                GlStateManager.glVertex3f(max, 0, 0);
-//                GlStateManager.glEnd();
-            }
+                float selectorX = 0;
+                int selectorLine = 0;
+                int lineStart = 0;
+                for (String fullLine : fullLines)
+                {
+                    if (selectorPosition <= lineStart + fullLine.length())
+                    {
+                        selectorX = FONT_RENDERER.getStringWidth(fullLine.substring(0, selectorPosition - lineStart).replace("\n", "")) + 0.5f;
+                        break;
+                    }
 
-            cursorX = Tools.max(cursorX, 1f / absolutePxWidth());
-            cursorX *= scale / absolutePxWidth();
+                    selectorLine++;
+                    lineStart += fullLine.length();
+                }
+                selectorX *= scale / absolutePxWidth();
+
+                GlStateManager.color(1, 1, 1, 0.3f);
+
+                if (selectorLine == cursorLine)
+                {
+                    float min = Tools.min(cursorX, selectorX), max = Tools.max(cursorX, selectorX);
+
+                    GlStateManager.glBegin(GL11.GL_QUADS);
+                    GlStateManager.glVertex3f(min, cursorLine * lineHeight, 0);
+                    GlStateManager.glVertex3f(min, (cursorLine + 1) * lineHeight, 0);
+                    GlStateManager.glVertex3f(max, (cursorLine + 1) * lineHeight, 0);
+                    GlStateManager.glVertex3f(max, cursorLine * lineHeight, 0);
+                    GlStateManager.glEnd();
+                }
+                else
+                {
+                    if (selectorPosition < cursorPosition)
+                    {
+                        GlStateManager.glBegin(GL11.GL_QUADS);
+
+                        //First line
+                        GlStateManager.glVertex3f(selectorX, selectorLine * lineHeight, 0);
+                        GlStateManager.glVertex3f(selectorX, (selectorLine + 1) * lineHeight, 0);
+                        GlStateManager.glVertex3f(1, (selectorLine + 1) * lineHeight, 0);
+                        GlStateManager.glVertex3f(1, selectorLine * lineHeight, 0);
+
+                        //Middle lines (if any)
+                        for (int middleLine = selectorLine + 1; middleLine < cursorLine; middleLine++)
+                        {
+                            GlStateManager.glVertex3f(0, middleLine * lineHeight, 0);
+                            GlStateManager.glVertex3f(0, (middleLine + 1) * lineHeight, 0);
+                            GlStateManager.glVertex3f(1, (middleLine + 1) * lineHeight, 0);
+                            GlStateManager.glVertex3f(1, middleLine * lineHeight, 0);
+                        }
+
+                        //Last line
+                        GlStateManager.glVertex3f(0, cursorLine * lineHeight, 0);
+                        GlStateManager.glVertex3f(0, (cursorLine + 1) * lineHeight, 0);
+                        GlStateManager.glVertex3f(cursorX, (cursorLine + 1) * lineHeight, 0);
+                        GlStateManager.glVertex3f(cursorX, cursorLine * lineHeight, 0);
+
+                        GlStateManager.glEnd();
+                    }
+                    else
+                    {
+                        GlStateManager.glBegin(GL11.GL_QUADS);
+
+                        //First line
+                        GlStateManager.glVertex3f(cursorX, cursorLine * lineHeight, 0);
+                        GlStateManager.glVertex3f(cursorX, (cursorLine + 1) * lineHeight, 0);
+                        GlStateManager.glVertex3f(1, (cursorLine + 1) * lineHeight, 0);
+                        GlStateManager.glVertex3f(1, cursorLine * lineHeight, 0);
+
+                        //Middle lines (if any)
+                        for (int middleLine = selectorLine + 1; middleLine < cursorLine; middleLine++)
+                        {
+                            GlStateManager.glVertex3f(0, middleLine * lineHeight, 0);
+                            GlStateManager.glVertex3f(0, (middleLine + 1) * lineHeight, 0);
+                            GlStateManager.glVertex3f(1, (middleLine + 1) * lineHeight, 0);
+                            GlStateManager.glVertex3f(1, middleLine * lineHeight, 0);
+                        }
+
+                        //Last line
+                        GlStateManager.glVertex3f(0, selectorLine * lineHeight, 0);
+                        GlStateManager.glVertex3f(0, (selectorLine + 1) * lineHeight, 0);
+                        GlStateManager.glVertex3f(selectorX, (selectorLine + 1) * lineHeight, 0);
+                        GlStateManager.glVertex3f(selectorX, selectorLine * lineHeight, 0);
+
+                        GlStateManager.glEnd();
+                    }
+                }
+            }
 
             //Cursor
             if ((System.currentTimeMillis() - cursorTime) % 1000 < 500)

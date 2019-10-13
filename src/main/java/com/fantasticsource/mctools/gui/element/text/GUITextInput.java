@@ -1019,7 +1019,7 @@ public class GUITextInput extends GUIText
         if (active || parent instanceof CodeInput)
         {
             float cursorX = parent instanceof CodeInput ? MonoASCIIFontRenderer.getStringWidth(text.substring(0, cursorPosition)) : FONT_RENDERER.getStringWidth(text.substring(0, cursorPosition)) + 0.5f;
-            float selectorX = selectorPosition == -1 ? cursorX : (parent instanceof CodeInput ? MonoASCIIFontRenderer.getStringWidth(text.substring(0, selectorPosition)) : FONT_RENDERER.getStringWidth(text.substring(0, selectorPosition))) - 0.5f;
+            float selectorX = selectorPosition == -1 ? cursorX : (parent instanceof CodeInput ? MonoASCIIFontRenderer.getStringWidth(text.substring(0, selectorPosition)) : FONT_RENDERER.getStringWidth(text.substring(0, selectorPosition))) + 0.5f;
 
             cursorX = Tools.max(cursorX, 1f / absolutePxWidth());
             cursorX *= scale / absolutePxWidth();
