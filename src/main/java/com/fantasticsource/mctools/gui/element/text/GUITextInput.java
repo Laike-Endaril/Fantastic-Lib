@@ -176,30 +176,30 @@ public class GUITextInput extends GUIText
     {
         if (!(parent instanceof CodeInput) || ((CodeInput) parent).selectionStartY == -1 || ((CodeInput) parent).selectionStartY == parent.indexOf(this)) return null;
 
-        CodeInput multi = (CodeInput) parent;
+        CodeInput code = (CodeInput) parent;
         int index = parent.indexOf(this);
-        int firstY = Tools.min(index, multi.selectionStartY);
-        int lastY = Tools.max(index, multi.selectionStartY);
+        int firstY = Tools.min(index, code.selectionStartY);
+        int lastY = Tools.max(index, code.selectionStartY);
 
-        GUITextInput element = (GUITextInput) multi.get(lastY);
+        GUITextInput element = (GUITextInput) code.get(lastY);
         String s = element.text.substring(Tools.max(element.cursorPosition, element.selectorPosition));
 
-        element = (GUITextInput) multi.get(firstY);
+        element = (GUITextInput) code.get(firstY);
         int nextCursorPos = element.selectorPosition == -1 ? element.cursorPosition : Tools.min(element.selectorPosition, element.cursorPosition);
         element.text = element.text.substring(0, nextCursorPos) + s;
 
         setActive(false);
         for (int i = lastY - firstY; i > 0; i--)
         {
-            multi.remove(firstY + 1);
+            code.remove(firstY + 1);
         }
         element.setActive(true);
 
         element.selectorPosition = -1;
         element.cursorPosition = nextCursorPos;
 
-        multi.cursorX = nextCursorPos;
-        multi.selectionStartY = -1;
+        code.cursorX = nextCursorPos;
+        code.selectionStartY = -1;
 
         return element;
     }
@@ -224,7 +224,7 @@ public class GUITextInput extends GUIText
 
         if (!active) return;
 
-        CodeInput multi = parent instanceof CodeInput ? (CodeInput) parent : null;
+        CodeInput code = parent instanceof CodeInput ? (CodeInput) parent : null;
 
         if (keyCode == Keyboard.KEY_RETURN)
         {
@@ -241,7 +241,7 @@ public class GUITextInput extends GUIText
                 deselectAll();
                 element.cursorPosition = min + 1;
             }
-            else if (multi != null)
+            else if (code != null)
             {
                 GUITextInput element = multilineDelete();
                 if (element == null) element = this;
@@ -268,11 +268,11 @@ public class GUITextInput extends GUIText
                 StringBuilder tabbing = new StringBuilder();
                 for (int i = tabs; i > 0; i--) tabbing.append(" ");
 
-                element = (GUITextInput) multi.add(multi.indexOf(element) + 1, tabbing + afterTrimmed);
+                element = (GUITextInput) code.add(code.indexOf(element) + 1, tabbing + afterTrimmed);
                 element.setActive(true);
                 element.cursorPosition = tabs;
 
-                multi.cursorX = tabs;
+                code.cursorX = tabs;
             }
         }
         else if (keyCode == Keyboard.KEY_HOME)
@@ -284,20 +284,20 @@ public class GUITextInput extends GUIText
             else
             {
                 int index = parent.indexOf(this);
-                if (multi != null && index != 0 && GUIScreen.isCtrlKeyDown())
+                if (code != null && index != 0 && GUIScreen.isCtrlKeyDown())
                 {
-                    GUITextInput first = (GUITextInput) multi.get(0);
+                    GUITextInput first = (GUITextInput) code.get(0);
 
                     if (GUIScreen.isShiftKeyDown())
                     {
-                        if (multi.selectionStartY == -1) multi.selectionStartY = index;
+                        if (code.selectionStartY == -1) code.selectionStartY = index;
 
                         for (int i = 0; i < parent.size(); i++)
                         {
                             GUITextInput element = (GUITextInput) parent.get(i);
 
-                            if (i > multi.selectionStartY) element.selectorPosition = -1;
-                            else if (i < multi.selectionStartY)
+                            if (i > code.selectionStartY) element.selectorPosition = -1;
+                            else if (i < code.selectionStartY)
                             {
                                 element.selectorPosition = element.text.length();
                                 element.cursorPosition = 0;
@@ -318,7 +318,7 @@ public class GUITextInput extends GUIText
                     setActive(false);
                     first.setActive(true);
 
-                    multi.cursorX = first.cursorPosition;
+                    code.cursorX = first.cursorPosition;
                 }
                 else singleLineHome();
             }
@@ -332,20 +332,20 @@ public class GUITextInput extends GUIText
             else
             {
                 int index = parent.indexOf(this);
-                if (multi != null && index != parent.size() - 1 && GUIScreen.isCtrlKeyDown())
+                if (code != null && index != parent.size() - 1 && GUIScreen.isCtrlKeyDown())
                 {
-                    GUITextInput last = (GUITextInput) multi.get(multi.size() - 1);
+                    GUITextInput last = (GUITextInput) code.get(code.size() - 1);
 
                     if (GUIScreen.isShiftKeyDown())
                     {
-                        if (multi.selectionStartY == -1) multi.selectionStartY = index;
+                        if (code.selectionStartY == -1) code.selectionStartY = index;
 
                         for (int i = 0; i < parent.size(); i++)
                         {
                             GUITextInput element = (GUITextInput) parent.get(i);
 
-                            if (i < multi.selectionStartY) element.selectorPosition = -1;
-                            else if (i > multi.selectionStartY)
+                            if (i < code.selectionStartY) element.selectorPosition = -1;
+                            else if (i > code.selectionStartY)
                             {
                                 element.selectorPosition = 0;
                                 element.cursorPosition = element.text.length();
@@ -366,18 +366,18 @@ public class GUITextInput extends GUIText
                     setActive(false);
                     last.setActive(true);
 
-                    multi.cursorX = last.cursorPosition;
+                    code.cursorX = last.cursorPosition;
                 }
                 else singleLineEnd();
             }
         }
         else if (GUIScreen.isCtrlKeyDown() && keyCode == Keyboard.KEY_A)
         {
-            if (multi != null)
+            if (code != null)
             {
-                GUITextInput last = (GUITextInput) multi.get(multi.size() - 1);
+                GUITextInput last = (GUITextInput) code.get(code.size() - 1);
 
-                for (GUIElement e : multi.children)
+                for (GUIElement e : code.children)
                 {
                     GUITextInput element = (GUITextInput) e;
                     if (element.text.length() > 0)
@@ -390,8 +390,8 @@ public class GUITextInput extends GUIText
                 setActive(false);
                 last.setActive(true);
 
-                multi.selectionStartY = 0;
-                multi.cursorX = last.cursorPosition;
+                code.selectionStartY = 0;
+                code.cursorX = last.cursorPosition;
             }
             else
             {
@@ -406,20 +406,20 @@ public class GUITextInput extends GUIText
         {
             StringBuilder s = new StringBuilder();
 
-            if (multi != null && ((CodeInput) parent).selectionStartY != -1 && ((CodeInput) parent).selectionStartY != parent.indexOf(this))
+            if (code != null && ((CodeInput) parent).selectionStartY != -1 && ((CodeInput) parent).selectionStartY != parent.indexOf(this))
             {
-                int startY = Tools.min(multi.indexOf(this), multi.selectionStartY);
-                int endY = Tools.max(multi.indexOf(this), multi.selectionStartY);
+                int startY = Tools.min(code.indexOf(this), code.selectionStartY);
+                int endY = Tools.max(code.indexOf(this), code.selectionStartY);
 
-                GUITextInput element = (GUITextInput) multi.get(startY);
+                GUITextInput element = (GUITextInput) code.get(startY);
                 s.append(element.text.substring(element.selectorPosition == -1 ? element.cursorPosition : Tools.min(element.cursorPosition, element.selectorPosition)));
 
                 for (int i = startY + 1; i < endY; i++)
                 {
-                    s.append("\n").append(((GUITextInput) multi.get(i)).text);
+                    s.append("\n").append(((GUITextInput) code.get(i)).text);
                 }
 
-                element = (GUITextInput) multi.get(endY);
+                element = (GUITextInput) code.get(endY);
                 s.append("\n").append(element.text, 0, Tools.max(element.cursorPosition, element.selectorPosition));
 
                 multilineDelete();
@@ -432,7 +432,7 @@ public class GUITextInput extends GUIText
                 deselectAll();
                 cursorPosition = min;
 
-                if (multi != null) ((CodeInput) parent).cursorX = cursorPosition;
+                if (code != null) ((CodeInput) parent).cursorX = cursorPosition;
             }
 
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(s.toString().replaceAll("\n", "\r\n")), null);
@@ -441,20 +441,20 @@ public class GUITextInput extends GUIText
         {
             StringBuilder s = new StringBuilder();
 
-            if (multi != null && ((CodeInput) parent).selectionStartY != -1 && ((CodeInput) parent).selectionStartY != parent.indexOf(this))
+            if (code != null && ((CodeInput) parent).selectionStartY != -1 && ((CodeInput) parent).selectionStartY != parent.indexOf(this))
             {
-                int startY = Tools.min(multi.indexOf(this), multi.selectionStartY);
-                int endY = Tools.max(multi.indexOf(this), multi.selectionStartY);
+                int startY = Tools.min(code.indexOf(this), code.selectionStartY);
+                int endY = Tools.max(code.indexOf(this), code.selectionStartY);
 
-                GUITextInput element = (GUITextInput) multi.get(startY);
+                GUITextInput element = (GUITextInput) code.get(startY);
                 s.append(element.text.substring(element.selectorPosition == -1 ? element.cursorPosition : Tools.min(element.cursorPosition, element.selectorPosition)));
 
                 for (int i = startY + 1; i < endY; i++)
                 {
-                    s.append("\n").append(((GUITextInput) multi.get(i)).text);
+                    s.append("\n").append(((GUITextInput) code.get(i)).text);
                 }
 
-                element = (GUITextInput) multi.get(endY);
+                element = (GUITextInput) code.get(endY);
                 s.append("\n").append(element.text, 0, Tools.max(element.cursorPosition, element.selectorPosition));
             }
             else if (hasSelectedText())
@@ -471,7 +471,7 @@ public class GUITextInput extends GUIText
             GUITextInput element = multilineDelete();
             if (element == null) element = this;
 
-            if (multi != null && tokens.length > 1)
+            if (code != null && tokens.length > 1)
             {
                 int min = element.selectorPosition == -1 ? element.cursorPosition : Tools.min(element.cursorPosition, element.selectorPosition);
                 String before = element.text.substring(0, min);
@@ -479,21 +479,21 @@ public class GUITextInput extends GUIText
                 element.text = before + tokens[0];
                 element.setActive(false);
 
-                int index = multi.indexOf(element) + 1;
+                int index = code.indexOf(element) + 1;
                 for (int i = 1; i < tokens.length - 1; i++)
                 {
-                    multi.add(index++, tokens[i]);
+                    code.add(index++, tokens[i]);
                 }
 
                 before = tokens[tokens.length - 1];
-                element = (GUITextInput) multi.add(index, before + after);
+                element = (GUITextInput) code.add(index, before + after);
 
                 deselectAll();
                 element.setActive(true);
                 element.cursorPosition = before.length();
 
-                multi.cursorX = element.cursorPosition;
-                multi.selectionStartY = -1;
+                code.cursorX = element.cursorPosition;
+                code.selectionStartY = -1;
             }
             else
             {
@@ -519,10 +519,10 @@ public class GUITextInput extends GUIText
             deselectAll();
             element.cursorPosition = min + 1;
 
-            if (multi != null)
+            if (code != null)
             {
-                multi.cursorX = element.cursorPosition;
-                multi.selectionStartY = -1;
+                code.cursorX = element.cursorPosition;
+                code.selectionStartY = -1;
             }
         }
         else if (keyCode == Keyboard.KEY_BACK)
@@ -541,7 +541,7 @@ public class GUITextInput extends GUIText
                     text = text.substring(0, cursorPosition - 1) + text.substring(cursorPosition);
                     cursorPosition--;
                 }
-                else if (multi != null)
+                else if (code != null)
                 {
                     int index = parent.indexOf(this);
                     if (index != 0)
@@ -553,10 +553,10 @@ public class GUITextInput extends GUIText
                     }
                 }
 
-                if (multi != null)
+                if (code != null)
                 {
-                    multi.cursorX = cursorPosition;
-                    multi.selectionStartY = -1;
+                    code.cursorX = cursorPosition;
+                    code.selectionStartY = -1;
                 }
             }
         }
@@ -575,7 +575,7 @@ public class GUITextInput extends GUIText
                 {
                     text = text.substring(0, cursorPosition) + text.substring(cursorPosition + 1);
                 }
-                else if (multi != null)
+                else if (code != null)
                 {
                     int index = parent.indexOf(this);
                     if (index != parent.size() - 1)
@@ -585,10 +585,10 @@ public class GUITextInput extends GUIText
                     }
                 }
 
-                if (multi != null)
+                if (code != null)
                 {
-                    multi.cursorX = cursorPosition;
-                    multi.selectionStartY = -1;
+                    code.cursorX = cursorPosition;
+                    code.selectionStartY = -1;
                 }
             }
         }
@@ -610,20 +610,20 @@ public class GUITextInput extends GUIText
                     while (cursorPosition > 0 && charType(text.charAt(cursorPosition - 1)) == type) cursorPosition--;
                 }
 
-                if (multi != null) ((CodeInput) parent).cursorX = cursorPosition;
+                if (code != null) ((CodeInput) parent).cursorX = cursorPosition;
             }
             else
             {
-                if (multi != null)
+                if (code != null)
                 {
-                    int index = multi.indexOf(this);
+                    int index = code.indexOf(this);
                     if (index != 0)
                     {
-                        GUITextInput other = (GUITextInput) multi.get(index - 1);
+                        GUITextInput other = (GUITextInput) code.get(index - 1);
 
-                        if (GUIScreen.isShiftKeyDown() && multi.selectionStartY == -1)
+                        if (GUIScreen.isShiftKeyDown() && code.selectionStartY == -1)
                         {
-                            multi.selectionStartY = index;
+                            code.selectionStartY = index;
                             other.selectorPosition = -1;
                         }
 
@@ -631,9 +631,9 @@ public class GUITextInput extends GUIText
                         other.setActive(true);
                         other.cursorPosition = other.text.length();
 
-                        multi.cursorX = other.cursorPosition;
+                        code.cursorX = other.cursorPosition;
                     }
-                    else multi.cursorX = cursorPosition;
+                    else code.cursorX = cursorPosition;
                 }
             }
         }
@@ -655,20 +655,20 @@ public class GUITextInput extends GUIText
                     while (cursorPosition < text.length() && charType(text.charAt(cursorPosition)) == type) cursorPosition++;
                 }
 
-                if (multi != null) ((CodeInput) parent).cursorX = cursorPosition;
+                if (code != null) ((CodeInput) parent).cursorX = cursorPosition;
             }
             else
             {
-                if (multi != null)
+                if (code != null)
                 {
-                    int index = multi.indexOf(this);
+                    int index = code.indexOf(this);
                     if (index != parent.size() - 1)
                     {
-                        GUITextInput other = (GUITextInput) multi.get(index + 1);
+                        GUITextInput other = (GUITextInput) code.get(index + 1);
 
-                        if (GUIScreen.isShiftKeyDown() && multi.selectionStartY == -1)
+                        if (GUIScreen.isShiftKeyDown() && code.selectionStartY == -1)
                         {
-                            multi.selectionStartY = index;
+                            code.selectionStartY = index;
                             other.selectorPosition = -1;
                         }
 
@@ -676,9 +676,9 @@ public class GUITextInput extends GUIText
                         other.setActive(true);
                         other.cursorPosition = 0;
 
-                        multi.cursorX = other.cursorPosition;
+                        code.cursorX = other.cursorPosition;
                     }
-                    else multi.cursorX = cursorPosition;
+                    else code.cursorX = cursorPosition;
                 }
             }
         }
@@ -690,22 +690,22 @@ public class GUITextInput extends GUIText
             }
             else
             {
-                if (multi != null && parent.indexOf(this) > 0)
+                if (code != null && parent.indexOf(this) > 0)
                 {
-                    int index = multi.indexOf(this);
-                    GUITextInput other = (GUITextInput) multi.get(index - 1);
+                    int index = code.indexOf(this);
+                    GUITextInput other = (GUITextInput) code.get(index - 1);
 
                     if (GUIScreen.isShiftKeyDown())
                     {
-                        if (multi.selectionStartY == -1) multi.selectionStartY = index;
+                        if (code.selectionStartY == -1) code.selectionStartY = index;
 
-                        if (multi.selectionStartY > index)
+                        if (code.selectionStartY > index)
                         {
                             selectorPosition = text.length();
                             cursorPosition = 0;
                             other.selectorPosition = other.text.length();
                         }
-                        else if (multi.selectionStartY < index) selectorPosition = -1;
+                        else if (code.selectionStartY < index) selectorPosition = -1;
                         else
                         {
                             if (selectorPosition == -1) selectorPosition = cursorPosition;
@@ -718,7 +718,7 @@ public class GUITextInput extends GUIText
                     setActive(false);
                     other.setActive(true);
 
-                    other.cursorPosition = Tools.min(other.text.length(), multi.cursorX);
+                    other.cursorPosition = Tools.min(other.text.length(), code.cursorX);
                 }
                 else singleLineHome();
             }
@@ -731,22 +731,22 @@ public class GUITextInput extends GUIText
             }
             else
             {
-                if (multi != null && parent.indexOf(this) != parent.size() - 1)
+                if (code != null && parent.indexOf(this) != parent.size() - 1)
                 {
-                    int index = multi.indexOf(this);
-                    GUITextInput other = (GUITextInput) multi.get(index + 1);
+                    int index = code.indexOf(this);
+                    GUITextInput other = (GUITextInput) code.get(index + 1);
 
                     if (GUIScreen.isShiftKeyDown())
                     {
-                        if (multi.selectionStartY == -1) multi.selectionStartY = index;
+                        if (code.selectionStartY == -1) code.selectionStartY = index;
 
-                        if (multi.selectionStartY < index)
+                        if (code.selectionStartY < index)
                         {
                             selectorPosition = 0;
                             cursorPosition = text.length();
                             other.selectorPosition = 0;
                         }
-                        else if (multi.selectionStartY > index) selectorPosition = -1;
+                        else if (code.selectionStartY > index) selectorPosition = -1;
                         else
                         {
                             if (selectorPosition == -1) selectorPosition = cursorPosition;
@@ -759,26 +759,26 @@ public class GUITextInput extends GUIText
                     setActive(false);
                     other.setActive(true);
 
-                    other.cursorPosition = Tools.min(other.text.length(), multi.cursorX);
+                    other.cursorPosition = Tools.min(other.text.length(), code.cursorX);
                 }
                 else singleLineEnd();
             }
         }
 
 
-        if (multi != null)
+        if (code != null)
         {
             GUITextInput element = activeLine();
             if (element != null)
             {
-                if (element.y < multi.top)
+                if (element.y < code.top)
                 {
-                    multi.progress = element.y / (multi.internalHeight - 1);
+                    code.progress = element.y / (code.internalHeight - 1);
                 }
 
-                if (element.y + element.height > multi.bottom)
+                if (element.y + element.height > code.bottom)
                 {
-                    multi.progress = (element.y + element.height - 1) / (multi.internalHeight - 1);
+                    code.progress = (element.y + element.height - 1) / (code.internalHeight - 1);
                 }
             }
         }
@@ -889,42 +889,42 @@ public class GUITextInput extends GUIText
         {
             if (parent instanceof CodeInput && ((CodeInput) parent).selectionStartY != -1 && ((CodeInput) parent).selectionStartY != parent.indexOf(this))
             {
-                CodeInput multi = (CodeInput) parent;
-                int index = multi.indexOf(this);
+                CodeInput code = (CodeInput) parent;
+                int index = code.indexOf(this);
 
-                if (multi.selectionStartY < index)
+                if (code.selectionStartY < index)
                 {
-                    GUITextInput element = (GUITextInput) multi.get(multi.selectionStartY);
+                    GUITextInput element = (GUITextInput) code.get(code.selectionStartY);
                     if (element.selectorPosition == -1) element.selectorPosition = element.cursorPosition;
                     element.cursorPosition = element.text.length();
 
-                    for (int i = multi.selectionStartY + 1; i < index; i++)
+                    for (int i = code.selectionStartY + 1; i < index; i++)
                     {
-                        element = (GUITextInput) multi.get(i);
+                        element = (GUITextInput) code.get(i);
                         element.selectorPosition = 0;
                         element.cursorPosition = element.text.length();
                     }
 
                     selectorPosition = 0;
 
-                    for (int i = 0; i < multi.selectionStartY; i++)
+                    for (int i = 0; i < code.selectionStartY; i++)
                     {
-                        ((GUITextInput) multi.get(i)).selectorPosition = -1;
+                        ((GUITextInput) code.get(i)).selectorPosition = -1;
                     }
-                    for (int i = index + 1; i < multi.size(); i++)
+                    for (int i = index + 1; i < code.size(); i++)
                     {
-                        ((GUITextInput) multi.get(i)).selectorPosition = -1;
+                        ((GUITextInput) code.get(i)).selectorPosition = -1;
                     }
                 }
                 else
                 {
-                    GUITextInput element = (GUITextInput) multi.get(multi.selectionStartY);
+                    GUITextInput element = (GUITextInput) code.get(code.selectionStartY);
                     if (element.selectorPosition == -1) element.selectorPosition = element.cursorPosition;
                     element.cursorPosition = 0;
 
-                    for (int i = multi.selectionStartY - 1; i > index; i--)
+                    for (int i = code.selectionStartY - 1; i > index; i--)
                     {
-                        element = (GUITextInput) multi.get(i);
+                        element = (GUITextInput) code.get(i);
                         element.selectorPosition = element.text.length();
                         element.cursorPosition = 0;
                     }
@@ -933,11 +933,11 @@ public class GUITextInput extends GUIText
 
                     for (int i = 0; i < index; i++)
                     {
-                        ((GUITextInput) multi.get(i)).selectorPosition = -1;
+                        ((GUITextInput) code.get(i)).selectorPosition = -1;
                     }
-                    for (int i = multi.selectionStartY + 1; i < multi.size(); i++)
+                    for (int i = code.selectionStartY + 1; i < code.size(); i++)
                     {
-                        ((GUITextInput) multi.get(i)).selectorPosition = -1;
+                        ((GUITextInput) code.get(i)).selectorPosition = -1;
                     }
                 }
 
@@ -957,9 +957,9 @@ public class GUITextInput extends GUIText
 
                 if (parent instanceof CodeInput)
                 {
-                    CodeInput multi = (CodeInput) parent;
-                    multi.selectionStartY = multi.indexOf(this);
-                    multi.cursorX = cursorPosition;
+                    CodeInput code = (CodeInput) parent;
+                    code.selectionStartY = code.indexOf(this);
+                    code.cursorX = cursorPosition;
                 }
             }
 
