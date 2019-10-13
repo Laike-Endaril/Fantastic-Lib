@@ -279,7 +279,27 @@ public class GUITextInput extends GUIText
         {
             if (this instanceof GUIMultilineTextInput)
             {
-                //TODO
+                if (GUIScreen.isShiftKeyDown())
+                {
+                    if (selectorPosition == -1) selectorPosition = cursorPosition;
+                }
+                else selectorPosition = -1;
+
+                if (GUIScreen.isCtrlKeyDown()) cursorPosition = 0;
+                else
+                {
+                    int position = 0;
+                    for (String fullLine : fullLines)
+                    {
+                        position += fullLine.length();
+                        if (position >= cursorPosition)
+                        {
+                            cursorPosition = position - fullLine.length();
+                            if (fullLine.length() > 0 && fullLine.charAt(0) == '\n') cursorPosition++;
+                            break;
+                        }
+                    }
+                }
             }
             else
             {
@@ -1080,7 +1100,8 @@ public class GUITextInput extends GUIText
             if (index >= lines.size()) return text.length();
 
             line = lines.get(index);
-            if (fullLines.get(index).charAt(0) == '\n') result++;
+            String fullLine = fullLines.get(index);
+            if (fullLine.length() > 0 && fullLine.charAt(0) == '\n') result++;
 
             for (int i = 0; i < index; i++)
             {
