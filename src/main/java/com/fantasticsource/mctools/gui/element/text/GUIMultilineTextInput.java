@@ -92,7 +92,8 @@ public class GUIMultilineTextInput extends GUITextInput
         //Draw cursor and selection highlight
         if (active)
         {
-            float lineHeight = 1f / lines.size();
+            float wUnit = (float) (scale / absolutePxWidth());
+            float lineHeight = 1f / fullLines.size();
 
             //Calculate cursor position
             float cursorX = 0;
@@ -112,7 +113,7 @@ public class GUIMultilineTextInput extends GUITextInput
                 }
             }
             cursorX = Tools.max(cursorX, 1f / absolutePxWidth());
-            cursorX *= scale / absolutePxWidth();
+            cursorX *= wUnit;
 
 
             if (selectorPosition != -1 && selectorPosition != cursorPosition)
@@ -132,7 +133,7 @@ public class GUIMultilineTextInput extends GUITextInput
                     selectorLine++;
                     lineStart += fullLine.length();
                 }
-                selectorX *= scale / absolutePxWidth();
+                selectorX *= wUnit;
 
                 GlStateManager.color(1, 1, 1, 0.3f);
 
@@ -187,7 +188,7 @@ public class GUIMultilineTextInput extends GUITextInput
                         GlStateManager.glVertex3f(1, cursorLine * lineHeight, 0);
 
                         //Middle lines (if any)
-                        for (int middleLine = selectorLine + 1; middleLine < cursorLine; middleLine++)
+                        for (int middleLine = cursorLine + 1; middleLine < selectorLine; middleLine++)
                         {
                             GlStateManager.glVertex3f(0, middleLine * lineHeight, 0);
                             GlStateManager.glVertex3f(0, (middleLine + 1) * lineHeight, 0);
