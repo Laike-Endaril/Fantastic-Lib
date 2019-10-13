@@ -230,7 +230,16 @@ public class GUITextInput extends GUIText
         {
             if (this instanceof GUIMultilineTextInput)
             {
-                text += "\n";
+                GUITextInput element = multilineDelete();
+                if (element == null) element = this;
+
+                int min = Tools.min(element.cursorPosition, element.selectorPosition);
+                if (min == -1) min = element.cursorPosition;
+                String before = element.text.substring(0, min);
+                String after = element.text.substring(Tools.max(element.cursorPosition, element.selectorPosition));
+                element.text = before + "\n" + after;
+                deselectAll();
+                element.cursorPosition = min + 1;
             }
             else if (multi != null)
             {
