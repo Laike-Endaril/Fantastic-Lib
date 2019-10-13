@@ -727,7 +727,31 @@ public class GUITextInput extends GUIText
         {
             if (this instanceof GUIMultilineTextInput)
             {
-                //TODO
+                if (GUIScreen.isShiftKeyDown())
+                {
+                    if (selectorPosition == -1) selectorPosition = cursorPosition;
+                }
+                else selectorPosition = -1;
+
+                int lineIndex = 0;
+                int pos = 0;
+                String partialLine = "";
+                for (String fullLine : fullLines)
+                {
+                    pos += fullLine.length();
+                    if (pos >= cursorPosition)
+                    {
+                        partialLine = fullLine.substring(0, cursorPosition - (pos - fullLine.length()));
+                        break;
+                    }
+                    lineIndex++;
+                }
+
+                if (lineIndex == 0) cursorPosition = 0;
+                else
+                {
+                    cursorPosition = findCursorPosition(absoluteX() + (double) FONT_RENDERER.getStringWidth(partialLine) / screen.width, lineIndex - 1);
+                }
             }
             else
             {
@@ -876,7 +900,7 @@ public class GUITextInput extends GUIText
                 }
                 else deselectAll();
 
-                cursorPosition = findCursorPosition();
+                cursorPosition = findCursorPosition(mouseX(), mouseY());
 
                 if (parent instanceof CodeInput && ((CodeInput) parent).selectionStartY == -1) ((CodeInput) parent).selectionStartY = parent.indexOf(this);
             }
@@ -884,7 +908,7 @@ public class GUITextInput extends GUIText
             {
                 deselectAll();
 
-                cursorPosition = findCursorPosition();
+                cursorPosition = findCursorPosition(mouseX(), mouseY());
                 selectorPosition = cursorPosition;
 
                 char[] chars = text.toCharArray();
@@ -982,12 +1006,12 @@ public class GUITextInput extends GUIText
                     }
                 }
 
-                cursorPosition = findCursorPosition();
+                cursorPosition = findCursorPosition(mouseX(), mouseY());
             }
             else
             {
                 if (selectorPosition == -1) selectorPosition = cursorPosition;
-                cursorPosition = findCursorPosition();
+                cursorPosition = findCursorPosition(mouseX(), mouseY());
                 if (selectorPosition == cursorPosition) selectorPosition = -1;
 
                 int sp = selectorPosition, cp = cursorPosition;
@@ -1110,21 +1134,25 @@ public class GUITextInput extends GUIText
         super.setActive(active);
     }
 
-    protected int findCursorPosition()
+    protected int findCursorPosition(double absX, double absY)
+    {
+        return findCursorPosition(absX, (int) ((absY - absoluteY()) / absoluteHeight() * fullLines.size()));
+    }
+
+    protected int findCursorPosition(double absX, int lineIndex)
     {
         //Find y, set line, and set result offset
         String line;
         int result = 0;
         if (this instanceof GUIMultilineTextInput)
         {
-            int index = (int) ((mouseY() - absoluteY()) / absoluteHeight() * fullLines.size());
-            if (index >= lines.size()) return text.length();
+            if (lineIndex >= lines.size()) return text.length();
 
-            line = lines.get(index);
-            String fullLine = fullLines.get(index);
+            line = lines.get(lineIndex);
+            String fullLine = fullLines.get(lineIndex);
             if (fullLine.length() > 0 && fullLine.charAt(0) == '\n') result++;
 
-            for (int i = 0; i < index; i++)
+            for (int i = 0; i < lineIndex; i++)
             {
                 result += fullLines.get(i).length();
             }
@@ -1132,7 +1160,7 @@ public class GUITextInput extends GUIText
         else line = text;
 
         //Find x
-        double xDif = mouseX() - absoluteX();
+        double xDif = absX - absoluteX();
         for (char c : line.toCharArray())
         {
             double lastDif = xDif;
