@@ -750,7 +750,7 @@ public class GUITextInput extends GUIText
                 if (lineIndex == 0) cursorPosition = 0;
                 else
                 {
-                    cursorPosition = findCursorPosition(absoluteX() + (double) FONT_RENDERER.getStringWidth(partialLine) / screen.width, lineIndex - 1);
+                    cursorPosition = findCursorPosition(absoluteX() + (double) FONT_RENDERER.getStringWidth(partialLine.replaceAll("\n", "")) / screen.width, lineIndex - 1);
                 }
             }
             else
@@ -792,7 +792,31 @@ public class GUITextInput extends GUIText
         {
             if (this instanceof GUIMultilineTextInput)
             {
-                //TODO
+                if (GUIScreen.isShiftKeyDown())
+                {
+                    if (selectorPosition == -1) selectorPosition = cursorPosition;
+                }
+                else selectorPosition = -1;
+
+                int lineIndex = 0;
+                int pos = 0;
+                String partialLine = "";
+                for (String fullLine : fullLines)
+                {
+                    pos += fullLine.length();
+                    if (pos >= cursorPosition)
+                    {
+                        partialLine = fullLine.substring(0, cursorPosition - (pos - fullLine.length()));
+                        break;
+                    }
+                    lineIndex++;
+                }
+
+                if (lineIndex == fullLines.size() - 1) cursorPosition = text.length();
+                else
+                {
+                    cursorPosition = findCursorPosition(absoluteX() + (double) FONT_RENDERER.getStringWidth(partialLine.replaceAll("\n", "")) / screen.width, lineIndex + 1);
+                }
             }
             else
             {
@@ -1092,8 +1116,8 @@ public class GUITextInput extends GUIText
         //Draw cursor and selection highlight
         if (active || parent instanceof CodeInput)
         {
-            float cursorX = parent instanceof CodeInput ? MonoASCIIFontRenderer.getStringWidth(text.substring(0, cursorPosition)) : FONT_RENDERER.getStringWidth(text.substring(0, cursorPosition)) + 0.5f;
-            float selectorX = selectorPosition == -1 ? cursorX : (parent instanceof CodeInput ? MonoASCIIFontRenderer.getStringWidth(text.substring(0, selectorPosition)) : FONT_RENDERER.getStringWidth(text.substring(0, selectorPosition))) + 0.5f;
+            float cursorX = parent instanceof CodeInput ? MonoASCIIFontRenderer.getStringWidth(text.substring(0, cursorPosition)) : FONT_RENDERER.getStringWidth(text.substring(0, cursorPosition).replaceAll("\n", "")) + 0.5f;
+            float selectorX = selectorPosition == -1 ? cursorX : (parent instanceof CodeInput ? MonoASCIIFontRenderer.getStringWidth(text.substring(0, selectorPosition)) : FONT_RENDERER.getStringWidth(text.substring(0, selectorPosition).replaceAll("\n", ""))) + 0.5f;
 
             cursorX = Tools.max(cursorX, 1f / absolutePxWidth());
             cursorX *= scale / absolutePxWidth();

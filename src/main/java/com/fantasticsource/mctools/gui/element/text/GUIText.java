@@ -122,7 +122,7 @@ public class GUIText extends GUIElement
                 }
                 else
                 {
-                    double wordW = (double) FONT_RENDERER.getStringWidth(word) / screen.width;
+                    double wordW = (double) FONT_RENDERER.getStringWidth(word.replaceAll("\n", "")) / screen.width;
 
                     if (lineW + wordW > parentW)
                     {
@@ -148,7 +148,7 @@ public class GUIText extends GUIElement
                             fullLine = new StringBuilder(word);
 
                             maxLineW = parentW;
-                            lineW = (double) (FONT_RENDERER.getStringWidth(word) - 1) / screen.width;
+                            lineW = (double) (FONT_RENDERER.getStringWidth(word.replaceAll("\n", "")) - 1) / screen.width;
                         }
                     }
                     else
