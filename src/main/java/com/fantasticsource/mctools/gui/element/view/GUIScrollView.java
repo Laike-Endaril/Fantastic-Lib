@@ -36,11 +36,9 @@ public class GUIScrollView extends GUIView
         recalc();
     }
 
-    @Override
-    public GUIElement recalc()
+    public GUIElement recalcThisOnly()
     {
         internalHeight = 0;
-        super.recalc(0);
         for (GUIElement element : children)
         {
             internalHeight = Tools.max(internalHeight, element.y + element.height);
@@ -49,6 +47,13 @@ public class GUIScrollView extends GUIView
         recalc2();
 
         return this;
+    }
+
+    @Override
+    public GUIElement recalc()
+    {
+        super.recalc(0);
+        return recalcThisOnly();
     }
 
     @Override
