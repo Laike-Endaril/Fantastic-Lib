@@ -112,10 +112,10 @@ public class GUIText extends GUIElement
                 if (word.equals("\n"))
                 {
                     lines.add(line.toString());
-                    fullLines.add(fullLine.toString() + "\n");
+                    fullLines.add(fullLine.toString());
 
                     line = new StringBuilder();
-                    fullLine = new StringBuilder();
+                    fullLine = new StringBuilder("\n");
 
                     maxLineW = 1;
                     lineW = -1d / screen.width;
