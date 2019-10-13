@@ -25,7 +25,7 @@ public class GUITextInput extends GUIText
 {
     protected static final Color T_RED = RED.copy().setAF(0.4f);
 
-    public int cursorPosition, selectorPosition = -1;
+    protected int cursorPosition, selectorPosition = -1;
     protected long cursorTime;
     protected TextFilter filter;
 

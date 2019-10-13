@@ -222,4 +222,22 @@ public class GUIMultilineTextInput extends GUITextInput
 
         drawChildren();
     }
+
+    public int fullLineCount()
+    {
+        return fullLines.size();
+    }
+
+    public int cursorLine()
+    {
+        int pos = cursorPosition;
+        int line = 0;
+        for (String fullLine : fullLines)
+        {
+            pos -= fullLine.length();
+            if (pos <= 0) return line;
+            line++;
+        }
+        return line;
+    }
 }
