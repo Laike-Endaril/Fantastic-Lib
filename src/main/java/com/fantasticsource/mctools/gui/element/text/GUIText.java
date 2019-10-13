@@ -16,7 +16,7 @@ import static com.fantasticsource.mctools.gui.GUIScreen.FONT_RENDERER;
 public class GUIText extends GUIElement
 {
     public String text;
-    protected ArrayList<String> lines = new ArrayList<>(), fullLines = new ArrayList<>();
+    public ArrayList<String> lines = new ArrayList<>(), fullLines = new ArrayList<>();
     protected Color color, hoverColor, activeColor;
 
 
