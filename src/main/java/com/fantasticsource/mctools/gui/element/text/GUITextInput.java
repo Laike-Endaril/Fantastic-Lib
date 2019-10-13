@@ -835,7 +835,7 @@ public class GUITextInput extends GUIText
                 }
                 else deselectAll();
 
-                cursorPosition = findCursorPosition(mouseX());
+                cursorPosition = findCursorPosition();
 
                 if (parent instanceof CodeInput && ((CodeInput) parent).selectionStartY == -1) ((CodeInput) parent).selectionStartY = parent.indexOf(this);
             }
@@ -843,7 +843,7 @@ public class GUITextInput extends GUIText
             {
                 deselectAll();
 
-                cursorPosition = findCursorPosition(mouseX());
+                cursorPosition = findCursorPosition();
                 selectorPosition = cursorPosition;
 
                 char[] chars = text.toCharArray();
@@ -941,12 +941,12 @@ public class GUITextInput extends GUIText
                     }
                 }
 
-                cursorPosition = findCursorPosition(mouseX());
+                cursorPosition = findCursorPosition();
             }
             else
             {
                 if (selectorPosition == -1) selectorPosition = cursorPosition;
-                cursorPosition = findCursorPosition(mouseX());
+                cursorPosition = findCursorPosition();
                 if (selectorPosition == cursorPosition) selectorPosition = -1;
 
                 int sp = selectorPosition, cp = cursorPosition;
@@ -1069,21 +1069,40 @@ public class GUITextInput extends GUIText
         super.setActive(active);
     }
 
-    protected int findCursorPosition(double x)
+    protected int findCursorPosition()
     {
-        double dif = x - absoluteX();
+        //Find y, set line, and set result offset
+        String line;
         int result = 0;
-        for (char c : text.toCharArray())
+        if (this instanceof GUIMultilineTextInput)
         {
-            double lastDif = dif;
-            dif -= (double) (parent instanceof CodeInput ? (MonoASCIIFontRenderer.CHAR_WIDTH + 2) : FONT_RENDERER.getCharWidth(c)) / screen.width;
-            if (dif <= 0)
+            int index = (int) ((mouseY() - absoluteY()) / absoluteHeight() * fullLines.size());
+            if (index >= lines.size()) return text.length();
+
+            line = lines.get(index);
+            if (fullLines.get(index).charAt(0) == '\n') result++;
+
+            for (int i = 0; i < index; i++)
             {
-                if (Math.abs(dif) < lastDif) result++;
+                result += fullLines.get(i).length();
+            }
+        }
+        else line = text;
+
+        //Find x
+        double xDif = mouseX() - absoluteX();
+        for (char c : line.toCharArray())
+        {
+            double lastDif = xDif;
+            xDif -= (double) (parent instanceof CodeInput ? (MonoASCIIFontRenderer.CHAR_WIDTH + 2) : FONT_RENDERER.getCharWidth(c)) / screen.width;
+            if (xDif <= 0)
+            {
+                if (Math.abs(xDif) < lastDif) result++;
                 break;
             }
             result++;
         }
+
         return result;
     }
 
