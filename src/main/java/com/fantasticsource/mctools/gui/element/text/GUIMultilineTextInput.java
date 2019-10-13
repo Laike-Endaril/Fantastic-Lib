@@ -79,7 +79,7 @@ public class GUIMultilineTextInput extends GUITextInput
             int yy = 0;
             for (String line : lines)
             {
-                FONT_RENDERER.drawString(line, 0, yy, (c.color() >> 8) | c.a() << 24, false);
+                FONT_RENDERER.drawString(line, 1, yy, (c.color() >> 8) | c.a() << 24, false);
                 yy += FONT_RENDERER.FONT_HEIGHT;
             }
 
