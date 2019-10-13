@@ -23,7 +23,7 @@ import static com.fantasticsource.tools.datastructures.Color.*;
 
 public class GUITextInput extends GUIText
 {
-    private static final Color T_RED = RED.copy().setAF(0.4f);
+    protected static final Color T_RED = RED.copy().setAF(0.4f);
 
     protected int cursorPosition, selectorPosition = -1;
     protected long cursorTime;

@@ -16,7 +16,7 @@ import static com.fantasticsource.mctools.gui.GUIScreen.FONT_RENDERER;
 public class GUIText extends GUIElement
 {
     public String text;
-    protected ArrayList<String> lines = new ArrayList<>();
+    protected ArrayList<String> lines = new ArrayList<>(), fullLines = new ArrayList<>();
     protected Color color, hoverColor, activeColor;
 
 
@@ -79,32 +79,43 @@ public class GUIText extends GUIElement
     @Override
     public GUIText recalc()
     {
+        text = text.replaceAll("\r", "");
+
         lines.clear();
+        fullLines.clear();
+
         if (parent instanceof CodeInput)
         {
             lines.add(text);
+            fullLines.add(text);
+
             width = (double) MonoASCIIFontRenderer.getStringWidth(text) / screen.width;
             height = (double) (MonoASCIIFontRenderer.LINE_HEIGHT + 2) / screen.height;
         }
         else
         {
-            String[] words = Tools.preservedSplit(text, "[\r\n]|[ ]+", true);
+            String[] words = Tools.preservedSplit(text, "[\n]|[ ]+", true);
 
             double parentW = parent == null ? 1 : parent.absoluteWidth();
 
             StringBuilder line = new StringBuilder();
+            StringBuilder fullLine = new StringBuilder();
+
             int index = 0;
             double maxLineW = 0, lineW = -1d / screen.width;
             while (index < words.length)
             {
                 String word = words[index++];
 
-                if (word.equals("") || word.equals("\r")) continue;
+                if (word.equals("")) continue;
 
                 if (word.equals("\n"))
                 {
                     lines.add(line.toString());
+                    fullLines.add(fullLine.toString() + "\n");
+
                     line = new StringBuilder();
+                    fullLine = new StringBuilder();
 
                     maxLineW = 1;
                     lineW = -1d / screen.width;
@@ -115,17 +126,26 @@ public class GUIText extends GUIElement
 
                     if (lineW + wordW > parentW)
                     {
-                        if (word.trim().equals("")) continue;
+                        if (word.trim().equals(""))
+                        {
+                            fullLine.append(word);
+                            continue;
+                        }
 
                         if (line.length() == 0)
                         {
                             line.append(word);
+                            fullLine.append(word);
+
                             lineW += wordW;
                         }
                         else
                         {
                             lines.add(line.toString());
+                            fullLines.add(fullLine.toString());
+
                             line = new StringBuilder(word);
+                            fullLine = new StringBuilder(word);
 
                             maxLineW = parentW;
                             lineW = (double) (FONT_RENDERER.getStringWidth(word) - 1) / screen.width;
@@ -134,6 +154,8 @@ public class GUIText extends GUIElement
                     else
                     {
                         line.append(word);
+                        fullLine.append(word);
+
                         lineW += wordW;
                     }
                 }
@@ -144,6 +166,7 @@ public class GUIText extends GUIElement
                 lines.add(line.toString());
                 maxLineW = Tools.max(maxLineW, lineW);
             }
+            if (fullLine.length() > 0) fullLines.add(fullLine.toString());
 
             width = maxLineW;
             height = (double) (Tools.max(1, lines.size()) * FONT_RENDERER.FONT_HEIGHT - 1) / screen.height;
