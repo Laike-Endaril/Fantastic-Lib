@@ -21,7 +21,7 @@ public class FantasticLib
     public static final String VERSION = "1.12.2.022a";
 
 
-    private static final boolean DEBUG_GUI = true;
+    private static final boolean DEBUG_GUI = false;
 
 
     public FantasticLib()
