@@ -6,7 +6,6 @@ import com.fantasticsource.mctools.gui.element.view.GUITooltipView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.TextFormatting;
 
 public class GUIItemStack extends GUIText
 {
@@ -14,7 +13,7 @@ public class GUIItemStack extends GUIText
 
     public GUIItemStack(GUIScreen screen, ItemStack stack)
     {
-        super(screen, stack.isEmpty() ? "(Empty Slot)" : stack.getCount() + " " + TextFormatting.RESET + stack.getDisplayName());
+        super(screen, stack.isEmpty() ? "(Empty Slot)" : stack.getCount() + " " + stack.getDisplayName());
         this.stack = stack;
 
         tooltip = new GUITooltipView(screen);
@@ -31,7 +30,7 @@ public class GUIItemStack extends GUIText
 
     public GUIItemStack(GUIScreen screen, double x, double y, ItemStack stack)
     {
-        super(screen, x, y, stack.isEmpty() ? "(Empty Slot)" : stack.getCount() + " " + TextFormatting.RESET + stack.getDisplayName());
+        super(screen, x, y, stack.isEmpty() ? "(Empty Slot)" : stack.getCount() + " " + stack.getDisplayName());
         this.stack = stack;
 
         tooltip = new GUITooltipView(screen);
@@ -54,7 +53,7 @@ public class GUIItemStack extends GUIText
     public GUIItemStack setStack(ItemStack stack)
     {
         this.stack = stack;
-        text = stack.isEmpty() ? "(Empty Slot)" : stack.getCount() + " " + TextFormatting.RESET + stack.getDisplayName();
+        text = stack.isEmpty() ? "(Empty Slot)" : stack.getCount() + " " + stack.getDisplayName();
 
         tooltip.clear();
         Minecraft mc = Minecraft.getMinecraft();
