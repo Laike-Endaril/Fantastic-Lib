@@ -169,7 +169,7 @@ public class GUIText extends GUIElement
             if (fullLine.length() > 0) fullLines.add(fullLine.toString());
 
             width = maxLineW;
-            if (this instanceof GUIMultilineTextInput && text.charAt(text.length() - 1) == '\n')
+            if (this instanceof GUIMultilineTextInput && text.length() > 0 && text.charAt(text.length() - 1) == '\n')
             {
                 height = (double) (Tools.max(1, fullLines.size()) * FONT_RENDERER.FONT_HEIGHT - 1) / screen.height;
             }
