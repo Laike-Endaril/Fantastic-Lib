@@ -1,3 +1,11 @@
+For some reason, an empty GUIMultilineTextInput does not render the cursor
+The render code is being called
+The variables used are the same as if there is text and the cursor is in that position
+The left scissor is the same as with text as well
+GL texture is disabled from highlight, though I also tried disabling it directly (didn't fix the issue)
+
+
+
 Fix scrollbars staying active if you release click while outside window
 
 Fix sliiiiight overclipping, usually at higher resolutions

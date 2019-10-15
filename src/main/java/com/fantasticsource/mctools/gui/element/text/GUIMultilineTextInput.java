@@ -112,7 +112,7 @@ public class GUIMultilineTextInput extends GUITextInput
                     lineStart += fullLine.length();
                 }
             }
-            cursorX = Tools.max(cursorX, 1f / absolutePxWidth());
+            cursorX = Tools.max(cursorX, 1f / absolutePxWidth() + 0.5f);
             cursorX *= wUnit;
 
 
