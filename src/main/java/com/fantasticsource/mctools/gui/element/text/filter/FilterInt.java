@@ -19,9 +19,11 @@ public class FilterInt extends TextFilter<Integer>
     {
         if (input.equals("")) return false;
 
+        boolean first = true;
         for (char c : transformInput(input).toCharArray())
         {
-            if (c < '0' || c > '9') return false;
+            if ((c < '0' || c > '9') && (!first || c != '-')) return false;
+            first = false;
         }
 
         return true;
