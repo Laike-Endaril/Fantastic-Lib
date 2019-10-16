@@ -1,6 +1,7 @@
 package com.fantasticsource.mctools.gui.element.text;
 
 import com.fantasticsource.mctools.MonoASCIIFontRenderer;
+import com.fantasticsource.mctools.Render;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.tools.Tools;
@@ -94,6 +95,8 @@ public class GUIText extends GUIElement
         }
         else
         {
+            StringBuilder previous = new StringBuilder();
+
             String[] words = Tools.preservedSplit(text, "[\n]|[ ]+", true);
 
             double parentW = parent == null ? 1 : parent.absoluteWidth();
@@ -122,7 +125,7 @@ public class GUIText extends GUIElement
                 }
                 else
                 {
-                    double wordW = (double) FONT_RENDERER.getStringWidth(word.replaceAll("\n", "")) / screen.width;
+                    double wordW = (double) Render.getPartialStringWidth(previous.toString().replaceAll("\n", ""), word.replaceAll("\n", "")) / screen.width;
 
                     if (lineW + wordW > parentW)
                     {
@@ -148,7 +151,7 @@ public class GUIText extends GUIElement
                             fullLine = new StringBuilder(word);
 
                             maxLineW = parentW;
-                            lineW = (double) (FONT_RENDERER.getStringWidth(word.replaceAll("\n", "")) - 1) / screen.width;
+                            lineW = (double) (Render.getPartialStringWidth(previous.toString().replaceAll("\n", ""), word.replaceAll("\n", "")) - 1) / screen.width;
                         }
                     }
                     else
@@ -159,6 +162,8 @@ public class GUIText extends GUIElement
                         lineW += wordW;
                     }
                 }
+
+                previous.append(word);
             }
 
             if (line.length() > 0)

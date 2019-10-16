@@ -5,6 +5,7 @@ import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.TrigLookupTable;
 import com.fantasticsource.tools.datastructures.Pair;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.GlStateManager;
@@ -83,6 +84,13 @@ public class Render
     public static void updateFOVMultiplier(FOVUpdateEvent event)
     {
         fovMultiplier = event.getNewfov();
+    }
+
+
+    public static int getPartialStringWidth(String beforePart, String part)
+    {
+        FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
+        return fr.getStringWidth(beforePart + part) - fr.getStringWidth(beforePart);
     }
 
 
