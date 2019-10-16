@@ -26,6 +26,8 @@ public class FilterInt extends TextFilter<Integer>
             first = false;
         }
 
+        if (input.charAt(0) == '-' && input.length() == 1) return false;
+
         return true;
     }
 
