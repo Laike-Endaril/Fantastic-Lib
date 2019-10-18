@@ -7,45 +7,51 @@ import net.minecraft.client.audio.SoundEventAccessor;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.registries.IForgeRegistry;
 
 import javax.annotation.Nullable;
 
 @SideOnly(Side.CLIENT)
 public class SimpleClientSound implements ISound
 {
-    public final ResourceLocation LOCATION;
+    public final ResourceLocation RL;
     public final SoundCategory CATEGORY;
     protected Sound sound;
     protected boolean repeat = false;
     protected int repeatDelay = 0;
 
-    public SimpleClientSound(ResourceLocation location, SoundCategory category)
+    public SimpleClientSound(IForgeRegistry<SoundEvent> registry, ResourceLocation rl, SoundCategory category)
     {
-        LOCATION = location;
+        RL = rl;
         CATEGORY = category;
+
+        registry.register(new SoundEvent(rl).setRegistryName(rl));
     }
 
-    public SimpleClientSound(ResourceLocation location, SoundCategory category, int repeatDelay)
+    public SimpleClientSound(IForgeRegistry<SoundEvent> registry, ResourceLocation rl, SoundCategory category, int repeatDelay)
     {
-        LOCATION = location;
+        RL = rl;
         CATEGORY = category;
         repeat = true;
         this.repeatDelay = repeatDelay;
+
+        registry.register(new SoundEvent(rl).setRegistryName(rl));
     }
 
     @Override
     public ResourceLocation getSoundLocation()
     {
-        return LOCATION;
+        return RL;
     }
 
     @Nullable
     @Override
     public SoundEventAccessor createAccessor(SoundHandler handler)
     {
-        SoundEventAccessor accessor = handler.getAccessor(LOCATION);
+        SoundEventAccessor accessor = handler.getAccessor(RL);
 
         if (accessor == null)
         {
