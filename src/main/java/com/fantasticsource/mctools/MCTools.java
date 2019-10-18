@@ -74,15 +74,22 @@ public class MCTools
                 if (tokens.length > 2) specificName = tokens[2];
             }
 
-            for (Map.Entry<ResourceLocation, EntityEntry> entry : ForgeRegistries.ENTITIES.getEntries())
+            if (name.toLowerCase().equals("player"))
             {
-                if (!Pattern.matches(domain, entry.getKey().getResourceDomain())) continue;
-                if (!Pattern.matches(name, entry.getKey().getResourcePath())) continue;
+                mapToPopulate.computeIfAbsent(EntityPlayerMP.class, o -> new HashSet<>()).add(specificName);
+            }
+            else
+            {
+                for (Map.Entry<ResourceLocation, EntityEntry> entry : ForgeRegistries.ENTITIES.getEntries())
+                {
+                    if (!Pattern.matches(domain, entry.getKey().getResourceDomain())) continue;
+                    if (!Pattern.matches(name, entry.getKey().getResourcePath())) continue;
 
-                Class cls = entry.getValue().getEntityClass();
-                if (!(EntityLivingBase.class.isAssignableFrom(cls))) continue;
+                    Class cls = entry.getValue().getEntityClass();
+                    if (!(EntityLivingBase.class.isAssignableFrom(cls))) continue;
 
-                mapToPopulate.computeIfAbsent((Class<? extends EntityLivingBase>) cls, o -> new HashSet<>()).add(specificName);
+                    mapToPopulate.computeIfAbsent((Class<? extends EntityLivingBase>) cls, o -> new HashSet<>()).add(specificName);
+                }
             }
         }
     }
