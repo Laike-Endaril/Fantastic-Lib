@@ -1,21 +1,21 @@
 package com.fantasticsource.mctools.sound;
 
+import com.fantasticsource.mctools.Network;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.Sound;
 import net.minecraft.client.audio.SoundEventAccessor;
 import net.minecraft.client.audio.SoundHandler;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.registries.IForgeRegistry;
 
 import javax.annotation.Nullable;
 
 @SideOnly(Side.CLIENT)
-public class SimpleClientSound implements ISound
+public class SimpleSound implements ISound
 {
     public final ResourceLocation RL;
     public final SoundCategory CATEGORY;
@@ -23,22 +23,29 @@ public class SimpleClientSound implements ISound
     protected boolean repeat = false;
     protected int repeatDelay = 0;
 
-    public SimpleClientSound(IForgeRegistry<SoundEvent> registry, ResourceLocation rl, SoundCategory category)
+    public SimpleSound(ResourceLocation rl, SoundCategory category)
     {
         RL = rl;
         CATEGORY = category;
-
-        registry.register(new SoundEvent(rl).setRegistryName(rl));
     }
 
-    public SimpleClientSound(IForgeRegistry<SoundEvent> registry, ResourceLocation rl, SoundCategory category, int repeatDelay)
+    public SimpleSound(ResourceLocation rl, SoundCategory category, int repeatDelay)
     {
         RL = rl;
         CATEGORY = category;
         repeat = true;
         this.repeatDelay = repeatDelay;
+    }
 
-        registry.register(new SoundEvent(rl).setRegistryName(rl));
+    @SideOnly(Side.CLIENT)
+    public static void play(ResourceLocation rl)
+    {
+        Minecraft.getMinecraft().getSoundHandler().playSound(new SimpleSound(rl, SoundCategory.MASTER));
+    }
+
+    public static void playOnClient(EntityPlayerMP player, ResourceLocation rl)
+    {
+        Network.WRAPPER.sendTo(new Network.PlaySimpleSoundPacket(rl), player);
     }
 
     @Override

@@ -12,27 +12,28 @@ import java.io.OutputStream;
 
 public class CItemStack extends Component
 {
-    public ItemStack stack = ItemStack.EMPTY;
+    public ItemStack value = ItemStack.EMPTY;
 
     public CItemStack()
     {
     }
 
-    public CItemStack(ItemStack stack)
+    public CItemStack(ItemStack value)
     {
-        set(stack);
+        set(value);
     }
 
-    public CItemStack set(ItemStack stack)
+    public CItemStack set(ItemStack value)
     {
-        this.stack = stack;
+        this.value = value;
+
         return this;
     }
 
     @Override
     public CItemStack write(ByteBuf buf)
     {
-        new CStringUTF8().set(stack.serializeNBT().toString()).write(buf);
+        new CStringUTF8().set(value.serializeNBT().toString()).write(buf);
         return this;
     }
 
@@ -41,8 +42,7 @@ public class CItemStack extends Component
     {
         try
         {
-            stack = new ItemStack(JsonToNBT.getTagFromJson(new CStringUTF8().read(buf).value));
-            return this;
+            return set(new ItemStack(JsonToNBT.getTagFromJson(new CStringUTF8().read(buf).value)));
         }
         catch (NBTException e)
         {
@@ -54,7 +54,7 @@ public class CItemStack extends Component
     @Override
     public CItemStack save(OutputStream stream)
     {
-        new CStringUTF8().set(stack.serializeNBT().toString()).save(stream);
+        new CStringUTF8().set(value.serializeNBT().toString()).save(stream);
         return this;
     }
 
@@ -63,8 +63,7 @@ public class CItemStack extends Component
     {
         try
         {
-            stack = new ItemStack(JsonToNBT.getTagFromJson(new CStringUTF8().load(stream).value));
-            return this;
+            return set(new ItemStack(JsonToNBT.getTagFromJson(new CStringUTF8().load(stream).value)));
         }
         catch (NBTException e)
         {

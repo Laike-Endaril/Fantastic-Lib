@@ -26,6 +26,8 @@ public class FantasticLib
 
     public FantasticLib()
     {
+        Network.init();
+
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
         {
             //Physical client
