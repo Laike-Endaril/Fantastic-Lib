@@ -1,6 +1,7 @@
 package com.fantasticsource.mctools;
 
 import com.fantasticsource.tools.ReflectionTool;
+import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.TrigLookupTable;
 import com.fantasticsource.tools.datastructures.ExplicitPriorityQueue;
 import net.minecraft.entity.*;
@@ -11,6 +12,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.MinecraftForge;
@@ -22,11 +24,16 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
+import net.minecraftforge.fml.common.registry.EntityEntry;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import static com.fantasticsource.tools.Tools.distance;
 import static com.fantasticsource.tools.Tools.radtodeg;
@@ -49,6 +56,45 @@ public class MCTools
     }
 
 
+    public static void populateEntityMap(String[] regex, LinkedHashMap<Class<? extends EntityLivingBase>, HashSet<String>> mapToPopulate)
+    {
+        String[] tokens = Tools.fixedSplit(regex, ":");
+        String domain = "minecraft", name, specificName = ".*";
+
+        if (tokens.length == 1)
+        {
+            name = tokens[0];
+        }
+        else
+        {
+            domain = tokens[0];
+            name = tokens[1];
+            if (tokens.length > 2) specificName = tokens[2];
+        }
+
+        for (Map.Entry<ResourceLocation, EntityEntry> entry : ForgeRegistries.ENTITIES.getEntries())
+        {
+            if (!Pattern.matches(domain, entry.getKey().getResourceDomain())) continue;
+            if (!Pattern.matches(name, entry.getKey().getResourcePath())) continue;
+
+            Class cls = entry.getValue().getEntityClass();
+            if (!(EntityLivingBase.class.isAssignableFrom(cls))) continue;
+
+            mapToPopulate.computeIfAbsent((Class<? extends EntityLivingBase>) cls, o -> new HashSet<>()).add(specificName);
+        }
+    }
+
+    public static boolean entityMatchesMap(EntityLivingBase entity, LinkedHashMap<Class<? extends EntityLivingBase>, HashSet<String>> populatedMap)
+    {
+        HashSet<String> set = populatedMap.get(entity.getClass());
+        if (set == null) return false;
+
+        String name = entity.getName();
+        for (String s : set) if (Pattern.matches(s, name)) return true;
+        return false;
+    }
+
+
     public static ArrayList<String> legibleNBT(NBTBase nbt)
     {
         return legibleNBT(nbt.toString());
@@ -59,8 +105,8 @@ public class MCTools
         ArrayList<String> result = new ArrayList<>();
 
         char[] chars = nbtString.toCharArray();
-        String current = "";
-        String indent = "";
+        StringBuilder current = new StringBuilder();
+        StringBuilder indent = new StringBuilder();
         for (int i = 0; i < chars.length; i++)
         {
             char c = chars[i];
@@ -68,27 +114,27 @@ public class MCTools
             {
                 case '{':
                 case '[':
-                    if (!current.equals("")) result.add(indent + current);
-                    result.add(indent + c);
-                    current = "";
-                    indent += " ";
+                    if (!current.toString().equals("")) result.add(indent + current.toString());
+                    result.add(indent.toString() + c);
+                    current = new StringBuilder();
+                    indent.append(" ");
                     break;
 
                 case '}':
                 case ']':
-                    if (!current.equals("")) result.add(indent + current);
-                    indent = indent.substring(0, indent.length() - 1);
-                    result.add(indent + c + (i + 1 < chars.length && chars[i + 1] == ',' ? ',' : ""));
-                    current = "";
+                    if (!current.toString().equals("")) result.add(indent + current.toString());
+                    indent = new StringBuilder(indent.substring(0, indent.length() - 1));
+                    result.add(indent.toString() + c + (i + 1 < chars.length && chars[i + 1] == ',' ? ',' : ""));
+                    current = new StringBuilder();
                     break;
 
                 case ',':
-                    if (!current.equals("")) result.add(indent + current + c);
-                    current = "";
+                    if (!current.toString().equals("")) result.add(indent + current.toString() + c);
+                    current = new StringBuilder();
                     break;
 
                 default:
-                    current += c;
+                    current.append(c);
             }
         }
 
