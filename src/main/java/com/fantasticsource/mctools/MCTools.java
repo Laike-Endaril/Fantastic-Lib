@@ -56,31 +56,34 @@ public class MCTools
     }
 
 
-    public static void populateEntityMap(String[] regex, LinkedHashMap<Class<? extends EntityLivingBase>, HashSet<String>> mapToPopulate)
+    public static void populateEntityMap(String[] regexArray, LinkedHashMap<Class<? extends EntityLivingBase>, HashSet<String>> mapToPopulate)
     {
-        String[] tokens = Tools.fixedSplit(regex, ":");
-        String domain = "minecraft", name, specificName = ".*";
-
-        if (tokens.length == 1)
+        for (String regex : regexArray)
         {
-            name = tokens[0];
-        }
-        else
-        {
-            domain = tokens[0];
-            name = tokens[1];
-            if (tokens.length > 2) specificName = tokens[2];
-        }
+            String[] tokens = Tools.fixedSplit(regex, ":");
+            String domain = "minecraft", name, specificName = ".*";
 
-        for (Map.Entry<ResourceLocation, EntityEntry> entry : ForgeRegistries.ENTITIES.getEntries())
-        {
-            if (!Pattern.matches(domain, entry.getKey().getResourceDomain())) continue;
-            if (!Pattern.matches(name, entry.getKey().getResourcePath())) continue;
+            if (tokens.length == 1)
+            {
+                name = tokens[0];
+            }
+            else
+            {
+                domain = tokens[0];
+                name = tokens[1];
+                if (tokens.length > 2) specificName = tokens[2];
+            }
 
-            Class cls = entry.getValue().getEntityClass();
-            if (!(EntityLivingBase.class.isAssignableFrom(cls))) continue;
+            for (Map.Entry<ResourceLocation, EntityEntry> entry : ForgeRegistries.ENTITIES.getEntries())
+            {
+                if (!Pattern.matches(domain, entry.getKey().getResourceDomain())) continue;
+                if (!Pattern.matches(name, entry.getKey().getResourcePath())) continue;
 
-            mapToPopulate.computeIfAbsent((Class<? extends EntityLivingBase>) cls, o -> new HashSet<>()).add(specificName);
+                Class cls = entry.getValue().getEntityClass();
+                if (!(EntityLivingBase.class.isAssignableFrom(cls))) continue;
+
+                mapToPopulate.computeIfAbsent((Class<? extends EntityLivingBase>) cls, o -> new HashSet<>()).add(specificName);
+            }
         }
     }
 
