@@ -11,15 +11,28 @@ public class CodeInput extends GUIScrollView
 {
     public Color color, hoverColor, activeColor, highlightColor;
     protected int cursorX, selectionStartY = -1;
+    public final double scale;
+
 
     public CodeInput(GUIScreen screen, double width, double height, String... lines)
     {
-        this(screen, width, height, GUIScreen.getIdleColor(Color.WHITE), GUIScreen.getHoverColor(Color.WHITE), Color.WHITE, Color.WHITE.copy().setAF(0.4f), lines);
+        this(screen, width, height, 1, lines);
+    }
+
+    public CodeInput(GUIScreen screen, double width, double height, double scale, String... lines)
+    {
+        this(screen, width, height, GUIScreen.getIdleColor(Color.WHITE), GUIScreen.getHoverColor(Color.WHITE), Color.WHITE, Color.WHITE.copy().setAF(0.4f), scale, lines);
     }
 
     public CodeInput(GUIScreen screen, double width, double height, Color color, Color hoverColor, Color activeColor, Color hightlightColor, String... lines)
     {
+        this(screen, width, height, color, hoverColor, activeColor, hightlightColor, 1, lines);
+    }
+
+    public CodeInput(GUIScreen screen, double width, double height, Color color, Color hoverColor, Color activeColor, Color hightlightColor, double scale, String... lines)
+    {
         super(screen, width, height);
+        this.scale = scale;
 
         this.color = color;
         this.hoverColor = hoverColor;
@@ -32,14 +45,26 @@ public class CodeInput extends GUIScrollView
         cursorX = ((GUITextInput) children.get(0)).text.length();
     }
 
+
     public CodeInput(GUIScreen screen, double x, double y, double width, double height, String... lines)
     {
-        this(screen, x, y, width, height, GUIScreen.getIdleColor(Color.WHITE), GUIScreen.getHoverColor(Color.WHITE), Color.WHITE, Color.WHITE.copy().setAF(0.4f), lines);
+        this(screen, x, y, width, height, 1, lines);
+    }
+
+    public CodeInput(GUIScreen screen, double x, double y, double width, double height, double scale, String... lines)
+    {
+        this(screen, x, y, width, height, GUIScreen.getIdleColor(Color.WHITE), GUIScreen.getHoverColor(Color.WHITE), Color.WHITE, Color.WHITE.copy().setAF(0.4f), scale, lines);
     }
 
     public CodeInput(GUIScreen screen, double x, double y, double width, double height, Color color, Color hoverColor, Color activeColor, Color hightlightColor, String... lines)
     {
+        this(screen, x, y, width, height, color, hoverColor, activeColor, hightlightColor, 1, lines);
+    }
+
+    public CodeInput(GUIScreen screen, double x, double y, double width, double height, Color color, Color hoverColor, Color activeColor, Color hightlightColor, double scale, String... lines)
+    {
         super(screen, x, y, width, height);
+        this.scale = scale;
 
         this.color = color;
         this.hoverColor = hoverColor;
@@ -51,6 +76,7 @@ public class CodeInput extends GUIScrollView
 
         cursorX = ((GUITextInput) children.get(0)).text.length();
     }
+
 
     @Override
     public GUIElement recalc()
@@ -95,11 +121,11 @@ public class CodeInput extends GUIScrollView
 
     public GUIElement add(String s)
     {
-        if (children.size() == 0) return super.add(new GUITextInput(screen, 0, 0, s, FilterNone.INSTANCE, activeColor));
+        if (children.size() == 0) return super.add(new GUITextInput(screen, 0, 0, s, FilterNone.INSTANCE, activeColor, scale));
         else
         {
             GUIElement element = children.get(children.size() - 1);
-            return super.add(new GUITextInput(screen, 0, element.y + (element.height + (1d / screen.height)) / height, s, FilterNone.INSTANCE, activeColor));
+            return super.add(new GUITextInput(screen, 0, element.y + (element.height + (1d / screen.height)) / height, s, FilterNone.INSTANCE, activeColor, scale));
         }
     }
 
@@ -108,7 +134,7 @@ public class CodeInput extends GUIScrollView
         if (index == 0) return add(s);
         else
         {
-            GUIElement element = children.get(index - 1), newElement = new GUITextInput(screen, 0, element.y + (element.height + (1d / screen.height)) / height, s, FilterNone.INSTANCE, activeColor);
+            GUIElement element = children.get(index - 1), newElement = new GUITextInput(screen, 0, element.y + (element.height + (1d / screen.height)) / height, s, FilterNone.INSTANCE, activeColor, scale);
             for (int i = index; i < children.size(); i++)
             {
                 element = children.get(i);
