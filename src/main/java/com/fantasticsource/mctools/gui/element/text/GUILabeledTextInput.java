@@ -16,11 +16,11 @@ public class GUILabeledTextInput extends GUIAutocroppedView
 
     public GUILabeledTextInput(GUIScreen screen, String label, String defaultInput, TextFilter filter, double scale)
     {
-        super(screen, scale);
+        super(screen);
 
-        input = new GUITextInput(screen, defaultInput, filter);
+        input = new GUITextInput(screen, defaultInput, filter, scale);
 
-        this.label = new GUIText(screen, label);
+        this.label = new GUIText(screen, label, scale);
         add(this.label.addClickActions(() ->
         {
             int length = input.text.length();
@@ -41,11 +41,11 @@ public class GUILabeledTextInput extends GUIAutocroppedView
 
     public GUILabeledTextInput(GUIScreen screen, double x, double y, String label, String defaultInput, TextFilter filter, double scale)
     {
-        super(screen, x, y, scale);
+        super(screen, x, y);
 
-        input = new GUITextInput(screen, defaultInput, filter);
+        input = new GUITextInput(screen, defaultInput, filter, scale);
 
-        this.label = new GUIText(screen, label);
+        this.label = new GUIText(screen, label, scale);
         add(this.label.addClickActions(() ->
         {
             int length = input.text.length();
