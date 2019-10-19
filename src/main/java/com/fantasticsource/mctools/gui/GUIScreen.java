@@ -34,10 +34,18 @@ public abstract class GUIScreen extends GuiScreen
     public float xPixel, yPixel;
     private ArrayList<Integer> mouseButtons = new ArrayList<>();
     private boolean initialized = false;
+    public final double textScale;
 
 
     public GUIScreen()
     {
+        this(1);
+    }
+
+    public GUIScreen(double textScale)
+    {
+        this.textScale = textScale;
+
         pxWidth = Display.getWidth();
         pxHeight = Display.getHeight();
 

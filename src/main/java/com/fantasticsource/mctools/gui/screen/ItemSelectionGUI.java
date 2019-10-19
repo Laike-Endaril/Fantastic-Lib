@@ -22,8 +22,11 @@ public class ItemSelectionGUI extends GUIScreen
         this(clickedElement, 1);
     }
 
-    public ItemSelectionGUI(GUIItemStack clickedElement, double scale)
+    public ItemSelectionGUI(GUIItemStack clickedElement, double textScale)
     {
+        super(textScale);
+
+
         if (Minecraft.getMinecraft().currentScreen instanceof GUIScreen) GUIScreen.showStacked(this);
         else Minecraft.getMinecraft().displayGuiScreen(this);
 
@@ -40,19 +43,19 @@ public class ItemSelectionGUI extends GUIScreen
         root.add(scrollView);
         root.add(new GUIVerticalScrollbar(this, 0.98, 0, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, scrollView));
 
-        scrollView.add(new GUIText(this, "\n", scale));
+        scrollView.add(new GUIText(this, "\n", textScale));
 
         //Current
-        GUIItemStack stackElement = new GUIItemStack(this, clickedElement.getStack().copy(), scale);
+        GUIItemStack stackElement = new GUIItemStack(this, clickedElement.getStack().copy(), textScale);
         stackElement.text += "" + TextFormatting.RESET + TextFormatting.DARK_PURPLE + " (currently selected)";
         scrollView.add(stackElement);
-        scrollView.add(new GUIText(this, "\n\n", scale));
+        scrollView.add(new GUIText(this, "\n\n", textScale));
 
         //Remove
-        stackElement = new GUIItemStack(this, ItemStack.EMPTY, scale);
+        stackElement = new GUIItemStack(this, ItemStack.EMPTY, textScale);
         stackElement.text = TextFormatting.DARK_PURPLE + "(Remove item)";
         scrollView.add(stackElement);
-        scrollView.add(new GUIText(this, "\n\n\n", scale));
+        scrollView.add(new GUIText(this, "\n\n\n", textScale));
 
         //Player inventory
         EntityPlayer player = Minecraft.getMinecraft().player;
@@ -61,8 +64,8 @@ public class ItemSelectionGUI extends GUIScreen
             ItemStack stack = player.inventory.getStackInSlot(i);
             if (!stack.isEmpty())
             {
-                scrollView.add(new GUIItemStack(this, stack.copy(), scale));
-                scrollView.add(new GUIText(this, "\n", scale));
+                scrollView.add(new GUIItemStack(this, stack.copy(), textScale));
+                scrollView.add(new GUIText(this, "\n", textScale));
             }
         }
 
