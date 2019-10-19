@@ -123,8 +123,8 @@ public class GUIText extends GUIElement
             lines.add(text);
             fullLines.add(text);
 
-            width = (double) MonoASCIIFontRenderer.getStringWidth(text) / screen.width;
-            height = (double) (MonoASCIIFontRenderer.LINE_HEIGHT + 2) / screen.height;
+            width = (double) MonoASCIIFontRenderer.getStringWidth(text) * scale / screen.width;
+            height = (double) (MonoASCIIFontRenderer.LINE_HEIGHT + 2) * scale / screen.height;
         }
         else
         {
@@ -158,7 +158,7 @@ public class GUIText extends GUIElement
                 }
                 else
                 {
-                    double wordW = (double) Render.getPartialStringWidth(previous.toString().replaceAll("\n", ""), word.replaceAll("\n", "")) / screen.width;
+                    double wordW = (double) Render.getPartialStringWidth(previous.toString().replaceAll("\n", ""), word.replaceAll("\n", "")) * scale / screen.width;
 
                     if (lineW + wordW > parentW)
                     {
@@ -184,7 +184,7 @@ public class GUIText extends GUIElement
                             fullLine = new StringBuilder(word);
 
                             maxLineW = parentW;
-                            lineW = (double) (Render.getPartialStringWidth(previous.toString().replaceAll("\n", ""), word.replaceAll("\n", "")) - 1) / screen.width;
+                            lineW = (double) (Render.getPartialStringWidth(previous.toString().replaceAll("\n", ""), word.replaceAll("\n", "")) - 1) * scale / screen.width;
                         }
                     }
                     else
@@ -209,9 +209,9 @@ public class GUIText extends GUIElement
             width = maxLineW;
             if (this instanceof GUIMultilineTextInput && text.length() > 0 && text.charAt(text.length() - 1) == '\n')
             {
-                height = (double) (Tools.max(1, fullLines.size()) * FONT_RENDERER.FONT_HEIGHT - 1) / screen.height;
+                height = (double) (Tools.max(1, fullLines.size()) * FONT_RENDERER.FONT_HEIGHT - 1) * scale / screen.height;
             }
-            else height = (double) (Tools.max(1, lines.size()) * FONT_RENDERER.FONT_HEIGHT - 1) / screen.height;
+            else height = (double) (Tools.max(1, lines.size()) * FONT_RENDERER.FONT_HEIGHT - 1) * scale / screen.height;
         }
 
         if (parent != null)
@@ -219,9 +219,6 @@ public class GUIText extends GUIElement
             width /= parent.absoluteWidth();
             height /= parent.absoluteHeight();
         }
-
-        width *= scale;
-        height *= scale;
 
         super.recalc();
         return this;
