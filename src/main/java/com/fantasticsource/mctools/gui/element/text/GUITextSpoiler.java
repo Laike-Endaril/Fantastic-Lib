@@ -14,34 +14,64 @@ public class GUITextSpoiler extends GUIText
 
     public GUITextSpoiler(GUIScreen screen, String text, GUIElement... hideableElements)
     {
-        this(screen, text, Color.WHITE, hideableElements);
+        this(screen, text, Color.WHITE, 1, hideableElements);
+    }
+
+    public GUITextSpoiler(GUIScreen screen, String text, double scale, GUIElement... hideableElements)
+    {
+        this(screen, text, Color.WHITE, scale, hideableElements);
     }
 
     public GUITextSpoiler(GUIScreen screen, String text, Color color, GUIElement... hideableElements)
     {
-        this(screen, text, color, color, color, hideableElements);
+        this(screen, text, color, color, color, 1, hideableElements);
+    }
+
+    public GUITextSpoiler(GUIScreen screen, String text, Color color, double scale, GUIElement... hideableElements)
+    {
+        this(screen, text, color, color, color, scale, hideableElements);
     }
 
     public GUITextSpoiler(GUIScreen screen, String text, Color color, Color hoverColor, Color activeColor, GUIElement... hideableElements)
     {
-        super(screen, text.charAt(text.length() - 1) == '\n' ? text : text + '\n', color, hoverColor, activeColor);
+        this(screen, text, color, hoverColor, activeColor, 1, hideableElements);
+    }
+
+    public GUITextSpoiler(GUIScreen screen, String text, Color color, Color hoverColor, Color activeColor, double scale, GUIElement... hideableElements)
+    {
+        super(screen, text.charAt(text.length() - 1) == '\n' ? text : text + '\n', color, hoverColor, activeColor, scale);
         for (GUIElement element : hideableElements) add(element);
     }
 
 
     public GUITextSpoiler(GUIScreen screen, double x, double y, String text, GUIElement... hideableElements)
     {
-        this(screen, x, y, text, Color.WHITE, hideableElements);
+        this(screen, x, y, text, Color.WHITE, 1, hideableElements);
+    }
+
+    public GUITextSpoiler(GUIScreen screen, double x, double y, String text, double scale, GUIElement... hideableElements)
+    {
+        this(screen, x, y, text, Color.WHITE, scale, hideableElements);
     }
 
     public GUITextSpoiler(GUIScreen screen, double x, double y, String text, Color color, GUIElement... hideableElements)
     {
-        this(screen, x, y, text, color, color, color, hideableElements);
+        this(screen, x, y, text, color, color, color, 1, hideableElements);
+    }
+
+    public GUITextSpoiler(GUIScreen screen, double x, double y, String text, Color color, double scale, GUIElement... hideableElements)
+    {
+        this(screen, x, y, text, color, color, color, scale, hideableElements);
     }
 
     public GUITextSpoiler(GUIScreen screen, double x, double y, String text, Color color, Color hoverColor, Color activeColor, GUIElement... hideableElements)
     {
-        super(screen, x, y, text.charAt(text.length() - 1) == '\n' ? text : text + '\n', color, hoverColor, activeColor);
+        this(screen, x, y, text, color, hoverColor, activeColor, 1, hideableElements);
+    }
+
+    public GUITextSpoiler(GUIScreen screen, double x, double y, String text, Color color, Color hoverColor, Color activeColor, double scale, GUIElement... hideableElements)
+    {
+        super(screen, x, y, text.charAt(text.length() - 1) == '\n' ? text : text + '\n', color, hoverColor, activeColor, scale);
         for (GUIElement element : hideableElements) add(element);
     }
 

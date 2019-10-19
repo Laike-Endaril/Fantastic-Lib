@@ -36,31 +36,53 @@ public class GUITextInput extends GUIText
 
     public GUITextInput(GUIScreen screen, String text, TextFilter filter)
     {
-        this(screen, text, filter, WHITE);
+        this(screen, text, filter, WHITE, 1);
+    }
+
+    public GUITextInput(GUIScreen screen, String text, TextFilter filter, double scale)
+    {
+        this(screen, text, filter, WHITE, scale);
     }
 
     public GUITextInput(GUIScreen screen, String text, TextFilter filter, Color activeColor)
     {
-        super(screen, text, getIdleColor(activeColor), getHoverColor(activeColor), activeColor);
+        this(screen, text, filter, activeColor, 1);
+    }
+
+    public GUITextInput(GUIScreen screen, String text, TextFilter filter, Color activeColor, double scale)
+    {
+        super(screen, text, getIdleColor(activeColor), getHoverColor(activeColor), activeColor, scale);
 
         this.filter = filter;
 
         cursorPosition = text.length();
     }
 
+
     public GUITextInput(GUIScreen screen, double x, double y, String text, TextFilter filter)
     {
-        this(screen, x, y, text, filter, WHITE);
+        this(screen, x, y, text, filter, WHITE, 1);
+    }
+
+    public GUITextInput(GUIScreen screen, double x, double y, String text, TextFilter filter, double scale)
+    {
+        this(screen, x, y, text, filter, WHITE, scale);
     }
 
     public GUITextInput(GUIScreen screen, double x, double y, String text, TextFilter filter, Color activeColor)
     {
-        super(screen, x, y, text, getIdleColor(activeColor), getHoverColor(activeColor), activeColor);
+        this(screen, x, y, text, filter, activeColor, 1);
+    }
+
+    public GUITextInput(GUIScreen screen, double x, double y, String text, TextFilter filter, Color activeColor, double scale)
+    {
+        super(screen, x, y, text, getIdleColor(activeColor), getHoverColor(activeColor), activeColor, scale);
 
         this.filter = filter;
 
         cursorPosition = text.length();
     }
+
 
     protected boolean hasSelectedText()
     {
@@ -750,7 +772,7 @@ public class GUITextInput extends GUIText
                 if (lineIndex == 0) cursorPosition = 0;
                 else
                 {
-                    cursorPosition = findCursorPosition(absoluteX() + (double) FONT_RENDERER.getStringWidth(partialLine.replaceAll("\n", "")) / screen.width, lineIndex - 1);
+                    cursorPosition = findCursorPosition(absoluteX() + (double) FONT_RENDERER.getStringWidth(partialLine.replaceAll("\n", "")) * scale / screen.width, lineIndex - 1);
                 }
             }
             else
@@ -815,7 +837,7 @@ public class GUITextInput extends GUIText
                 if (lineIndex == fullLines.size() - 1) cursorPosition = text.length();
                 else
                 {
-                    cursorPosition = findCursorPosition(absoluteX() + (double) FONT_RENDERER.getStringWidth(partialLine.replaceAll("\n", "")) / screen.width, lineIndex + 1);
+                    cursorPosition = findCursorPosition(absoluteX() + (double) FONT_RENDERER.getStringWidth(partialLine.replaceAll("\n", "")) * scale / screen.width, lineIndex + 1);
                 }
             }
             else
@@ -1067,7 +1089,7 @@ public class GUITextInput extends GUIText
         GlStateManager.disableTexture2D();
 
 
-        double scale = new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
+        double adjustedScale = scale * new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
 
         if (!filter.acceptable(text))
         {
@@ -1101,7 +1123,7 @@ public class GUITextInput extends GUIText
             GlStateManager.enableTexture2D();
 
             GlStateManager.pushMatrix();
-            GlStateManager.scale(scale / absolutePxWidth(), scale / absolutePxHeight(), 1);
+            GlStateManager.scale(adjustedScale / absolutePxWidth(), adjustedScale / absolutePxHeight(), 1);
 
             Color c = active ? activeColor : isMouseWithin() ? hoverColor : color;
             if (parent instanceof CodeInput) MonoASCIIFontRenderer.draw(text, 0, 0, c, BLACK);
@@ -1120,8 +1142,8 @@ public class GUITextInput extends GUIText
             float selectorX = selectorPosition == -1 ? cursorX : (parent instanceof CodeInput ? MonoASCIIFontRenderer.getStringWidth(text.substring(0, selectorPosition)) : FONT_RENDERER.getStringWidth(text.substring(0, selectorPosition).replaceAll("\n", ""))) + 0.5f;
 
             cursorX = Tools.max(cursorX, 1f / absolutePxWidth() + 0.5f);
-            cursorX *= scale / absolutePxWidth();
-            selectorX *= scale / absolutePxWidth();
+            cursorX *= adjustedScale / absolutePxWidth();
+            selectorX *= adjustedScale / absolutePxWidth();
 
             if (selectorPosition != -1 && cursorX != selectorX)
             {
@@ -1188,7 +1210,7 @@ public class GUITextInput extends GUIText
         for (char c : line.toCharArray())
         {
             double lastDif = xDif;
-            xDif -= (double) (parent instanceof CodeInput ? (MonoASCIIFontRenderer.CHAR_WIDTH + 2) : FONT_RENDERER.getCharWidth(c)) / screen.width;
+            xDif -= (double) (parent instanceof CodeInput ? (MonoASCIIFontRenderer.CHAR_WIDTH + 2) : FONT_RENDERER.getCharWidth(c)) * scale / screen.width;
             if (xDif <= 0)
             {
                 if (Math.abs(xDif) < lastDif) result++;

@@ -11,7 +11,12 @@ public class GUILabeledTextInput extends GUIAutocroppedView
 
     public GUILabeledTextInput(GUIScreen screen, String label, String defaultInput, TextFilter filter)
     {
-        super(screen);
+        this(screen, label, defaultInput, filter, 1);
+    }
+
+    public GUILabeledTextInput(GUIScreen screen, String label, String defaultInput, TextFilter filter, double scale)
+    {
+        super(screen, scale);
 
         input = new GUITextInput(screen, defaultInput, filter);
 
@@ -27,10 +32,16 @@ public class GUILabeledTextInput extends GUIAutocroppedView
 
         add(input);
     }
+
 
     public GUILabeledTextInput(GUIScreen screen, double x, double y, String label, String defaultInput, TextFilter filter)
     {
-        super(screen, x, y);
+        this(screen, x, y, label, defaultInput, filter, 1);
+    }
+
+    public GUILabeledTextInput(GUIScreen screen, double x, double y, String label, String defaultInput, TextFilter filter, double scale)
+    {
+        super(screen, x, y, scale);
 
         input = new GUITextInput(screen, defaultInput, filter);
 
@@ -46,6 +57,7 @@ public class GUILabeledTextInput extends GUIAutocroppedView
 
         add(input);
     }
+
 
     @Override
     public void recalcAndRepositionSubElements(int startIndex)

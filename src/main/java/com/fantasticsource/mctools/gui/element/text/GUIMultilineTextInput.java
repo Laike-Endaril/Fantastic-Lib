@@ -19,9 +19,19 @@ public class GUIMultilineTextInput extends GUITextInput
         super(screen, text, filter);
     }
 
+    public GUIMultilineTextInput(GUIScreen screen, String text, TextFilter filter, double scale)
+    {
+        super(screen, text, filter, scale);
+    }
+
     public GUIMultilineTextInput(GUIScreen screen, String text, TextFilter filter, Color activeColor)
     {
         super(screen, text, filter, activeColor);
+    }
+
+    public GUIMultilineTextInput(GUIScreen screen, String text, TextFilter filter, Color activeColor, double scale)
+    {
+        super(screen, text, filter, activeColor, scale);
     }
 
     public GUIMultilineTextInput(GUIScreen screen, double x, double y, String text, TextFilter filter)
@@ -29,17 +39,28 @@ public class GUIMultilineTextInput extends GUITextInput
         super(screen, x, y, text, filter);
     }
 
+    public GUIMultilineTextInput(GUIScreen screen, double x, double y, String text, TextFilter filter, double scale)
+    {
+        super(screen, x, y, text, filter, scale);
+    }
+
     public GUIMultilineTextInput(GUIScreen screen, double x, double y, String text, TextFilter filter, Color activeColor)
     {
         super(screen, x, y, text, filter, activeColor);
     }
+
+    public GUIMultilineTextInput(GUIScreen screen, double x, double y, String text, TextFilter filter, Color activeColor, double scale)
+    {
+        super(screen, x, y, text, filter, activeColor, scale);
+    }
+
 
     @Override
     public void draw()
     {
         GlStateManager.disableTexture2D();
 
-        double scale = new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
+        double adjustedScale = scale * new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
 
         if (!filter.acceptable(text))
         {
@@ -73,7 +94,7 @@ public class GUIMultilineTextInput extends GUITextInput
             GlStateManager.enableTexture2D();
 
             GlStateManager.pushMatrix();
-            GlStateManager.scale(scale / absolutePxWidth(), scale / absolutePxHeight(), 1);
+            GlStateManager.scale(adjustedScale / absolutePxWidth(), adjustedScale / absolutePxHeight(), 1);
 
             Color c = active ? activeColor : isMouseWithin() ? hoverColor : color;
             int yy = 0;
@@ -92,7 +113,7 @@ public class GUIMultilineTextInput extends GUITextInput
         //Draw cursor and selection highlight
         if (active)
         {
-            float wUnit = (float) (scale / absolutePxWidth());
+            float wUnit = (float) (adjustedScale / absolutePxWidth());
             float lineHeight = 1f / fullLines.size();
 
             //Calculate cursor position

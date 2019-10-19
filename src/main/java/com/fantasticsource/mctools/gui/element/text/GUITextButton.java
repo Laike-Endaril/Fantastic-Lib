@@ -17,19 +17,34 @@ public class GUITextButton extends GUIAutocroppedView
 
     public GUITextButton(GUIScreen screen, String text)
     {
-        this(screen, text, WHITE);
+        this(screen, text, WHITE, 1);
+    }
+
+    public GUITextButton(GUIScreen screen, String text, double scale)
+    {
+        this(screen, text, WHITE, scale);
     }
 
     public GUITextButton(GUIScreen screen, String text, Color color)
     {
-        this(screen, text, color, getIdleColor(color).setAF(color.af() * 0.4f));
+        this(screen, text, color, getIdleColor(color).setAF(color.af() * 0.4f), 1);
+    }
+
+    public GUITextButton(GUIScreen screen, String text, Color color, double scale)
+    {
+        this(screen, text, color, getIdleColor(color).setAF(color.af() * 0.4f), scale);
     }
 
     public GUITextButton(GUIScreen screen, String text, Color border, Color center)
     {
+        this(screen, text, border, center, 1);
+    }
+
+    public GUITextButton(GUIScreen screen, String text, Color border, Color center, double scale)
+    {
         super(screen, DEFAULT_PADDING, new GUIGradientBorder(screen, 1, 1, DEFAULT_PADDING / (1 + DEFAULT_PADDING) / 2, getIdleColor(border), getIdleColor(center), getHoverColor(border), getHoverColor(center), border, center));
 
-        this.text = new GUIText(screen, text, getIdleColor(border), getHoverColor(border), border);
+        this.text = new GUIText(screen, text, getIdleColor(border), getHoverColor(border), border, scale);
         add(this.text);
         linkMouseActivity(this.text);
         linkMouseActivity(this.background);
@@ -37,21 +52,37 @@ public class GUITextButton extends GUIAutocroppedView
         recalc();
     }
 
+
     public GUITextButton(GUIScreen screen, double x, double y, String text)
     {
-        this(screen, x, y, text, WHITE);
+        this(screen, x, y, text, WHITE, 1);
+    }
+
+    public GUITextButton(GUIScreen screen, double x, double y, String text, double scale)
+    {
+        this(screen, x, y, text, WHITE, scale);
     }
 
     public GUITextButton(GUIScreen screen, double x, double y, String text, Color color)
     {
-        this(screen, x, y, text, color, getIdleColor(color).setAF(color.af() * 0.4f));
+        this(screen, x, y, text, color, getIdleColor(color).setAF(color.af() * 0.4f), 1);
+    }
+
+    public GUITextButton(GUIScreen screen, double x, double y, String text, Color color, double scale)
+    {
+        this(screen, x, y, text, color, getIdleColor(color).setAF(color.af() * 0.4f), scale);
     }
 
     public GUITextButton(GUIScreen screen, double x, double y, String text, Color border, Color center)
     {
+        this(screen, x, y, text, border, center, 1);
+    }
+
+    public GUITextButton(GUIScreen screen, double x, double y, String text, Color border, Color center, double scale)
+    {
         super(screen, x, y, DEFAULT_PADDING, new GUIGradientBorder(screen, 1, 1, DEFAULT_PADDING / (1 + DEFAULT_PADDING) / 2, getIdleColor(border), getIdleColor(center), getHoverColor(border), getHoverColor(center), border, center));
 
-        this.text = new GUIText(screen, text, getIdleColor(border), getHoverColor(border), border);
+        this.text = new GUIText(screen, text, getIdleColor(border), getHoverColor(border), border, scale);
         add(this.text);
         linkMouseActivity(this.text);
         linkMouseActivity(this.background);

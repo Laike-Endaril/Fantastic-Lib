@@ -13,7 +13,12 @@ public class GUIItemStack extends GUIText
 
     public GUIItemStack(GUIScreen screen, ItemStack stack)
     {
-        super(screen, stack.isEmpty() ? "(Empty Slot)" : stack.getCount() + " " + stack.getDisplayName());
+        this(screen, stack, 1);
+    }
+
+    public GUIItemStack(GUIScreen screen, ItemStack stack, double scale)
+    {
+        super(screen, stack.isEmpty() ? "(Empty Slot)" : stack.getCount() + " " + stack.getDisplayName(), scale);
         this.stack = stack;
 
         tooltip = new GUITooltipView(screen);
@@ -28,9 +33,15 @@ public class GUIItemStack extends GUIText
         }
     }
 
+
     public GUIItemStack(GUIScreen screen, double x, double y, ItemStack stack)
     {
-        super(screen, x, y, stack.isEmpty() ? "(Empty Slot)" : stack.getCount() + " " + stack.getDisplayName());
+        this(screen, x, y, stack, 1);
+    }
+
+    public GUIItemStack(GUIScreen screen, double x, double y, ItemStack stack, double scale)
+    {
+        super(screen, x, y, stack.isEmpty() ? "(Empty Slot)" : stack.getCount() + " " + stack.getDisplayName(), scale);
         this.stack = stack;
 
         tooltip = new GUITooltipView(screen);
