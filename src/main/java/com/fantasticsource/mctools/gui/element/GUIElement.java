@@ -12,7 +12,7 @@ import net.minecraftforge.common.MinecraftForge;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public abstract class GUIElement
+public class GUIElement
 {
     public static final Color T_GRAY = new Color(0xAAAAAA77);
 
@@ -130,7 +130,10 @@ public abstract class GUIElement
         GlStateManager.popMatrix();
     }
 
-    public abstract void draw();
+    public void draw()
+    {
+        drawChildren();
+    }
 
     public void mouseWheel(double x, double y, int delta)
     {
