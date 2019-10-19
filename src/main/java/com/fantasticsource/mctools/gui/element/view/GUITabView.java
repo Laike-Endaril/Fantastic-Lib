@@ -19,10 +19,17 @@ public class GUITabView extends GUIView
     private GUIElement tabBackground = null;
     private int current = 0;
     private boolean autocalcTabs = false, autocalcTabviews = false;
+    public final double scale;
+
 
     public GUITabView(GUIScreen screen, double width, double height, String... tabNames)
     {
-        this(screen, width, height, genTabs(screen, tabNames));
+        this(screen, width, height, 1, tabNames);
+    }
+
+    public GUITabView(GUIScreen screen, double width, double height, double scale, String... tabNames)
+    {
+        this(screen, width, height, scale, genTabs(screen, scale, tabNames));
         autocalcTabs = true;
         autocalcTabviews = true;
 
@@ -35,7 +42,12 @@ public class GUITabView extends GUIView
 
     public GUITabView(GUIScreen screen, double width, double height, String[] tabNames, GUIView... tabViews)
     {
-        this(screen, width, height, genTabs(screen, tabNames), tabViews);
+        this(screen, width, height, 1, tabNames, tabViews);
+    }
+
+    public GUITabView(GUIScreen screen, double width, double height, double scale, String[] tabNames, GUIView... tabViews)
+    {
+        this(screen, width, height, scale, genTabs(screen, scale, tabNames), tabViews);
         autocalcTabs = true;
 
         GUITextButton tab = (GUITextButton) tabs.get(0);
@@ -47,7 +59,13 @@ public class GUITabView extends GUIView
 
     public GUITabView(GUIScreen screen, double width, double height, GUIElement[] tabs, GUIView... tabViews)
     {
+        this(screen, width, height, 1, tabs, tabViews);
+    }
+
+    public GUITabView(GUIScreen screen, double width, double height, double scale, GUIElement[] tabs, GUIView... tabViews)
+    {
         super(screen, width, height);
+        this.scale = scale;
 
         if (tabs.length != tabViews.length)
         {
@@ -77,9 +95,15 @@ public class GUITabView extends GUIView
         recalc();
     }
 
+
     public GUITabView(GUIScreen screen, double x, double y, double width, double height, String... tabNames)
     {
-        this(screen, x, y, width, height, genTabs(screen, tabNames));
+        this(screen, x, y, width, height, 1, tabNames);
+    }
+
+    public GUITabView(GUIScreen screen, double x, double y, double width, double height, double scale, String... tabNames)
+    {
+        this(screen, x, y, width, height, genTabs(screen, scale, tabNames));
         autocalcTabs = true;
         autocalcTabviews = true;
 
@@ -92,7 +116,12 @@ public class GUITabView extends GUIView
 
     public GUITabView(GUIScreen screen, double x, double y, double width, double height, String[] tabNames, GUIView... tabViews)
     {
-        this(screen, x, y, width, height, genTabs(screen, tabNames), tabViews);
+        this(screen, x, y, width, height, 1, tabNames, tabViews);
+    }
+
+    public GUITabView(GUIScreen screen, double x, double y, double width, double height, double scale, String[] tabNames, GUIView... tabViews)
+    {
+        this(screen, x, y, width, height, genTabs(screen, scale, tabNames), tabViews);
         autocalcTabs = true;
 
         GUITextButton tab = (GUITextButton) tabs.get(0);
@@ -104,7 +133,13 @@ public class GUITabView extends GUIView
 
     public GUITabView(GUIScreen screen, double x, double y, double width, double height, GUIElement[] tabs, GUIView... tabViews)
     {
+        this(screen, x, y, width, height, 1, tabs, tabViews);
+    }
+
+    public GUITabView(GUIScreen screen, double x, double y, double width, double height, double scale, GUIElement[] tabs, GUIView... tabViews)
+    {
         super(screen, x, y, width, height);
+        this.scale = scale;
 
         if (tabs.length != tabViews.length)
         {
@@ -134,13 +169,14 @@ public class GUITabView extends GUIView
         recalc();
     }
 
-    private static GUIElement[] genTabs(GUIScreen screen, String[] tabNames)
+
+    private static GUIElement[] genTabs(GUIScreen screen, double scale, String[] tabNames)
     {
         GUIElement[] result = new GUIElement[tabNames.length];
 
         for (int i = 0; i < result.length; i++)
         {
-            result[i] = new GUITextButton(screen, 0, 0, tabNames[i], WHITE, T_GRAY);
+            result[i] = new GUITextButton(screen, 0, 0, tabNames[i], WHITE, T_GRAY, scale);
         }
 
         return result;
@@ -169,7 +205,7 @@ public class GUITabView extends GUIView
         tabViews.add(view);
         view.parent = this;
 
-        GUITextButton tab = new GUITextButton(screen, 0, 0, name, WHITE, T_GRAY);
+        GUITextButton tab = new GUITextButton(screen, 0, 0, name, WHITE, T_GRAY, scale);
         tabs.add(tab);
         add(tab);
         recalc();
