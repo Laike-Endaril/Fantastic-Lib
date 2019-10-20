@@ -12,6 +12,16 @@ public class GUITextSpacer extends GUIElement
     protected boolean vertical;
 
 
+    public GUITextSpacer(GUIScreen screen)
+    {
+        this(screen, 1);
+    }
+
+    public GUITextSpacer(GUIScreen screen, boolean vertical)
+    {
+        this(screen, 1, vertical);
+    }
+
     public GUITextSpacer(GUIScreen screen, double length)
     {
         this(screen, length, 1);
