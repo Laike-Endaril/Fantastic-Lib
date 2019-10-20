@@ -5,7 +5,7 @@ import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIGradient;
 import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
 import com.fantasticsource.mctools.gui.element.text.GUIItemStack;
-import com.fantasticsource.mctools.gui.element.text.GUIText;
+import com.fantasticsource.mctools.gui.element.text.GUITextSpacer;
 import com.fantasticsource.mctools.gui.element.view.GUIScrollView;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
@@ -43,19 +43,22 @@ public class ItemSelectionGUI extends GUIScreen
         root.add(scrollView);
         root.add(new GUIVerticalScrollbar(this, 0.98, 0, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, scrollView));
 
-        scrollView.add(new GUIText(this, "\n", textScale));
+        scrollView.add(new GUITextSpacer(this));
 
         //Current
-        GUIItemStack stackElement = new GUIItemStack(this, clickedElement.getStack().copy(), textScale);
+        GUIItemStack stackElement = new GUIItemStack(this, clickedElement.getStack().copy());
         stackElement.text += "" + TextFormatting.RESET + TextFormatting.DARK_PURPLE + " (currently selected)";
         scrollView.add(stackElement);
-        scrollView.add(new GUIText(this, "\n\n", textScale));
+        scrollView.add(new GUITextSpacer(this));
+        scrollView.add(new GUITextSpacer(this));
 
         //Remove
-        stackElement = new GUIItemStack(this, ItemStack.EMPTY, textScale);
+        stackElement = new GUIItemStack(this, ItemStack.EMPTY);
         stackElement.text = TextFormatting.DARK_PURPLE + "(Remove item)";
         scrollView.add(stackElement);
-        scrollView.add(new GUIText(this, "\n\n\n", textScale));
+        scrollView.add(new GUITextSpacer(this));
+        scrollView.add(new GUITextSpacer(this));
+        scrollView.add(new GUITextSpacer(this));
 
         //Player inventory
         EntityPlayer player = Minecraft.getMinecraft().player;
@@ -64,8 +67,8 @@ public class ItemSelectionGUI extends GUIScreen
             ItemStack stack = player.inventory.getStackInSlot(i);
             if (!stack.isEmpty())
             {
-                scrollView.add(new GUIItemStack(this, stack.copy(), textScale));
-                scrollView.add(new GUIText(this, "\n", textScale));
+                scrollView.add(new GUIItemStack(this, stack.copy()));
+                scrollView.add(new GUITextSpacer(this));
             }
         }
 
