@@ -53,7 +53,7 @@ public class GUITextSpacer extends GUIElement
         {
             if (vertical)
             {
-                width = (double) (MonoASCIIFontRenderer.LINE_HEIGHT + 2) * scale / screen.height;
+                width = (double) (MonoASCIIFontRenderer.LINE_HEIGHT + 2) * scale / screen.width;
             }
             else
             {
@@ -62,7 +62,7 @@ public class GUITextSpacer extends GUIElement
         }
         else
         {
-            if (vertical) width = (double) (FONT_RENDERER.FONT_HEIGHT - 1) * scale / screen.height;
+            if (vertical) width = (double) (FONT_RENDERER.FONT_HEIGHT - 1) * scale / screen.width;
             else height = (double) (FONT_RENDERER.FONT_HEIGHT - 1) * scale / screen.height;
         }
 
