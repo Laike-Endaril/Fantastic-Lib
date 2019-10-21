@@ -5,6 +5,7 @@ import com.fantasticsource.mctools.*;
 import com.fantasticsource.mctools.gui.screen.TestGUI;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -18,7 +19,7 @@ public class FantasticLib
 {
     public static final String MODID = "fantasticlib";
     public static final String NAME = "Fantastic Lib";
-    public static final String VERSION = "1.12.2.025";
+    public static final String VERSION = "1.12.2.025a";
 
 
     private static final boolean DEBUG_GUI = false;
@@ -65,5 +66,6 @@ public class FantasticLib
     public void postInit(FMLPostInitializationEvent event)
     {
         DataFiles.output();
+        if (Loader.isModLoaded("smoothfont")) Compat.smoothfont = true;
     }
 }
