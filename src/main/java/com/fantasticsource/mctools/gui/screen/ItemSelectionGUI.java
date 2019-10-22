@@ -2,7 +2,6 @@ package com.fantasticsource.mctools.gui.screen;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
-import com.fantasticsource.mctools.gui.element.other.GUIGradient;
 import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
 import com.fantasticsource.mctools.gui.element.text.GUIItemStack;
 import com.fantasticsource.mctools.gui.element.text.GUITextSpacer;
@@ -37,17 +36,19 @@ public class ItemSelectionGUI extends GUIScreen
         selection = clickedElement.getStack();
 
 
-        root.add(new GUIGradient(this, 0, 0, 1, 1, Color.BLACK.copy().setAF(0.7f)));
-
-        GUIScrollView scrollView = new GUIScrollView(this, 0.02, 0, 0.94, 1);
+        GUITextSpacer spacer = new GUITextSpacer(this, true);
+        GUIScrollView scrollView = new GUIScrollView(this, 0.98 - spacer.width * 2, 1);
+        root.add(spacer.addRecalcActions(() -> scrollView.width = 0.98 - spacer.width * 2));
         root.add(scrollView);
+
+        root.add(new GUITextSpacer(this, true));
         root.add(new GUIVerticalScrollbar(this, 0.98, 0, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, scrollView));
 
         scrollView.add(new GUITextSpacer(this));
 
         //Current
         GUIItemStack stackElement = new GUIItemStack(this, clickedElement.getStack().copy());
-        stackElement.text += "" + TextFormatting.RESET + TextFormatting.DARK_PURPLE + " (currently selected)";
+        stackElement.text += "" + TextFormatting.RESET + TextFormatting.DARK_PURPLE + "(currently selected)";
         scrollView.add(stackElement);
         scrollView.add(new GUITextSpacer(this));
         scrollView.add(new GUITextSpacer(this));
