@@ -271,12 +271,10 @@ public class GUIElement
     {
         recalcAndRepositionSubElements(subIndexChanged);
 
-        onRecalc();
-
         return this;
     }
 
-    protected void onRecalc()
+    public final void postRecalc()
     {
         for (Runnable action : onRecalcActions) action.run();
     }
@@ -346,6 +344,7 @@ public class GUIElement
                         furthestX = Tools.max(furthestX, autoX);
                         furthestY = Tools.max(furthestY, autoY + element.height);
                     }
+                    element.postRecalc();
                 }
                 break;
 
@@ -378,6 +377,7 @@ public class GUIElement
                         autoY = element.y;
                         furthestY = Tools.max(furthestY, autoY + element.height);
                     }
+                    element.postRecalc();
                 }
                 break;
 
@@ -410,6 +410,7 @@ public class GUIElement
                         autoY = element.y;
                         furthestY = Tools.max(furthestY, autoY + element.height);
                     }
+                    element.postRecalc();
                 }
                 break;
 

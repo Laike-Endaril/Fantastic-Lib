@@ -107,8 +107,6 @@ public class GUIAutocroppedView extends GUIView
             }
         }
 
-        onRecalc();
-
         return this;
     }
 }

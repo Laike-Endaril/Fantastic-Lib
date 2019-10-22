@@ -46,8 +46,6 @@ public class GUIScrollView extends GUIView
 
         recalc2();
 
-        onRecalc();
-
         return this;
     }
 

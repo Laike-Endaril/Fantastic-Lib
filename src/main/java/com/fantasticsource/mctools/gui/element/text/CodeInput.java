@@ -94,8 +94,6 @@ public class CodeInput extends GUIScrollView
 
         recalc2();
 
-        onRecalc();
-
         return this;
     }
 

@@ -179,6 +179,7 @@ public abstract class GUIScreen extends GuiScreen
 
         mouseButtons.clear();
         root.recalc();
+        root.postRecalc();
     }
 
     protected abstract void init();
