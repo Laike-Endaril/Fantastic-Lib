@@ -271,11 +271,15 @@ public class GUIElement
     {
         recalcAndRepositionSubElements(subIndexChanged);
 
-        for (Runnable action : onRecalcActions) action.run();
+        onRecalc();
 
         return this;
     }
 
+    protected void onRecalc()
+    {
+        for (Runnable action : onRecalcActions) action.run();
+    }
 
     public GUIElement add(GUIElement element)
     {

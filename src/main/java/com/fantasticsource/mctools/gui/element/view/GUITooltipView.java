@@ -32,9 +32,11 @@ public class GUITooltipView extends GUIAutocroppedView
     @Override
     public GUITooltipView recalc(int subIndexChanged)
     {
-        super.recalc(subIndexChanged);
+        recalcAndRepositionSubElements(subIndexChanged);
 
         offset = 12d / screen.width;
+
+        onRecalc();
 
         return this;
     }

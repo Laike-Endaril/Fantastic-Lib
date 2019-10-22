@@ -46,13 +46,15 @@ public class GUIScrollView extends GUIView
 
         recalc2();
 
+        onRecalc();
+
         return this;
     }
 
     @Override
     public GUIElement recalc()
     {
-        super.recalc(0);
+        recalcAndRepositionSubElements(0);
         return recalcThisOnly();
     }
 

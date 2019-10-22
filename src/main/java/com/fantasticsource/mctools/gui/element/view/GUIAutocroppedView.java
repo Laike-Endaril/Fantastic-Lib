@@ -88,7 +88,7 @@ public class GUIAutocroppedView extends GUIView
             }
         }
 
-        super.recalc(0);
+        recalcAndRepositionSubElements(0);
 
         double paddingPx = Tools.min(absolutePxWidth(), absolutePxHeight()) * padding;
         double xPad = paddingPx / parent.absolutePxWidth(), yPad = paddingPx / parent.absolutePxHeight();
@@ -106,6 +106,8 @@ public class GUIAutocroppedView extends GUIView
                 element.y += (0.5 - element.y) * 2 * yPad;
             }
         }
+
+        onRecalc();
 
         return this;
     }
