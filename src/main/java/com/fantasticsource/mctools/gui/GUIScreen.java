@@ -10,6 +10,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -180,6 +181,8 @@ public abstract class GUIScreen extends GuiScreen
         mouseButtons.clear();
         root.recalc();
         root.postRecalc();
+
+        Keyboard.enableRepeatEvents(true);
     }
 
     protected abstract void init();
