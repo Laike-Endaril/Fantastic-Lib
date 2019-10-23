@@ -1,6 +1,7 @@
 package com.fantasticsource.mctools.gui.element.text;
 
 import com.fantasticsource.mctools.MonoASCIIFontRenderer;
+import com.fantasticsource.mctools.Render;
 import com.fantasticsource.mctools.gui.GUILeftClickEvent;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
@@ -901,12 +902,121 @@ public class GUITextInput extends GUIText
     }
 
     @Override
-    public GUITextInput recalc()
+    public GUITextInput recalc(int subIndexChanged)
     {
-        super.recalc();
+        text = text.replaceAll("\r", "");
+
+        lines.clear();
+        fullLines.clear();
+
+        if (parent instanceof CodeInput)
+        {
+            lines.add(text);
+            fullLines.add(text);
+
+            width = (double) MonoASCIIFontRenderer.getStringWidth(text) * scale / screen.width;
+            height = (double) (MonoASCIIFontRenderer.LINE_HEIGHT + 2) * scale / screen.height;
+        }
+        else
+        {
+            StringBuilder previous = new StringBuilder();
+
+            String[] words = Tools.preservedSplit(text, "[\n]|[ ]+", true);
+
+            double parentW = parent == null ? 1 : parent.absoluteWidth();
+
+            StringBuilder line = new StringBuilder();
+            StringBuilder fullLine = new StringBuilder();
+
+            int index = 0;
+            double maxLineW = 0, lineW = -1d / screen.width;
+            while (index < words.length)
+            {
+                String word = words[index++];
+
+                if (word.equals("")) continue;
+
+                if (word.equals("\n"))
+                {
+                    lines.add(line.toString());
+                    fullLines.add(fullLine.toString());
+
+                    line = new StringBuilder();
+                    fullLine = new StringBuilder("\n");
+
+                    maxLineW = 1;
+                    lineW = -1d / screen.width;
+                }
+                else
+                {
+                    double wordW = (double) Render.getPartialStringWidth(previous.toString().replaceAll("\n", ""), word.replaceAll("\n", "")) * scale / screen.width;
+
+                    if (lineW + wordW > parentW)
+                    {
+                        if (word.trim().equals(""))
+                        {
+                            fullLine.append(word);
+                            continue;
+                        }
+
+                        if (line.length() == 0)
+                        {
+                            line.append(word);
+                            fullLine.append(word);
+
+                            lineW += wordW;
+                        }
+                        else
+                        {
+                            lines.add(line.toString());
+                            fullLines.add(fullLine.toString());
+
+                            line = new StringBuilder(word);
+                            fullLine = new StringBuilder(word);
+
+                            maxLineW = parentW;
+                            lineW = (double) (Render.getPartialStringWidth(previous.toString().replaceAll("\n", ""), word.replaceAll("\n", "")) - 1) * scale / screen.width;
+                        }
+                    }
+                    else
+                    {
+                        line.append(word);
+                        fullLine.append(word);
+
+                        lineW += wordW;
+                    }
+                }
+
+                previous.append(word);
+            }
+
+            if (line.length() > 0)
+            {
+                lines.add(line.toString());
+                maxLineW = Tools.max(maxLineW, lineW);
+            }
+            if (fullLine.length() > 0) fullLines.add(fullLine.toString());
+
+            width = maxLineW;
+            if (this instanceof GUIMultilineTextInput && text.length() > 0 && text.charAt(text.length() - 1) == '\n')
+            {
+                height = (double) (Tools.max(1, fullLines.size()) * FONT_RENDERER.FONT_HEIGHT - 1) * scale / screen.height;
+            }
+            else height = (double) (Tools.max(1, lines.size()) * FONT_RENDERER.FONT_HEIGHT - 1) * scale / screen.height;
+        }
+
+        if (parent != null)
+        {
+            width /= parent.absoluteWidth();
+            height /= parent.absoluteHeight();
+        }
+
+        recalcAndRepositionSubElements(0);
 
         if (parent instanceof CodeInput) width = Tools.max(width, 2d / parent.absolutePxWidth());
         else width = 1 - x;
+
+        postRecalc();
 
         return this;
     }

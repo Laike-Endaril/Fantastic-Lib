@@ -16,10 +16,10 @@ import static com.fantasticsource.mctools.gui.GUIScreen.FONT_RENDERER;
 
 public class GUIText extends GUIElement
 {
+    public final double scale;
     public String text;
     protected ArrayList<String> lines = new ArrayList<>(), fullLines = new ArrayList<>();
     protected Color color, hoverColor, activeColor;
-    public final double scale;
 
 
     public GUIText(GUIScreen screen, String text)
@@ -111,7 +111,7 @@ public class GUIText extends GUIElement
 
 
     @Override
-    public GUIText recalc()
+    public GUIText recalc(int subIndexChanged)
     {
         text = text.replaceAll("\r", "");
 
@@ -220,7 +220,10 @@ public class GUIText extends GUIElement
             height /= parent.absoluteHeight();
         }
 
-        super.recalc();
+        recalcAndRepositionSubElements(0);
+
+        postRecalc();
+
         return this;
     }
 

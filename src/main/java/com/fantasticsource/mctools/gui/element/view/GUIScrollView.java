@@ -50,16 +50,15 @@ public class GUIScrollView extends GUIView
     }
 
     @Override
-    public GUIElement recalc()
-    {
-        recalcAndRepositionSubElements(0);
-        return recalcThisOnly();
-    }
-
-    @Override
     public GUIElement recalc(int subIndexChanged)
     {
-        return recalc();
+        recalcAndRepositionSubElements(subIndexChanged);
+
+        recalcThisOnly();
+
+        postRecalc();
+
+        return this;
     }
 
     protected void recalc2()

@@ -14,12 +14,12 @@ import static com.fantasticsource.tools.datastructures.Color.WHITE;
 
 public class GUITabView extends GUIView
 {
+    public final double scale;
     public ArrayList<GUIElement> tabs = new ArrayList<>();
     public ArrayList<GUIView> tabViews = new ArrayList<>();
     private GUIElement tabBackground = null;
     private int current = 0;
     private boolean autocalcTabs = false, autocalcTabviews = false;
-    public final double scale;
 
 
     public GUITabView(GUIScreen screen, double width, double height, String... tabNames)
@@ -224,13 +224,7 @@ public class GUITabView extends GUIView
     }
 
     @Override
-    public GUIElement recalc()
-    {
-        return recalc(0);
-    }
-
-    @Override
-    public GUIElement recalc(int subIndexChanged)
+    public GUITabView recalc(int subIndexChanged)
     {
         if (autocalcTabs)
         {
@@ -266,7 +260,11 @@ public class GUITabView extends GUIView
             tabBackground.height = element.y + element.height;
         }
 
-        return super.recalc(0);
+        recalcAndRepositionSubElements(0);
+
+        postRecalc();
+
+        return this;
     }
 
     public void setActiveTab(int index)

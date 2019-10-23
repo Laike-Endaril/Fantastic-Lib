@@ -30,12 +30,12 @@ public abstract class GUIScreen extends GuiScreen
     private static boolean ignoreClosure = false;
     public final GUIView root, tooltips;
     public final ArrayList<Runnable> onClosedActions = new ArrayList<>();
+    public final double textScale;
     public boolean drawStack = true;
     public int pxWidth, pxHeight;
     public float xPixel, yPixel;
     private ArrayList<Integer> mouseButtons = new ArrayList<>();
     private boolean initialized = false;
-    public final double textScale;
 
 
     public GUIScreen()
@@ -180,7 +180,6 @@ public abstract class GUIScreen extends GuiScreen
 
         mouseButtons.clear();
         root.recalc();
-        root.postRecalc();
 
         Keyboard.enableRepeatEvents(true);
     }

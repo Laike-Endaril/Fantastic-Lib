@@ -9,9 +9,9 @@ import com.fantasticsource.tools.datastructures.Color;
 
 public class CodeInput extends GUIScrollView
 {
+    public final double scale;
     public Color color, hoverColor, activeColor, highlightColor;
     protected int cursorX, selectionStartY = -1;
-    public final double scale;
 
 
     public CodeInput(GUIScreen screen, double width, double height, String... lines)
@@ -77,9 +77,8 @@ public class CodeInput extends GUIScrollView
         cursorX = ((GUITextInput) children.get(0)).text.length();
     }
 
-
     @Override
-    public GUIElement recalc()
+    public GUIElement recalc(int subIndexChanged)
     {
         internalHeight = 0;
         GUIElement prev = null;
@@ -94,13 +93,9 @@ public class CodeInput extends GUIScrollView
 
         recalc2();
 
-        return this;
-    }
+        postRecalc();
 
-    @Override
-    public GUIElement recalc(int subIndexChanged)
-    {
-        return recalc();
+        return this;
     }
 
     @Override

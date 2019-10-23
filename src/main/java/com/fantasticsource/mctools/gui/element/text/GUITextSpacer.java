@@ -47,7 +47,7 @@ public class GUITextSpacer extends GUIElement
 
 
     @Override
-    public GUITextSpacer recalc()
+    public GUITextSpacer recalc(int subIndexChanged)
     {
         if (parent instanceof CodeInput)
         {
@@ -72,7 +72,10 @@ public class GUITextSpacer extends GUIElement
             height /= parent.absoluteHeight();
         }
 
-        super.recalc();
+        recalcAndRepositionSubElements(0);
+
+        postRecalc();
+
         return this;
     }
 

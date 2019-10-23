@@ -75,7 +75,7 @@ public class GUIAutocroppedView extends GUIView
         if (parent == null) return this;
 
 
-        super.recalc(0);
+        recalcAndRepositionSubElements(0);
 
         width = 0;
         height = 0;
@@ -106,6 +106,8 @@ public class GUIAutocroppedView extends GUIView
                 element.y += (0.5 - element.y) * 2 * yPad;
             }
         }
+
+        postRecalc();
 
         return this;
     }

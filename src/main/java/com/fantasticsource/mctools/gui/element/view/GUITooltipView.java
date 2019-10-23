@@ -1,7 +1,9 @@
 package com.fantasticsource.mctools.gui.element.view;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
+import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIGradient;
+import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 
 public class GUITooltipView extends GUIAutocroppedView
@@ -32,9 +34,46 @@ public class GUITooltipView extends GUIAutocroppedView
     @Override
     public GUITooltipView recalc(int subIndexChanged)
     {
-        super.recalc(subIndexChanged);
+        width = 1;
+        height = 1;
+        if (parent == null) return this;
+
+
+        recalcAndRepositionSubElements(0);
+
+        width = 0;
+        height = 0;
+        for (GUIElement element : children)
+        {
+            if (element != background)
+            {
+                width = Tools.max(width, element.x + element.width);
+                height = Tools.max(height, element.y + element.height);
+            }
+        }
+
+        recalcAndRepositionSubElements(0);
+
+        double paddingPx = Tools.min(absolutePxWidth(), absolutePxHeight()) * padding;
+        double xPad = paddingPx / parent.absolutePxWidth(), yPad = paddingPx / parent.absolutePxHeight();
+
+        width += xPad * 2;
+        height += yPad * 2;
+
+        xPad = xPad / width;
+        yPad = yPad / height;
+        for (GUIElement element : children)
+        {
+            if (element != background)
+            {
+                element.x += (0.5 - element.x) * 2 * xPad;
+                element.y += (0.5 - element.y) * 2 * yPad;
+            }
+        }
 
         offset = 12d / screen.width;
+
+        postRecalc();
 
         return this;
     }
