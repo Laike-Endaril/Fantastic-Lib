@@ -42,7 +42,7 @@ public class GUITextSpacer extends GUIElement
         super(screen, vertical ? 0 : length, vertical ? length : 0);
         this.vertical = vertical;
         this.scale = scale * screen.textScale;
-        recalc();
+        recalc(0);
     }
 
 

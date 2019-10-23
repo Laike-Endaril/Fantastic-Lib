@@ -66,7 +66,7 @@ public class GUILabeledTextInput extends GUIAutocroppedView
 
         if (label != null && input != null)
         {
-            label.recalc();
+            label.recalc(0);
             input.x = label.width;
             input.y = 0;
         }

@@ -179,7 +179,7 @@ public abstract class GUIScreen extends GuiScreen
         }
 
         mouseButtons.clear();
-        root.recalc();
+        root.recalc(0);
 
         Keyboard.enableRepeatEvents(true);
     }
@@ -202,7 +202,7 @@ public abstract class GUIScreen extends GuiScreen
         xPixel = 1f / pxWidth;
         yPixel = 1f / pxHeight;
 
-        root.recalc();
+        root.recalc(0);
     }
 
     @Override

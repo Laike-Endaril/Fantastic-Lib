@@ -84,7 +84,7 @@ public class CodeInput extends GUIScrollView
         GUIElement prev = null;
         for (GUIElement element : children)
         {
-            element.recalc();
+            element.recalc(0);
             if (prev == null) element.y = 0;
             else element.y = prev.y + prev.height;
             prev = element;

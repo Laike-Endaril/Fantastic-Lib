@@ -37,7 +37,7 @@ public class GUITabView extends GUIView
         tabBackground = new GUIGradientBorder(screen, 0, 0, 1, 1, 0.1, ((GUIGradientBorder) tab.background).border, ((GUIGradientBorder) tab.background).center);
         add(0, tabBackground);
 
-        recalc();
+        recalc(0);
     }
 
     public GUITabView(GUIScreen screen, double width, double height, String[] tabNames, GUIView... tabViews)
@@ -54,7 +54,7 @@ public class GUITabView extends GUIView
         tabBackground = new GUIGradientBorder(screen, 0, 0, 1, 1, 0.1, ((GUIGradientBorder) tab.background).border, ((GUIGradientBorder) tab.background).center);
         add(0, tabBackground);
 
-        recalc();
+        recalc(0);
     }
 
     public GUITabView(GUIScreen screen, double width, double height, GUIElement[] tabs, GUIView... tabViews)
@@ -92,7 +92,7 @@ public class GUITabView extends GUIView
             children.add(this.tabViews.get(0));
         }
 
-        recalc();
+        recalc(0);
     }
 
 
@@ -111,7 +111,7 @@ public class GUITabView extends GUIView
         tabBackground = new GUIGradientBorder(screen, 0, 0, 1, 1, 0.1, ((GUIGradientBorder) tab.background).border, ((GUIGradientBorder) tab.background).center);
         add(0, tabBackground);
 
-        recalc();
+        recalc(0);
     }
 
     public GUITabView(GUIScreen screen, double x, double y, double width, double height, String[] tabNames, GUIView... tabViews)
@@ -128,7 +128,7 @@ public class GUITabView extends GUIView
         tabBackground = new GUIGradientBorder(screen, 0, 0, 1, 1, 0.1, ((GUIGradientBorder) tab.background).border, ((GUIGradientBorder) tab.background).center);
         add(0, tabBackground);
 
-        recalc();
+        recalc(0);
     }
 
     public GUITabView(GUIScreen screen, double x, double y, double width, double height, GUIElement[] tabs, GUIView... tabViews)
@@ -166,7 +166,7 @@ public class GUITabView extends GUIView
             children.add(this.tabViews.get(0));
         }
 
-        recalc();
+        recalc(0);
     }
 
 
@@ -208,7 +208,7 @@ public class GUITabView extends GUIView
         GUITextButton tab = new GUITextButton(screen, 0, 0, name, WHITE, T_GRAY, scale);
         tabs.add(tab);
         add(tab);
-        recalc();
+        recalc(0);
 
         return tabs.size() - 1;
     }
@@ -278,7 +278,7 @@ public class GUITabView extends GUIView
         int i = children.indexOf(tabViews.get(current));
         children.remove(i);
         current = index;
-        children.add(i, tabViews.get(current).recalc());
+        children.add(i, tabViews.get(current).recalc(0));
     }
 
     @Override

@@ -262,11 +262,6 @@ public class GUIElement
         return getClass().getSimpleName();
     }
 
-    public final GUIElement recalc()
-    {
-        return recalc(0);
-    }
-
     public GUIElement recalc(int subIndexChanged)
     {
         recalcAndRepositionSubElements(subIndexChanged);
@@ -326,7 +321,7 @@ public class GUIElement
                 for (int i = startIndex; i < size(); i++)
                 {
                     GUIElement element = get(i);
-                    element.recalc();
+                    element.recalc(0);
                     if (element.autoplace)
                     {
                         if (autoX != 0 && autoX + element.width > 1)
@@ -369,7 +364,7 @@ public class GUIElement
                 for (int i = startIndex; i < size(); i++)
                 {
                     GUIElement element = get(i);
-                    element.recalc();
+                    element.recalc(0);
                     if (element.autoplace)
                     {
                         element.x = 0.5 - element.width / 2;
@@ -401,7 +396,7 @@ public class GUIElement
                 for (int i = startIndex; i < size(); i++)
                 {
                     GUIElement element = get(i);
-                    element.recalc();
+                    element.recalc(0);
                     if (element.autoplace)
                     {
                         element.x = 0;
@@ -423,7 +418,7 @@ public class GUIElement
     public void setSubElementAutoplaceMethod(byte subElementAutoplaceMethod)
     {
         this.subElementAutoplaceMethod = subElementAutoplaceMethod;
-        recalc();
+        recalc(0);
     }
 
     public void remove(GUIElement element)
@@ -450,7 +445,7 @@ public class GUIElement
     {
         for (GUIElement child : (ArrayList<GUIElement>) children.clone()) if (child.parent == this) child.parent = null;
         children.clear();
-        recalc();
+        recalc(0);
     }
 
     public GUIElement get(int index)

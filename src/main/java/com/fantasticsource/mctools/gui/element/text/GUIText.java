@@ -55,7 +55,7 @@ public class GUIText extends GUIElement
         this.color = color;
         this.hoverColor = hoverColor;
         this.activeColor = activeColor;
-        recalc();
+        recalc(0);
     }
 
 
@@ -92,7 +92,7 @@ public class GUIText extends GUIElement
         this.color = color;
         this.hoverColor = hoverColor;
         this.activeColor = activeColor;
-        recalc();
+        recalc(0);
     }
 
 

@@ -20,7 +20,7 @@ public class GUIScrollView extends GUIView
             element.parent = this;
         }
 
-        recalc();
+        recalc(0);
     }
 
     public GUIScrollView(GUIScreen screen, double x, double y, double width, double height, GUIElement... subElements)
@@ -33,7 +33,7 @@ public class GUIScrollView extends GUIView
             element.parent = this;
         }
 
-        recalc();
+        recalc(0);
     }
 
     public GUIElement recalcThisOnly()

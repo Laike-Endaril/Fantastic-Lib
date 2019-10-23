@@ -49,7 +49,7 @@ public class GUITextButton extends GUIAutocroppedView
         linkMouseActivity(this.text);
         linkMouseActivity(this.background);
 
-        recalc();
+        recalc(0);
     }
 
 
@@ -87,7 +87,7 @@ public class GUITextButton extends GUIAutocroppedView
         linkMouseActivity(this.text);
         linkMouseActivity(this.background);
 
-        recalc();
+        recalc(0);
     }
 
     @Override

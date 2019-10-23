@@ -898,7 +898,7 @@ public class GUITextInput extends GUIText
 
         cursorTime = System.currentTimeMillis();
 
-        recalc();
+        recalc(0);
     }
 
     @Override
