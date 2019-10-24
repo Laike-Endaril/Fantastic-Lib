@@ -1005,6 +1005,9 @@ public class GUITextInput extends GUIText
             else height = (double) (Tools.max(1, lines.size()) * FONT_RENDERER.FONT_HEIGHT - 1) * scale / screen.height;
         }
 
+        //TODO this line is cancelling a scissor offset issue of unknown origin; offset = 1 - ()
+        width += (1 - scale) / screen.width;
+
         if (parent != null)
         {
             width /= parent.absoluteWidth();
