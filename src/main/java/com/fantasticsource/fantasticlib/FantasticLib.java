@@ -3,6 +3,8 @@ package com.fantasticsource.fantasticlib;
 import com.fantasticsource.fantasticlib.config.FantasticConfig;
 import com.fantasticsource.mctools.*;
 import com.fantasticsource.mctools.gui.screen.TestGUI;
+import com.fantasticsource.tools.ReflectionTool;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
@@ -22,8 +24,19 @@ public class FantasticLib
     public static final String VERSION = "1.12.2.025a";
 
 
-    private static final boolean DEBUG_GUI = false;
+    private static boolean DEBUG_GUI;
 
+    static
+    {
+        try
+        {
+            DEBUG_GUI = ReflectionTool.getField(ItemStack.class, "stackSize") != null;
+        }
+        catch (NoSuchFieldException | IllegalAccessException e)
+        {
+            e.printStackTrace();
+        }
+    }
 
     public FantasticLib()
     {
