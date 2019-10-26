@@ -1,4 +1,5 @@
 fantasticlib.literal=%s
+fantasticlib.success=§aSUCCESS
 
 
 fantasticlib.error.notEnoughItemFilterArgs=Not enough arguments for item filter: %s
