@@ -22,6 +22,12 @@ public class TestGUI extends GUIScreen
     }
 
     @Override
+    public String title()
+    {
+        return "Test";
+    }
+
+    @Override
     protected void init()
     {
         switch (test)

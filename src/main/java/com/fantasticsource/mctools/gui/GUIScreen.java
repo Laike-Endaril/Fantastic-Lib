@@ -58,6 +58,9 @@ public abstract class GUIScreen extends GuiScreen
     }
 
 
+    public abstract String title();
+
+
     public static Color getIdleColor(Color activeColor)
     {
         return activeColor.copy().setVF(0.5f * activeColor.vf());

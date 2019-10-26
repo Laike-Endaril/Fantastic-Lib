@@ -92,6 +92,12 @@ public class ItemSelectionGUI extends GUIScreen
     }
 
     @Override
+    public String title()
+    {
+        return "Item";
+    }
+
+    @Override
     protected void init()
     {
     }
