@@ -1,3 +1,6 @@
+fantasticlib.literal=%s
+
+
 fantasticlib.error.notEnoughItemFilterArgs=Not enough arguments for item filter: %s
 fantasticlib.error.tooManyItemFilterArgs=Too many arguments for item filter: %s
 fantasticlib.error.badItemName=Bad item name: %s
