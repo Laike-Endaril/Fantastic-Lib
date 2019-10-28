@@ -6,6 +6,9 @@ import com.fantasticsource.mctools.gui.screen.TestGUI;
 import com.fantasticsource.tools.ReflectionTool;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Config;
+import net.minecraftforge.common.config.ConfigManager;
+import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
@@ -14,6 +17,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 @Mod(modid = FantasticLib.MODID, name = FantasticLib.NAME, version = FantasticLib.VERSION, acceptableRemoteVersions = "*")
@@ -40,6 +44,8 @@ public class FantasticLib
 
     public FantasticLib()
     {
+        MinecraftForge.EVENT_BUS.register(FantasticLib.class);
+
         Network.init();
 
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
@@ -51,6 +57,13 @@ public class FantasticLib
         }
 
         MinecraftForge.EVENT_BUS.register(PlayerData.class);
+    }
+
+
+    @SubscribeEvent
+    public static void saveConfig(ConfigChangedEvent.OnConfigChangedEvent event)
+    {
+        if (event.getModID().equals(MODID)) ConfigManager.sync(MODID, Config.Type.INSTANCE);
     }
 
 

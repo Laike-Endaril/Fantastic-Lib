@@ -57,10 +57,6 @@ public abstract class GUIScreen extends GuiScreen
         tooltips = new GUIView(this, 1, 1);
     }
 
-
-    public abstract String title();
-
-
     public static Color getIdleColor(Color activeColor)
     {
         return activeColor.copy().setVF(0.5f * activeColor.vf());
@@ -80,6 +76,8 @@ public abstract class GUIScreen extends GuiScreen
         Minecraft.getMinecraft().displayGuiScreen(screen);
         ignoreClosure = false;
     }
+
+    public abstract String title();
 
     public boolean isInitialized()
     {
