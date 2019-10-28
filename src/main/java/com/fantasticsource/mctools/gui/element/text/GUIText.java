@@ -50,7 +50,7 @@ public class GUIText extends GUIElement
     public GUIText(GUIScreen screen, String text, Color color, Color hoverColor, Color activeColor, double scale)
     {
         super(screen, 0, 0);
-        this.scale = scale * screen.textScale;
+        this.scale = scale * screen.textScale * 2 / new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
         this.text = text;
         this.color = color;
         this.hoverColor = hoverColor;
@@ -87,7 +87,7 @@ public class GUIText extends GUIElement
     public GUIText(GUIScreen screen, double x, double y, String text, Color color, Color hoverColor, Color activeColor, double scale)
     {
         super(screen, x, y, 0, 0);
-        this.scale = scale * screen.textScale;
+        this.scale = scale * screen.textScale * 2 / new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
         this.text = text;
         this.color = color;
         this.hoverColor = hoverColor;

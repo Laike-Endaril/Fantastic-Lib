@@ -3,6 +3,8 @@ package com.fantasticsource.mctools.gui.element.text;
 import com.fantasticsource.mctools.MonoASCIIFontRenderer;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScaledResolution;
 
 import static com.fantasticsource.mctools.gui.GUIScreen.FONT_RENDERER;
 
@@ -41,7 +43,7 @@ public class GUITextSpacer extends GUIElement
     {
         super(screen, vertical ? 0 : length, vertical ? length : 0);
         this.vertical = vertical;
-        this.scale = scale * screen.textScale;
+        this.scale = scale * screen.textScale * 2 / new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
         recalc(0);
     }
 
