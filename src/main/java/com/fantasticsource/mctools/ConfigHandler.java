@@ -41,6 +41,7 @@ public class ConfigHandler
                 comments.add("");
             }
 
+
             line = reader.readLine();
         }
         reader.close();
@@ -64,6 +65,57 @@ public class ConfigHandler
     {
         MCTools.reloadConfig(modid);
         config = MCTools.getConfig(modid);
+        return this;
+    }
+
+    public ConfigHandler removeCategory(String path) throws IllegalAccessException
+    {
+        String[] targetNodes = path.split("[.]");
+        ArrayList<String> currentNodes = new ArrayList<>();
+
+        for (int i = 0; i < lines.size(); i++)
+        {
+            String line = lines.get(i);
+            if (line.trim().equals("")) continue;
+
+
+            boolean parentFound = true;
+            if (currentNodes.size() != targetNodes.length)
+            {
+                parentFound = false;
+            }
+            else
+            {
+                for (int i2 = 0; i2 < targetNodes.length; i2++)
+                {
+                    if (!currentNodes.get(i2).equals(targetNodes[i2]))
+                    {
+                        parentFound = false;
+                        break;
+                    }
+                }
+            }
+
+            if (parentFound)
+            {
+                removeCategory(i - 1);
+                if (FantasticLib.isClient) MCTools.removeLangKey(currentNodes.get(currentNodes.size() - 1).toLowerCase());
+                break;
+            }
+            else if (line.contains("}")) currentNodes.remove(currentNodes.size() - 1);
+            else if (line.contains("{"))
+            {
+                String s = line.substring(0, line.indexOf("{")).trim();
+                int index = s.indexOf('"'), lastIndex = s.lastIndexOf('"');
+                if (index > -1 && lastIndex != index)
+                {
+                    s = s.substring(index + 1, lastIndex);
+                }
+
+                currentNodes.add(s);
+            }
+        }
+
         return this;
     }
 
@@ -98,7 +150,7 @@ public class ConfigHandler
             if (parentFound)
             {
                 addCategory(i, targetNodes[targetNodes.length - 1]);
-                if (FantasticLib.isClient) fixLangKey(currentNodes, targetNodes[targetNodes.length - 1]);
+                if (FantasticLib.isClient) MCTools.addLangKey(targetNodes[targetNodes.length - 1].toLowerCase(), targetNodes[targetNodes.length - 1]);
                 break;
             }
             else if (line.contains("}")) currentNodes.remove(currentNodes.size() - 1);
@@ -168,21 +220,26 @@ public class ConfigHandler
         return this;
     }
 
+    protected void removeCategory(int index)
+    {
+        int parens = 1;
+        lines.remove(index);
+        comments.remove(index);
+        while (parens > 0)
+        {
+            comments.remove(index);
+            String line = lines.remove(index);
+            if (line.contains("{")) parens++;
+            else if (line.contains("}")) parens--;
+        }
+    }
+
     protected void addCategory(int index, String name)
     {
         lines.add(index++, name + " {");
         comments.add("");
         lines.add(index++, "}");
         comments.add("");
-    }
-
-    protected void fixLangKey(ArrayList<String> currentNodes, String name) throws IllegalAccessException
-    {
-        StringBuilder path = new StringBuilder(currentNodes.size() == 0 ? "" : currentNodes.get(0));
-        for (int i = 1; i < currentNodes.size(); i++) path.append(".").append(currentNodes.get(i));
-        path.append(".").append(name.toLowerCase());
-
-        MCTools.addLangKey(path.toString(), name);
     }
 
     protected void addProperty(int index, String name, Object value)

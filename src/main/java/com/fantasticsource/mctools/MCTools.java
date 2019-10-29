@@ -67,6 +67,14 @@ public class MCTools
 
 
     @SideOnly(Side.CLIENT)
+    public static void removeLangKey(String key) throws IllegalAccessException
+    {
+        Locale locale = (Locale) languageManagerCurrentLocaleField.get(null);
+        Map<String, String> properties = (Map<String, String>) localePropertiesField.get(locale);
+        properties.remove(key);
+    }
+
+    @SideOnly(Side.CLIENT)
     public static void addLangKey(String key, String value) throws IllegalAccessException
     {
         Locale locale = (Locale) languageManagerCurrentLocaleField.get(null);
