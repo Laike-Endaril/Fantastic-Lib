@@ -1,9 +1,12 @@
 package com.fantasticsource.mctools;
 
+import com.fantasticsource.fantasticlib.FantasticLib;
 import com.fantasticsource.tools.ReflectionTool;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.TrigLookupTable;
 import com.fantasticsource.tools.datastructures.ExplicitPriorityQueue;
+import net.minecraft.client.resources.LanguageManager;
+import net.minecraft.client.resources.Locale;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.ai.attributes.IAttribute;
@@ -26,6 +29,8 @@ import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -40,7 +45,7 @@ import static com.fantasticsource.tools.Tools.radtodeg;
 
 public class MCTools
 {
-    private static Field configManagerCONFIGSField;
+    private static Field configManagerCONFIGSField, languageManagerCurrentLocaleField, localePropertiesField;
     private static boolean host = false;
 
     static
@@ -48,11 +53,25 @@ public class MCTools
         try
         {
             configManagerCONFIGSField = ReflectionTool.getField(ConfigManager.class, "CONFIGS");
+            if (FantasticLib.isClient)
+            {
+                languageManagerCurrentLocaleField = ReflectionTool.getField(LanguageManager.class, "field_135049_a", "CURRENT_LOCALE");
+                localePropertiesField = ReflectionTool.getField(Locale.class, "field_135032_a", "properties");
+            }
         }
         catch (Exception e)
         {
             crash(e, 700, false);
         }
+    }
+
+
+    @SideOnly(Side.CLIENT)
+    public static void addLangKey(String key, String value) throws IllegalAccessException
+    {
+        Locale locale = (Locale) languageManagerCurrentLocaleField.get(null);
+        Map<String, String> properties = (Map<String, String>) localePropertiesField.get(locale);
+        properties.put(key, value);
     }
 
 
@@ -173,6 +192,11 @@ public class MCTools
     public static String getConfigDir()
     {
         return Loader.instance().getConfigDir().getAbsolutePath() + File.separator;
+    }
+
+    public static Configuration getConfig(String modid) throws IllegalAccessException
+    {
+        return ((Map<String, Configuration>) configManagerCONFIGSField.get(null)).get(getConfigDir() + modid + ".cfg");
     }
 
     public static void reloadConfig(String modid) throws IllegalAccessException

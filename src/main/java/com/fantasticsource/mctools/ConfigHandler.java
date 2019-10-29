@@ -1,6 +1,7 @@
 package com.fantasticsource.mctools;
 
-import net.minecraftforge.common.config.ConfigHack;
+import com.fantasticsource.fantasticlib.FantasticLib;
+import net.minecraftforge.common.config.Configuration;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -8,16 +9,18 @@ import java.util.ArrayList;
 public class ConfigHandler
 {
     protected final String modid;
+    protected Configuration config;
     protected final File file;
     protected BufferedReader reader;
     protected BufferedWriter writer;
     protected final ArrayList<String> lines = new ArrayList<>();
     protected final ArrayList<String> comments = new ArrayList<>();
 
-    public ConfigHandler(String modid)
+    public ConfigHandler(String modid) throws IllegalAccessException
     {
         this.modid = modid;
-        file = ConfigHack.getConfiguration(modid).getConfigFile();
+        config = MCTools.getConfig(modid);
+        file = config.getConfigFile();
     }
 
     public ConfigHandler load() throws IOException
@@ -60,10 +63,11 @@ public class ConfigHandler
     public ConfigHandler sync() throws IllegalAccessException
     {
         MCTools.reloadConfig(modid);
+        config = MCTools.getConfig(modid);
         return this;
     }
 
-    public ConfigHandler addCategory(String path)
+    public ConfigHandler addCategory(String path) throws IllegalAccessException
     {
         String[] targetNodes = path.split("[.]");
         ArrayList<String> currentNodes = new ArrayList<>();
@@ -93,11 +97,8 @@ public class ConfigHandler
 
             if (parentFound)
             {
-                lines.add(i++, targetNodes[targetNodes.length - 1] + " {");
-                comments.add("");
-                lines.add(i++, "}");
-                comments.add("");
-
+                addCategory(i, targetNodes[targetNodes.length - 1]);
+                if (FantasticLib.isClient) fixLangKey(currentNodes, targetNodes[targetNodes.length - 1]);
                 break;
             }
             else if (line.contains("}")) currentNodes.remove(currentNodes.size() - 1);
@@ -167,7 +168,24 @@ public class ConfigHandler
         return this;
     }
 
-    private void addProperty(int index, String name, Object value)
+    protected void addCategory(int index, String name)
+    {
+        lines.add(index++, name + " {");
+        comments.add("");
+        lines.add(index++, "}");
+        comments.add("");
+    }
+
+    protected void fixLangKey(ArrayList<String> currentNodes, String name) throws IllegalAccessException
+    {
+        StringBuilder path = new StringBuilder(currentNodes.size() == 0 ? "" : currentNodes.get(0));
+        for (int i = 1; i < currentNodes.size(); i++) path.append(".").append(currentNodes.get(i));
+        path.append(".").append(name.toLowerCase());
+
+        MCTools.addLangKey(path.toString(), name);
+    }
+
+    protected void addProperty(int index, String name, Object value)
     {
         if (value.getClass() == String.class)
         {

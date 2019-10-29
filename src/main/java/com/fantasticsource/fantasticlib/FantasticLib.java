@@ -28,13 +28,14 @@ public class FantasticLib
     public static final String VERSION = "1.12.2.025f";
 
 
-    private static boolean DEBUG_GUI;
+    public static boolean isClient = false;
+    private static boolean debugGui;
 
     static
     {
         try
         {
-            DEBUG_GUI = ReflectionTool.getField(ItemStack.class, "stackSize") != null;
+            debugGui = ReflectionTool.getField(ItemStack.class, "stackSize") != null;
         }
         catch (NoSuchFieldException | IllegalAccessException e)
         {
@@ -51,9 +52,10 @@ public class FantasticLib
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
         {
             //Physical client
+            isClient = true;
             if (FantasticConfig.entityRenderFixer) MinecraftForge.EVENT_BUS.register(EntityRenderFixer.class);
             MinecraftForge.EVENT_BUS.register(TooltipFixer.class);
-            if (DEBUG_GUI) MinecraftForge.EVENT_BUS.register(TestGUI.class);
+            if (debugGui) MinecraftForge.EVENT_BUS.register(TestGUI.class);
         }
 
         MinecraftForge.EVENT_BUS.register(PlayerData.class);
