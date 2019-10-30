@@ -12,7 +12,7 @@ import java.time.Instant;
 
 public class CMCTimestamp extends Component
 {
-    protected MCTimestamp value;
+    public MCTimestamp value;
 
     public CMCTimestamp set(MCTimestamp value)
     {
