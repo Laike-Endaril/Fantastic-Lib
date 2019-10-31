@@ -25,7 +25,7 @@ public class FantasticLib
 {
     public static final String MODID = "fantasticlib";
     public static final String NAME = "Fantastic Lib";
-    public static final String VERSION = "1.12.2.026";
+    public static final String VERSION = "1.12.2.026a";
 
 
     public static boolean isClient = false;
@@ -94,6 +94,7 @@ public class FantasticLib
     public void postInit(FMLPostInitializationEvent event)
     {
         DataFiles.output();
+        if (Loader.isModLoaded("betterportals")) Compat.betterportals = true;
         if (Loader.isModLoaded("smoothfont")) Compat.smoothfont = true;
     }
 }
