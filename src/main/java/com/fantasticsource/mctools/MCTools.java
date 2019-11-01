@@ -66,6 +66,12 @@ public class MCTools
     }
 
 
+    public static void playSimpleSoundOnClient(EntityPlayerMP player, ResourceLocation rl)
+    {
+        Network.WRAPPER.sendTo(new Network.PlaySimpleSoundPacket(rl), player);
+    }
+
+
     @SideOnly(Side.CLIENT)
     public static void removeLangKey(String key) throws IllegalAccessException
     {
