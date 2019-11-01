@@ -47,6 +47,7 @@ public class MCTools
 {
     private static Field configManagerCONFIGSField, languageManagerCurrentLocaleField, localePropertiesField;
     private static boolean host = false;
+    public static final TrigLookupTable TRIG_TABLE = new TrigLookupTable(1024);
 
     static
     {
@@ -63,6 +64,18 @@ public class MCTools
         {
             crash(e, 700, false);
         }
+    }
+
+
+    public static double lookAngleDifDeg(EntityLivingBase searcher, Entity target)
+    {
+        double angleDif = Vec3d.fromPitchYaw(searcher.rotationPitch, searcher.rotationYawHead).normalize().dotProduct(new Vec3d(target.posX - searcher.posX, (target.posY + target.height / 2) - (searcher.posY + searcher.getEyeHeight()), target.posZ - searcher.posZ).normalize());
+
+        //And because Vec3d.fromPitchYaw occasionally returns values barely out of the range of (-1, 1)...
+        if (angleDif < -1) angleDif = -1;
+        else if (angleDif > 1) angleDif = 1;
+
+        return Tools.radtodeg(TRIG_TABLE.arccos(angleDif)); //0 in front, 180 in back
     }
 
 
