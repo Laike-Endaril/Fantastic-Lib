@@ -19,17 +19,29 @@ public class ImprovedRayTracing
     private static final int MAX_ITERATIONS = 200;
     private static long lastWarning = -1;
 
+
     /**
      * @return Double.NaN if this ray would not collide with the entity, regardless of terrain.  The distance this ray penetrates through the given entity, if it does.  The distance from the edge of the entity to where this ray collided with a block, as a negative value, in all other cases
      */
-    public static double entityPenetration(Entity entity, Vec3d vecStart, Vec3d vecEnd, boolean collideOnAllSolids)
+    public static double entityPenetration(Entity fromEyesOf, double maxDistance, Entity target, boolean collideOnAllSolids)
     {
-        RayTraceResult entityEnd = rayTraceEntity(entity, vecEnd, vecStart);
+        if (fromEyesOf.world != target.world) return Double.NaN;
+
+        Vec3d eyes = fromEyesOf.getPositionVector().addVector(0, fromEyesOf.getEyeHeight(), 0);
+        return entityPenetration(target, eyes, eyes.add(fromEyesOf.getLookVec().scale(maxDistance)), collideOnAllSolids);
+    }
+
+    /**
+     * @return Double.NaN if this ray would not collide with the entity, regardless of terrain.  The distance this ray penetrates through the given entity, if it does.  The distance from the edge of the entity to where this ray collided with a block, as a negative value, in all other cases
+     */
+    public static double entityPenetration(Entity target, Vec3d vecStart, Vec3d vecEnd, boolean collideOnAllSolids)
+    {
+        RayTraceResult entityEnd = rayTraceEntity(target, vecEnd, vecStart);
         if (entityEnd == null || entityEnd.typeOfHit == RayTraceResult.Type.MISS) return Double.NaN;
 
 
-        RayTraceResult entityStart = rayTraceEntity(entity, vecStart, vecEnd);
-        RayTraceResult blockEnd = rayTraceBlocks(entity.world, vecStart, entityEnd.hitVec, collideOnAllSolids);
+        RayTraceResult entityStart = rayTraceEntity(target, vecStart, vecEnd);
+        RayTraceResult blockEnd = rayTraceBlocks(target.world, vecStart, entityEnd.hitVec, collideOnAllSolids);
 
         if (blockEnd.typeOfHit == RayTraceResult.Type.MISS)
         {
@@ -39,14 +51,38 @@ public class ImprovedRayTracing
         return vecStart.distanceTo(blockEnd.hitVec) - vecStart.distanceTo(entityStart.hitVec);
     }
 
-    public static RayTraceResult rayTraceEntity(Entity entity, Vec3d vecStart, Vec3d vecEnd)
+
+    public static RayTraceResult rayTraceEntity(Entity fromEyesOf, double maxDistance, Entity target)
     {
-        return entity.getEntityBoundingBox().calculateIntercept(vecStart, vecEnd);
+        if (fromEyesOf.world != target.world) return null;
+
+        Vec3d eyes = fromEyesOf.getPositionVector().addVector(0, fromEyesOf.getEyeHeight(), 0);
+        return rayTraceEntity(target, eyes, eyes.add(fromEyesOf.getLookVec().scale(maxDistance)));
+    }
+
+    public static RayTraceResult rayTraceEntity(Entity target, Vec3d vecStart, Vec3d vecEnd)
+    {
+        return target.getEntityBoundingBox().calculateIntercept(vecStart, vecEnd);
+    }
+
+
+    public static boolean isUnobstructed(Entity fromEyesOf, double maxDistance, boolean collideOnAllSolids)
+    {
+        Vec3d eyes = fromEyesOf.getPositionVector().addVector(0, fromEyesOf.getEyeHeight(), 0);
+        return isUnobstructed(fromEyesOf.world, eyes, eyes.add(fromEyesOf.getLookVec().scale(maxDistance)), collideOnAllSolids);
     }
 
     public static boolean isUnobstructed(World world, Vec3d vecStart, Vec3d vecEnd, boolean collideOnAllSolids)
     {
         return rayTraceBlocks(world, vecStart, vecEnd, collideOnAllSolids).hitVec == null;
+    }
+
+
+    @Nonnull
+    public static RayTraceResult rayTraceBlocks(Entity fromEyesOf, double maxDistance, boolean collideOnAllSolids)
+    {
+        Vec3d eyes = fromEyesOf.getPositionVector().addVector(0, fromEyesOf.getEyeHeight(), 0);
+        return rayTraceBlocks(fromEyesOf.world, eyes, eyes.add(fromEyesOf.getLookVec().scale(maxDistance)), collideOnAllSolids);
     }
 
     @Nonnull
