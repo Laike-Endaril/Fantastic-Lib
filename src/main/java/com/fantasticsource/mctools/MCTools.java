@@ -78,6 +78,17 @@ public class MCTools
         return Tools.radtodeg(TRIG_TABLE.arccos(angleDif)); //0 in front, 180 in back
     }
 
+    public static double angleDifDeg(Vec3d origin, Vec3d p1, Vec3d p2)
+    {
+        double angleDif = p1.subtract(origin).normalize().dotProduct(p2.subtract(origin).normalize());
+
+        //And because Vec3d.fromPitchYaw occasionally returns values barely out of the range of (-1, 1)...
+        if (angleDif < -1) angleDif = -1;
+        else if (angleDif > 1) angleDif = 1;
+
+        return Tools.radtodeg(TRIG_TABLE.arccos(angleDif)); //0 in front, 180 in back
+    }
+
 
     public static void playSimpleSoundOnClient(EntityPlayerMP player, ResourceLocation rl)
     {
