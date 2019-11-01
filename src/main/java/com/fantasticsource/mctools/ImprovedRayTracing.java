@@ -7,6 +7,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -74,7 +75,7 @@ public class ImprovedRayTracing
 
     public static boolean isUnobstructed(World world, Vec3d vecStart, Vec3d vecEnd, boolean collideOnAllSolids)
     {
-        return rayTraceBlocks(world, vecStart, vecEnd, collideOnAllSolids).hitVec == null;
+        return rayTraceBlocks(world, vecStart, vecEnd, collideOnAllSolids).typeOfHit == RayTraceResult.Type.MISS;
     }
 
 
@@ -99,7 +100,7 @@ public class ImprovedRayTracing
         if (!world.isBlockLoaded(pos))
         {
             world.profiler.endSection();
-            return new RayTraceResult(RayTraceResult.Type.MISS, null, null, pos);
+            return new RayTraceResult(RayTraceResult.Type.MISS, vecStart, null, pos);
         }
         IBlockState state = world.getBlockState(pos);
         if ((collideOnAllSolids || !canSeeThrough(state)) && state.getCollisionBoundingBox(world, pos) != Block.NULL_AABB)
@@ -179,8 +180,9 @@ public class ImprovedRayTracing
             //Check the BlockPos
             if (!world.isBlockLoaded(pos))
             {
+                RayTraceResult rayTraceResult = new AxisAlignedBB(pos).calculateIntercept(vecStart, vecEnd);
                 world.profiler.endSection();
-                return new RayTraceResult(RayTraceResult.Type.MISS, null, null, pos);
+                return new RayTraceResult(RayTraceResult.Type.MISS, rayTraceResult.hitVec, rayTraceResult.sideHit, pos);
             }
             state = world.getBlockState(pos);
             if ((collideOnAllSolids || !canSeeThrough(state)) && state.getCollisionBoundingBox(world, pos) != Block.NULL_AABB)
@@ -198,7 +200,7 @@ public class ImprovedRayTracing
             if (pos.getX() == endPos.getX() && pos.getY() == endPos.getY() && pos.getZ() == endPos.getZ())
             {
                 world.profiler.endSection();
-                return new RayTraceResult(RayTraceResult.Type.MISS, null, null, pos);
+                return new RayTraceResult(RayTraceResult.Type.MISS, vecEnd, null, pos);
             }
         }
 
@@ -210,8 +212,9 @@ public class ImprovedRayTracing
             Tools.printStackTrace();
             lastWarning = System.currentTimeMillis();
         }
+        RayTraceResult rayTraceResult = new AxisAlignedBB(pos).calculateIntercept(vecStart, vecEnd);
         world.profiler.endSection();
-        return new RayTraceResult(RayTraceResult.Type.MISS, null, null, pos);
+        return new RayTraceResult(RayTraceResult.Type.MISS, rayTraceResult.hitVec, rayTraceResult.sideHit, pos);
     }
 
     public static boolean canSeeThrough(IBlockState blockState)
