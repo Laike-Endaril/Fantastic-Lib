@@ -12,12 +12,14 @@ import net.minecraft.entity.ai.*;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.projectile.EntitySnowball;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
@@ -66,6 +68,14 @@ public class MCTools
         }
     }
 
+
+    public static void spawnDebugSnowball(World world, double x, double y, double z)
+    {
+        EntitySnowball snowball = new EntitySnowball(world, x, y, z);
+        snowball.setVelocity(0, 0, 0);
+        snowball.setNoGravity(true);
+        world.spawnEntity(snowball);
+    }
 
     public static double lookAngleDifDeg(EntityLivingBase searcher, Entity target)
     {
