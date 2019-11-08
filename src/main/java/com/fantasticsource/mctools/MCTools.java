@@ -33,6 +33,7 @@ import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.util.vector.Quaternion;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -66,6 +67,16 @@ public class MCTools
         {
             crash(e, 700, false);
         }
+    }
+
+
+    public static Quaternion rotatedQuaternion(Quaternion v, Quaternion axis, double theta)
+    {
+        double sinThetaDiv2 = TRIG_TABLE.sin(theta * 0.5);
+        double cosThetaDiv2 = TRIG_TABLE.cos(theta * 0.5);
+        Quaternion q = new Quaternion((float) (sinThetaDiv2 * axis.x), (float) (sinThetaDiv2 * axis.y), (float) (sinThetaDiv2 * axis.z), (float) cosThetaDiv2);
+        Quaternion qConjugate = new Quaternion((float) -(sinThetaDiv2 * axis.x), (float) -(sinThetaDiv2 * axis.y), (float) -(sinThetaDiv2 * axis.z), (float) cosThetaDiv2);
+        return Quaternion.mul(Quaternion.mul(q, v, null), qConjugate, null);
     }
 
 
