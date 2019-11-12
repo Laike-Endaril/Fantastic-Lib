@@ -331,6 +331,11 @@ public class MCTools
     }
 
 
+    public static double getAttribute(EntityLivingBase entity, IAttribute attribute)
+    {
+        return getAttribute(entity, attribute, attribute.getDefaultValue());
+    }
+
     public static double getAttribute(EntityLivingBase entity, IAttribute attribute, double defaultVal)
     {
         if (entity == null) return defaultVal;
