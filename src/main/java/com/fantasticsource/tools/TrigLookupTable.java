@@ -7,6 +7,8 @@ import static com.fantasticsource.tools.Tools.posMod;
 @SuppressWarnings("unused")
 public class TrigLookupTable
 {
+    public static final TrigLookupTable TRIG_TABLE_1024 = new TrigLookupTable(1024);
+
     private double[] table, invtable;
 
     public TrigLookupTable(int granularity)
