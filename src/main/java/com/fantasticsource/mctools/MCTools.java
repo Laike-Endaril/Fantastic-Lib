@@ -131,7 +131,7 @@ public class MCTools
     }
 
 
-    public static void populateEntityDoubleMap(String[] regexArray, LinkedHashMap<Class<? extends EntityLivingBase>, HashMap<String, Double>> mapToPopulate)
+    public static void populateEntityDoubleMap(String[] regexArray, LinkedHashMap<Class<? extends EntityLivingBase>, LinkedHashMap<String, Double>> mapToPopulate)
     {
         for (String regex : regexArray)
         {
@@ -154,7 +154,7 @@ public class MCTools
 
             if (name.toLowerCase().equals("player"))
             {
-                mapToPopulate.computeIfAbsent(EntityPlayerMP.class, o -> new HashMap<>()).put(specificName, value);
+                mapToPopulate.computeIfAbsent(EntityPlayerMP.class, o -> new LinkedHashMap<>()).put(specificName, value);
             }
             else
             {
@@ -166,13 +166,13 @@ public class MCTools
                     Class cls = entry.getValue().getEntityClass();
                     if (!(EntityLivingBase.class.isAssignableFrom(cls))) continue;
 
-                    mapToPopulate.computeIfAbsent((Class<? extends EntityLivingBase>) cls, o -> new HashMap<>()).put(specificName, value);
+                    mapToPopulate.computeIfAbsent((Class<? extends EntityLivingBase>) cls, o -> new LinkedHashMap<>()).put(specificName, value);
                 }
             }
         }
     }
 
-    public static double entityMatchesDoubleMapOrDefault(EntityLivingBase entity, LinkedHashMap<Class<? extends EntityLivingBase>, HashMap<String, Double>> populatedMap, double defaultValue)
+    public static double entityMatchesDoubleMapOrDefault(EntityLivingBase entity, LinkedHashMap<Class<? extends EntityLivingBase>, LinkedHashMap<String, Double>> populatedMap, double defaultValue)
     {
         HashMap<String, Double> map = populatedMap.get(entity.getClass());
         if (map == null) return defaultValue;
@@ -187,7 +187,7 @@ public class MCTools
     }
 
 
-    public static void populateEntityIntMap(String[] regexArray, LinkedHashMap<Class<? extends EntityLivingBase>, HashMap<String, Integer>> mapToPopulate)
+    public static void populateEntityIntMap(String[] regexArray, LinkedHashMap<Class<? extends EntityLivingBase>, LinkedHashMap<String, Integer>> mapToPopulate)
     {
         for (String regex : regexArray)
         {
@@ -210,7 +210,7 @@ public class MCTools
 
             if (name.toLowerCase().equals("player"))
             {
-                mapToPopulate.computeIfAbsent(EntityPlayerMP.class, o -> new HashMap<>()).put(specificName, value);
+                mapToPopulate.computeIfAbsent(EntityPlayerMP.class, o -> new LinkedHashMap<>()).put(specificName, value);
             }
             else
             {
@@ -222,13 +222,13 @@ public class MCTools
                     Class cls = entry.getValue().getEntityClass();
                     if (!(EntityLivingBase.class.isAssignableFrom(cls))) continue;
 
-                    mapToPopulate.computeIfAbsent((Class<? extends EntityLivingBase>) cls, o -> new HashMap<>()).put(specificName, value);
+                    mapToPopulate.computeIfAbsent((Class<? extends EntityLivingBase>) cls, o -> new LinkedHashMap<>()).put(specificName, value);
                 }
             }
         }
     }
 
-    public static int entityMatchesIntMapOrDefault(EntityLivingBase entity, LinkedHashMap<Class<? extends EntityLivingBase>, HashMap<String, Integer>> populatedMap, int defaultValue)
+    public static int entityMatchesIntMapOrDefault(EntityLivingBase entity, LinkedHashMap<Class<? extends EntityLivingBase>, LinkedHashMap<String, Integer>> populatedMap, int defaultValue)
     {
         HashMap<String, Integer> map = populatedMap.get(entity.getClass());
         if (map == null) return defaultValue;
