@@ -25,7 +25,7 @@ public class FantasticLib
 {
     public static final String MODID = "fantasticlib";
     public static final String NAME = "Fantastic Lib";
-    public static final String VERSION = "1.12.2.026b";
+    public static final String VERSION = "1.12.2.027";
 
 
     public static boolean isClient = false;
