@@ -35,6 +35,14 @@ public class ImprovedRayTracing
     /**
      * @return Double.NaN if this ray would not collide with the entity, regardless of terrain.  The distance this ray penetrates through the given entity, if it does.  The distance from the edge of the entity to where this ray collided with a block, as a negative value, in all other cases
      */
+    public static double entityPenetration(Entity target, Vec3d vecStart, Vec3d vecEnd, double maxDistance, boolean collideOnAllSolids)
+    {
+        return entityPenetration(target, vecStart, vecStart.add(vecEnd.subtract(vecStart).normalize().scale(maxDistance)), collideOnAllSolids);
+    }
+
+    /**
+     * @return Double.NaN if this ray would not collide with the entity, regardless of terrain.  The distance this ray penetrates through the given entity, if it does.  The distance from the edge of the entity to where this ray collided with a block, as a negative value, in all other cases
+     */
     public static double entityPenetration(Entity target, Vec3d vecStart, Vec3d vecEnd, boolean collideOnAllSolids)
     {
         RayTraceResult entityEnd = rayTraceEntity(target, vecEnd, vecStart);
@@ -61,6 +69,11 @@ public class ImprovedRayTracing
         return rayTraceEntity(target, eyes, eyes.add(fromEyesOf.getLookVec().scale(maxDistance)));
     }
 
+    public static RayTraceResult rayTraceEntity(Entity target, Vec3d vecStart, Vec3d vecEnd, double maxDistance)
+    {
+        return rayTraceEntity(target, vecStart, vecStart.add(vecEnd.subtract(vecStart).normalize().scale(maxDistance)));
+    }
+
     public static RayTraceResult rayTraceEntity(Entity target, Vec3d vecStart, Vec3d vecEnd)
     {
         return target.getEntityBoundingBox().calculateIntercept(vecStart, vecEnd);
@@ -71,6 +84,11 @@ public class ImprovedRayTracing
     {
         Vec3d eyes = fromEyesOf.getPositionVector().addVector(0, fromEyesOf.getEyeHeight(), 0);
         return isUnobstructed(fromEyesOf.world, eyes, eyes.add(fromEyesOf.getLookVec().scale(maxDistance)), collideOnAllSolids);
+    }
+
+    public static boolean isUnobstructed(World world, Vec3d vecStart, Vec3d vecEnd, double maxDistance, boolean collideOnAllSolids)
+    {
+        return isUnobstructed(world, vecStart, vecStart.add(vecEnd.subtract(vecStart).normalize().scale(maxDistance)), collideOnAllSolids);
     }
 
     public static boolean isUnobstructed(World world, Vec3d vecStart, Vec3d vecEnd, boolean collideOnAllSolids)
@@ -84,6 +102,12 @@ public class ImprovedRayTracing
     {
         Vec3d eyes = fromEyesOf.getPositionVector().addVector(0, fromEyesOf.getEyeHeight(), 0);
         return rayTraceBlocks(fromEyesOf.world, eyes, eyes.add(fromEyesOf.getLookVec().scale(maxDistance)), collideOnAllSolids);
+    }
+
+    @Nonnull
+    public static RayTraceResult rayTraceBlocks(World world, Vec3d vecStart, Vec3d vecEnd, double maxDistance, boolean collideOnAllSolids)
+    {
+        return rayTraceBlocks(world, vecStart, vecStart.add(vecEnd.subtract(vecStart).normalize().scale(maxDistance)), collideOnAllSolids);
     }
 
     @Nonnull
@@ -112,6 +136,14 @@ public class ImprovedRayTracing
                 return result;
             }
         }
+
+        //End if this was the last block
+        if (pos.getX() == endPos.getX() && pos.getY() == endPos.getY() && pos.getZ() == endPos.getZ())
+        {
+            world.profiler.endSection();
+            return new RayTraceResult(RayTraceResult.Type.MISS, vecEnd, null, pos);
+        }
+
 
         //Iterate through all non-starting blocks and check them
         double xStart = vecStart.x, yStart = vecStart.y, zStart = vecStart.z;
@@ -209,11 +241,19 @@ public class ImprovedRayTracing
         if (lastWarning == -1 || System.currentTimeMillis() - lastWarning > 1000 * 5)
         {
             System.err.println("WARNING: ENDLESS RAYTRACING DETECTED!  This warning will not show more than once every 5 seconds, but may be happening far more often");
+            System.err.println("From " + vecStart + " to " + vecEnd);
             Tools.printStackTrace();
             lastWarning = System.currentTimeMillis();
         }
         RayTraceResult rayTraceResult = new AxisAlignedBB(pos).calculateIntercept(vecStart, vecEnd);
         world.profiler.endSection();
+        if (rayTraceResult == null)
+        {
+            System.err.println("\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            System.err.println("Null raytraceresult from " + vecStart + " to " + vecEnd + " at position " + pos);
+            System.err.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+        }
+
         return new RayTraceResult(RayTraceResult.Type.MISS, rayTraceResult.hitVec, rayTraceResult.sideHit, pos);
     }
 
