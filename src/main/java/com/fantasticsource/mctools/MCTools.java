@@ -37,10 +37,7 @@ import org.lwjgl.util.vector.Quaternion;
 
 import java.io.File;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static com.fantasticsource.tools.Tools.distance;
@@ -131,6 +128,118 @@ public class MCTools
         Locale locale = (Locale) languageManagerCurrentLocaleField.get(null);
         Map<String, String> properties = (Map<String, String>) localePropertiesField.get(locale);
         properties.put(key, value);
+    }
+
+
+    public static void populateEntityDoubleMap(String[] regexArray, LinkedHashMap<Class<? extends EntityLivingBase>, HashMap<String, Double>> mapToPopulate)
+    {
+        for (String regex : regexArray)
+        {
+            String[] tokens = Tools.fixedSplit(regex, ",");
+            double value = Double.parseDouble(tokens[1].trim());
+
+            String[] tokens2 = Tools.fixedSplit(tokens[0].trim(), ":");
+            String domain = "minecraft", name, specificName = ".*";
+
+            if (tokens2.length == 1)
+            {
+                name = tokens2[0];
+            }
+            else
+            {
+                domain = tokens2[0];
+                name = tokens2[1];
+                if (tokens2.length > 2) specificName = tokens2[2];
+            }
+
+            if (name.toLowerCase().equals("player"))
+            {
+                mapToPopulate.computeIfAbsent(EntityPlayerMP.class, o -> new HashMap<>()).put(specificName, value);
+            }
+            else
+            {
+                for (Map.Entry<ResourceLocation, EntityEntry> entry : ForgeRegistries.ENTITIES.getEntries())
+                {
+                    if (!Pattern.matches(domain, entry.getKey().getResourceDomain())) continue;
+                    if (!Pattern.matches(name, entry.getKey().getResourcePath())) continue;
+
+                    Class cls = entry.getValue().getEntityClass();
+                    if (!(EntityLivingBase.class.isAssignableFrom(cls))) continue;
+
+                    mapToPopulate.computeIfAbsent((Class<? extends EntityLivingBase>) cls, o -> new HashMap<>()).put(specificName, value);
+                }
+            }
+        }
+    }
+
+    public static double entityMatchesDoubleMapOrDefault(EntityLivingBase entity, LinkedHashMap<Class<? extends EntityLivingBase>, HashMap<String, Double>> populatedMap, double defaultValue)
+    {
+        HashMap<String, Double> map = populatedMap.get(entity.getClass());
+        if (map == null) return defaultValue;
+
+        String name = entity.getName();
+        for (Map.Entry<String, Double> entry : map.entrySet())
+        {
+            if (Pattern.matches(entry.getKey(), name)) return entry.getValue();
+        }
+
+        return defaultValue;
+    }
+
+
+    public static void populateEntityIntMap(String[] regexArray, LinkedHashMap<Class<? extends EntityLivingBase>, HashMap<String, Integer>> mapToPopulate)
+    {
+        for (String regex : regexArray)
+        {
+            String[] tokens = Tools.fixedSplit(regex, ",");
+            int value = Integer.parseInt(tokens[1].trim());
+
+            String[] tokens2 = Tools.fixedSplit(tokens[0].trim(), ":");
+            String domain = "minecraft", name, specificName = ".*";
+
+            if (tokens2.length == 1)
+            {
+                name = tokens2[0];
+            }
+            else
+            {
+                domain = tokens2[0];
+                name = tokens2[1];
+                if (tokens2.length > 2) specificName = tokens2[2];
+            }
+
+            if (name.toLowerCase().equals("player"))
+            {
+                mapToPopulate.computeIfAbsent(EntityPlayerMP.class, o -> new HashMap<>()).put(specificName, value);
+            }
+            else
+            {
+                for (Map.Entry<ResourceLocation, EntityEntry> entry : ForgeRegistries.ENTITIES.getEntries())
+                {
+                    if (!Pattern.matches(domain, entry.getKey().getResourceDomain())) continue;
+                    if (!Pattern.matches(name, entry.getKey().getResourcePath())) continue;
+
+                    Class cls = entry.getValue().getEntityClass();
+                    if (!(EntityLivingBase.class.isAssignableFrom(cls))) continue;
+
+                    mapToPopulate.computeIfAbsent((Class<? extends EntityLivingBase>) cls, o -> new HashMap<>()).put(specificName, value);
+                }
+            }
+        }
+    }
+
+    public static int entityMatchesIntMapOrDefault(EntityLivingBase entity, LinkedHashMap<Class<? extends EntityLivingBase>, HashMap<String, Integer>> populatedMap, int defaultValue)
+    {
+        HashMap<String, Integer> map = populatedMap.get(entity.getClass());
+        if (map == null) return defaultValue;
+
+        String name = entity.getName();
+        for (Map.Entry<String, Integer> entry : map.entrySet())
+        {
+            if (Pattern.matches(entry.getKey(), name)) return entry.getValue();
+        }
+
+        return defaultValue;
     }
 
 
