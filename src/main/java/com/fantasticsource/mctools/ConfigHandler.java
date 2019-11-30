@@ -9,12 +9,12 @@ import java.util.ArrayList;
 public class ConfigHandler
 {
     protected final String modid;
-    protected Configuration config;
     protected final File file;
-    protected BufferedReader reader;
-    protected BufferedWriter writer;
     protected final ArrayList<String> lines = new ArrayList<>();
     protected final ArrayList<String> comments = new ArrayList<>();
+    protected Configuration config;
+    protected BufferedReader reader;
+    protected BufferedWriter writer;
 
     public ConfigHandler(String modid) throws IllegalAccessException
     {

@@ -45,9 +45,9 @@ import static com.fantasticsource.tools.Tools.radtodeg;
 
 public class MCTools
 {
+    public static final TrigLookupTable TRIG_TABLE = new TrigLookupTable(1024);
     private static Field configManagerCONFIGSField, languageManagerCurrentLocaleField, localePropertiesField;
     private static boolean host = false;
-    public static final TrigLookupTable TRIG_TABLE = new TrigLookupTable(1024);
 
     static
     {
