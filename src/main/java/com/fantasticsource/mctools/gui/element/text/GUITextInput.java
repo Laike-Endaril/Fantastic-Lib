@@ -579,9 +579,20 @@ public class GUITextInput extends GUIText
             if (min == -1) min = element.cursorPosition;
             String before = element.text.substring(0, min);
             String after = element.text.substring(Tools.max(element.cursorPosition, element.selectorPosition));
-            element.text = before + typedChar + after;
-            deselectAll();
-            element.cursorPosition = min + 1;
+            if (code != null && typedChar == '}' && element.isWhitespace())
+            {
+                StringBuilder s = new StringBuilder();
+                for (int i = tabs() - 1; i > 0; i--) s.append(" ");
+                element.text = s.toString() + '}';
+                deselectAll();
+                element.cursorPosition = element.text.length();
+            }
+            else
+            {
+                element.text = before + typedChar + after;
+                deselectAll();
+                element.cursorPosition = min + 1;
+            }
 
             if (code != null)
             {
