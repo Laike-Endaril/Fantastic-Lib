@@ -107,7 +107,7 @@ public class GUIElement
     {
         if (children.size() > 0 && width > 0 && height > 0)
         {
-            for (GUIElement element : children)
+            for (GUIElement element : children.toArray(new GUIElement[0]))
             {
                 int[] lastScissor = element.preDraw();
                 if (lastScissor != null)
