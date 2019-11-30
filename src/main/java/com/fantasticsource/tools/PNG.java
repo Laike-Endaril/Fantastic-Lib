@@ -41,19 +41,19 @@ public class PNG
         try
         {
             //Read file header and check it
-            read(buffer, 0, 8);
+            read(buffer, 8);
             if (bytesToInt(buffer, 0) != 0x89504E47 || bytesToInt(buffer, 4) != 0x0D0A1A0A)
             {
                 throw new IOException("Not a PNG file (file header is not PNG file header)");
             }
 
             //Read first chunk header and make sure it is image header chunk header (headerception)
-            read(buffer, 0, 8);
+            read(buffer, 8);
             if (bytesToInt(buffer, 0) != 13) throw new IOException("PNG has wrong image header length");
             if (!bytesToASCII(buffer, 4, 4).equals("IHDR")) throw new IOException("PNG file's first chunk was not image header");
 
             //Read image header chunk and check it
-            read(buffer, 0, 13);
+            read(buffer, 13);
             width = bytesToInt(buffer, 0);
             height = bytesToInt(buffer, 4);
             if (buffer[8] != 8) throw new IllegalArgumentException("PNG does not have 8 bits of alpha");
@@ -64,11 +64,11 @@ public class PNG
 
 
             //Skip all non-image-data chunks
-            read(buffer, 0, 8);
+            read(buffer, 8);
             while (!bytesToASCII(buffer, 4, 4).equals("IDAT"))
             {
                 skip(bytesToInt(buffer, 0) + 4);
-                read(buffer, 0, 8);
+                read(buffer, 8);
             }
             chunkBytesRemaining = bytesToInt(buffer, 0);
 
@@ -186,7 +186,7 @@ public class PNG
                 if (chunkBytesRemaining == 0) //Reached the end of IDAT chunk but not the end of current line; need next IDAT chunk
                 {
                     skip(4); //Toss the CRC
-                    read(line, 0, 8);
+                    read(line, 8);
                     if (!bytesToASCII(line, 4, 4).equals("IDAT")) throw new IOException("PNG has less image data than header indicates");
                     chunkBytesRemaining = bytesToInt(line, 0);
                 }
@@ -200,7 +200,7 @@ public class PNG
         int length = buffer.length;
         if (length > chunkBytesRemaining) length = chunkBytesRemaining;
 
-        read(buffer, 0, length);
+        read(buffer, length);
 
         chunkBytesRemaining -= length;
         return length;
@@ -278,26 +278,19 @@ public class PNG
     }
 
 
-    private void read(byte[] buffer, int offset, int length) throws IOException
+    private void read(byte[] buffer, int length) throws IOException
     {
-        do
+        int offset = 0;
+        while (length > 0)
         {
             int bytesRead = input.read(buffer, offset, length);
             if (bytesRead < 0) throw new EOFException();
-            offset += bytesRead;
             length -= bytesRead;
         }
-        while (length > 0);
     }
 
     private void skip(int length) throws IOException
     {
-        do
-        {
-            long bytesSkipped = input.skip(length);
-            if (bytesSkipped < 0) throw new EOFException();
-            length -= bytesSkipped;
-        }
-        while (length > 0);
+        while (length > 0) length -= input.skip(length);
     }
 }
