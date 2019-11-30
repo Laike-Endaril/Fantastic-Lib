@@ -240,7 +240,7 @@ public class Color
     {
         this.hex = hex;
 
-        intValue = Integer.parseInt(hex, 16);
+        intValue = Tools.parseHexInt(hex);
 
         r = (intValue >> 24) & 0xff;
         g = (intValue >> 16) & 0xff;

@@ -14,6 +14,16 @@ import java.util.Random;
 @SuppressWarnings("unused")
 public class Tools
 {
+    public static int parseHexInt(String hex)
+    {
+        hex = hex.replaceAll("0x", "");
+        if (hex.length() > 8) throw new NumberFormatException("Hex string too long (max 8 characters): " + hex);
+
+        if (hex.length() < 8) return Integer.parseInt(hex, 16);
+
+        return (Integer.parseInt(hex.substring(0, 2), 16) << 24) | (Integer.parseInt(hex.substring(2)));
+    }
+
     public static boolean isPowerOfTwo(int n)
     {
         if (n == 0) return false;
