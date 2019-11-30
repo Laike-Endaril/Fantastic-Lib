@@ -50,16 +50,14 @@ public class PNG
             //Read first chunk header and make sure it is image header chunk header (headerception)
             read(buffer, 0, 8);
             if (bytesToInt(buffer, 0) != 13) throw new IOException("PNG has wrong image header length");
-            if (!bytesToASCII(buffer, 4, 4).equals("IHDR"))
-                throw new IOException("PNG file's first chunk was not image header");
+            if (!bytesToASCII(buffer, 4, 4).equals("IHDR")) throw new IOException("PNG file's first chunk was not image header");
 
             //Read image header chunk and check it
             read(buffer, 0, 13);
             width = bytesToInt(buffer, 0);
             height = bytesToInt(buffer, 4);
             if (buffer[8] != 8) throw new IllegalArgumentException("PNG does not have 8 bits of alpha");
-            if (buffer[9] != 6)
-                throw new IllegalArgumentException("PNG is not 32 bit (true color + alpha) color format");
+            if (buffer[9] != 6) throw new IllegalArgumentException("PNG is not 32 bit (true color + alpha) color format");
             if (buffer[12] != 0) throw new IOException("PNG does not use standard interlacing");
 
             skip(4); //Skip CRC
@@ -125,6 +123,11 @@ public class PNG
     public static long totalBufferMemoryUsed()
     {
         return totalBufferMemory;
+    }
+
+    public boolean isLoaded()
+    {
+        return loaded;
     }
 
     public int getHeight()
