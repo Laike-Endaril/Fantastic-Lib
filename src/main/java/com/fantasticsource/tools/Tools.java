@@ -21,7 +21,7 @@ public class Tools
 
         if (hex.length() < 8) return Integer.parseInt(hex, 16);
 
-        return (Integer.parseInt(hex.substring(0, 2), 16) << 24) | (Integer.parseInt(hex.substring(2)));
+        return (Integer.parseInt(hex.substring(0, 2), 16) << 24) | (Integer.parseInt(hex.substring(2), 16));
     }
 
     public static boolean isPowerOfTwo(int n)
