@@ -15,7 +15,6 @@ public class PNG
     private static long totalBufferMemory = 0;
 
     private int width, height;
-    private byte[] line, lastLine;
     private ByteBuffer directBuffer = null;
     private boolean loaded = false;
 
@@ -39,7 +38,7 @@ public class PNG
             //Read file header and check it
             byte[] buffer = new byte[4096];
             read(input, buffer, 8);
-            if (bytesToInt(buffer, 0) != 0x89504E47 || bytesToInt(buffer, 4) != 0x0D0A1A0A)
+            if (bytesToInt(buffer, 0) != 0x89504e47 || bytesToInt(buffer, 4) != 0x0d0a1a0a)
             {
                 throw new IOException("Not a PNG file (file header is not PNG file header)");
             }
@@ -77,15 +76,15 @@ public class PNG
             totalBuffers++;
             totalBufferMemory += png.height * lineSize;
 
-            png.line = new byte[lineSize + 1];
+            byte[] line = new byte[lineSize + 1], lastLine = new byte[lineSize + 1];
             Inflater inflater = new Inflater();
             try
             {
                 for (int y = 0; y < png.height; y++)
                 {
-                    for (int bytesRead, position = 0; position < png.line.length; position += bytesRead)
+                    for (int bytesRead, position = 0; position < line.length; position += bytesRead)
                     {
-                        bytesRead = inflater.inflate(png.line, position, png.line.length - position);
+                        bytesRead = inflater.inflate(line, position, line.length - position);
 
                         if (bytesRead == 0)
                         {
@@ -94,9 +93,9 @@ public class PNG
                             if (chunkBytesRemaining == 0) //Reached the end of IDAT chunk but not the end of current line; need next IDAT chunk
                             {
                                 skip(input, 4); //Toss the CRC
-                                read(input, png.line, 8);
-                                if (!bytesToASCII(png.line, 4, 4).equals("IDAT")) throw new IOException("PNG has less image data than header indicates");
-                                chunkBytesRemaining = bytesToInt(png.line, 0);
+                                read(input, line, 8);
+                                if (!bytesToASCII(line, 4, 4).equals("IDAT")) throw new IOException("PNG has less image data than header indicates");
+                                chunkBytesRemaining = bytesToInt(line, 0);
                             }
                             int read = readChunkOrMax(buffer, input, chunkBytesRemaining);
                             chunkBytesRemaining -= read;
@@ -104,12 +103,12 @@ public class PNG
                         }
                     }
 
-                    png.unfilter();
+                    png.unfilter(line, lastLine);
 
                     png.directBuffer.position(y * lineSize);
-                    png.directBuffer.put(png.line, 1, lineSize);
+                    png.directBuffer.put(line, 1, lineSize);
 
-                    png.lastLine = png.line;
+                    System.arraycopy(line, 0, lastLine, 0, line.length);
                 }
             }
             catch (DataFormatException e)
@@ -211,7 +210,7 @@ public class PNG
     }
 
 
-    private void unfilter() throws IOException
+    private void unfilter(byte[] line, byte[] lastLine) throws IOException
     {
         switch (line[0])
         {
