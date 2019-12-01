@@ -7,7 +7,6 @@ import java.util.zip.Inflater;
 
 import static com.fantasticsource.tools.Tools.*;
 
-@SuppressWarnings("unused")
 public class PNG
 {
     //Only does RGBA for now
@@ -15,13 +14,9 @@ public class PNG
     private static int totalBuffers = 0;
     private static long totalBufferMemory = 0;
 
-    private InputStream input;
-    private byte[] buffer = new byte[4096];
-
-    private int width, height, chunkBytesRemaining;
+    private int width, height;
     private byte[] line, lastLine;
     private ByteBuffer directBuffer = null;
-    private Inflater inflater = new Inflater();
     private boolean loaded = false;
 
 
@@ -29,9 +24,10 @@ public class PNG
     {
         PNG png = new PNG();
 
+        InputStream input = null;
         try
         {
-            png.input = new FileInputStream(filename);
+            input = new FileInputStream(filename);
         }
         catch (FileNotFoundException e)
         {
@@ -41,36 +37,37 @@ public class PNG
         try
         {
             //Read file header and check it
-            png.read(8);
-            if (bytesToInt(png.buffer, 0) != 0x89504E47 || bytesToInt(png.buffer, 4) != 0x0D0A1A0A)
+            byte[] buffer = new byte[4096];
+            read(input, buffer, 8);
+            if (bytesToInt(buffer, 0) != 0x89504E47 || bytesToInt(buffer, 4) != 0x0D0A1A0A)
             {
                 throw new IOException("Not a PNG file (file header is not PNG file header)");
             }
 
             //Read first chunk header and make sure it is image header chunk header (headerception)
-            png.read(8);
-            if (bytesToInt(png.buffer, 0) != 13) throw new IOException("PNG has wrong image header length");
-            if (!bytesToASCII(png.buffer, 4, 4).equals("IHDR")) throw new IOException("PNG file's first chunk was not image header");
+            read(input, buffer, 8);
+            if (bytesToInt(buffer, 0) != 13) throw new IOException("PNG has wrong image header length");
+            if (!bytesToASCII(buffer, 4, 4).equals("IHDR")) throw new IOException("PNG file's first chunk was not image header");
 
             //Read image header chunk and check it
-            png.read(13);
-            png.width = bytesToInt(png.buffer, 0);
-            png.height = bytesToInt(png.buffer, 4);
-            if (png.buffer[8] != 8) throw new IllegalArgumentException("PNG does not have 8 bits of alpha");
-            if (png.buffer[9] != 6) throw new IllegalArgumentException("PNG is not 32 bit (true color + alpha) color format");
-            if (png.buffer[12] != 0) throw new IOException("PNG does not use standard interlacing");
+            read(input, buffer, 13);
+            png.width = bytesToInt(buffer, 0);
+            png.height = bytesToInt(buffer, 4);
+            if (buffer[8] != 8) throw new IllegalArgumentException("PNG does not have 8 bits of alpha");
+            if (buffer[9] != 6) throw new IllegalArgumentException("PNG is not 32 bit (true color + alpha) color format");
+            if (buffer[12] != 0) throw new IOException("PNG does not use standard interlacing");
 
-            png.skip(4); //Skip CRC
+            skip(input, 4); //Skip CRC
 
 
             //Skip all non-image-data chunks
-            png.read(8);
-            while (!bytesToASCII(png.buffer, 4, 4).equals("IDAT"))
+            read(input, buffer, 8);
+            while (!bytesToASCII(buffer, 4, 4).equals("IDAT"))
             {
-                png.skip(bytesToInt(png.buffer, 0) + 4);
-                png.read(8);
+                skip(input, bytesToInt(buffer, 0) + 4);
+                read(input, buffer, 8);
             }
-            png.chunkBytesRemaining = bytesToInt(png.buffer, 0);
+            int chunkBytesRemaining = bytesToInt(buffer, 0);
 
 
             //Read image data
@@ -81,11 +78,32 @@ public class PNG
             totalBufferMemory += png.height * lineSize;
 
             png.line = new byte[lineSize + 1];
+            Inflater inflater = new Inflater();
             try
             {
                 for (int y = 0; y < png.height; y++)
                 {
-                    png.readLine();
+                    for (int bytesRead, position = 0; position < png.line.length; position += bytesRead)
+                    {
+                        bytesRead = inflater.inflate(png.line, position, png.line.length - position);
+
+                        if (bytesRead == 0)
+                        {
+                            if (inflater.finished()) throw new EOFException("PNG had EOF before all image data could be read");
+
+                            if (chunkBytesRemaining == 0) //Reached the end of IDAT chunk but not the end of current line; need next IDAT chunk
+                            {
+                                skip(input, 4); //Toss the CRC
+                                read(input, png.line, 8);
+                                if (!bytesToASCII(png.line, 4, 4).equals("IDAT")) throw new IOException("PNG has less image data than header indicates");
+                                chunkBytesRemaining = bytesToInt(png.line, 0);
+                            }
+                            int read = readChunkOrMax(buffer, input, chunkBytesRemaining);
+                            chunkBytesRemaining -= read;
+                            inflater.setInput(buffer, 0, read);
+                        }
+                    }
+
                     png.unfilter();
 
                     png.directBuffer.position(y * lineSize);
@@ -100,10 +118,10 @@ public class PNG
             }
             finally
             {
-                png.inflater.end();
+                inflater.end();
             }
             //noinspection ConstantConditions
-            png.input.close();
+            input.close();
             png.loaded = true;
 
             //Flip the buffer so it can be read correctly
@@ -132,6 +150,7 @@ public class PNG
         return totalBufferMemory;
     }
 
+
     public boolean isLoaded()
     {
         return loaded;
@@ -151,6 +170,7 @@ public class PNG
     {
         return directBuffer;
     }
+
 
     public void free() //Because direct byte buffers are not unloaded by the garbage collector!
     {
@@ -180,36 +200,13 @@ public class PNG
     }
 
 
-    private void readLine() throws IOException, DataFormatException
-    {
-        for (int bytesRead, position = 0; position < line.length; position += bytesRead)
-        {
-            bytesRead = inflater.inflate(line, position, line.length - position);
-
-            if (bytesRead == 0)
-            {
-                if (inflater.finished()) throw new EOFException("PNG had EOF before all image data could be read");
-
-                if (chunkBytesRemaining == 0) //Reached the end of IDAT chunk but not the end of current line; need next IDAT chunk
-                {
-                    skip(4); //Toss the CRC
-                    read(line, 8);
-                    if (!bytesToASCII(line, 4, 4).equals("IDAT")) throw new IOException("PNG has less image data than header indicates");
-                    chunkBytesRemaining = bytesToInt(line, 0);
-                }
-                inflater.setInput(buffer, 0, readChunkOrMax());
-            }
-        }
-    }
-
-    private int readChunkOrMax() throws IOException
+    private static int readChunkOrMax(byte[] buffer, InputStream input, int chunkBytesRemaining) throws IOException
     {
         int length = buffer.length;
         if (length > chunkBytesRemaining) length = chunkBytesRemaining;
 
-        read(buffer, length);
+        read(input, buffer, length);
 
-        chunkBytesRemaining -= length;
         return length;
     }
 
@@ -285,12 +282,7 @@ public class PNG
     }
 
 
-    private void read(int length) throws IOException
-    {
-        read(buffer, length);
-    }
-
-    private void read(byte[] buffer, int length) throws IOException
+    private static void read(InputStream input, byte[] buffer, int length) throws IOException
     {
         int offset = 0;
         while (length > 0)
@@ -301,7 +293,8 @@ public class PNG
         }
     }
 
-    private void skip(int length) throws IOException
+
+    private static void skip(InputStream input, int length) throws IOException
     {
         while (length > 0) length -= input.skip(length);
     }
