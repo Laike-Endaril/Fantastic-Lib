@@ -15,8 +15,8 @@ public class PNG
     private static int totalBuffers = 0;
     private static long totalBufferMemory = 0;
 
-    private final InputStream input;
-    private final byte[] buffer = new byte[4096];
+    private InputStream input;
+    private byte[] buffer = new byte[4096];
 
     private int width, height, chunkBytesRemaining;
     private byte[] line, lastLine;
@@ -25,73 +25,73 @@ public class PNG
     private boolean loaded = false;
 
 
-    public PNG(String filename)
+    public static PNG load(String filename)
     {
-        InputStream is = null;
+        PNG png = new PNG();
+
         try
         {
-            is = new FileInputStream(filename);
+            png.input = new FileInputStream(filename);
         }
         catch (FileNotFoundException e)
         {
             e.printStackTrace();
         }
-        input = is;
 
         try
         {
             //Read file header and check it
-            read(buffer, 8);
-            if (bytesToInt(buffer, 0) != 0x89504E47 || bytesToInt(buffer, 4) != 0x0D0A1A0A)
+            png.read(8);
+            if (bytesToInt(png.buffer, 0) != 0x89504E47 || bytesToInt(png.buffer, 4) != 0x0D0A1A0A)
             {
                 throw new IOException("Not a PNG file (file header is not PNG file header)");
             }
 
             //Read first chunk header and make sure it is image header chunk header (headerception)
-            read(buffer, 8);
-            if (bytesToInt(buffer, 0) != 13) throw new IOException("PNG has wrong image header length");
-            if (!bytesToASCII(buffer, 4, 4).equals("IHDR")) throw new IOException("PNG file's first chunk was not image header");
+            png.read(8);
+            if (bytesToInt(png.buffer, 0) != 13) throw new IOException("PNG has wrong image header length");
+            if (!bytesToASCII(png.buffer, 4, 4).equals("IHDR")) throw new IOException("PNG file's first chunk was not image header");
 
             //Read image header chunk and check it
-            read(buffer, 13);
-            width = bytesToInt(buffer, 0);
-            height = bytesToInt(buffer, 4);
-            if (buffer[8] != 8) throw new IllegalArgumentException("PNG does not have 8 bits of alpha");
-            if (buffer[9] != 6) throw new IllegalArgumentException("PNG is not 32 bit (true color + alpha) color format");
-            if (buffer[12] != 0) throw new IOException("PNG does not use standard interlacing");
+            png.read(13);
+            png.width = bytesToInt(png.buffer, 0);
+            png.height = bytesToInt(png.buffer, 4);
+            if (png.buffer[8] != 8) throw new IllegalArgumentException("PNG does not have 8 bits of alpha");
+            if (png.buffer[9] != 6) throw new IllegalArgumentException("PNG is not 32 bit (true color + alpha) color format");
+            if (png.buffer[12] != 0) throw new IOException("PNG does not use standard interlacing");
 
-            skip(4); //Skip CRC
+            png.skip(4); //Skip CRC
 
 
             //Skip all non-image-data chunks
-            read(buffer, 8);
-            while (!bytesToASCII(buffer, 4, 4).equals("IDAT"))
+            png.read(8);
+            while (!bytesToASCII(png.buffer, 4, 4).equals("IDAT"))
             {
-                skip(bytesToInt(buffer, 0) + 4);
-                read(buffer, 8);
+                png.skip(bytesToInt(png.buffer, 0) + 4);
+                png.read(8);
             }
-            chunkBytesRemaining = bytesToInt(buffer, 0);
+            png.chunkBytesRemaining = bytesToInt(png.buffer, 0);
 
 
             //Read image data
-            int lineSize = width * 4;
+            int lineSize = png.width * 4;
 
-            directBuffer = allocateNative(height * lineSize);
+            png.directBuffer = allocateNative(png.height * lineSize);
             totalBuffers++;
-            totalBufferMemory += height * lineSize;
+            totalBufferMemory += png.height * lineSize;
 
-            line = new byte[lineSize + 1];
+            png.line = new byte[lineSize + 1];
             try
             {
-                for (int y = 0; y < height; y++)
+                for (int y = 0; y < png.height; y++)
                 {
-                    readLine();
-                    unfilter();
+                    png.readLine();
+                    png.unfilter();
 
-                    directBuffer.position(y * lineSize);
-                    directBuffer.put(line, 1, lineSize);
+                    png.directBuffer.position(y * lineSize);
+                    png.directBuffer.put(png.line, 1, lineSize);
 
-                    lastLine = line;
+                    png.lastLine = png.line;
                 }
             }
             catch (DataFormatException e)
@@ -100,20 +100,27 @@ public class PNG
             }
             finally
             {
-                inflater.end();
+                png.inflater.end();
             }
             //noinspection ConstantConditions
-            input.close();
-            loaded = true;
+            png.input.close();
+            png.loaded = true;
 
             //Flip the buffer so it can be read correctly
-            directBuffer.flip();
+            png.directBuffer.flip();
         }
         catch (IOException e)
         {
             e.printStackTrace();
         }
+
+        return png;
     }
+
+    private PNG()
+    {
+    }
+
 
     public static int totalBuffersUsed()
     {
@@ -277,6 +284,11 @@ public class PNG
         }
     }
 
+
+    private void read(int length) throws IOException
+    {
+        read(buffer, length);
+    }
 
     private void read(byte[] buffer, int length) throws IOException
     {
