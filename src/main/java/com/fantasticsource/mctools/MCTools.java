@@ -359,7 +359,7 @@ public class MCTools
 
     public static String getConfigDir()
     {
-        return Loader.instance().getConfigDir().getAbsolutePath() + File.separator;
+        return Loader.instance().getConfigDir().getAbsolutePath() + '/';
     }
 
     public static Configuration getConfig(String modid) throws IllegalAccessException
@@ -381,17 +381,17 @@ public class MCTools
 
     public static String getWorldSaveDir(MinecraftServer server)
     {
-        return server.worlds[0].getSaveHandler().getWorldDirectory() + File.separator;
+        return server.worlds[0].getSaveHandler().getWorldDirectory().toString() + '/';
     }
 
     public static String getDataDir(MinecraftServer server)
     {
-        return server.worlds[0].getSaveHandler().getWorldDirectory() + File.separator + "data" + File.separator;
+        return server.worlds[0].getSaveHandler().getWorldDirectory().toString() + '/' + "data" + '/';
     }
 
     public static String getPlayerDataDir(MinecraftServer server)
     {
-        return server.worlds[0].getSaveHandler().getWorldDirectory() + File.separator + "playerdata" + File.separator;
+        return server.worlds[0].getSaveHandler().getWorldDirectory().toString() + '/' + "playerdata" + '/';
     }
 
     public static void crash(Exception e, int code, boolean hardExit)

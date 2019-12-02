@@ -37,17 +37,56 @@ public class Tools
         return true;
     }
 
-    public static boolean delete(File file)
+
+    public static ArrayList<String> allRecursiveRelativeFilenames(String directory)
+    {
+        File folder = new File(directory);
+        if (!folder.exists() || !folder.isDirectory())
+        {
+            throw new IllegalStateException("Directory does not exist: " + directory);
+        }
+
+
+        ArrayList<String> result = new ArrayList<>();
+        for (File file : folder.listFiles())
+        {
+            if (!file.isDirectory()) result.add(file.getName());
+            else result.addAll(allRecursiveRelativeFilenames(directory, file.getName()));
+        }
+
+        return result;
+    }
+
+    private static ArrayList<String> allRecursiveRelativeFilenames(String mainDirectory, String relativeSubDirectory)
+    {
+        String fullDirectory = mainDirectory + '/' + relativeSubDirectory;
+
+        File folder = new File(fullDirectory);
+        if (!folder.exists() || !folder.isDirectory())
+        {
+            throw new IllegalStateException("Directory does not exist: " + fullDirectory);
+        }
+
+
+        ArrayList<String> result = new ArrayList<>();
+        for (File file : folder.listFiles())
+        {
+            if (!file.isDirectory()) result.add(relativeSubDirectory + '/' + file.getName());
+            else result.addAll(allRecursiveRelativeFilenames(fullDirectory, file.getName()));
+        }
+
+        return result;
+    }
+
+
+    public static boolean deleteFilesRecursively(File file)
     {
         if (file.isDirectory())
         {
             File[] files = file.listFiles();
             if (files != null)
             {
-                for (File f : files)
-                {
-                    delete(f);
-                }
+                for (File f : files) deleteFilesRecursively(f);
             }
         }
         return file.delete();
