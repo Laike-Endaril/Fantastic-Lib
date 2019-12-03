@@ -298,8 +298,8 @@ public class ImprovedRayTracing
     {
         public FixedRayTraceResult(Type typeIn, Vec3d hitVecIn, EnumFacing sideHitIn, BlockPos blockPosIn)
         {
-            super(typeIn, hitVecIn, sideHitIn, new BlockPos(0, 0, 0));
-            hitVec = blockPosIn == null ? null : new Vec3d(blockPosIn);
+            super(typeIn, new Vec3d(0, 0, 0), sideHitIn, blockPosIn);
+            hitVec = hitVecIn == null ? null : new Vec3d(hitVecIn.x, hitVecIn.y, hitVecIn.z);
         }
     }
 }
