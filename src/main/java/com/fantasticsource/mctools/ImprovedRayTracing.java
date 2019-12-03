@@ -7,7 +7,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -41,7 +41,7 @@ public class ImprovedRayTracing
     }
 
     /**
-     * @return Double.NaN if this ray would not collide with the entity, regardless of terrain.  The distance this ray penetrates through the given entity, if it does.  The distance from the edge of the entity to where this ray collided with a block, as a negative value, in all other cases
+     * @return Double.NaN if this ray would not collide with the entity, regardless of terrain.  The distance this ray penetrates through the given entity, if it does.  The distance from the edge of the entity to where this ray collided with a block (including an unloaded block), as a negative value, in all other cases
      */
     public static double entityPenetration(Entity target, Vec3d vecStart, Vec3d vecEnd, boolean collideOnAllSolids)
     {
@@ -50,14 +50,15 @@ public class ImprovedRayTracing
 
 
         RayTraceResult entityStart = rayTraceEntity(target, vecStart, vecEnd);
-        RayTraceResult blockEnd = rayTraceBlocks(target.world, vecStart, entityEnd.hitVec, collideOnAllSolids);
+        RayTraceResult blockHit = rayTraceBlocks(target.world, vecStart, entityEnd.hitVec, collideOnAllSolids);
 
-        if (blockEnd.typeOfHit == RayTraceResult.Type.MISS)
+        if (blockHit.typeOfHit == RayTraceResult.Type.MISS)
         {
             return entityStart.hitVec.distanceTo(entityEnd.hitVec);
         }
 
-        return vecStart.distanceTo(blockEnd.hitVec) - vecStart.distanceTo(entityStart.hitVec);
+        if (blockHit.hitVec == null) return -vecStart.distanceTo(entityStart.hitVec);
+        return vecStart.distanceTo(blockHit.hitVec) - vecStart.distanceTo(entityStart.hitVec);
     }
 
 
@@ -124,7 +125,7 @@ public class ImprovedRayTracing
         if (!world.isBlockLoaded(pos))
         {
             world.profiler.endSection();
-            return new RayTraceResult(RayTraceResult.Type.MISS, vecStart, null, pos);
+            return new FixedRayTraceResult(null, null, null, pos);
         }
         IBlockState state = world.getBlockState(pos);
         if ((collideOnAllSolids || !canSeeThrough(state)) && state.getCollisionBoundingBox(world, pos) != Block.NULL_AABB)
@@ -141,7 +142,7 @@ public class ImprovedRayTracing
         if (pos.getX() == endPos.getX() && pos.getY() == endPos.getY() && pos.getZ() == endPos.getZ())
         {
             world.profiler.endSection();
-            return new RayTraceResult(RayTraceResult.Type.MISS, vecEnd, null, pos);
+            return new FixedRayTraceResult(RayTraceResult.Type.MISS, vecEnd, null, pos);
         }
 
 
@@ -212,9 +213,8 @@ public class ImprovedRayTracing
             //Check the BlockPos
             if (!world.isBlockLoaded(pos))
             {
-                RayTraceResult rayTraceResult = new AxisAlignedBB(pos).calculateIntercept(vecStart, vecEnd);
                 world.profiler.endSection();
-                return new RayTraceResult(RayTraceResult.Type.MISS, rayTraceResult.hitVec, rayTraceResult.sideHit, pos);
+                return new FixedRayTraceResult(null, null, null, pos);
             }
             state = world.getBlockState(pos);
             if ((collideOnAllSolids || !canSeeThrough(state)) && state.getCollisionBoundingBox(world, pos) != Block.NULL_AABB)
@@ -232,7 +232,7 @@ public class ImprovedRayTracing
             if (pos.getX() == endPos.getX() && pos.getY() == endPos.getY() && pos.getZ() == endPos.getZ())
             {
                 world.profiler.endSection();
-                return new RayTraceResult(RayTraceResult.Type.MISS, vecEnd, null, pos);
+                return new FixedRayTraceResult(RayTraceResult.Type.MISS, vecEnd, null, pos);
             }
         }
 
@@ -240,21 +240,17 @@ public class ImprovedRayTracing
         //Max iterations reached; force end and warn
         if (lastWarning == -1 || System.currentTimeMillis() - lastWarning > 1000 * 5)
         {
-            System.err.println("WARNING: ENDLESS RAYTRACING DETECTED!  This warning will not show more than once every 5 seconds, but may be happening far more often");
-            System.err.println("From " + vecStart + " to " + vecEnd);
+            System.err.println("WARNING: BEYOND-LIMIT RAYTRACING DETECTED!  This warning will not show more than once every 5 seconds, but may be happening far more often");
+            System.err.println("From " + vecStart + " to " + vecEnd + " (distance: " + vecStart.distanceTo(vecEnd) + ")");
+            System.err.println("Limit: " + MAX_ITERATIONS + " iterations (not based directly on distance, but longer distances are generally more iterations)");
+            System.err.println();
             Tools.printStackTrace();
             lastWarning = System.currentTimeMillis();
         }
-        RayTraceResult rayTraceResult = new AxisAlignedBB(pos).calculateIntercept(vecStart, vecEnd);
-        world.profiler.endSection();
-        if (rayTraceResult == null)
-        {
-            System.err.println("\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-            System.err.println("Null raytraceresult from " + vecStart + " to " + vecEnd + " at position " + pos);
-            System.err.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
-        }
 
-        return new RayTraceResult(RayTraceResult.Type.MISS, rayTraceResult.hitVec, rayTraceResult.sideHit, pos);
+
+        world.profiler.endSection();
+        return new FixedRayTraceResult(null, null, null, null);
     }
 
     public static boolean canSeeThrough(IBlockState blockState)
@@ -296,5 +292,14 @@ public class ImprovedRayTracing
         }
 
         return false;
+    }
+
+    public static class FixedRayTraceResult extends RayTraceResult
+    {
+        public FixedRayTraceResult(Type typeIn, Vec3d hitVecIn, EnumFacing sideHitIn, BlockPos blockPosIn)
+        {
+            super(typeIn, hitVecIn, sideHitIn, new BlockPos(0, 0, 0));
+            hitVec = blockPosIn == null ? null : new Vec3d(blockPosIn);
+        }
     }
 }
