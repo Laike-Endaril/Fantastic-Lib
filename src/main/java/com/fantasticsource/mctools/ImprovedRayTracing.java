@@ -121,7 +121,7 @@ public class ImprovedRayTracing
         RayTraceResult result;
         BlockPos pos = new BlockPos(vecStart), endPos = new BlockPos(vecEnd), startPos = new BlockPos(vecStart); //TODO remove startPos
 
-        ArrayList<BlockPos> nearbyPositions = new ArrayList<>(); //TODO remove this
+        ArrayList<BlockPos> iteratedPositions = new ArrayList<>(); //TODO remove this
 
 
         //Check starting block
@@ -211,7 +211,7 @@ public class ImprovedRayTracing
                 pos = pos.south(zDir);
                 nextZStop += zDir;
             }
-            if (pos.distanceSq(endPos) < 9) nearbyPositions.add(new BlockPos(pos));
+            iteratedPositions.add(new BlockPos(pos));
 
 
             //Check the BlockPos
@@ -249,7 +249,8 @@ public class ImprovedRayTracing
             System.err.println("From " + vecStart + " to " + vecEnd + " (distance: " + vecStart.distanceTo(vecEnd) + ")");
             System.err.println("Limit: " + MAX_ITERATIONS + " iterations (not synonymous to distance, but longer distances are generally more iterations)");
             System.err.println("From " + startPos + " to " + endPos + " ... current position is ... " + pos); //TODO remove this...probably
-            for (BlockPos debugPos : nearbyPositions) System.err.println(debugPos);
+            System.err.println();
+            for (BlockPos debugPos : iteratedPositions) System.err.println(debugPos);
             System.err.println();
             Tools.printStackTrace();
             lastWarning = System.currentTimeMillis();
