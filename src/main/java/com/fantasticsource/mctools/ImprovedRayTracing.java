@@ -14,12 +14,12 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 
 public class ImprovedRayTracing
 {
     private static final int MAX_ITERATIONS = 200;
     private static long lastWarning = -1;
+    private static int errorCount = 0;
 
 
     /**
@@ -119,9 +119,12 @@ public class ImprovedRayTracing
 
 
         RayTraceResult result;
-        BlockPos pos = new BlockPos(vecStart), endPos = new BlockPos(vecEnd), startPos = new BlockPos(vecStart); //TODO remove startPos
+        BlockPos pos = new BlockPos(vecStart), endPos = new BlockPos(vecEnd);
 
-        ArrayList<BlockPos> iteratedPositions = new ArrayList<>(); //TODO remove this
+        //Special cases for ending blockpos
+        if (vecEnd.x > vecStart.x && vecEnd.x == (int) vecEnd.x) endPos = new BlockPos(endPos.getX() - 1, endPos.getY(), endPos.getZ());
+        if (vecEnd.y > vecStart.y && vecEnd.y == (int) vecEnd.y) endPos = new BlockPos(endPos.getX(), endPos.getY() - 1, endPos.getZ());
+        if (vecEnd.z > vecStart.z && vecEnd.z == (int) vecEnd.z) endPos = new BlockPos(endPos.getX(), endPos.getY(), endPos.getZ() - 1);
 
 
         //Check starting block
@@ -211,7 +214,6 @@ public class ImprovedRayTracing
                 pos = pos.south(zDir);
                 nextZStop += zDir;
             }
-            iteratedPositions.add(new BlockPos(pos));
 
 
             //Check the BlockPos
@@ -242,23 +244,21 @@ public class ImprovedRayTracing
 
 
         //Max iterations reached; force end and warn
-        if (lastWarning == -1 || System.currentTimeMillis() - lastWarning > 1000 * 5)
+        if (lastWarning == -1 || System.currentTimeMillis() - lastWarning > 1000 * 60 * 5)
         {
-            //TODO reduce frequency
-            System.err.println("WARNING: BEYOND-LIMIT RAYTRACING DETECTED!  This warning will not show more than once every 5 seconds, but may be happening far more often");
+            System.err.println("WARNING: BEYOND-LIMIT RAYTRACING DETECTED!  This warning will not show more than once every 5 minutes.  This is usually due to inefficient raytrace calls from another mod");
+            System.err.println("This type of error has occurred " + errorCount + " additional times since the last time this message was shown");
             System.err.println("From " + vecStart + " to " + vecEnd + " (distance: " + vecStart.distanceTo(vecEnd) + ")");
             System.err.println("Limit: " + MAX_ITERATIONS + " iterations (not synonymous to distance, but longer distances are generally more iterations)");
-            System.err.println("From " + startPos + " to " + endPos + " ... current position is ... " + pos); //TODO remove this...probably
-            System.err.println();
-            for (BlockPos debugPos : iteratedPositions) System.err.println(debugPos);
             System.err.println();
             Tools.printStackTrace();
             lastWarning = System.currentTimeMillis();
         }
+        else errorCount++;
 
 
         world.profiler.endSection();
-        return new RayTraceResult(null, null, null, null); //TODO change this back to FixedRayTraceResult
+        return new FixedRayTraceResult(null, null, null, null);
     }
 
     public static boolean canSeeThrough(IBlockState blockState)
