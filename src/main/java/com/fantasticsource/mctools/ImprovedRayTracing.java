@@ -14,6 +14,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 
 public class ImprovedRayTracing
 {
@@ -118,7 +119,9 @@ public class ImprovedRayTracing
 
 
         RayTraceResult result;
-        BlockPos pos = new BlockPos(vecStart), endPos = new BlockPos(vecEnd);
+        BlockPos pos = new BlockPos(vecStart), endPos = new BlockPos(vecEnd), startPos = new BlockPos(vecStart); //TODO remove startPos
+
+        ArrayList<BlockPos> nearbyPositions = new ArrayList<>(); //TODO remove this
 
 
         //Check starting block
@@ -208,6 +211,7 @@ public class ImprovedRayTracing
                 pos = pos.south(zDir);
                 nextZStop += zDir;
             }
+            if (pos.distanceSq(endPos) < 9) nearbyPositions.add(new BlockPos(pos));
 
 
             //Check the BlockPos
@@ -240,9 +244,12 @@ public class ImprovedRayTracing
         //Max iterations reached; force end and warn
         if (lastWarning == -1 || System.currentTimeMillis() - lastWarning > 1000 * 5)
         {
+            //TODO reduce frequency
             System.err.println("WARNING: BEYOND-LIMIT RAYTRACING DETECTED!  This warning will not show more than once every 5 seconds, but may be happening far more often");
             System.err.println("From " + vecStart + " to " + vecEnd + " (distance: " + vecStart.distanceTo(vecEnd) + ")");
-            System.err.println("Limit: " + MAX_ITERATIONS + " iterations (not based directly on distance, but longer distances are generally more iterations)");
+            System.err.println("Limit: " + MAX_ITERATIONS + " iterations (not synonymous to distance, but longer distances are generally more iterations)");
+            System.err.println("From " + startPos + " to " + endPos + " ... current position is ... " + pos); //TODO remove this...probably
+            for (BlockPos debugPos : nearbyPositions) System.err.println(debugPos);
             System.err.println();
             Tools.printStackTrace();
             lastWarning = System.currentTimeMillis();
@@ -250,7 +257,7 @@ public class ImprovedRayTracing
 
 
         world.profiler.endSection();
-        return new FixedRayTraceResult(null, null, null, null);
+        return new RayTraceResult(null, null, null, null); //TODO change this back to FixedRayTraceResult
     }
 
     public static boolean canSeeThrough(IBlockState blockState)
