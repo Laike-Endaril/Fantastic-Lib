@@ -185,7 +185,9 @@ public abstract class GUIScreen extends GuiScreen
         Keyboard.enableRepeatEvents(true);
     }
 
-    protected abstract void init();
+    protected void init()
+    {
+    }
 
     @Override
     public void onResize(Minecraft mcIn, int w, int h)
