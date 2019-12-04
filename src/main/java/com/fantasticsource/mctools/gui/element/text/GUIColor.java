@@ -42,7 +42,7 @@ public class GUIColor extends GUIText
 
     public Color getValue()
     {
-        return value;
+        return value.copy();
     }
 
     public GUIColor setValue(Color value)

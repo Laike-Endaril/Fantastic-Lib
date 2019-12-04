@@ -15,9 +15,6 @@ import net.minecraft.client.Minecraft;
 
 public class ColorSelectionGUI extends GUIScreen
 {
-    private Color color;
-    private GUIColor colorElement;
-
     public ColorSelectionGUI(GUIColor clickedElement)
     {
         this(clickedElement, 1);
@@ -35,8 +32,7 @@ public class ColorSelectionGUI extends GUIScreen
         drawStack = false;
 
 
-        colorElement = clickedElement;
-        color = colorElement.getValue();
+        Color color = clickedElement.getValue();
 
 
         //Setup
@@ -72,7 +68,7 @@ public class ColorSelectionGUI extends GUIScreen
 
         root.add(save.addClickActions(() ->
         {
-            colorElement.setValue(color);
+            clickedElement.setValue(color);
             close();
         }));
         root.add(cancel.addClickActions(this::close));
