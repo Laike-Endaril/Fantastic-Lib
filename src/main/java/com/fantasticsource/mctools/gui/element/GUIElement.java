@@ -284,6 +284,13 @@ public class GUIElement
         return element;
     }
 
+    public GUIElement addAll(GUIElement... elements)
+    {
+        for (GUIElement element : elements) add(element);
+
+        return this;
+    }
+
     public GUIElement add(int index, GUIElement element)
     {
         element.parent = this;
