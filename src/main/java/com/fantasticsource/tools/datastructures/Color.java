@@ -316,6 +316,13 @@ public class Color
         return hex;
     }
 
+    public String hex8()
+    {
+        StringBuilder result = new StringBuilder();
+        for (int i = hex.length(); i < 8; i++) result.append("0");
+        return result + hex;
+    }
+
     public String toString()
     {
         return hex();
