@@ -1,6 +1,7 @@
 package com.fantasticsource.mctools.gui.element.text;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
+import com.fantasticsource.mctools.gui.screen.ColorSelectionGUI;
 import com.fantasticsource.tools.datastructures.Color;
 
 public class GUIColor extends GUIText
@@ -17,9 +18,9 @@ public class GUIColor extends GUIText
         super(screen, value == null ? "00000000" : value.hex8(), scale);
         this.value = value == null ? new Color(0) : value;
 
-        color = GUIScreen.getIdleColor(this.value);
-        hoverColor = GUIScreen.getHoverColor(this.value);
-        activeColor = this.value;
+        color = GUIScreen.getIdleColor(this.value).setA(255);
+        hoverColor = GUIScreen.getHoverColor(this.value).setA(255);
+        activeColor = this.value.copy().setA(255);
     }
 
 
@@ -33,10 +34,11 @@ public class GUIColor extends GUIText
         super(screen, x, y, value == null ? "00000000" : value.hex8(), scale);
         this.value = value == null ? new Color(0) : value;
 
-        color = GUIScreen.getIdleColor(this.value);
-        hoverColor = GUIScreen.getHoverColor(this.value);
-        activeColor = this.value;
+        color = GUIScreen.getIdleColor(this.value).setA(255);
+        hoverColor = GUIScreen.getHoverColor(this.value).setA(255);
+        activeColor = this.value.copy().setA(255);
     }
+
 
     public Color getValue()
     {
@@ -47,10 +49,17 @@ public class GUIColor extends GUIText
     {
         this.value = value == null ? new Color(0) : value;
 
-        color = GUIScreen.getIdleColor(this.value);
-        hoverColor = GUIScreen.getHoverColor(this.value);
-        activeColor = this.value;
+        color = GUIScreen.getIdleColor(this.value).setA(255);
+        hoverColor = GUIScreen.getHoverColor(this.value).setA(255);
+        activeColor = this.value.copy().setA(255);
 
         return this;
+    }
+
+    @Override
+    public void click()
+    {
+        ColorSelectionGUI gui = new ColorSelectionGUI(this, screen.textScale);
+        super.click();
     }
 }
