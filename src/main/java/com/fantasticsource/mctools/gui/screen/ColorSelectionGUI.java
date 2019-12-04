@@ -3,10 +3,8 @@ package com.fantasticsource.mctools.gui.screen;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIGradient;
-import com.fantasticsource.mctools.gui.element.text.GUIColor;
-import com.fantasticsource.mctools.gui.element.text.GUILabeledTextInput;
-import com.fantasticsource.mctools.gui.element.text.GUINavbar;
-import com.fantasticsource.mctools.gui.element.text.GUITextSpacer;
+import com.fantasticsource.mctools.gui.element.other.GUIGradientBorder;
+import com.fantasticsource.mctools.gui.element.text.*;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterColor;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterInt;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterRangedFloat;
@@ -40,6 +38,12 @@ public class ColorSelectionGUI extends GUIScreen
         colorElement = clickedElement;
         color = colorElement.getValue();
 
+
+        //Setup
+        GUIView left = new GUIView(this, 0.3, 1);
+        GUIView center = new GUIView(this, 0.3, 1);
+        GUIView right = new GUIView(this, 0.3, 1);
+
         FilterRangedInt filter0to255 = FilterRangedInt.get(0, 255);
         FilterRangedFloat filter0to1 = FilterRangedFloat.get(0, 1);
 
@@ -57,11 +61,27 @@ public class ColorSelectionGUI extends GUIScreen
 
         GUIGradient preview = new GUIGradient(this, 1, 0.3, color);
 
-        GUIView left = new GUIView(this, 0.3, 1);
-        GUIView center = new GUIView(this, 0.3, 1);
-        GUIView right = new GUIView(this, 0.3, 1);
+        GUITextButton
+                save = new GUITextButton(this, "Save", Color.GREEN),
+                cancel = new GUITextButton(this, "Cancel", Color.RED);
+
+
+        //Root
+        root.add(new GUIGradient(this, 0, 0, 1, 1, Color.BLACK.copy().setAF(0.85f)));
+        root.add(new GUINavbar(this, Color.AQUA));
+
+        root.add(save.addClickActions(() ->
+        {
+            colorElement.setValue(color);
+            close();
+        }));
+        root.add(cancel.addClickActions(this::close));
+        root.add(new GUIGradientBorder(this, 1, 0.01, 1, Color.GRAY, Color.BLANK));
+
         root.addAll(new GUIElement(this, 0.025, 1), left, new GUIElement(this, 0.025, 1), center, new GUIElement(this, 0.025, 1), right);
 
+
+        //Left
         left.add(new GUITextSpacer(this));
         left.add(r);
         r.input.addRecalcActions(() ->
@@ -112,6 +132,8 @@ public class ColorSelectionGUI extends GUIScreen
             }
         });
 
+
+        //Center
         center.add(new GUITextSpacer(this));
         center.add(hex);
         hex.input.addRecalcActions(() ->
@@ -153,6 +175,8 @@ public class ColorSelectionGUI extends GUIScreen
         center.add(new GUITextSpacer(this));
         center.add(preview);
 
+
+        //Right
         right.add(new GUITextSpacer(this));
         right.add(rf);
         rf.input.addRecalcActions(() ->
@@ -213,9 +237,5 @@ public class ColorSelectionGUI extends GUIScreen
     @Override
     protected void init()
     {
-        root.add(new GUIGradient(this, 0, 0, 1, 1, Color.BLACK.copy().setAF(0.85f)));
-
-        GUINavbar navbar = new GUINavbar(this, Color.AQUA);
-        root.add(navbar);
     }
 }

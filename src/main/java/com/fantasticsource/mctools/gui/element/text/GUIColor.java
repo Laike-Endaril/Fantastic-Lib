@@ -48,6 +48,7 @@ public class GUIColor extends GUIText
     public GUIColor setValue(Color value)
     {
         this.value = value == null ? new Color(0) : value;
+        text = this.value.hex8();
 
         color = GUIScreen.getIdleColor(this.value).setA(255);
         hoverColor = GUIScreen.getHoverColor(this.value).setA(255);
@@ -59,7 +60,7 @@ public class GUIColor extends GUIText
     @Override
     public void click()
     {
-        ColorSelectionGUI gui = new ColorSelectionGUI(this, screen.textScale);
+        new ColorSelectionGUI(this, screen.textScale);
         super.click();
     }
 }
