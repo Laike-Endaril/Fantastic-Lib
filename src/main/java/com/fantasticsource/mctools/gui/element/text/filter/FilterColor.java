@@ -1,5 +1,7 @@
 package com.fantasticsource.mctools.gui.element.text.filter;
 
+import com.fantasticsource.tools.Tools;
+
 public class FilterColor extends TextFilter<Integer>
 {
     public static final FilterColor INSTANCE = new FilterColor();
@@ -34,6 +36,6 @@ public class FilterColor extends TextFilter<Integer>
     @Override
     public Integer parse(String input)
     {
-        return !acceptable(input) ? null : Integer.parseInt(input);
+        return !acceptable(input) ? null : Tools.parseHexInt(input);
     }
 }

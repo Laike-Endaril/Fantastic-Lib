@@ -30,9 +30,7 @@ public class GUIGradient extends GUIElement
     {
         super(screen, width, height);
 
-        colors = new Color[]{topRight, topLeft, bottomLeft, bottomRight};
-        hoverColors = new Color[]{topRightHover, topLeftHover, bottomLeftHover, bottomRightHover};
-        activeColors = new Color[]{topRightActive, topLeftActive, bottomLeftActive, bottomRightActive};
+        setColor(topRight, topLeft, bottomLeft, bottomRight, topRightHover, topLeftHover, bottomLeftHover, bottomRightHover, topRightActive, topLeftActive, bottomLeftActive, bottomRightActive);
     }
 
     public GUIGradient(GUIScreen screen, double x, double y, double width, double height, Color color)
@@ -58,6 +56,30 @@ public class GUIGradient extends GUIElement
         hoverColors = new Color[]{topRightHover, topLeftHover, bottomLeftHover, bottomRightHover};
         activeColors = new Color[]{topRightActive, topLeftActive, bottomLeftActive, bottomRightActive};
     }
+
+
+    public void setColor(Color color)
+    {
+        setColor(color, color, color);
+    }
+
+    public void setColor(Color color, Color hover, Color active)
+    {
+        setColor(color, color, color, color, hover, hover, hover, hover, active, active, active, active);
+    }
+
+    public void setColor(Color topRight, Color topLeft, Color bottomLeft, Color bottomRight)
+    {
+        setColor(topRight, topLeft, bottomLeft, bottomRight, topRight, topLeft, bottomLeft, bottomRight, topRight, topLeft, bottomLeft, bottomRight);
+    }
+
+    public void setColor(Color topRight, Color topLeft, Color bottomLeft, Color bottomRight, Color topRightHover, Color topLeftHover, Color bottomLeftHover, Color bottomRightHover, Color topRightActive, Color topLeftActive, Color bottomLeftActive, Color bottomRightActive)
+    {
+        colors = new Color[]{topRight, topLeft, bottomLeft, bottomRight};
+        hoverColors = new Color[]{topRightHover, topLeftHover, bottomLeftHover, bottomRightHover};
+        activeColors = new Color[]{topRightActive, topLeftActive, bottomLeftActive, bottomRightActive};
+    }
+
 
     @Override
     public void draw()
