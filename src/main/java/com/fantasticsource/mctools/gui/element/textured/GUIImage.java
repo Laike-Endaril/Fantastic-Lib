@@ -2,6 +2,7 @@ package com.fantasticsource.mctools.gui.element.textured;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
+import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -16,13 +17,24 @@ public class GUIImage extends GUIElement
 {
     private ResourceLocation texture;
     private double scaledWidth, scaledHeight, u, v, uw, vh;
+    private Color color;
 
     public GUIImage(GUIScreen screen, double unscaledWidth, double unscaledHeight, ResourceLocation texture)
     {
-        this(screen, unscaledWidth, unscaledHeight, texture, 0, 0, 1, 1);
+        this(screen, unscaledWidth, unscaledHeight, texture, Color.WHITE);
+    }
+
+    public GUIImage(GUIScreen screen, double unscaledWidth, double unscaledHeight, ResourceLocation texture, Color color)
+    {
+        this(screen, unscaledWidth, unscaledHeight, texture, color, 0, 0, 1, 1);
     }
 
     public GUIImage(GUIScreen screen, double unscaledWidth, double unscaledHeight, ResourceLocation texture, double u, double v, double uw, double vh)
+    {
+        this(screen, unscaledWidth, unscaledHeight, texture, Color.WHITE, u, v, uw, vh);
+    }
+
+    public GUIImage(GUIScreen screen, double unscaledWidth, double unscaledHeight, ResourceLocation texture, Color color, double u, double v, double uw, double vh)
     {
         super(screen, 1, 1);
 
@@ -30,6 +42,8 @@ public class GUIImage extends GUIElement
         scaledHeight = unscaledHeight * 2 / new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
 
         this.texture = texture;
+
+        this.color = color;
 
         this.u = u;
         this.v = v;
@@ -40,10 +54,20 @@ public class GUIImage extends GUIElement
 
     public GUIImage(GUIScreen screen, double x, double y, double unscaledWidth, double unscaledHeight, ResourceLocation texture)
     {
-        this(screen, x, y, unscaledWidth, unscaledHeight, texture, 0, 0, 1, 1);
+        this(screen, x, y, unscaledWidth, unscaledHeight, texture, Color.WHITE);
+    }
+
+    public GUIImage(GUIScreen screen, double x, double y, double unscaledWidth, double unscaledHeight, ResourceLocation texture, Color color)
+    {
+        this(screen, x, y, unscaledWidth, unscaledHeight, texture, color, 0, 0, 1, 1);
     }
 
     public GUIImage(GUIScreen screen, double x, double y, double unscaledWidth, double unscaledHeight, ResourceLocation texture, double u, double v, double uw, double vh)
+    {
+        this(screen, x, y, unscaledWidth, unscaledHeight, texture, Color.WHITE, u, v, uw, vh);
+    }
+
+    public GUIImage(GUIScreen screen, double x, double y, double unscaledWidth, double unscaledHeight, ResourceLocation texture, Color color, double u, double v, double uw, double vh)
     {
         super(screen, x, y, 1, 1);
 
@@ -86,6 +110,7 @@ public class GUIImage extends GUIElement
     public void draw()
     {
         GlStateManager.enableTexture2D();
+        GlStateManager.color(color.rf(), color.gf(), color.bf(), color.af());
 
         Minecraft.getMinecraft().getTextureManager().bindTexture(texture);
 
@@ -100,6 +125,8 @@ public class GUIImage extends GUIElement
         builder.pos(0, 1, 0).tex(u, v2).endVertex();
         builder.pos(1, 1, 0).tex(u2, v2).endVertex();
         tessellator.draw();
+
+        GlStateManager.color(1, 1, 1, 1);
 
 
         drawChildren();
