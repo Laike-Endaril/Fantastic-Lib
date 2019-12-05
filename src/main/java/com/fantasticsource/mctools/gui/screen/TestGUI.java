@@ -2,9 +2,8 @@ package com.fantasticsource.mctools.gui.screen;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
-import com.fantasticsource.mctools.gui.element.other.GUIGradient;
 import com.fantasticsource.mctools.gui.element.text.GUIText;
-import com.fantasticsource.tools.datastructures.Color;
+import com.fantasticsource.mctools.gui.element.view.GUIAutocroppedView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.EnumHand;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -36,27 +35,9 @@ public class TestGUI extends GUIScreen
                 test = 0;
 
             case 0:
-                root.add(new GUIGradient(this, -100, -100, 200, 200, Color.WHITE));
-
-                GUIElement element = new GUIText(this, 0.1, 0.1, "Test", Color.RED, 0.25);
-                root.add(element);
-                element.add(new GUIGradient(this, -100, -100, 200, 200, Color.BLACK.copy().setAF(0.3f)));
-
-                element = new GUIText(this, 0.1, 0.2, "Test", Color.RED, 0.5);
-                root.add(element);
-                element.add(new GUIGradient(this, -100, -100, 200, 200, Color.BLACK.copy().setAF(0.3f)));
-
-                element = new GUIText(this, 0.1, 0.3, "Test", Color.RED, 1);
-                root.add(element);
-                element.add(new GUIGradient(this, -100, -100, 200, 200, Color.BLACK.copy().setAF(0.3f)));
-
-                element = new GUIText(this, 0.1, 0.4, "Test", Color.RED, 2);
-                root.add(element);
-                element.add(new GUIGradient(this, -100, -100, 200, 200, Color.BLACK.copy().setAF(0.3f)));
-
-                element = new GUIText(this, 0.1, 0.5, "Test", Color.RED, 4);
-                root.add(element);
-                element.add(new GUIGradient(this, -100, -100, 200, 200, Color.BLACK.copy().setAF(0.3f)));
+                GUIAutocroppedView view = new GUIAutocroppedView(this);
+                view.addAll(new GUIElement(this, 1, 0), new GUIText(this, "Test"));
+                root.addAll(view, new GUIText(this, "Test2"));
 
                 break;
         }
