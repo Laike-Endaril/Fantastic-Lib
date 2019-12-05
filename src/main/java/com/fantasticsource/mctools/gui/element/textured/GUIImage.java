@@ -1,4 +1,4 @@
-package com.fantasticsource.mctools.gui.element.other;
+package com.fantasticsource.mctools.gui.element.textured;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
@@ -15,21 +15,21 @@ import static org.lwjgl.opengl.GL11.GL_QUADS;
 public class GUIImage extends GUIElement
 {
     private ResourceLocation texture;
-    private double unscaledWidth, unscaledHeight, u, v, uw, vh;
+    private double scaledWidth, scaledHeight, u, v, uw, vh;
 
-    public GUIImage(GUIScreen screen, ResourceLocation texture, double unscaledWidth, double unscaledHeight)
+    public GUIImage(GUIScreen screen, double unscaledWidth, double unscaledHeight, ResourceLocation texture)
     {
-        this(screen, texture, unscaledWidth, unscaledHeight, 0, 0, 1, 1);
+        this(screen, unscaledWidth, unscaledHeight, texture, 0, 0, 1, 1);
     }
 
-    public GUIImage(GUIScreen screen, ResourceLocation texture, double unscaledWidth, double unscaledHeight, double u, double v, double uw, double vh)
+    public GUIImage(GUIScreen screen, double unscaledWidth, double unscaledHeight, ResourceLocation texture, double u, double v, double uw, double vh)
     {
         super(screen, 1, 1);
 
-        this.texture = texture;
+        scaledWidth = unscaledWidth * 2 / new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
+        scaledHeight = unscaledHeight * 2 / new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
 
-        this.unscaledWidth = unscaledWidth * 2 / new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
-        this.unscaledHeight = unscaledHeight * 2 / new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
+        this.texture = texture;
 
         this.u = u;
         this.v = v;
@@ -38,19 +38,19 @@ public class GUIImage extends GUIElement
     }
 
 
-    public GUIImage(GUIScreen screen, double x, double y, ResourceLocation texture, double unscaledWidth, double unscaledHeight)
+    public GUIImage(GUIScreen screen, double x, double y, double unscaledWidth, double unscaledHeight, ResourceLocation texture)
     {
-        this(screen, x, y, texture, unscaledWidth, unscaledHeight, 0, 0, 1, 1);
+        this(screen, x, y, unscaledWidth, unscaledHeight, texture, 0, 0, 1, 1);
     }
 
-    public GUIImage(GUIScreen screen, double x, double y, ResourceLocation texture, double unscaledWidth, double unscaledHeight, double u, double v, double uw, double vh)
+    public GUIImage(GUIScreen screen, double x, double y, double unscaledWidth, double unscaledHeight, ResourceLocation texture, double u, double v, double uw, double vh)
     {
         super(screen, x, y, 1, 1);
 
-        this.texture = texture;
+        this.scaledWidth = unscaledWidth * 2 / new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
+        this.scaledHeight = unscaledHeight * 2 / new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
 
-        this.unscaledWidth = unscaledWidth * 2 / new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
-        this.unscaledHeight = unscaledHeight * 2 / new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
+        this.texture = texture;
 
         this.u = u;
         this.v = v;
@@ -62,11 +62,11 @@ public class GUIImage extends GUIElement
     @Override
     public GUIImage recalc(int subIndexChanged)
     {
-        width = unscaledWidth / screen.width;
-        height = unscaledHeight / screen.height;
+        width = scaledWidth / screen.width;
+        height = scaledHeight / screen.height;
 
         //TODO this line is cancelling a scissor offset issue of unknown origin; offset = 1 - ()
-//        width += (1 - unscaledWidth) / screen.width;
+//        width += (1 - scaledWidth) / screen.width;
 
         if (parent != null)
         {

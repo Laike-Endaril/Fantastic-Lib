@@ -2,8 +2,9 @@ package com.fantasticsource.mctools.gui.screen;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
-import com.fantasticsource.mctools.gui.element.other.GUIImage;
+import com.fantasticsource.mctools.gui.element.other.GUIButton;
 import com.fantasticsource.mctools.gui.element.text.GUIText;
+import com.fantasticsource.mctools.gui.element.textured.GUIImage;
 import com.fantasticsource.mctools.gui.element.view.GUIAutocroppedView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.EnumHand;
@@ -43,7 +44,8 @@ public class TestGUI extends GUIScreen
                 view.addAll(new GUIElement(this, 1, 0), new GUIText(this, "Test"));
                 root.addAll(view, new GUIText(this, "Test2"));
 
-                root.add(new GUIImage(this, new ResourceLocation(MODID, "image/monospace.png"), 8, 8, 0, 0, 1d / 16, 1d / 16));
+                ResourceLocation rl = new ResourceLocation(MODID, "image/monospace.png");
+                root.add(new GUIButton(this, new GUIImage(this, 8, 8, rl, 2d / 16, 0, 1d / 16, 1d / 16), new GUIImage(this, 8, 8, rl, 1d / 16, 1d / 16, 1d / 16, 1d / 16), new GUIImage(this, 8, 8, rl, 2d / 16, 2d / 16, 1d / 16, 1d / 16)));
 
                 break;
         }
