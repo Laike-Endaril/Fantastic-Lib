@@ -432,15 +432,15 @@ public class GUIElement
     {
         int index = indexOf(element);
         if (element.parent == this) element.parent = null;
-        children.remove(index);
-        recalc(index);
+
+        if (index != -1) remove(index);
     }
 
     public void remove(int index)
     {
         GUIElement element = children.remove(index);
         if (element.parent == this) element.parent = null;
-        recalc(index);
+        recalc(Tools.max(0, index - 1));
     }
 
     public int size()

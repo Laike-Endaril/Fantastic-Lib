@@ -2,18 +2,17 @@ package com.fantasticsource.mctools.gui.screen;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
-import com.fantasticsource.mctools.gui.element.other.GUIButton;
+import com.fantasticsource.mctools.gui.element.other.GUIGradient;
+import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
 import com.fantasticsource.mctools.gui.element.text.GUIText;
-import com.fantasticsource.mctools.gui.element.textured.GUIImage;
-import com.fantasticsource.mctools.gui.element.view.GUIAutocroppedView;
+import com.fantasticsource.mctools.gui.element.view.GUIArrayList;
+import com.fantasticsource.mctools.gui.element.view.GUIScrollView;
+import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
-
-import static com.fantasticsource.fantasticlib.FantasticLib.MODID;
 
 public class TestGUI extends GUIScreen
 {
@@ -40,12 +39,18 @@ public class TestGUI extends GUIScreen
                 test = 0;
 
             case 0:
-                GUIAutocroppedView view = new GUIAutocroppedView(this);
-                view.addAll(new GUIElement(this, 1, 0), new GUIText(this, "Test"));
-                root.addAll(view, new GUIText(this, "Test2"));
+                root.add(new GUIGradient(this, 0, 0, 1, 1, Color.BLACK.copy().setAF(0.85f)));
 
-                ResourceLocation rl = new ResourceLocation(MODID, "image/monospace.png");
-                root.add(new GUIButton(this, new GUIImage(this, 8, 8, rl, 2d / 16, 0, 1d / 16, 1d / 16), new GUIImage(this, 8, 8, rl, 1d / 16, 1d / 16, 1d / 16, 1d / 16), new GUIImage(this, 8, 8, rl, 2d / 16, 2d / 16, 1d / 16, 1d / 16)));
+                GUIScrollView arrayList = new GUIArrayList<GUIElement>(this, 0.98, 1)
+                {
+                    @Override
+                    public GUIElement[] newLineDefaultElements()
+                    {
+                        return new GUIElement[]{new GUIText(screen, "Test" + size())};
+                    }
+                };
+                root.add(arrayList);
+                root.add(new GUIVerticalScrollbar(this, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, arrayList));
 
                 break;
         }

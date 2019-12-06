@@ -2,21 +2,51 @@ package com.fantasticsource.mctools.gui.element.view;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
+import com.fantasticsource.mctools.gui.element.other.GUIButton;
+import com.fantasticsource.mctools.gui.element.textured.GUIImage;
+import com.fantasticsource.tools.datastructures.Color;
+import net.minecraft.util.ResourceLocation;
 
-public class GUIArrayList<T extends GUIElement> extends GUIScrollView
+import static com.fantasticsource.fantasticlib.FantasticLib.MODID;
+
+public abstract class GUIArrayList<T extends GUIElement> extends GUIScrollView
 {
     public GUIArrayList(GUIScreen screen, double width, double height, GUIElement... subElements)
     {
         super(screen, width, height, subElements);
 
-        //TODO add "add" button
+        addAddLineButton();
     }
 
     public GUIArrayList(GUIScreen screen, double x, double y, double width, double height, GUIElement... subElements)
     {
         super(screen, x, y, width, height, subElements);
 
-        //TODO add "add" button
+        addAddLineButton();
+    }
+
+
+    private void addAddLineButton()
+    {
+        GUIAutocroppedView line = new GUIAutocroppedView(screen);
+
+        //Force line to be full width
+        line.add(new GUIElement(screen, 1, 0));
+
+        //Add "add line" button
+        GUIImage idle = new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), 0, 0, 1d / 2, 1d / 2);
+        idle.add(new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), GUIScreen.getIdleColor(Color.GREEN), 0, 1d / 2, 1d / 2, 1d / 2));
+
+        GUIImage hover = new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), 0, 0, 1d / 2, 1d / 2);
+        hover.add(new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), GUIScreen.getHoverColor(Color.GREEN), 0, 1d / 2, 1d / 2, 1d / 2));
+
+        GUIImage active = new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), 1d / 2, 0, 1d / 2, 1d / 2);
+        active.add(new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), Color.GREEN, 0, 1d / 2, 1d / 2, 1d / 2));
+
+        line.add(new GUIButton(screen, idle, hover, active).addClickActions(() -> addLine(newLineDefaultElements())));
+
+        //Add line
+        add(line);
     }
 
 
@@ -35,11 +65,31 @@ public class GUIArrayList<T extends GUIElement> extends GUIScrollView
     {
         if (index >= children.size()) throw new ArrayIndexOutOfBoundsException("Index: " + index + ", Size: " + size());
 
-        GUIAutocroppedView view = new GUIAutocroppedView(screen);
-        view.add(new GUIElement(screen, 1, 0)); //Force full width
-//        view.add(); //TODO add "remove" button
-        if (lineElements != null) view.addAll(lineElements);
-        super.add(view);
+        GUIAutocroppedView line = new GUIAutocroppedView(screen);
+
+        //Force line to be full width
+        line.add(new GUIElement(screen, 1, 0));
+
+        //Add "remove line" button
+        GUIImage idle = new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), 0, 0, 1d / 2, 1d / 2);
+        idle.add(new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), GUIScreen.getIdleColor(Color.RED), 1d / 2, 1d / 2, 1d / 2, 1d / 2));
+
+        GUIImage hover = new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), 0, 0, 1d / 2, 1d / 2);
+        hover.add(new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), GUIScreen.getHoverColor(Color.RED), 1d / 2, 1d / 2, 1d / 2, 1d / 2));
+
+        GUIImage active = new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), 1d / 2, 0, 1d / 2, 1d / 2);
+        active.add(new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), Color.RED, 1d / 2, 1d / 2, 1d / 2, 1d / 2));
+
+        line.add(new GUIButton(screen, idle, hover, active).addClickActions(() -> remove(line)));
+
+        //Line elements
+        if (lineElements != null) line.addAll(lineElements);
+
+        //Add line
+        add(children.size() - 1, line);
+
         return this;
     }
+
+    public abstract T[] newLineDefaultElements();
 }
