@@ -3,6 +3,7 @@ package com.fantasticsource.mctools.gui.screen;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIGradient;
+import com.fantasticsource.mctools.gui.element.other.GUITab;
 import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
 import com.fantasticsource.mctools.gui.element.text.GUIText;
 import com.fantasticsource.mctools.gui.element.view.GUIArrayList;
@@ -46,7 +47,7 @@ public class TestGUI extends GUIScreen
                     @Override
                     public GUIElement[] newLineDefaultElements()
                     {
-                        return new GUIElement[]{new GUIText(screen, "Test" + size())};
+                        return new GUIElement[]{new GUIText(screen, "Test" + Math.pow(10, size())), new GUITab(screen, 0.5, 0), new GUIText(screen, "Foo")};
                     }
                 };
                 root.add(arrayList);
