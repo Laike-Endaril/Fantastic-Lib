@@ -15,18 +15,18 @@ public abstract class GUIArrayList<T extends GUIElement> extends GUIScrollView
     {
         super(screen, width, height, subElements);
 
-        addAddLineButton();
+        addAddLineLine();
     }
 
     public GUIArrayList(GUIScreen screen, double x, double y, double width, double height, GUIElement... subElements)
     {
         super(screen, x, y, width, height, subElements);
 
-        addAddLineButton();
+        addAddLineLine();
     }
 
 
-    private void addAddLineButton()
+    private void addAddLineLine()
     {
         GUIAutocroppedView line = new GUIAutocroppedView(screen);
 
@@ -65,7 +65,7 @@ public abstract class GUIArrayList<T extends GUIElement> extends GUIScrollView
     {
         if (index >= children.size()) throw new ArrayIndexOutOfBoundsException("Index: " + index + ", Size: " + size());
 
-        GUIAutocroppedView line = new GUIAutocroppedView(screen);
+        GUIAutocroppedView line = new GUIAutocroppedView(screen, newLineBackgroundElement());
 
         //Force line to be full width
         line.add(new GUIElement(screen, 1, 0));
@@ -91,5 +91,18 @@ public abstract class GUIArrayList<T extends GUIElement> extends GUIScrollView
         return this;
     }
 
+
+    public final double buttonWidth()
+    {
+        GUIElement button = children.get(children.size() - 1).get(1);
+        return button.width;
+    }
+
+
     public abstract T[] newLineDefaultElements();
+
+    public GUIElement newLineBackgroundElement()
+    {
+        return null;
+    }
 }
