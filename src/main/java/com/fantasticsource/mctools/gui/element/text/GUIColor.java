@@ -8,6 +8,11 @@ public class GUIColor extends GUIText
 {
     private Color value;
 
+    public GUIColor(GUIScreen screen)
+    {
+        this(screen, Color.WHITE, 1);
+    }
+
     public GUIColor(GUIScreen screen, Color value)
     {
         this(screen, value, 1);
@@ -16,13 +21,18 @@ public class GUIColor extends GUIText
     public GUIColor(GUIScreen screen, Color value, double scale)
     {
         super(screen, value == null ? "00000000" : value.hex8(), scale);
-        this.value = value == null ? new Color(0) : value;
+        this.value = value == null ? new Color(0) : value.copy();
 
         color = GUIScreen.getIdleColor(this.value).setA(255);
         hoverColor = GUIScreen.getHoverColor(this.value).setA(255);
         activeColor = this.value.copy().setA(255);
     }
 
+
+    public GUIColor(GUIScreen screen, double x, double y)
+    {
+        this(screen, x, y, Color.WHITE, 1);
+    }
 
     public GUIColor(GUIScreen screen, double x, double y, Color value)
     {
@@ -32,7 +42,7 @@ public class GUIColor extends GUIText
     public GUIColor(GUIScreen screen, double x, double y, Color value, double scale)
     {
         super(screen, x, y, value == null ? "00000000" : value.hex8(), scale);
-        this.value = value == null ? new Color(0) : value;
+        this.value = value == null ? new Color(0) : value.copy();
 
         color = GUIScreen.getIdleColor(this.value).setA(255);
         hoverColor = GUIScreen.getHoverColor(this.value).setA(255);
