@@ -1,13 +1,11 @@
 package com.fantasticsource.mctools.gui.screen;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
-import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIGradient;
-import com.fantasticsource.mctools.gui.element.other.GUITab;
-import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
+import com.fantasticsource.mctools.gui.element.text.GUIMultilineTextInput;
 import com.fantasticsource.mctools.gui.element.text.GUIText;
-import com.fantasticsource.mctools.gui.element.view.GUIArrayList;
-import com.fantasticsource.mctools.gui.element.view.GUIScrollView;
+import com.fantasticsource.mctools.gui.element.text.GUITextInput;
+import com.fantasticsource.mctools.gui.element.text.filter.FilterNone;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.EnumHand;
@@ -42,17 +40,27 @@ public class TestGUI extends GUIScreen
             case 0:
                 root.add(new GUIGradient(this, 0, 0, 1, 1, Color.BLACK.copy().setAF(0.85f)));
 
-                GUIScrollView arrayList = new GUIArrayList<GUIElement>(this, 0.98, 1)
-                {
-                    @Override
-                    public GUIElement[] newLineDefaultElements()
-                    {
-                        return new GUIElement[]{new GUIText(screen, "Test" + Math.pow(10, size())), new GUITab(screen, 0.5, 0), new GUIText(screen, "Foo")};
-                    }
-                };
-                root.add(arrayList);
-                root.add(new GUIVerticalScrollbar(this, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, arrayList));
+                root.add(new GUIText(this, "aaaa"));
+                root.add(new GUIText(this, "IIII"));
+                root.add(new GUIText(this, "\n"));
+                root.add(new GUIText(this, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"));
+                root.add(new GUIText(this, "IIII"));
+                root.add(new GUIText(this, "\n"));
+                root.add(new GUIText(this, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"));
+                root.add(new GUIText(this, "IIII"));
 
+                root.add(new GUIText(this, "\n"));
+                root.add(new GUITextInput(this, "aaaa", FilterNone.INSTANCE));
+                root.add(new GUITextInput(this, "IIII", FilterNone.INSTANCE));
+                root.add(new GUIText(this, "\n"));
+                root.add(new GUITextInput(this, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", FilterNone.INSTANCE));
+                root.add(new GUITextInput(this, "IIII", FilterNone.INSTANCE));
+                root.add(new GUIText(this, "\n"));
+                root.add(new GUITextInput(this, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", FilterNone.INSTANCE));
+                root.add(new GUITextInput(this, "IIII", FilterNone.INSTANCE));
+
+                root.add(new GUIText(this, "\n"));
+                root.add(new GUIMultilineTextInput(this, "a", FilterNone.INSTANCE));
                 break;
         }
 

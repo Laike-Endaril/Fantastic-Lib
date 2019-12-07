@@ -940,7 +940,7 @@ public class GUITextInput extends GUIText
             StringBuilder fullLine = new StringBuilder();
 
             int index = 0;
-            double maxLineW = 0, lineW = 0;
+            double maxLineW = 0, lineW = 1d / screen.width;
             while (index < words.length)
             {
                 String word = words[index++];
@@ -956,7 +956,7 @@ public class GUITextInput extends GUIText
                     fullLine = new StringBuilder("\n");
 
                     maxLineW = 1;
-                    lineW = 0;
+                    lineW = 1d / screen.width;
                 }
                 else
                 {
@@ -986,7 +986,7 @@ public class GUITextInput extends GUIText
                             fullLine = new StringBuilder(word);
 
                             maxLineW = parentW;
-                            lineW = (double) Render.getPartialStringWidth(previous.toString().replaceAll("\n", ""), word.replaceAll("\n", "")) * scale / screen.width;
+                            lineW = (double) (Render.getPartialStringWidth(previous.toString().replaceAll("\n", ""), word.replaceAll("\n", "")) + 1) * scale / screen.width;
                         }
                     }
                     else
