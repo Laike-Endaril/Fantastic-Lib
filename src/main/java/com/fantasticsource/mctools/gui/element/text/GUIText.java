@@ -154,7 +154,7 @@ public class GUIText extends GUIElement
             StringBuilder fullLine = new StringBuilder();
 
             int index = 0;
-            double maxLineW = 0, lineW = -1d / screen.width;
+            double maxLineW = 0, lineW = 0;
             while (index < words.length)
             {
                 String word = words[index++];
@@ -170,7 +170,7 @@ public class GUIText extends GUIElement
                     fullLine = new StringBuilder("\n");
 
                     maxLineW = 1;
-                    lineW = -1d / screen.width;
+                    lineW = 0;
                 }
                 else
                 {
@@ -200,7 +200,7 @@ public class GUIText extends GUIElement
                             fullLine = new StringBuilder(word);
 
                             maxLineW = parentW;
-                            lineW = (double) (Render.getPartialStringWidth(previous.toString().replaceAll("\n", ""), word.replaceAll("\n", "")) - 1) * scale / screen.width;
+                            lineW = (double) Render.getPartialStringWidth(previous.toString().replaceAll("\n", ""), word.replaceAll("\n", "")) * scale / screen.width;
                         }
                     }
                     else
@@ -230,14 +230,14 @@ public class GUIText extends GUIElement
             else height = (double) (Tools.max(1, lines.size()) * FONT_RENDERER.FONT_HEIGHT - 1) * scale / screen.height;
         }
 
-        //TODO this line is cancelling a scissor offset issue of unknown origin; offset = 1 - ()
-        width += (1 - scale) / screen.width;
-
         if (parent != null)
         {
             width /= parent.absoluteWidth();
             height /= parent.absoluteHeight();
         }
+
+        //TODO this line is cancelling a scissor offset issue of unknown origin, equal to 1 pixel when the element is full width
+        width += 1d * width / screen.width;
 
         recalcAndRepositionSubElements(0);
 
