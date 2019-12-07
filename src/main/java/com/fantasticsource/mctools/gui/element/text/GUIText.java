@@ -17,7 +17,7 @@ import static com.fantasticsource.mctools.gui.GUIScreen.FONT_RENDERER;
 public class GUIText extends GUIElement
 {
     public final double scale;
-    public String text;
+    protected String text;
     protected ArrayList<String> lines = new ArrayList<>(), fullLines = new ArrayList<>();
     protected Color color, hoverColor, activeColor;
 
@@ -106,6 +106,22 @@ public class GUIText extends GUIElement
         this.color = color;
         this.hoverColor = hoverColor;
         this.activeColor = activeColor;
+        return this;
+    }
+
+
+    public String getText()
+    {
+        return text;
+    }
+
+    public GUIText setText(String text)
+    {
+        if (text.equals(this.text)) return this;
+
+
+        this.text = text;
+        screen.root.recalc(0);
         return this;
     }
 

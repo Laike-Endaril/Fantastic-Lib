@@ -76,6 +76,8 @@ public class GUIImage extends GUIElement
 
         this.texture = texture;
 
+        this.color = color;
+
         this.u = u;
         this.v = v;
         this.uw = uw;

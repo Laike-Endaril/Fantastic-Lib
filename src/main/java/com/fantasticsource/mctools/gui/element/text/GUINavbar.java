@@ -45,6 +45,7 @@ public class GUINavbar extends GUITextButton
         back.hoverBorder = back.activeBorder;
 
         GUIText fore = (GUIText) children.get(1);
+        fore.setText(genText(screen));
         fore.setColor(back.border);
     }
 
@@ -64,13 +65,6 @@ public class GUINavbar extends GUITextButton
     @Override
     public GUIAutocroppedView recalc(int subIndexChanged)
     {
-        if (children.size() > 1)
-        {
-            GUIText fore = (GUIText) children.get(1);
-            fore.text = genText(screen);
-        }
-
-
         width = 1;
         height = 1;
         if (parent == null) return this;

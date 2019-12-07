@@ -4,9 +4,8 @@ import java.util.LinkedHashMap;
 
 public class FilterRangedInt extends TextFilter<Integer>
 {
-    private final int min, max;
-
     private static LinkedHashMap<String, FilterRangedInt> instances = new LinkedHashMap<>();
+    private final int min, max;
 
     private FilterRangedInt(int min, int max)
     {

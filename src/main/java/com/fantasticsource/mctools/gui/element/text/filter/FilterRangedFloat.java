@@ -4,9 +4,8 @@ import java.util.LinkedHashMap;
 
 public class FilterRangedFloat extends TextFilter<Float>
 {
-    private final float min, max;
-
     private static LinkedHashMap<String, FilterRangedFloat> instances = new LinkedHashMap<>();
+    private final float min, max;
 
     private FilterRangedFloat(float min, float max)
     {

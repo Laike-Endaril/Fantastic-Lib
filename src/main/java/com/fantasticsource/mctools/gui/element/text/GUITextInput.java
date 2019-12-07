@@ -192,7 +192,7 @@ public class GUITextInput extends GUIText
 
     public boolean valid()
     {
-        return filter.acceptable(text);
+        return filter != null && filter.acceptable(text);
     }
 
     protected GUITextInput multilineDelete()
@@ -209,7 +209,7 @@ public class GUITextInput extends GUIText
 
         element = (GUITextInput) code.get(firstY);
         int nextCursorPos = element.selectorPosition == -1 ? element.cursorPosition : Tools.min(element.selectorPosition, element.cursorPosition);
-        element.text = element.text.substring(0, nextCursorPos) + s;
+        element.setText(element.text.substring(0, nextCursorPos) + s);
 
         setActive(false);
         for (int i = lastY - firstY; i > 0; i--)
@@ -260,7 +260,7 @@ public class GUITextInput extends GUIText
                 if (min == -1) min = element.cursorPosition;
                 String before = element.text.substring(0, min);
                 String after = element.text.substring(Tools.max(element.cursorPosition, element.selectorPosition));
-                element.text = before + "\n" + after;
+                element.setText(before + "\n" + after);
                 deselectAll();
                 element.cursorPosition = min + 1;
             }
@@ -273,7 +273,7 @@ public class GUITextInput extends GUIText
                 String before = element.text.substring(0, min);
                 String after = element.text.substring(Tools.max(element.cursorPosition, element.selectorPosition));
 
-                element.text = before;
+                element.setText(before);
                 deselectAll();
                 element.cursorPosition = min;
                 element.setActive(false);
@@ -540,7 +540,7 @@ public class GUITextInput extends GUIText
                 int min = element.selectorPosition == -1 ? element.cursorPosition : Tools.min(element.cursorPosition, element.selectorPosition);
                 String before = element.text.substring(0, min);
                 String after = element.text.substring(Tools.max(element.cursorPosition, element.selectorPosition));
-                element.text = before + tokens[0];
+                element.setText(before + tokens[0]);
                 element.setActive(false);
 
                 int index = code.indexOf(element) + 1;
@@ -564,7 +564,7 @@ public class GUITextInput extends GUIText
                 int min = Tools.min(element.cursorPosition, element.selectorPosition);
                 if (min == -1) min = element.cursorPosition;
                 String before = element.text.substring(0, min) + clipboard;
-                element.text = before + element.text.substring(Tools.max(element.cursorPosition, element.selectorPosition));
+                element.setText(before + element.text.substring(Tools.max(element.cursorPosition, element.selectorPosition)));
 
                 deselectAll();
                 element.cursorPosition = before.length();
@@ -583,13 +583,13 @@ public class GUITextInput extends GUIText
             {
                 StringBuilder s = new StringBuilder();
                 for (int i = tabs() - 1; i > 0; i--) s.append(" ");
-                element.text = s.toString() + '}';
+                element.setText(s.toString() + '}');
                 deselectAll();
                 element.cursorPosition = element.text.length();
             }
             else
             {
-                element.text = before + typedChar + after;
+                element.setText(before + typedChar + after);
                 deselectAll();
                 element.cursorPosition = min + 1;
             }
@@ -909,7 +909,7 @@ public class GUITextInput extends GUIText
 
         cursorTime = System.currentTimeMillis();
 
-        recalc(0);
+        screen.root.recalc(0);
     }
 
     @Override
@@ -1028,7 +1028,7 @@ public class GUITextInput extends GUIText
         recalcAndRepositionSubElements(0);
 
         if (parent instanceof CodeInput) width = Tools.max(width, 2d / parent.absolutePxWidth());
-        else width = 1 - x;
+//        else width += 8d * 2 / new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor() / screen.width;
 
         postRecalc();
 
@@ -1349,6 +1349,6 @@ public class GUITextInput extends GUIText
     @Override
     public String toString()
     {
-        return filter.transformInput(text);
+        return valid() ? filter.transformInput(text) : "(INVALID INPUT)";
     }
 }

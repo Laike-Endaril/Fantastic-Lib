@@ -19,6 +19,10 @@ public class PNG
     private boolean loaded = false;
 
 
+    private PNG()
+    {
+    }
+
     public static PNG load(String filename)
     {
         PNG png = new PNG();
@@ -134,11 +138,6 @@ public class PNG
         return png;
     }
 
-    private PNG()
-    {
-    }
-
-
     public static int totalBuffersUsed()
     {
         return totalBuffers;
@@ -149,6 +148,31 @@ public class PNG
         return totalBufferMemory;
     }
 
+    private static int readChunkOrMax(byte[] buffer, InputStream input, int chunkBytesRemaining) throws IOException
+    {
+        int length = buffer.length;
+        if (length > chunkBytesRemaining) length = chunkBytesRemaining;
+
+        read(input, buffer, length);
+
+        return length;
+    }
+
+    private static void read(InputStream input, byte[] buffer, int length) throws IOException
+    {
+        int offset = 0;
+        while (length > 0)
+        {
+            int bytesRead = input.read(buffer, offset, length);
+            if (bytesRead < 0) throw new EOFException();
+            length -= bytesRead;
+        }
+    }
+
+    private static void skip(InputStream input, int length) throws IOException
+    {
+        while (length > 0) length -= input.skip(length);
+    }
 
     public boolean isLoaded()
     {
@@ -169,7 +193,6 @@ public class PNG
     {
         return directBuffer;
     }
-
 
     public void free() //Because direct byte buffers are not unloaded by the garbage collector!
     {
@@ -197,18 +220,6 @@ public class PNG
         if (loaded) System.err.println("WARNING: PNG object was not freed manually!\r\nThis can cause some massive memory usage due to delayed freeing by garbage collector!");
         free();
     }
-
-
-    private static int readChunkOrMax(byte[] buffer, InputStream input, int chunkBytesRemaining) throws IOException
-    {
-        int length = buffer.length;
-        if (length > chunkBytesRemaining) length = chunkBytesRemaining;
-
-        read(input, buffer, length);
-
-        return length;
-    }
-
 
     private void unfilter(byte[] line, byte[] lastLine) throws IOException
     {
@@ -278,23 +289,5 @@ public class PNG
 
             line[i] += (byte) c;
         }
-    }
-
-
-    private static void read(InputStream input, byte[] buffer, int length) throws IOException
-    {
-        int offset = 0;
-        while (length > 0)
-        {
-            int bytesRead = input.read(buffer, offset, length);
-            if (bytesRead < 0) throw new EOFException();
-            length -= bytesRead;
-        }
-    }
-
-
-    private static void skip(InputStream input, int length) throws IOException
-    {
-        while (length > 0) length -= input.skip(length);
     }
 }

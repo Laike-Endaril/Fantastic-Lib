@@ -35,7 +35,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.util.vector.Quaternion;
 
-import java.io.File;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.regex.Pattern;

@@ -84,7 +84,7 @@ public class ColorSelectionGUI extends GUIScreen
         {
             if (r.input.isActive() && r.input.valid())
             {
-                color.setR(filter0to255.parse(r.input.text));
+                color.setR(filter0to255.parse(r.input.getText()));
                 preview.setColor(color);
                 hex.setInput(color.hex8());
                 dec.setInput("" + color.color());
@@ -96,7 +96,7 @@ public class ColorSelectionGUI extends GUIScreen
         {
             if (g.input.isActive() && g.input.valid())
             {
-                color.setG(filter0to255.parse(g.input.text));
+                color.setG(filter0to255.parse(g.input.getText()));
                 preview.setColor(color);
                 hex.setInput(color.hex8());
                 dec.setInput("" + color.color());
@@ -108,7 +108,7 @@ public class ColorSelectionGUI extends GUIScreen
         {
             if (b.input.isActive() && b.input.valid())
             {
-                color.setB(filter0to255.parse(b.input.text));
+                color.setB(filter0to255.parse(b.input.getText()));
                 preview.setColor(color);
                 hex.setInput(color.hex8());
                 dec.setInput("" + color.color());
@@ -120,7 +120,7 @@ public class ColorSelectionGUI extends GUIScreen
         {
             if (a.input.isActive() && a.input.valid())
             {
-                color.setA(filter0to255.parse(a.input.text));
+                color.setA(filter0to255.parse(a.input.getText()));
                 preview.setColor(color);
                 hex.setInput(color.hex8());
                 dec.setInput("" + color.color());
@@ -136,7 +136,7 @@ public class ColorSelectionGUI extends GUIScreen
         {
             if (hex.input.isActive() && hex.input.valid())
             {
-                color.setColor(FilterColor.INSTANCE.parse(hex.input.text));
+                color.setColor(FilterColor.INSTANCE.parse(hex.input.getText()));
                 preview.setColor(color);
                 dec.setInput("" + color.color());
                 r.setInput("" + color.r());
@@ -155,7 +155,7 @@ public class ColorSelectionGUI extends GUIScreen
         {
             if (dec.input.isActive() && dec.input.valid())
             {
-                color.setColor(FilterInt.INSTANCE.parse(dec.input.text));
+                color.setColor(FilterInt.INSTANCE.parse(dec.input.getText()));
                 preview.setColor(color);
                 hex.setInput(color.hex8());
                 r.setInput("" + color.r());
@@ -179,7 +179,7 @@ public class ColorSelectionGUI extends GUIScreen
         {
             if (rf.input.isActive() && rf.input.valid())
             {
-                color.setRF(filter0to1.parse(rf.input.text));
+                color.setRF(filter0to1.parse(rf.input.getText()));
                 preview.setColor(color);
                 hex.setInput(color.hex8());
                 dec.setInput("" + color.color());
@@ -191,7 +191,7 @@ public class ColorSelectionGUI extends GUIScreen
         {
             if (gf.input.isActive() && gf.input.valid())
             {
-                color.setGF(filter0to1.parse(gf.input.text));
+                color.setGF(filter0to1.parse(gf.input.getText()));
                 preview.setColor(color);
                 hex.setInput(color.hex8());
                 dec.setInput("" + color.color());
@@ -203,7 +203,7 @@ public class ColorSelectionGUI extends GUIScreen
         {
             if (bf.input.isActive() && bf.input.valid())
             {
-                color.setBF(filter0to1.parse(bf.input.text));
+                color.setBF(filter0to1.parse(bf.input.getText()));
                 preview.setColor(color);
                 hex.setInput(color.hex8());
                 dec.setInput("" + color.color());
@@ -215,7 +215,7 @@ public class ColorSelectionGUI extends GUIScreen
         {
             if (af.input.isActive() && af.input.valid())
             {
-                color.setAF(filter0to1.parse(af.input.text));
+                color.setAF(filter0to1.parse(af.input.getText()));
                 preview.setColor(color);
                 hex.setInput(color.hex8());
                 dec.setInput("" + color.color());
