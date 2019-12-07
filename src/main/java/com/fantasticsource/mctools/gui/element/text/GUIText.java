@@ -236,7 +236,7 @@ public class GUIText extends GUIElement
             height /= parent.absoluteHeight();
         }
 
-        //TODO this line is cancelling a scissor offset issue of unknown origin, equal to 1 pixel when the element is full width
+        //TODO this line is cancelling a scissor offset issue of unknown origin, equal to 1 pixel when the element is full width.  I wonder if this is happening with other elements as well?
         width += 1d * width / screen.width;
 
         recalcAndRepositionSubElements(0);
