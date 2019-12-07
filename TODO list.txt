@@ -1,4 +1,4 @@
-An empty GUITextInput or GUIMultilineTextInput does not render the cursor
+An empty GUIMultilineTextInput does not render the cursor
 
 
 

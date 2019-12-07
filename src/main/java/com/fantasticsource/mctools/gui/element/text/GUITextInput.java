@@ -940,7 +940,7 @@ public class GUITextInput extends GUIText
             StringBuilder fullLine = new StringBuilder();
 
             int index = 0;
-            double maxLineW = 0, lineW = 1d / screen.width;
+            double maxLineW = 1d / screen.width, lineW = 1d / screen.width;
             while (index < words.length)
             {
                 String word = words[index++];
