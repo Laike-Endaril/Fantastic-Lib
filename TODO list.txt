@@ -1,7 +1,3 @@
-An empty GUIMultilineTextInput does not render the cursor
-
-
-
 Fix scrollbars staying active if you release click while outside window
 
 Fix sliiiiight overclipping, usually at higher resolutions

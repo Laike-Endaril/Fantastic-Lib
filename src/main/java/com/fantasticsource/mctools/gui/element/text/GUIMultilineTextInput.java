@@ -114,7 +114,7 @@ public class GUIMultilineTextInput extends GUITextInput
         if (active)
         {
             float wUnit = (float) (adjustedScale / absolutePxWidth());
-            float lineHeight = 1f / fullLines.size();
+            float lineHeight = 1f / Tools.max(1, fullLines.size());
 
             //Calculate cursor position
             float cursorX = 0;
@@ -133,13 +133,13 @@ public class GUIMultilineTextInput extends GUITextInput
                     lineStart += fullLine.length();
                 }
             }
-            cursorX = Tools.max(cursorX, 1f / absolutePxWidth() + 0.5f);
+            cursorX = Tools.max(cursorX, 0.5f);
             cursorX *= wUnit;
 
 
+            //Selection highlight
             if (selectorPosition != -1 && selectorPosition != cursorPosition)
             {
-                //Selection highlight
                 float selectorX = 0;
                 int selectorLine = 0;
                 int lineStart = 0;
@@ -246,7 +246,7 @@ public class GUIMultilineTextInput extends GUITextInput
 
     public int fullLineCount()
     {
-        return fullLines.size();
+        return Tools.max(1, fullLines.size());
     }
 
     public int cursorLine()

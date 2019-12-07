@@ -2,6 +2,7 @@ package com.fantasticsource.mctools.gui.screen;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.other.GUIGradient;
+import com.fantasticsource.mctools.gui.element.text.GUILabeledTextInput;
 import com.fantasticsource.mctools.gui.element.text.GUIMultilineTextInput;
 import com.fantasticsource.mctools.gui.element.text.GUIText;
 import com.fantasticsource.mctools.gui.element.text.GUITextInput;
@@ -58,6 +59,13 @@ public class TestGUI extends GUIScreen
                 root.add(new GUIText(this, "\n"));
                 root.add(new GUITextInput(this, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", FilterNone.INSTANCE));
                 root.add(new GUITextInput(this, "IIII", FilterNone.INSTANCE));
+
+                root.add(new GUIText(this, "\n"));
+                root.add(new GUILabeledTextInput(this, "aaaa", "IIII", FilterNone.INSTANCE));
+                root.add(new GUIText(this, "\n"));
+                root.add(new GUILabeledTextInput(this, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "IIII", FilterNone.INSTANCE));
+                root.add(new GUIText(this, "\n"));
+                root.add(new GUILabeledTextInput(this, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "IIII", FilterNone.INSTANCE));
 
                 root.add(new GUIText(this, "\n"));
                 root.add(new GUIMultilineTextInput(this, "a", FilterNone.INSTANCE));
