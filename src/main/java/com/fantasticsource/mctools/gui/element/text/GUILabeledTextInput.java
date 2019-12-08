@@ -83,4 +83,20 @@ public class GUILabeledTextInput extends GUIAutocroppedView
     {
         return input.toString();
     }
+
+
+    public boolean valid()
+    {
+        return input.valid();
+    }
+
+    public String getText()
+    {
+        return input.getText();
+    }
+
+    public void setText(String text)
+    {
+        input.setText(text);
+    }
 }
