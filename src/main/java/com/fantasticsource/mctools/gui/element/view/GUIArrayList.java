@@ -43,12 +43,17 @@ public abstract class GUIArrayList<T extends GUIElement> extends GUIScrollView
         GUIImage active = new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), 1d / 2, 0, 1d / 2, 1d / 2);
         active.add(new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), Color.GREEN, 0, 1d / 2, 1d / 2, 1d / 2));
 
-        line.add(new GUIButton(screen, idle, hover, active).addClickActions(() -> addLine(newLineDefaultElements())));
+        line.add(new GUIButton(screen, idle, hover, active).addClickActions(this::addLine));
 
         //Add line
         add(line);
     }
 
+
+    public GUIArrayList<T> addLine()
+    {
+        return addLine(newLineDefaultElements());
+    }
 
     public GUIArrayList<T> addLine(T... lineElements)
     {
@@ -110,5 +115,12 @@ public abstract class GUIArrayList<T extends GUIElement> extends GUIScrollView
     public int lineCount()
     {
         return size() - 1;
+    }
+
+
+    @Override
+    public GUIAutocroppedView get(int index)
+    {
+        return (GUIAutocroppedView) super.get(index);
     }
 }
