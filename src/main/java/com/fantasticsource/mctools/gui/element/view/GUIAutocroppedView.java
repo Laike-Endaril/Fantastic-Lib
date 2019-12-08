@@ -4,6 +4,10 @@ import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.tools.Tools;
 
+/**
+ * Does not currently support relative-dimension subelements (except in background)
+ * Eg. text- and image-based elements are fine
+ */
 public class GUIAutocroppedView extends GUIView
 {
     public GUIElement background;
