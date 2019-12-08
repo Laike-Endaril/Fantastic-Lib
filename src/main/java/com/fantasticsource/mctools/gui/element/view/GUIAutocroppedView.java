@@ -7,8 +7,6 @@ import com.fantasticsource.tools.Tools;
 /**
  * Does not currently support relative-dimension subelements (except in background)
  * Eg. text- and image-based elements are fine
- *
- * I think padding may also be broken for now
  */
 public class GUIAutocroppedView extends GUIView
 {
