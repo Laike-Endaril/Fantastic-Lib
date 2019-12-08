@@ -107,9 +107,8 @@ public abstract class GUIArrayList<T extends GUIElement> extends GUIScrollView
     }
 
 
-    @Override
-    public int size()
+    public int lineCount()
     {
-        return super.size() - 1;
+        return size() - 1;
     }
 }
