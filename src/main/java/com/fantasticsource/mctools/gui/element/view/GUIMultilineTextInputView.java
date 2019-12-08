@@ -40,4 +40,20 @@ public class GUIMultilineTextInputView extends GUIScrollView
 
         return this;
     }
+
+
+    public boolean valid()
+    {
+        return multilineTextInput.valid();
+    }
+
+    public String getText()
+    {
+        return multilineTextInput.getText();
+    }
+
+    public void setText(String text)
+    {
+        multilineTextInput.setText(text);
+    }
 }
