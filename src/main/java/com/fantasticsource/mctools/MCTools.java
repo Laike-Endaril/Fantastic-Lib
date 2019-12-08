@@ -84,6 +84,12 @@ public class MCTools
 
     public static void setLore(ItemStack stack, List<String> loreLines)
     {
+        if (loreLines == null || loreLines.size() == 0 || (loreLines.size() == 1 && (loreLines.get(0) == null || loreLines.get(0).equals(""))))
+        {
+            removeLore(stack);
+            return;
+        }
+
         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
         NBTTagCompound compound = stack.getTagCompound();
 
