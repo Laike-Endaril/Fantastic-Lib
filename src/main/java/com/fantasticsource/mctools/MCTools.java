@@ -13,7 +13,11 @@ import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntitySnowball;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
@@ -24,6 +28,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
@@ -63,6 +68,38 @@ public class MCTools
         {
             crash(e, 700, false);
         }
+    }
+
+
+    public static void setLore(ItemStack stack, ArrayList<String> loreLines)
+    {
+        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+        NBTTagCompound compound = stack.getTagCompound();
+
+        if (!compound.hasKey("display")) compound.setTag("display", new NBTTagCompound());
+        compound = compound.getCompoundTag("display");
+
+        compound.setTag("Lore", new NBTTagList());
+        NBTTagList lore = compound.getTagList("Lore", Constants.NBT.TAG_STRING);
+
+        for (String line : loreLines) lore.appendTag(new NBTTagString(line));
+    }
+
+    public static ArrayList<String> getLore(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return null;
+
+        NBTTagCompound compound = stack.getTagCompound();
+        if (!compound.hasKey("display")) return null;
+
+        compound = compound.getCompoundTag("display");
+        if (!compound.hasKey("Lore")) return null;
+
+        NBTTagList lore = compound.getTagList("Lore", Constants.NBT.TAG_STRING);
+        ArrayList<String> loreLines = new ArrayList<>();
+        for (int i = 0; i < lore.tagCount(); i++) loreLines.add(lore.getStringTagAt(i));
+
+        return loreLines;
     }
 
 
