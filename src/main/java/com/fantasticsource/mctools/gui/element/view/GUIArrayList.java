@@ -105,4 +105,11 @@ public abstract class GUIArrayList<T extends GUIElement> extends GUIScrollView
     {
         return null;
     }
+
+
+    @Override
+    public int size()
+    {
+        return super.size() - 1;
+    }
 }
