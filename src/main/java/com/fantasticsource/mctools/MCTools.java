@@ -71,7 +71,18 @@ public class MCTools
     }
 
 
-    public static void setLore(ItemStack stack, ArrayList<String> loreLines)
+    public static void setLore(ItemStack stack, String lore)
+    {
+        if (lore == null || lore.equals(""))
+        {
+            removeLore(stack);
+            return;
+        }
+
+        setLore(stack, Arrays.asList(Tools.fixedSplit(lore, "\n")));
+    }
+
+    public static void setLore(ItemStack stack, List<String> loreLines)
     {
         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
         NBTTagCompound compound = stack.getTagCompound();
@@ -83,6 +94,21 @@ public class MCTools
         NBTTagList lore = compound.getTagList("Lore", Constants.NBT.TAG_STRING);
 
         for (String line : loreLines) lore.appendTag(new NBTTagString(line));
+    }
+
+    public static void removeLore(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return;
+
+        NBTTagCompound compound = stack.getTagCompound();
+        if (!compound.hasKey("display")) return;
+
+        NBTTagCompound display = compound.getCompoundTag("display");
+        if (!display.hasKey("Lore")) return;
+
+        display.removeTag("Lore");
+
+        if (display.getKeySet().size() == 0) compound.removeTag("display");
     }
 
     public static ArrayList<String> getLore(ItemStack stack)
