@@ -3,6 +3,7 @@ package com.fantasticsource.mctools.gui.element.view;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIButton;
+import com.fantasticsource.mctools.gui.element.other.GUIGradient;
 import com.fantasticsource.mctools.gui.element.textured.GUIImage;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.util.ResourceLocation;
@@ -11,6 +12,11 @@ import static com.fantasticsource.fantasticlib.FantasticLib.MODID;
 
 public abstract class GUIArrayList<T extends GUIElement> extends GUIScrollView
 {
+    public static final Color
+            AL_WHITE = Color.WHITE.copy().setAF(0.3f),
+            AL_BLACK = Color.BLACK.copy().setAF(0.3f);
+
+
     public GUIArrayList(GUIScreen screen, double width, double height, GUIElement... subElements)
     {
         super(screen, width, height, subElements);
@@ -108,7 +114,7 @@ public abstract class GUIArrayList<T extends GUIElement> extends GUIScrollView
 
     public GUIElement newLineBackgroundElement()
     {
-        return null;
+        return new GUIGradient(screen, 1, 1, AL_WHITE, AL_WHITE, AL_BLACK, AL_BLACK);
     }
 
 
