@@ -56,4 +56,12 @@ public class GUIMultilineTextInputView extends GUIScrollView
     {
         multilineTextInput.setText(text);
     }
+
+    @Override
+    public void click()
+    {
+        multilineTextInput.setActive(true);
+
+        super.click();
+    }
 }
