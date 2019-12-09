@@ -28,8 +28,10 @@ public class GUIElement
             AP_CENTERED_H_TOP_TO_BOTTOM = 8,
             AP_CENTERED_V_LEFT_TO_RIGHT = 9,
             AP_X_0_TOP_TO_BOTTOM = 10;
+
     public final ArrayList<Runnable> onClickActions = new ArrayList<>();
     public final ArrayList<Runnable> onRecalcActions = new ArrayList<>();
+
     public double x, y, width, height;
     public GUIElement parent = null;
     public ArrayList<GUIElement> children = new ArrayList<>();

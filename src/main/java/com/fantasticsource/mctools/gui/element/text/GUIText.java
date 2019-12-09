@@ -18,6 +18,7 @@ public class GUIText extends GUIElement
 {
     public final double scale;
     protected String text;
+    public String oldText;
     protected ArrayList<String> lines = new ArrayList<>(), fullLines = new ArrayList<>();
     protected Color color, hoverColor, activeColor;
 
@@ -52,6 +53,7 @@ public class GUIText extends GUIElement
         super(screen, 0, 0);
         this.scale = scale * screen.textScale * 2 / new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
         this.text = text;
+        oldText = text;
         this.color = color;
         this.hoverColor = hoverColor;
         this.activeColor = activeColor;
@@ -89,6 +91,7 @@ public class GUIText extends GUIElement
         super(screen, x, y, 0, 0);
         this.scale = scale * screen.textScale * 2 / new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
         this.text = text;
+        oldText = text;
         this.color = color;
         this.hoverColor = hoverColor;
         this.activeColor = activeColor;
@@ -120,8 +123,10 @@ public class GUIText extends GUIElement
         if (text.equals(this.text)) return this;
 
 
+        oldText = this.text;
         this.text = text;
         screen.root.recalc(0);
+
         return this;
     }
 
