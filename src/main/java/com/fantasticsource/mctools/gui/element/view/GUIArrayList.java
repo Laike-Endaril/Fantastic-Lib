@@ -4,11 +4,7 @@ import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIButton;
 import com.fantasticsource.mctools.gui.element.other.GUIGradient;
-import com.fantasticsource.mctools.gui.element.textured.GUIImage;
 import com.fantasticsource.tools.datastructures.Color;
-import net.minecraft.util.ResourceLocation;
-
-import static com.fantasticsource.fantasticlib.FantasticLib.MODID;
 
 public abstract class GUIArrayList<T extends GUIElement> extends GUIScrollView
 {
@@ -40,16 +36,7 @@ public abstract class GUIArrayList<T extends GUIElement> extends GUIScrollView
         line.add(new GUIElement(screen, 1, 0));
 
         //Add "add line" button
-        GUIImage idle = new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), 0, 0, 1d / 2, 1d / 2);
-        idle.add(new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), GUIScreen.getIdleColor(Color.GREEN), 0, 1d / 2, 1d / 2, 1d / 2));
-
-        GUIImage hover = new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), 0, 0, 1d / 2, 1d / 2);
-        hover.add(new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), GUIScreen.getHoverColor(Color.GREEN), 0, 1d / 2, 1d / 2, 1d / 2));
-
-        GUIImage active = new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), 1d / 2, 0, 1d / 2, 1d / 2);
-        active.add(new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), Color.GREEN, 0, 1d / 2, 1d / 2, 1d / 2));
-
-        line.add(new GUIButton(screen, idle, hover, active).addClickActions(this::addLine));
+        line.add(GUIButton.newAddButton(screen)).addClickActions(this::addLine);
 
         //Add line
         add(line);
@@ -82,16 +69,7 @@ public abstract class GUIArrayList<T extends GUIElement> extends GUIScrollView
         line.add(new GUIElement(screen, 1, 0));
 
         //Add "remove line" button
-        GUIImage idle = new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), 0, 0, 1d / 2, 1d / 2);
-        idle.add(new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), GUIScreen.getIdleColor(Color.RED), 1d / 2, 1d / 2, 1d / 2, 1d / 2));
-
-        GUIImage hover = new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), 0, 0, 1d / 2, 1d / 2);
-        hover.add(new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), GUIScreen.getHoverColor(Color.RED), 1d / 2, 1d / 2, 1d / 2, 1d / 2));
-
-        GUIImage active = new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), 1d / 2, 0, 1d / 2, 1d / 2);
-        active.add(new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), Color.RED, 1d / 2, 1d / 2, 1d / 2, 1d / 2));
-
-        line.add(new GUIButton(screen, idle, hover, active).addClickActions(() -> remove(line)));
+        line.add(GUIButton.newRemoveButton(screen).addClickActions(() -> remove(line)));
 
         //Line elements
         if (lineElements != null) line.addAll(lineElements);
