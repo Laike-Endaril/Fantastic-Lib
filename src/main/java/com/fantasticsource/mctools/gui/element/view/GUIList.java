@@ -92,7 +92,7 @@ public abstract class GUIList extends GUIScrollView
 
     public GUIElement newLineBackgroundElement()
     {
-        return new GUIGradient(screen, 1, 1, AL_WHITE, AL_WHITE, AL_BLACK, AL_BLACK);
+        return new GUIGradient(screen, 1, 1, AL_BLACK, AL_BLACK, AL_WHITE, AL_WHITE);
     }
 
 

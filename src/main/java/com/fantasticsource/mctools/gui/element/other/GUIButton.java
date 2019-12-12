@@ -84,13 +84,13 @@ public class GUIButton extends GUIAutocroppedView
     public static GUIButton newEditButton(GUIScreen screen)
     {
         GUIImage idle = new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), 0, 0, 1d / 4, 1d / 4);
-        idle.add(new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), GUIScreen.getIdleColor(Color.RED), 2d / 4, 1d / 4, 1d / 4, 1d / 4));
+        idle.add(new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), GUIScreen.getIdleColor(Color.ORANGE), 2d / 4, 1d / 4, 1d / 4, 1d / 4));
 
         GUIImage hover = new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), 0, 0, 1d / 4, 1d / 4);
-        hover.add(new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), GUIScreen.getHoverColor(Color.RED), 2d / 4, 1d / 4, 1d / 4, 1d / 4));
+        hover.add(new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), GUIScreen.getHoverColor(Color.ORANGE), 2d / 4, 1d / 4, 1d / 4, 1d / 4));
 
         GUIImage active = new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), 1d / 4, 0, 1d / 4, 1d / 4);
-        active.add(new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), Color.RED, 2d / 4, 1d / 4, 1d / 4, 1d / 4));
+        active.add(new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), Color.ORANGE, 2d / 4, 1d / 4, 1d / 4, 1d / 4));
 
         return new GUIButton(screen, idle, hover, active);
     }
@@ -98,13 +98,13 @@ public class GUIButton extends GUIAutocroppedView
     public static GUIButton newListButton(GUIScreen screen)
     {
         GUIImage idle = new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), 0, 0, 1d / 4, 1d / 4);
-        idle.add(new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), GUIScreen.getIdleColor(Color.RED), 3d / 4, 1d / 4, 1d / 4, 1d / 4));
+        idle.add(new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), GUIScreen.getIdleColor(Color.AQUA), 3d / 4, 1d / 4, 1d / 4, 1d / 4));
 
         GUIImage hover = new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), 0, 0, 1d / 4, 1d / 4);
-        hover.add(new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), GUIScreen.getHoverColor(Color.RED), 3d / 4, 1d / 4, 1d / 4, 1d / 4));
+        hover.add(new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), GUIScreen.getHoverColor(Color.AQUA), 3d / 4, 1d / 4, 1d / 4, 1d / 4));
 
         GUIImage active = new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), 1d / 4, 0, 1d / 4, 1d / 4);
-        active.add(new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), Color.RED, 3d / 4, 1d / 4, 1d / 4, 1d / 4));
+        active.add(new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), Color.AQUA, 3d / 4, 1d / 4, 1d / 4, 1d / 4));
 
         return new GUIButton(screen, idle, hover, active);
     }

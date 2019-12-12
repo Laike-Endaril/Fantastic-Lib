@@ -17,7 +17,8 @@ public class Color
             YELLOW = new Color(0xFFFF00FF),
             AQUA = new Color(0x00FFFFFF),
             PURPLE = new Color(0xFF00FFFF),
-            GRAY = new Color(0x777777FF);
+            GRAY = new Color(0x777777FF),
+            ORANGE = new Color(0xFF7700FF);
 
     private int intValue, r, g, b, a;
     private float rf, gf, bf, af;
