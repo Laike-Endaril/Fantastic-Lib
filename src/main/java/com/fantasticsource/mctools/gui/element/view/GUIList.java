@@ -6,21 +6,21 @@ import com.fantasticsource.mctools.gui.element.other.GUIButton;
 import com.fantasticsource.mctools.gui.element.other.GUIGradient;
 import com.fantasticsource.tools.datastructures.Color;
 
-public abstract class GUIArrayList<T extends GUIElement> extends GUIScrollView
+public abstract class GUIList extends GUIScrollView
 {
     public static final Color
             AL_WHITE = Color.WHITE.copy().setAF(0.3f),
             AL_BLACK = Color.BLACK.copy().setAF(0.3f);
 
 
-    public GUIArrayList(GUIScreen screen, double width, double height, GUIElement... subElements)
+    public GUIList(GUIScreen screen, double width, double height, GUIElement... subElements)
     {
         super(screen, width, height, subElements);
 
         addAddLineLine();
     }
 
-    public GUIArrayList(GUIScreen screen, double x, double y, double width, double height, GUIElement... subElements)
+    public GUIList(GUIScreen screen, double x, double y, double width, double height, GUIElement... subElements)
     {
         super(screen, x, y, width, height, subElements);
 
@@ -43,23 +43,23 @@ public abstract class GUIArrayList<T extends GUIElement> extends GUIScrollView
     }
 
 
-    public GUIArrayList<T> addLine()
+    public GUIList addLine()
     {
         return addLine(newLineDefaultElements());
     }
 
-    public GUIArrayList<T> addLine(T... lineElements)
+    public GUIList addLine(GUIElement... lineElements)
     {
         return addLine(children.size() - 1, lineElements);
     }
 
-    public GUIArrayList<T> addAllLines(T[]... lines)
+    public GUIList addAllLines(GUIElement[]... lines)
     {
-        for (T[] line : lines) addLine(line);
+        for (GUIElement[] line : lines) addLine(line);
         return this;
     }
 
-    public GUIArrayList<T> addLine(int index, T... lineElements)
+    public GUIList addLine(int index, GUIElement... lineElements)
     {
         if (index >= children.size()) throw new ArrayIndexOutOfBoundsException("Index: " + index + ", Size: " + size());
 
@@ -88,7 +88,7 @@ public abstract class GUIArrayList<T extends GUIElement> extends GUIScrollView
     }
 
 
-    public abstract T[] newLineDefaultElements();
+    public abstract GUIElement[] newLineDefaultElements();
 
     public GUIElement newLineBackgroundElement()
     {
