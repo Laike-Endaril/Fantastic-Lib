@@ -7,16 +7,16 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 
-public class GUIItemStack extends GUIText
+public class GUIItemStackText extends GUIText
 {
     private ItemStack stack;
 
-    public GUIItemStack(GUIScreen screen, ItemStack stack)
+    public GUIItemStackText(GUIScreen screen, ItemStack stack)
     {
         this(screen, stack, 1);
     }
 
-    public GUIItemStack(GUIScreen screen, ItemStack stack, double scale)
+    public GUIItemStackText(GUIScreen screen, ItemStack stack, double scale)
     {
         super(screen, stack.isEmpty() ? "(Empty Slot)" : stack.getCount() + " " + stack.getDisplayName(), scale);
         this.stack = stack;
@@ -34,12 +34,12 @@ public class GUIItemStack extends GUIText
     }
 
 
-    public GUIItemStack(GUIScreen screen, double x, double y, ItemStack stack)
+    public GUIItemStackText(GUIScreen screen, double x, double y, ItemStack stack)
     {
         this(screen, x, y, stack, 1);
     }
 
-    public GUIItemStack(GUIScreen screen, double x, double y, ItemStack stack, double scale)
+    public GUIItemStackText(GUIScreen screen, double x, double y, ItemStack stack, double scale)
     {
         super(screen, x, y, stack.isEmpty() ? "(Empty Slot)" : stack.getCount() + " " + stack.getDisplayName(), scale);
         this.stack = stack;
@@ -61,7 +61,7 @@ public class GUIItemStack extends GUIText
         return stack;
     }
 
-    public GUIItemStack setStack(ItemStack stack)
+    public GUIItemStackText setStack(ItemStack stack)
     {
         this.stack = stack;
         text = stack.isEmpty() ? "(Empty Slot)" : stack.getCount() + " " + stack.getDisplayName();

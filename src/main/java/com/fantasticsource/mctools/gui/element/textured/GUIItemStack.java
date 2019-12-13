@@ -3,10 +3,13 @@ package com.fantasticsource.mctools.gui.element.textured;
 import com.fantasticsource.mctools.Render;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
+import com.fantasticsource.mctools.gui.element.text.GUIText;
+import com.fantasticsource.mctools.gui.element.view.GUIAutocroppedView;
+import com.fantasticsource.mctools.gui.element.view.GUITooltipView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.init.Items;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 
 import java.nio.FloatBuffer;
@@ -24,6 +27,17 @@ public class GUIItemStack extends GUIElement
         scaledHeight = unscaledHeight * 2 / new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
 
         this.stack = stack;
+
+        tooltip = new GUITooltipView(screen);
+        tooltip.setSubElementAutoplaceMethod(AP_X_0_TOP_TO_BOTTOM);
+        Minecraft mc = Minecraft.getMinecraft();
+
+        for (String line : stack.getTooltip(mc.player, ITooltipFlag.TooltipFlags.ADVANCED))
+        {
+            GUIAutocroppedView view = new GUIAutocroppedView(screen, 0.3);
+            view.add(new GUIText(screen, line));
+            tooltip.add(view);
+        }
     }
 
 
@@ -35,6 +49,17 @@ public class GUIItemStack extends GUIElement
         this.scaledHeight = unscaledHeight * 2 / new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
 
         this.stack = stack;
+
+        tooltip = new GUITooltipView(screen);
+        tooltip.setSubElementAutoplaceMethod(AP_X_0_TOP_TO_BOTTOM);
+        Minecraft mc = Minecraft.getMinecraft();
+
+        for (String line : stack.getTooltip(mc.player, ITooltipFlag.TooltipFlags.ADVANCED))
+        {
+            GUIAutocroppedView view = new GUIAutocroppedView(screen, 0.3);
+            view.add(new GUIText(screen, line));
+            tooltip.add(view);
+        }
     }
 
 
@@ -45,6 +70,7 @@ public class GUIItemStack extends GUIElement
         height = scaledHeight / screen.height;
 
         //TODO this line is cancelling a scissor offset issue of unknown origin; offset = 1 - ()
+        //TODO I might've fixed the root issue and not need this line?
 //        width += (1 - scaledWidth) / screen.width;
 
         if (parent != null)
@@ -63,6 +89,8 @@ public class GUIItemStack extends GUIElement
     @Override
     public void draw()
     {
+        //TODO Later-drawn GUIItemStacks render on top of tooltips
+
         FloatBuffer projection = Render.getProjectionMatrix();
         FloatBuffer modelView = Render.getModelViewMatrix();
 
@@ -71,7 +99,7 @@ public class GUIItemStack extends GUIElement
 
         GlStateManager.enableTexture2D();
         ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
-        Minecraft.getMinecraft().getRenderItem().renderItemIntoGUI(new ItemStack(Items.BOW), absolutePxX() / sr.getScaleFactor(), absolutePxY() / sr.getScaleFactor());
+        Minecraft.getMinecraft().getRenderItem().renderItemIntoGUI(stack, absolutePxX() / sr.getScaleFactor(), absolutePxY() / sr.getScaleFactor());
 
         Render.setProjectionMatrix(projection);
         Render.setModelViewMatrix(modelView);

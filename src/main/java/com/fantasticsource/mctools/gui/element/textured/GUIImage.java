@@ -92,6 +92,7 @@ public class GUIImage extends GUIElement
         height = scaledHeight / screen.height;
 
         //TODO this line is cancelling a scissor offset issue of unknown origin; offset = 1 - ()
+        //TODO I might've fixed the root issue and not need this line?
 //        width += (1 - scaledWidth) / screen.width;
 
         if (parent != null)
