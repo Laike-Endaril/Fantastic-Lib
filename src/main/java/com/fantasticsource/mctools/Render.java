@@ -259,6 +259,22 @@ public class Render
     }
 
 
+    public IntBuffer getViewportMatrix() throws IllegalAccessException
+    {
+        return (IntBuffer) activeRenderInfoViewportField.get(null);
+    }
+
+    public IntBuffer getProjectionMatrix() throws IllegalAccessException
+    {
+        return (IntBuffer) activeRenderInfoProjectionField.get(null);
+    }
+
+    public IntBuffer getModelViewMatrix() throws IllegalAccessException
+    {
+        return (IntBuffer) activeRenderInfoModelviewField.get(null);
+    }
+
+
     public static Vec3d getCameraPosition()
     {
         return Minecraft.getMinecraft().player.getPositionVector().add(ActiveRenderInfo.getCameraPosition());
