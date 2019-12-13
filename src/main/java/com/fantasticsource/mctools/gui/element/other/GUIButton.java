@@ -24,35 +24,6 @@ public class GUIButton extends GUIAutocroppedView
         add(idleElement);
     }
 
-    @Override
-    public void draw()
-    {
-        if (isMouseWithin())
-        {
-            if (active) set(activeElement);
-            else set(hoverElement);
-        }
-        else set(idleElement);
-
-        super.draw();
-    }
-
-    private void set(GUIElement element)
-    {
-        int index = indexOf(element);
-        if (index != -1) return;
-
-        index = indexOf(idleElement);
-        if (index != -1) remove(index);
-        index = indexOf(hoverElement);
-        if (index != -1) remove(index);
-        index = indexOf(activeElement);
-        if (index != -1) remove(index);
-
-        add(element);
-    }
-
-
     public static GUIButton newAddButton(GUIScreen screen)
     {
         GUIImage idle = new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), 0, 0, 1d / 4, 1d / 4);
@@ -107,5 +78,33 @@ public class GUIButton extends GUIAutocroppedView
         active.add(new GUIImage(screen, 8, 8, new ResourceLocation(MODID, "image/gui.png"), Color.AQUA, 3d / 4, 1d / 4, 1d / 4, 1d / 4));
 
         return new GUIButton(screen, idle, hover, active);
+    }
+
+    @Override
+    public void draw()
+    {
+        if (isMouseWithin())
+        {
+            if (active) set(activeElement);
+            else set(hoverElement);
+        }
+        else set(idleElement);
+
+        super.draw();
+    }
+
+    private void set(GUIElement element)
+    {
+        int index = indexOf(element);
+        if (index != -1) return;
+
+        index = indexOf(idleElement);
+        if (index != -1) remove(index);
+        index = indexOf(hoverElement);
+        if (index != -1) remove(index);
+        index = indexOf(activeElement);
+        if (index != -1) remove(index);
+
+        add(element);
     }
 }

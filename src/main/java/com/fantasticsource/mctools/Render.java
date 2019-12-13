@@ -25,6 +25,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
 import java.lang.reflect.Field;
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
@@ -39,7 +40,7 @@ public class Render
             SCALING_MC_GUI = 1;
 
 
-    private static Field activeRenderInfoViewportField, activeRenderInfoProjectionField, activeRenderInfoModelviewField, minecraftRenderPartialTicksPausedField;
+    private static Field minecraftRenderPartialTicksPausedField;
 
     private static float fov, fovMultiplier;
 
@@ -48,9 +49,6 @@ public class Render
     {
         try
         {
-            activeRenderInfoViewportField = ReflectionTool.getField(ActiveRenderInfo.class, "field_178814_a", "VIEWPORT");
-            activeRenderInfoProjectionField = ReflectionTool.getField(ActiveRenderInfo.class, "field_178813_c", "PROJECTION");
-            activeRenderInfoModelviewField = ReflectionTool.getField(ActiveRenderInfo.class, "field_178812_b", "MODELVIEW");
             minecraftRenderPartialTicksPausedField = ReflectionTool.getField(Minecraft.class, "field_193996_ah", "renderPartialTicksPaused");
 
             MinecraftForge.EVENT_BUS.register(Render.class);
@@ -166,9 +164,9 @@ public class Render
         double py = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTick;
         double pz = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTick;
 
-        FloatBuffer modelView = ((FloatBuffer) activeRenderInfoModelviewField.get(null)).duplicate();
-        FloatBuffer projection = ((FloatBuffer) activeRenderInfoProjectionField.get(null)).duplicate();
-        IntBuffer viewport = ((IntBuffer) activeRenderInfoViewportField.get(null)).duplicate();
+        FloatBuffer modelView = getModelViewMatrix();
+        FloatBuffer projection = getProjectionMatrix();
+        IntBuffer viewport = getViewportMatrix();
 
         float[] in = new float[4];
         float[] out = new float[4];
@@ -225,60 +223,65 @@ public class Render
     }
 
 
-    public static double getZNearDist() throws IllegalAccessException
+    public static double getZNearDist()
     {
-        FloatBuffer projection = (FloatBuffer) activeRenderInfoProjectionField.get(null);
+        FloatBuffer projection = getProjectionMatrix();
         return (2f * projection.get(11)) / (2f * projection.get(10) - 2f);
     }
 
-    public static double getZNearWidth() throws IllegalAccessException
+    public static double getZNearWidth()
     {
-        return getZNearDist() * 2 / ((FloatBuffer) activeRenderInfoProjectionField.get(null)).get(0);
+        return getZNearDist() * 2 / getProjectionMatrix().get(0);
     }
 
-    public static double getZNearHeight() throws IllegalAccessException
+    public static double getZNearHeight()
     {
-        return getZNearDist() * 2 / ((FloatBuffer) activeRenderInfoProjectionField.get(null)).get(5);
+        return getZNearDist() * 2 / getProjectionMatrix().get(5);
     }
 
 
     /**
      * This is not the width of the near plane!  This is the PORT width, not the VIEW width, ie. usually the window width
      */
-    public static int getViewportWidth() throws IllegalAccessException
+    public static int getViewportWidth()
     {
-        return ((IntBuffer) activeRenderInfoViewportField.get(null)).get(2);
+        return getViewportMatrix().get(2);
     }
 
     /**
      * This is not the height of the near plane!  This is the PORT height, not the VIEW height, ie. usually the window height
      */
-    public static int getViewportHeight() throws IllegalAccessException
+    public static int getViewportHeight()
     {
-        return ((IntBuffer) activeRenderInfoViewportField.get(null)).get(3);
+        return getViewportMatrix().get(3);
     }
 
 
-    public static IntBuffer getViewportMatrix() throws IllegalAccessException
+    public static IntBuffer getViewportMatrix()
     {
-        return (IntBuffer) activeRenderInfoViewportField.get(null);
+        IntBuffer result = ByteBuffer.allocateDirect(16 << 2).asIntBuffer();
+        GlStateManager.glGetInteger(GL11.GL_PROJECTION_MATRIX, result);
+        return result;
     }
 
-    public static FloatBuffer getProjectionMatrix() throws IllegalAccessException
+    public static FloatBuffer getProjectionMatrix()
     {
-        return (FloatBuffer) activeRenderInfoProjectionField.get(null);
+        FloatBuffer result = ByteBuffer.allocateDirect(16 << 2).asFloatBuffer();
+        GlStateManager.getFloat(GL11.GL_PROJECTION_MATRIX, result);
+        return result;
     }
-
-    public static FloatBuffer getModelViewMatrix() throws IllegalAccessException
-    {
-        return (FloatBuffer) activeRenderInfoModelviewField.get(null);
-    }
-
 
     public static void setProjectionMatrix(FloatBuffer matrix)
     {
         GlStateManager.matrixMode(GL11.GL_PROJECTION);
         GL11.glLoadMatrix(matrix);
+    }
+
+    public static FloatBuffer getModelViewMatrix()
+    {
+        FloatBuffer result = ByteBuffer.allocateDirect(16 << 2).asFloatBuffer();
+        GlStateManager.getFloat(GL11.GL_MODELVIEW_MATRIX, result);
+        return result;
     }
 
     public static void setModelViewMatrix(FloatBuffer matrix)
@@ -317,35 +320,28 @@ public class Render
 
             double xRatio = width, yRatio = height;
 
-            try
+            switch (scalingMode)
             {
-                switch (scalingMode)
-                {
-                    case SCALING_FULL:
-                        width = Render.getViewportWidth();
-                        height = Render.getViewportHeight();
-                        break;
+                case SCALING_FULL:
+                    width = Render.getViewportWidth();
+                    height = Render.getViewportHeight();
+                    break;
 
-                    case SCALING_MC_GUI:
-                        width = sr.getScaledWidth();
-                        height = sr.getScaledHeight();
-                        break;
+                case SCALING_MC_GUI:
+                    width = sr.getScaledWidth();
+                    height = sr.getScaledHeight();
+                    break;
 
-                    default:
-                        return;
-                }
-
-                this.scalingMode = scalingMode;
-
-                xRatio /= width;
-                yRatio /= height;
-
-                GlStateManager.scale(xRatio, yRatio, 1);
+                default:
+                    return;
             }
-            catch (IllegalAccessException e)
-            {
-                e.printStackTrace();
-            }
+
+            this.scalingMode = scalingMode;
+
+            xRatio /= width;
+            yRatio /= height;
+
+            GlStateManager.scale(xRatio, yRatio, 1);
         }
 
         public int getWidth()

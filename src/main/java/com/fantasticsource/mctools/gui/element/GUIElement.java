@@ -78,7 +78,7 @@ public class GUIElement
         return xx <= x && x < xx + absoluteWidth() && yy <= y && y < yy + absoluteHeight();
     }
 
-    private int[] preDraw()
+    protected int[] preDraw()
     {
         //Matrix
         GlStateManager.pushMatrix();

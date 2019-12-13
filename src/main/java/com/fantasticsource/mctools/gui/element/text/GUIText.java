@@ -17,8 +17,8 @@ import static com.fantasticsource.mctools.gui.GUIScreen.FONT_RENDERER;
 public class GUIText extends GUIElement
 {
     public final double scale;
-    protected String text;
     public String oldText;
+    protected String text;
     protected ArrayList<String> lines = new ArrayList<>(), fullLines = new ArrayList<>();
     protected Color color, hoverColor, activeColor;
 

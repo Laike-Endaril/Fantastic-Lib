@@ -16,6 +16,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Stack;
@@ -27,6 +28,7 @@ public abstract class GUIScreen extends GuiScreen
     public static final FontRenderer FONT_RENDERER = Minecraft.getMinecraft().fontRenderer;
     public static int[] currentScissor;
     public static double mouseX = 0.5, mouseY = 0.5;
+    public static FloatBuffer mcProjection, mcModelView;
     private static boolean ignoreClosure = false;
     public final GUIView root, tooltips;
     public final ArrayList<Runnable> onClosedActions = new ArrayList<>();
@@ -92,6 +94,9 @@ public abstract class GUIScreen extends GuiScreen
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
+        mcProjection = Render.getProjectionMatrix();
+        mcModelView = Render.getModelViewMatrix();
+
         if (pxWidth != Display.getWidth() || pxHeight != Display.getHeight()) recalc();
 
         if (drawStack)
@@ -170,14 +175,7 @@ public abstract class GUIScreen extends GuiScreen
             init();
         }
 
-        try
-        {
-            Mouse.setCursorPosition((int) (mouseX * Render.getViewportWidth()), (int) ((1 - mouseY) * Render.getViewportHeight()));
-        }
-        catch (IllegalAccessException e)
-        {
-            e.printStackTrace();
-        }
+        Mouse.setCursorPosition((int) (mouseX * Render.getViewportWidth()), (int) ((1 - mouseY) * Render.getViewportHeight()));
 
         mouseButtons.clear();
         root.recalc(0);

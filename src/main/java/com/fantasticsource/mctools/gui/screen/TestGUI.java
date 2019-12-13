@@ -2,13 +2,12 @@ package com.fantasticsource.mctools.gui.screen;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.other.GUIGradient;
-import com.fantasticsource.mctools.gui.element.text.GUILabeledTextInput;
-import com.fantasticsource.mctools.gui.element.text.GUIMultilineTextInput;
 import com.fantasticsource.mctools.gui.element.text.GUIText;
-import com.fantasticsource.mctools.gui.element.text.GUITextInput;
-import com.fantasticsource.mctools.gui.element.text.filter.FilterNone;
+import com.fantasticsource.mctools.gui.element.textured.GUIItemStack;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -41,34 +40,9 @@ public class TestGUI extends GUIScreen
             case 0:
                 root.add(new GUIGradient(this, 0, 0, 1, 1, Color.BLACK.copy().setAF(0.85f)));
 
-                root.add(new GUIText(this, "aaaa"));
-                root.add(new GUIText(this, "IIII"));
-                root.add(new GUIText(this, "\n"));
-                root.add(new GUIText(this, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"));
-                root.add(new GUIText(this, "IIII"));
-                root.add(new GUIText(this, "\n"));
-                root.add(new GUIText(this, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"));
-                root.add(new GUIText(this, "IIII"));
-
-                root.add(new GUIText(this, "\n"));
-                root.add(new GUITextInput(this, "aaaa", FilterNone.INSTANCE));
-                root.add(new GUITextInput(this, "IIII", FilterNone.INSTANCE));
-                root.add(new GUIText(this, "\n"));
-                root.add(new GUITextInput(this, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", FilterNone.INSTANCE));
-                root.add(new GUITextInput(this, "IIII", FilterNone.INSTANCE));
-                root.add(new GUIText(this, "\n"));
-                root.add(new GUITextInput(this, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", FilterNone.INSTANCE));
-                root.add(new GUITextInput(this, "IIII", FilterNone.INSTANCE));
-
-                root.add(new GUIText(this, "\n"));
-                root.add(new GUILabeledTextInput(this, "aaaa", "IIII", FilterNone.INSTANCE));
-                root.add(new GUIText(this, "\n"));
-                root.add(new GUILabeledTextInput(this, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "IIII", FilterNone.INSTANCE));
-                root.add(new GUIText(this, "\n"));
-                root.add(new GUILabeledTextInput(this, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "IIII", FilterNone.INSTANCE));
-
-                root.add(new GUIText(this, "\n"));
-                root.add(new GUIMultilineTextInput(this, "a", FilterNone.INSTANCE));
+                root.add(new GUIItemStack(this, 16, 16, new ItemStack(Items.BOW)));
+                root.add(new GUIText(this, "Test"));
+                root.add(new GUIItemStack(this, 16, 16, new ItemStack(Items.BOW)));
                 break;
         }
 
