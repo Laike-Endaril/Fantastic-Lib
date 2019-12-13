@@ -259,19 +259,32 @@ public class Render
     }
 
 
-    public IntBuffer getViewportMatrix() throws IllegalAccessException
+    public static IntBuffer getViewportMatrix() throws IllegalAccessException
     {
         return (IntBuffer) activeRenderInfoViewportField.get(null);
     }
 
-    public IntBuffer getProjectionMatrix() throws IllegalAccessException
+    public static FloatBuffer getProjectionMatrix() throws IllegalAccessException
     {
-        return (IntBuffer) activeRenderInfoProjectionField.get(null);
+        return (FloatBuffer) activeRenderInfoProjectionField.get(null);
     }
 
-    public IntBuffer getModelViewMatrix() throws IllegalAccessException
+    public static FloatBuffer getModelViewMatrix() throws IllegalAccessException
     {
-        return (IntBuffer) activeRenderInfoModelviewField.get(null);
+        return (FloatBuffer) activeRenderInfoModelviewField.get(null);
+    }
+
+
+    public static void setProjectionMatrix(FloatBuffer matrix)
+    {
+        GlStateManager.matrixMode(GL11.GL_PROJECTION);
+        GL11.glLoadMatrix(matrix);
+    }
+
+    public static void setModelViewMatrix(FloatBuffer matrix)
+    {
+        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+        GL11.glLoadMatrix(matrix);
     }
 
 
