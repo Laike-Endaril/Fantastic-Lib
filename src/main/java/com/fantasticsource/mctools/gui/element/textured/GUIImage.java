@@ -4,7 +4,6 @@ import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -16,7 +15,7 @@ import static org.lwjgl.opengl.GL11.GL_QUADS;
 public class GUIImage extends GUIElement
 {
     private ResourceLocation texture;
-    private double scaledWidth, scaledHeight, u, v, uw, vh;
+    private double unscaledWidth, unscaledHeight, u, v, uw, vh;
     private Color color;
 
     public GUIImage(GUIScreen screen, double unscaledWidth, double unscaledHeight, ResourceLocation texture)
@@ -38,8 +37,8 @@ public class GUIImage extends GUIElement
     {
         super(screen, 1, 1);
 
-        scaledWidth = unscaledWidth * 2 / new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
-        scaledHeight = unscaledHeight * 2 / new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
+        this.unscaledWidth = unscaledWidth;
+        this.unscaledHeight = unscaledHeight;
 
         this.texture = texture;
 
@@ -71,8 +70,8 @@ public class GUIImage extends GUIElement
     {
         super(screen, x, y, 1, 1);
 
-        this.scaledWidth = unscaledWidth * 2 / new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
-        this.scaledHeight = unscaledHeight * 2 / new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
+        this.unscaledWidth = unscaledWidth;
+        this.unscaledHeight = unscaledHeight;
 
         this.texture = texture;
 
@@ -88,8 +87,8 @@ public class GUIImage extends GUIElement
     @Override
     public GUIImage recalc(int subIndexChanged)
     {
-        width = scaledWidth / screen.width;
-        height = scaledHeight / screen.height;
+        width = unscaledWidth / screen.width;
+        height = unscaledHeight / screen.height;
 
         //TODO this line is cancelling a scissor offset issue of unknown origin; offset = 1 - ()
         //TODO I might've fixed the root issue and not need this line?
