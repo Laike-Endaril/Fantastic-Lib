@@ -63,6 +63,17 @@ public class GUIItemStack extends GUIElement
     }
 
 
+    public void setItemStack(ItemStack stack)
+    {
+        this.stack = stack.copy();
+    }
+
+    public ItemStack getItemStack()
+    {
+        return stack.copy();
+    }
+
+
     @Override
     public GUIItemStack recalc(int subIndexChanged)
     {
