@@ -6,6 +6,8 @@ import com.fantasticsource.mctools.gui.element.other.GUIButton;
 import com.fantasticsource.mctools.gui.element.other.GUIGradient;
 import com.fantasticsource.tools.datastructures.Color;
 
+import java.util.ArrayList;
+
 public abstract class GUIList extends GUIScrollView
 {
     public static final Color
@@ -30,15 +32,15 @@ public abstract class GUIList extends GUIScrollView
 
     private void addAddLineLine()
     {
-        GUIAutocroppedView line = new GUIAutocroppedView(screen);
+        Line line = new Line(screen);
 
-        //Force line to be full width
+        //Add blank element to force line to be full width
         line.add(new GUIElement(screen, 1, 0));
 
         //Add "add line" button
         line.add(GUIButton.newAddButton(screen)).addClickActions(this::addLine);
 
-        //Add line
+        //Add line to list
         add(line);
     }
 
@@ -48,25 +50,38 @@ public abstract class GUIList extends GUIScrollView
         return addLine(newLineDefaultElements());
     }
 
+    public GUIList addLine(int index)
+    {
+        return addLine(index, newLineDefaultElements());
+    }
+
     public GUIList addLine(GUIElement... lineElements)
     {
         return addLine(children.size() - 1, lineElements);
-    }
-
-    public GUIList addAllLines(GUIElement[]... lines)
-    {
-        for (GUIElement[] line : lines) addLine(line);
-        return this;
     }
 
     public GUIList addLine(int index, GUIElement... lineElements)
     {
         if (index >= children.size()) throw new ArrayIndexOutOfBoundsException("Index: " + index + ", Size: " + size());
 
-        GUIAutocroppedView line = new GUIAutocroppedView(screen, newLineBackgroundElement());
+        Line line = new Line(screen, newLineBackgroundElement());
 
-        //Force line to be full width
+        //Add blank element to force line to be full width
         line.add(new GUIElement(screen, 1, 0));
+
+        //Add "add line" button
+        GUIButton button = GUIButton.newAddButton(screen);
+        line.add(button).addClickActions(() ->
+        {
+            for (int i = 0; i < size(); i++)
+            {
+                if (get(i).indexOf(button) != -1)
+                {
+                    addLine(i);
+                    break;
+                }
+            }
+        });
 
         //Add "remove line" button
         line.add(GUIButton.newRemoveButton(screen).addClickActions(() -> remove(line)));
@@ -74,9 +89,15 @@ public abstract class GUIList extends GUIScrollView
         //Line elements
         if (lineElements != null) line.addAll(lineElements);
 
-        //Add line
-        add(children.size() - 1, line);
+        //Add line to list
+        add(index, line);
 
+        return this;
+    }
+
+    public GUIList addAllLines(GUIElement[]... lines)
+    {
+        for (GUIElement[] line : lines) addLine(line);
         return this;
     }
 
@@ -103,8 +124,61 @@ public abstract class GUIList extends GUIScrollView
 
 
     @Override
-    public GUIAutocroppedView get(int index)
+    public Line get(int index)
     {
-        return (GUIAutocroppedView) super.get(index);
+        return (Line) super.get(index);
+    }
+
+
+    public static class Line extends GUIAutocroppedView
+    {
+        public Line(GUIScreen screen)
+        {
+            super(screen);
+        }
+
+        public Line(GUIScreen screen, double padding)
+        {
+            super(screen, padding);
+        }
+
+        public Line(GUIScreen screen, GUIElement background)
+        {
+            super(screen, background);
+        }
+
+        public Line(GUIScreen screen, double padding, GUIElement background)
+        {
+            super(screen, padding, background);
+        }
+
+        public Line(GUIScreen screen, double x, double y)
+        {
+            super(screen, x, y);
+        }
+
+        public Line(GUIScreen screen, double x, double y, double padding)
+        {
+            super(screen, x, y, padding);
+        }
+
+        public Line(GUIScreen screen, double x, double y, GUIElement background)
+        {
+            super(screen, x, y, background);
+        }
+
+        public Line(GUIScreen screen, double x, double y, double padding, GUIElement background)
+        {
+            super(screen, x, y, padding, background);
+        }
+
+        public ArrayList<GUIElement> getLineElements()
+        {
+            if (children.size() < 4) return new ArrayList<>();
+
+            ArrayList<GUIElement> list = new ArrayList<>();
+            for (int i = 3; i < children.size(); i++) list.add(get(i));
+            return list;
+        }
     }
 }
