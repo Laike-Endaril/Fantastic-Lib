@@ -23,8 +23,8 @@ public class GUIItemStack extends GUIElement
     {
         super(screen, 1, 1);
 
-        scaledWidth = unscaledWidth * 2 / new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
-        scaledHeight = unscaledHeight * 2 / new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
+        scaledWidth = unscaledWidth;
+        scaledHeight = unscaledHeight;
 
         this.stack = stack;
 
@@ -45,8 +45,8 @@ public class GUIItemStack extends GUIElement
     {
         super(screen, x, y, 1, 1);
 
-        this.scaledWidth = unscaledWidth * 2 / new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
-        this.scaledHeight = unscaledHeight * 2 / new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
+        this.scaledWidth = unscaledWidth;
+        this.scaledHeight = unscaledHeight;
 
         this.stack = stack;
 
