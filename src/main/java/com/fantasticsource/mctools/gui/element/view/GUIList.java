@@ -172,13 +172,26 @@ public abstract class GUIList extends GUIScrollView
             super(screen, x, y, padding, background);
         }
 
+
         public ArrayList<GUIElement> getLineElements()
         {
-            if (children.size() < 4) return new ArrayList<>();
+            if (size() < 4) return new ArrayList<>();
+
+            int offset = 3;
+            if (get(0) == background)
+            {
+                if (size() < 5) return new ArrayList<>();
+                else offset++;
+            }
 
             ArrayList<GUIElement> list = new ArrayList<>();
-            for (int i = 3; i < children.size(); i++) list.add(get(i));
+            for (int i = offset; i < children.size(); i++) list.add(get(i));
             return list;
+        }
+
+        public GUIElement getLineElement(int index)
+        {
+            return get(get(0) == background ? index + 4 : index + 3);
         }
     }
 }
