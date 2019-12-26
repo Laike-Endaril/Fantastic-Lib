@@ -3,7 +3,6 @@ package com.fantasticsource.mctools.potions;
 import com.fantasticsource.fantasticlib.FantasticLib;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
@@ -14,26 +13,26 @@ import java.util.regex.Pattern;
 public class Potions
 {
     /**
-     * Syntax is registryname.duration.level & registryname.duration.level & registryname.duration.level...
+     * Syntax is registryname.duration.level.interval & registryname.duration.level.interval & registryname.duration.level.interval...
      */
-    public static ArrayList<PotionEffect> parsePotions(String potionList)
+    public static ArrayList<FantasticPotionEffect> parsePotions(String potionList)
     {
         return parsePotions(potionList, false);
     }
 
     /**
-     * Syntax is registryname.duration.level & registryname.duration.level & registryname.duration.level...
+     * Syntax is registryname.duration.level.interval & registryname.duration.level.interval & registryname.duration.level.interval...
      */
-    public static ArrayList<PotionEffect> parsePotions(String[] potionList)
+    public static ArrayList<FantasticPotionEffect> parsePotions(String[] potionList)
     {
         return parsePotions(potionList, false);
     }
 
     /**
-     * Syntax if ampFirst is true is registryname.level.duration & registryname.level.duration & registryname.level.duration...
-     * Syntax if ampFirst is false is registryname.duration.level & registryname.duration.level & registryname.duration.level...
+     * Syntax if ampFirst is true is registryname.level.duration.interval & registryname.level.duration.interval & registryname.level.duration.interval...
+     * Syntax if ampFirst is false is registryname.duration.level.interval & registryname.duration.level.interval & registryname.duration.level.interval...
      */
-    public static ArrayList<PotionEffect> parsePotions(String potionList, boolean ampFirst)
+    public static ArrayList<FantasticPotionEffect> parsePotions(String potionList, boolean ampFirst)
     {
         String[] potions = potionList.split("&");
         for (int i = 0; i < potions.length; i++) potions[i] = potions[i].trim();
@@ -41,14 +40,14 @@ public class Potions
     }
 
     /**
-     * If ampFirst is true, syntax for each is registryname.level.duration
-     * If ampFirst is false, syntax for each is registryname.duration.level
+     * If ampFirst is true, syntax for each is registryname.level.duration.interval
+     * If ampFirst is false, syntax for each is registryname.duration.level.interval
      */
-    public static ArrayList<PotionEffect> parsePotions(String[] potionList, boolean ampFirst)
+    public static ArrayList<FantasticPotionEffect> parsePotions(String[] potionList, boolean ampFirst)
     {
-        ArrayList<PotionEffect> result = new ArrayList<>();
+        ArrayList<FantasticPotionEffect> result = new ArrayList<>();
 
-        PotionEffect potion;
+        FantasticPotionEffect potion;
         for (String string : potionList)
         {
             potion = parsePotion(string, ampFirst);
@@ -60,18 +59,18 @@ public class Potions
     }
 
     /**
-     * Syntax is registryname.duration.level
+     * Syntax is registryname.duration.level.interval
      */
-    public static PotionEffect parsePotion(String potionString)
+    public static FantasticPotionEffect parsePotion(String potionString)
     {
         return parsePotion(potionString, false);
     }
 
     /**
-     * If ampFirst is true, syntax is registryname.level.duration
-     * If ampFirst is false, syntax is registryname.duration.level
+     * If ampFirst is true, syntax is registryname.level.duration.interval
+     * If ampFirst is false, syntax is registryname.duration.level.interval
      */
-    public static PotionEffect parsePotion(String potionString, boolean ampFirst)
+    public static FantasticPotionEffect parsePotion(String potionString, boolean ampFirst)
     {
         potionString = potionString.trim();
         if (potionString.equals("")) return null;
@@ -101,13 +100,13 @@ public class Potions
 
         potionString = potionString.replace(regString, "").trim().replace(".", "");
         String[] tokens = potionString.equals("") ? new String[0] : potionString.replace(regString, "").split(Pattern.quote("."));
-        if (tokens.length > 2)
+        if (tokens.length > 3)
         {
             System.err.println(I18n.format(FantasticLib.MODID + ".error.tooManyPotionArgs", potionString));
             return null;
         }
 
-        int duration = Integer.MAX_VALUE, amplifier = 0;
+        int duration = Integer.MAX_VALUE, amplifier = 0, interval = 0;
         if (ampFirst)
         {
             if (tokens.length > 0)
@@ -187,6 +186,24 @@ public class Potions
             }
         }
 
-        return new PotionEffect(potion, duration, amplifier, false, true);
+        if (tokens.length > 2)
+        {
+            String intrvStr = tokens[2].trim();
+            if (intrvStr.equals("*")) interval = Integer.MAX_VALUE;
+            else
+            {
+                try
+                {
+                    interval = Integer.parseInt(tokens[2].trim());
+                }
+                catch (NumberFormatException e)
+                {
+                    System.err.println(I18n.format(FantasticLib.MODID + ".error.potionIntrvNotNumber", potionString));
+                    return null;
+                }
+            }
+        }
+
+        return new FantasticPotionEffect(potion, duration, amplifier, false, true).setInterval(interval);
     }
 }

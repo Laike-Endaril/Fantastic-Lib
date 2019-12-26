@@ -16,6 +16,7 @@ fantasticlib.error.tooManyPotionArgs=Too many arguments for potion effect (shoul
 fantasticlib.error.potionNotFound=ResourceLocation for potion not found: %s
 fantasticlib.error.potionAmpNotNumber=Amplifier for potion is not a number: %s
 fantasticlib.error.potionDurNotNumber=Duration for potion is not a number: %s
+fantasticlib.error.potionIntrvNotNumber=Interval for potion is not a number: %s
 
 
 
