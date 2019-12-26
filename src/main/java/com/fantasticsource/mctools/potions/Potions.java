@@ -122,7 +122,7 @@ public class Potions
                     try
                     {
                         amplifier = Integer.parseInt(tokens[0].trim());
-                        if (amplifier > 0) amplifier--; //Makes it so ppl can just type 2 for stength 2 instead of typing 1
+                        if (amplifier > 0) amplifier--; //Makes it so ppl can just type 2 for strength 2 instead of typing 1
                     }
                     catch (NumberFormatException e)
                     {
@@ -154,7 +154,7 @@ public class Potions
                     try
                     {
                         amplifier = Integer.parseInt(tokens[1].trim());
-                        if (amplifier > 0) amplifier--; //Makes it so ppl can just type 2 for stength 2 instead of typing 1
+                        if (amplifier > 0) amplifier--; //Makes it so ppl can just type 2 for strength 2 instead of typing 1
                     }
                     catch (NumberFormatException e)
                     {
