@@ -30,28 +30,28 @@ public class Potions
     }
 
     /**
-     * Syntax if allMaxDuration is true is registryname.level & registryname.level & registryname.level...
-     * Syntax if allMaxDuration is false is registryname.duration.level & registryname.duration.level & registryname.duration.level...
+     * Syntax if ampFirst is true is registryname.level.duration & registryname.level.duration & registryname.level.duration...
+     * Syntax if ampFirst is false is registryname.duration.level & registryname.duration.level & registryname.duration.level...
      */
-    public static ArrayList<PotionEffect> parsePotions(String potionList, boolean allMaxDuration)
+    public static ArrayList<PotionEffect> parsePotions(String potionList, boolean ampFirst)
     {
         String[] potions = potionList.split("&");
         for (int i = 0; i < potions.length; i++) potions[i] = potions[i].trim();
-        return parsePotions(potions, allMaxDuration);
+        return parsePotions(potions, ampFirst);
     }
 
     /**
-     * If allMaxDuration is true, syntax for each is registryname.level
-     * If allMaxDuration is false, syntax for each is registryname.duration.level
+     * If ampFirst is true, syntax for each is registryname.level.duration
+     * If ampFirst is false, syntax for each is registryname.duration.level
      */
-    public static ArrayList<PotionEffect> parsePotions(String[] potionList, boolean allMaxDuration)
+    public static ArrayList<PotionEffect> parsePotions(String[] potionList, boolean ampFirst)
     {
         ArrayList<PotionEffect> result = new ArrayList<>();
 
         PotionEffect potion;
         for (String string : potionList)
         {
-            potion = parsePotion(string, allMaxDuration);
+            potion = parsePotion(string, ampFirst);
             if (potion == null) continue;
             result.add(potion);
         }
@@ -68,10 +68,10 @@ public class Potions
     }
 
     /**
-     * If maxDuration is true, syntax is registryname.level
-     * If maxDuration is false, syntax is registryname.duration.level
+     * If ampFirst is true, syntax is registryname.level.duration
+     * If ampFirst is false, syntax is registryname.duration.level
      */
-    public static PotionEffect parsePotion(String potionString, boolean maxDuration)
+    public static PotionEffect parsePotion(String potionString, boolean ampFirst)
     {
         potionString = potionString.trim();
         if (potionString.equals("")) return null;
@@ -101,22 +101,19 @@ public class Potions
 
         potionString = potionString.replace(regString, "").trim().replace(".", "");
         String[] tokens = potionString.equals("") ? new String[0] : potionString.replace(regString, "").split(Pattern.quote("."));
-        if (tokens.length > (maxDuration ? 1 : 2))
+        if (tokens.length > 2)
         {
             System.err.println(I18n.format(FantasticLib.MODID + ".error.tooManyPotionArgs", potionString));
             return null;
         }
 
-        int duration, amplifier;
-        if (maxDuration)
+        int duration = Integer.MAX_VALUE, amplifier = 0;
+        if (ampFirst)
         {
-            duration = Integer.MAX_VALUE;
-
-            if (tokens.length < 1) amplifier = 0;
-            else
+            if (tokens.length > 0)
             {
-                String token = tokens[0].trim();
-                if (token.equals("*")) amplifier = Integer.MAX_VALUE;
+                String ampStr = tokens[0].trim();
+                if (ampStr.equals("*")) amplifier = Integer.MAX_VALUE;
                 else
                 {
                     try
@@ -131,24 +128,49 @@ public class Potions
                     }
                 }
             }
+
+            if (tokens.length > 1)
+            {
+                String durStr = tokens[1].trim();
+                if (durStr.equals("*")) duration = Integer.MAX_VALUE;
+                else
+                {
+                    try
+                    {
+                        duration = Integer.parseInt(tokens[1].trim());
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        System.err.println(I18n.format(FantasticLib.MODID + ".error.potionDurNotNumber", potionString));
+                        return null;
+                    }
+                }
+            }
         }
         else
         {
-            try
+            if (tokens.length > 0)
             {
-                duration = tokens.length > 0 ? Integer.parseInt(tokens[0].trim()) : Integer.MAX_VALUE;
-            }
-            catch (NumberFormatException e)
-            {
-                System.err.println(I18n.format(FantasticLib.MODID + ".error.potionDurNotNumber", potionString));
-                return null;
+                String durStr = tokens[0].trim();
+                if (durStr.equals("*")) duration = Integer.MAX_VALUE;
+                else
+                {
+                    try
+                    {
+                        duration = Integer.parseInt(tokens[0].trim());
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        System.err.println(I18n.format(FantasticLib.MODID + ".error.potionDurNotNumber", potionString));
+                        return null;
+                    }
+                }
             }
 
-            if (tokens.length < 2) amplifier = 0;
-            else
+            if (tokens.length > 1)
             {
-                String token = tokens[1].trim();
-                if (token.equals("*")) amplifier = Integer.MAX_VALUE;
+                String ampStr = tokens[1].trim();
+                if (ampStr.equals("*")) amplifier = Integer.MAX_VALUE;
                 else
                 {
                     try
