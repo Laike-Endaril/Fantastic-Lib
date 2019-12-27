@@ -5,7 +5,7 @@ import net.minecraft.potion.PotionEffect;
 
 public class FantasticPotionEffect extends PotionEffect
 {
-    protected int interval = 0;
+    public int interval = 0;
 
     public FantasticPotionEffect(Potion potionIn)
     {

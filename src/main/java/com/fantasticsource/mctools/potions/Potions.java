@@ -98,8 +98,8 @@ public class Potions
             return null;
         }
 
-        potionString = potionString.replace(regString, "").trim().replace(".", "");
-        String[] tokens = potionString.equals("") ? new String[0] : potionString.replace(regString, "").split(Pattern.quote("."));
+        potionString = potionString.replaceFirst(regString, "").replaceFirst("[.]", "").trim();
+        String[] tokens = potionString.equals("") ? new String[0] : potionString.split(Pattern.quote("."));
         if (tokens.length > 3)
         {
             System.err.println(I18n.format(FantasticLib.MODID + ".error.tooManyPotionArgs", potionString));
