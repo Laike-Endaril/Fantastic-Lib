@@ -94,8 +94,8 @@ public abstract class GUIScreen extends GuiScreen
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
-        mcProjection = Render.getProjectionMatrix();
-        mcModelView = Render.getModelViewMatrix();
+        mcProjection = Render.getCurrentProjectionMatrix();
+        mcModelView = Render.getCurrentModelViewMatrix();
 
         if (pxWidth != Display.getWidth() || pxHeight != Display.getHeight()) recalc();
 
@@ -175,7 +175,7 @@ public abstract class GUIScreen extends GuiScreen
             init();
         }
 
-        Mouse.setCursorPosition((int) (mouseX * Render.getViewportWidth()), (int) ((1 - mouseY) * Render.getViewportHeight()));
+        Mouse.setCursorPosition((int) (mouseX * Render.getCurrentViewportWidth()), (int) ((1 - mouseY) * Render.getCurrentViewportHeight()));
 
         mouseButtons.clear();
         root.recalc(0);

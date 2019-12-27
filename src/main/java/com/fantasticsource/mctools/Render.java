@@ -40,7 +40,7 @@ public class Render
             SCALING_MC_GUI = 1;
 
 
-    private static Field minecraftRenderPartialTicksPausedField;
+    private static Field activeRenderInfoViewportField, activeRenderInfoProjectionField, activeRenderInfoModelviewField, minecraftRenderPartialTicksPausedField;
 
     private static float fov, fovMultiplier;
 
@@ -49,6 +49,9 @@ public class Render
     {
         try
         {
+            activeRenderInfoViewportField = ReflectionTool.getField(ActiveRenderInfo.class, "field_178814_a", "VIEWPORT");
+            activeRenderInfoProjectionField = ReflectionTool.getField(ActiveRenderInfo.class, "field_178813_c", "PROJECTION");
+            activeRenderInfoModelviewField = ReflectionTool.getField(ActiveRenderInfo.class, "field_178812_b", "MODELVIEW");
             minecraftRenderPartialTicksPausedField = ReflectionTool.getField(Minecraft.class, "field_193996_ah", "renderPartialTicksPaused");
 
             MinecraftForge.EVENT_BUS.register(Render.class);
@@ -112,15 +115,15 @@ public class Render
     }
 
 
-    public static float getVFOV()
+    public static float getStoredVFOV()
     {
         //This should already be accounting for partialticks behind the scenes
         return fov * fovMultiplier;
     }
 
-    public static double getHFOV(TrigLookupTable trigLookupTable)
+    public static double getStoredHFOV(TrigLookupTable trigLookupTable) throws IllegalAccessException
     {
-        return radtodeg(trigLookupTable.arctan(getZNearWidth() * 0.5 / getZNearDist())) * 2;
+        return radtodeg(trigLookupTable.arctan(getStoredZNearWidth() * 0.5 / getStoredZNearDist())) * 2;
     }
 
 
@@ -156,7 +159,7 @@ public class Render
      * When the entity is visible in the current projection, the returned values are its position in the window
      * When the entity is not visible in the current projection, the returned values are an off-screen position with the correct ratio to be used for an edge-of-screen indicator
      */
-    private static Pair<Float, Float> get2DWindowCoordsFrom3DWorldCoords(double x, double y, double z, double partialTick)
+    private static Pair<Float, Float> get2DWindowCoordsFrom3DWorldCoords(double x, double y, double z, double partialTick) throws IllegalAccessException
     {
         //Based on GLU.gluProject()
         EntityPlayer player = Minecraft.getMinecraft().player;
@@ -164,9 +167,10 @@ public class Render
         double py = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTick;
         double pz = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTick;
 
-        FloatBuffer modelView = getModelViewMatrix();
-        FloatBuffer projection = getProjectionMatrix();
-        IntBuffer viewport = getViewportMatrix();
+        //Need to get these from stored values, because the actual current matrices are probably ortho, for drawing a HUD
+        FloatBuffer modelView = getStoredModelViewMatrix();
+        FloatBuffer projection = getStoredProjectionMatrix();
+        IntBuffer viewport = getStoredViewportMatrix();
 
         float[] in = new float[4];
         float[] out = new float[4];
@@ -223,52 +227,94 @@ public class Render
     }
 
 
-    public static double getZNearDist()
+    public static double getCurrentZNearDist()
     {
-        FloatBuffer projection = getProjectionMatrix();
+        FloatBuffer projection = getCurrentProjectionMatrix();
         return (2f * projection.get(11)) / (2f * projection.get(10) - 2f);
     }
 
-    public static double getZNearWidth()
+    public static double getStoredZNearDist() throws IllegalAccessException
     {
-        return getZNearDist() * 2 / getProjectionMatrix().get(0);
+        FloatBuffer projection = getStoredProjectionMatrix();
+        return (2f * projection.get(11)) / (2f * projection.get(10) - 2f);
     }
 
-    public static double getZNearHeight()
+    public static double getCurrentZNearWidth()
     {
-        return getZNearDist() * 2 / getProjectionMatrix().get(5);
+        return getCurrentZNearDist() * 2 / getCurrentProjectionMatrix().get(0);
+    }
+
+    public static double getStoredZNearWidth() throws IllegalAccessException
+    {
+        return getStoredZNearDist() * 2 / getStoredProjectionMatrix().get(0);
+    }
+
+    public static double getCurrentZNearHeight()
+    {
+        return getCurrentZNearDist() * 2 / getCurrentProjectionMatrix().get(5);
+    }
+
+    public static double getStoredZNearHeight() throws IllegalAccessException
+    {
+        return getStoredZNearDist() * 2 / getStoredProjectionMatrix().get(5);
     }
 
 
     /**
      * This is not the width of the near plane!  This is the PORT width, not the VIEW width, ie. usually the window width
      */
-    public static int getViewportWidth()
+    public static int getCurrentViewportWidth()
     {
-        return getViewportMatrix().get(2);
+        return getCurrentViewportMatrix().get(2);
+    }
+
+    /**
+     * This is not the width of the near plane!  This is the PORT width, not the VIEW width, ie. usually the window width
+     */
+    public static int getStoredViewportWidth() throws IllegalAccessException
+    {
+        return getStoredViewportMatrix().get(2);
     }
 
     /**
      * This is not the height of the near plane!  This is the PORT height, not the VIEW height, ie. usually the window height
      */
-    public static int getViewportHeight()
+    public static int getCurrentViewportHeight()
     {
-        return getViewportMatrix().get(3);
+        return getCurrentViewportMatrix().get(3);
+    }
+
+    /**
+     * This is not the height of the near plane!  This is the PORT height, not the VIEW height, ie. usually the window height
+     */
+    public static int getStoredViewportHeight() throws IllegalAccessException
+    {
+        return getStoredViewportMatrix().get(3);
     }
 
 
-    public static IntBuffer getViewportMatrix()
+    public static IntBuffer getCurrentViewportMatrix()
     {
         IntBuffer result = ByteBuffer.allocateDirect(16 << 2).asIntBuffer();
         GlStateManager.glGetInteger(GL11.GL_PROJECTION_MATRIX, result);
         return result;
     }
 
-    public static FloatBuffer getProjectionMatrix()
+    public static IntBuffer getStoredViewportMatrix() throws IllegalAccessException
+    {
+        return ((IntBuffer) activeRenderInfoViewportField.get(null)).duplicate();
+    }
+
+    public static FloatBuffer getCurrentProjectionMatrix()
     {
         FloatBuffer result = ByteBuffer.allocateDirect(16 << 2).asFloatBuffer();
         GlStateManager.getFloat(GL11.GL_PROJECTION_MATRIX, result);
         return result;
+    }
+
+    public static FloatBuffer getStoredProjectionMatrix() throws IllegalAccessException
+    {
+        return ((FloatBuffer) activeRenderInfoProjectionField.get(null)).duplicate();
     }
 
     public static void setProjectionMatrix(FloatBuffer matrix)
@@ -277,11 +323,16 @@ public class Render
         GL11.glLoadMatrix(matrix);
     }
 
-    public static FloatBuffer getModelViewMatrix()
+    public static FloatBuffer getCurrentModelViewMatrix()
     {
         FloatBuffer result = ByteBuffer.allocateDirect(16 << 2).asFloatBuffer();
         GlStateManager.getFloat(GL11.GL_MODELVIEW_MATRIX, result);
         return result;
+    }
+
+    public static FloatBuffer getStoredModelViewMatrix() throws IllegalAccessException
+    {
+        return ((FloatBuffer) activeRenderInfoModelviewField.get(null)).duplicate();
     }
 
     public static void setModelViewMatrix(FloatBuffer matrix)
@@ -314,7 +365,7 @@ public class Render
             return parentEvent;
         }
 
-        public void setScalingMode(byte scalingMode)
+        public void setScalingMode(byte scalingMode) throws IllegalAccessException
         {
             if (this.scalingMode == scalingMode) return;
 
@@ -323,8 +374,8 @@ public class Render
             switch (scalingMode)
             {
                 case SCALING_FULL:
-                    width = Render.getViewportWidth();
-                    height = Render.getViewportHeight();
+                    width = Render.getStoredViewportWidth();
+                    height = Render.getStoredViewportHeight();
                     break;
 
                 case SCALING_MC_GUI:

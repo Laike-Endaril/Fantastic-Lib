@@ -102,8 +102,8 @@ public class GUIItemStack extends GUIElement
     {
         //TODO Later-drawn GUIItemStacks render on top of tooltips
 
-        FloatBuffer projection = Render.getProjectionMatrix();
-        FloatBuffer modelView = Render.getModelViewMatrix();
+        FloatBuffer projection = Render.getCurrentProjectionMatrix();
+        FloatBuffer modelView = Render.getCurrentModelViewMatrix();
 
         Render.setProjectionMatrix(GUIScreen.mcProjection);
         Render.setModelViewMatrix(GUIScreen.mcModelView);
