@@ -118,7 +118,7 @@ public class Render
         return fov * fovMultiplier;
     }
 
-    public static double getHFOV(TrigLookupTable trigLookupTable) throws IllegalAccessException
+    public static double getHFOV(TrigLookupTable trigLookupTable)
     {
         return radtodeg(trigLookupTable.arctan(getZNearWidth() * 0.5 / getZNearDist())) * 2;
     }
@@ -156,7 +156,7 @@ public class Render
      * When the entity is visible in the current projection, the returned values are its position in the window
      * When the entity is not visible in the current projection, the returned values are an off-screen position with the correct ratio to be used for an edge-of-screen indicator
      */
-    private static Pair<Float, Float> get2DWindowCoordsFrom3DWorldCoords(double x, double y, double z, double partialTick) throws IllegalAccessException
+    private static Pair<Float, Float> get2DWindowCoordsFrom3DWorldCoords(double x, double y, double z, double partialTick)
     {
         //Based on GLU.gluProject()
         EntityPlayer player = Minecraft.getMinecraft().player;
@@ -179,7 +179,7 @@ public class Render
         multMatrix(modelView, in, out);
         multMatrix(projection, out, in);
 
-        if (in[3] == 0.0) return null;
+        if (in[3] == 0.0) return null; //TODO handle this without returning null if possible
 
         in[3] = (1.0f / in[3]) * 0.5f;
 
