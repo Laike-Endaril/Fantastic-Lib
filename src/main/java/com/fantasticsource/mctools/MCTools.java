@@ -437,11 +437,13 @@ public class MCTools
 
     public static void reloadConfig(String modid) throws IllegalAccessException
     {
+        //TODO This wipes config tooltips and doesn't fully load configs
         reloadConfig(getConfigDir() + modid + ".cfg", modid);
     }
 
     public static void reloadConfig(String configFilename, String modid) throws IllegalAccessException
     {
+        //TODO This wipes config tooltips and doesn't fully load configs
         ((Map<String, Configuration>) configManagerCONFIGSField.get(null)).remove(configFilename);
         ConfigManager.sync(modid, Config.Type.INSTANCE);
     }
