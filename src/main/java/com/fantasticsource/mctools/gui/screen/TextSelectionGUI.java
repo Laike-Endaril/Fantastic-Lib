@@ -39,7 +39,7 @@ public class TextSelectionGUI extends GUIScreen
 
         GUITextSpacer spacer = new GUITextSpacer(this, true);
         TextSelectionGUI gui = this;
-        GUIList list = new GUIList(this, 0.98 - spacer.width * 2, 1, false)
+        GUIList list = new GUIList(this, false, 0.98 - spacer.width * 2, 1)
         {
             @Override
             public GUIElement[] newLineDefaultElements()
