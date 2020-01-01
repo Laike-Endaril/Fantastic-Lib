@@ -14,6 +14,41 @@ import java.util.Random;
 @SuppressWarnings("unused")
 public class Tools
 {
+    public String[] sort(String... values)
+    {
+        String[] result = new String[values.length];
+        System.arraycopy(values, 0, result, 0, result.length);
+
+        String s;
+        for (int passesRemaining = result.length - 1; passesRemaining > 0; passesRemaining--)
+        {
+            for (int i = 0; i < passesRemaining; i++)
+            {
+                if (inOrder(result[i], result[i + 1])) continue;
+
+                s = result[i];
+                result[i] = result[i + 1];
+                result[i + 1] = s;
+            }
+        }
+
+        return result;
+    }
+
+    public boolean inOrder(String s1, String s2)
+    {
+        char[] chars1 = s1.toLowerCase().toCharArray();
+        char[] chars2 = s2.toLowerCase().toCharArray();
+
+        for (int i = 0; i < chars1.length; i++)
+        {
+            if (i >= chars2.length || chars2[i] < chars1[i]) return false;
+        }
+
+        return true;
+    }
+
+
     public static int parseHexInt(String hex)
     {
         hex = hex.replaceAll("0x", "");
