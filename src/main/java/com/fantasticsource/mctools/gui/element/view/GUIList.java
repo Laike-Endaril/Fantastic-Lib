@@ -17,7 +17,7 @@ public abstract class GUIList extends GUIScrollView
     public final boolean editable;
 
 
-    public GUIList(GUIScreen screen, double width, double height, boolean editable, GUIElement... subElements)
+    public GUIList(GUIScreen screen, boolean editable, double width, double height, GUIElement... subElements)
     {
         super(screen, width, height, subElements);
 
@@ -26,7 +26,7 @@ public abstract class GUIList extends GUIScrollView
         if (editable) addAddLineLine();
     }
 
-    public GUIList(GUIScreen screen, double x, double y, double width, double height, boolean editable, GUIElement... subElements)
+    public GUIList(GUIScreen screen, boolean editable, double x, double y, double width, double height, GUIElement... subElements)
     {
         super(screen, x, y, width, height, subElements);
 
