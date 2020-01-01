@@ -14,7 +14,7 @@ import java.util.Random;
 @SuppressWarnings("unused")
 public class Tools
 {
-    public String[] sort(String... values)
+    public static String[] sort(String... values)
     {
         String[] result = new String[values.length];
         System.arraycopy(values, 0, result, 0, result.length);
@@ -35,7 +35,7 @@ public class Tools
         return result;
     }
 
-    public boolean inOrder(String s1, String s2)
+    public static boolean inOrder(String s1, String s2)
     {
         char[] chars1 = s1.toLowerCase().toCharArray();
         char[] chars2 = s2.toLowerCase().toCharArray();
