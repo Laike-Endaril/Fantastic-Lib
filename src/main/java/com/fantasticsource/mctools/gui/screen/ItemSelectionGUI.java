@@ -96,9 +96,4 @@ public class ItemSelectionGUI extends GUIScreen
     {
         return "Item";
     }
-
-    @Override
-    protected void init()
-    {
-    }
 }

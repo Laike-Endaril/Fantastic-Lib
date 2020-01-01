@@ -229,9 +229,4 @@ public class ColorSelectionGUI extends GUIScreen
     {
         return "Color";
     }
-
-    @Override
-    protected void init()
-    {
-    }
 }
