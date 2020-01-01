@@ -16,7 +16,7 @@ public class GUINavbar extends GUITextButton
 
     public GUINavbar(GUIScreen screen, double scale)
     {
-        this(screen, Color.WHITE, scale);
+        this(screen, Color.AQUA, scale);
     }
 
     public GUINavbar(GUIScreen screen, Color color)
