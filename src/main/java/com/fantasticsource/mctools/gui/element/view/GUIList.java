@@ -14,25 +14,31 @@ public abstract class GUIList extends GUIScrollView
             AL_WHITE = Color.WHITE.copy().setAF(0.3f),
             AL_BLACK = Color.BLACK.copy().setAF(0.3f);
 
+    public final boolean editable;
 
-    public GUIList(GUIScreen screen, double width, double height, GUIElement... subElements)
+
+    public GUIList(GUIScreen screen, double width, double height, boolean editable, GUIElement... subElements)
     {
         super(screen, width, height, subElements);
 
-        addAddLineLine();
+        this.editable = editable;
+
+        if (editable) addAddLineLine();
     }
 
-    public GUIList(GUIScreen screen, double x, double y, double width, double height, GUIElement... subElements)
+    public GUIList(GUIScreen screen, double x, double y, double width, double height, boolean editable, GUIElement... subElements)
     {
         super(screen, x, y, width, height, subElements);
 
-        addAddLineLine();
+        this.editable = editable;
+
+        if (editable) addAddLineLine();
     }
 
 
     private void addAddLineLine()
     {
-        Line line = new Line(screen);
+        Line line = new Line(screen, editable);
 
         //Add blank element to force line to be full width
         line.add(new GUIElement(screen, 1, 0));
@@ -64,27 +70,30 @@ public abstract class GUIList extends GUIScrollView
     {
         if (index >= children.size()) throw new ArrayIndexOutOfBoundsException("Index: " + index + ", Size: " + size());
 
-        Line line = new Line(screen, newLineBackgroundElement());
+        Line line = new Line(screen, editable, newLineBackgroundElement());
 
         //Add blank element to force line to be full width
         line.add(new GUIElement(screen, 1, 0));
 
-        //Add "add line" button
-        GUIButton button = GUIButton.newAddButton(screen);
-        line.add(button).addClickActions(() ->
+        if (editable)
         {
-            for (int i = 0; i < size(); i++)
+            //Add "add line" button
+            GUIButton button = GUIButton.newAddButton(screen);
+            line.add(button).addClickActions(() ->
             {
-                if (get(i).indexOf(button) != -1)
+                for (int i = 0; i < size(); i++)
                 {
-                    addLine(i);
-                    break;
+                    if (get(i).indexOf(button) != -1)
+                    {
+                        addLine(i);
+                        break;
+                    }
                 }
-            }
-        });
+            });
 
-        //Add "remove line" button
-        line.add(GUIButton.newRemoveButton(screen).addClickActions(() -> remove(line)));
+            //Add "remove line" button
+            line.add(GUIButton.newRemoveButton(screen).addClickActions(() -> remove(line)));
+        }
 
         //Line elements
         if (lineElements != null) line.addAll(lineElements);
@@ -119,7 +128,7 @@ public abstract class GUIList extends GUIScrollView
 
     public int lineCount()
     {
-        return size() - 1;
+        return editable ? size() - 1 : size();
     }
 
 
@@ -132,57 +141,62 @@ public abstract class GUIList extends GUIScrollView
 
     public static class Line extends GUIAutocroppedView
     {
-        public Line(GUIScreen screen)
+        public final boolean editable;
+
+
+        public Line(GUIScreen screen, boolean editable)
         {
-            super(screen);
+            this(screen, editable, 0);
         }
 
-        public Line(GUIScreen screen, double padding)
+        public Line(GUIScreen screen, boolean editable, double padding)
         {
-            super(screen, padding);
+            this(screen, editable, padding, null);
         }
 
-        public Line(GUIScreen screen, GUIElement background)
+        public Line(GUIScreen screen, boolean editable, GUIElement background)
         {
-            super(screen, background);
+            this(screen, editable, 0, background);
         }
 
-        public Line(GUIScreen screen, double padding, GUIElement background)
+        public Line(GUIScreen screen, boolean editable, double padding, GUIElement background)
         {
             super(screen, padding, background);
+
+            this.editable = editable;
         }
 
-        public Line(GUIScreen screen, double x, double y)
+
+        public Line(GUIScreen screen, boolean editable, double x, double y)
         {
-            super(screen, x, y);
+            this(screen, editable, x, y, 0);
         }
 
-        public Line(GUIScreen screen, double x, double y, double padding)
+        public Line(GUIScreen screen, boolean editable, double x, double y, double padding)
         {
-            super(screen, x, y, padding);
+            this(screen, editable, x, y, padding, null);
         }
 
-        public Line(GUIScreen screen, double x, double y, GUIElement background)
+        public Line(GUIScreen screen, boolean editable, double x, double y, GUIElement background)
         {
-            super(screen, x, y, background);
+            this(screen, editable, x, y, 0, background);
         }
 
-        public Line(GUIScreen screen, double x, double y, double padding, GUIElement background)
+        public Line(GUIScreen screen, boolean editable, double x, double y, double padding, GUIElement background)
         {
             super(screen, x, y, padding, background);
+
+            this.editable = editable;
         }
 
 
         public ArrayList<GUIElement> getLineElements()
         {
-            if (size() < 4) return new ArrayList<>();
+            int offset = editable ? 3 : 1;
+            if (size() > 0 && get(0) == background) offset++;
 
-            int offset = 3;
-            if (get(0) == background)
-            {
-                if (size() < 5) return new ArrayList<>();
-                else offset++;
-            }
+            if (size() <= offset) return new ArrayList<>();
+
 
             ArrayList<GUIElement> list = new ArrayList<>();
             for (int i = offset; i < children.size(); i++) list.add(get(i));
@@ -191,7 +205,7 @@ public abstract class GUIList extends GUIScrollView
 
         public GUIElement getLineElement(int index)
         {
-            return get(get(0) == background ? index + 4 : index + 3);
+            return getLineElements().get(index);
         }
     }
 }
