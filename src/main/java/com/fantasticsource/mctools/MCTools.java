@@ -433,7 +433,6 @@ public class MCTools
 
     public static Configuration getConfig(String modid) throws IllegalAccessException
     {
-        System.out.println(getConfigDir() + modid + ".cfg");
         return ((Map<String, Configuration>) configManagerCONFIGSField.get(null)).get(getConfigDir() + modid + ".cfg");
     }
 

@@ -20,8 +20,6 @@ public class ConfigHandler
     {
         this.modid = modid;
         config = MCTools.getConfig(modid);
-        System.out.println(config == null);
-        System.out.println(modid);
         file = config.getConfigFile();
     }
 
