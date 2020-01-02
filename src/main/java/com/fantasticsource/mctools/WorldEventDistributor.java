@@ -24,19 +24,7 @@ import static net.minecraftforge.common.MinecraftForge.EVENT_BUS;
 
 public class WorldEventDistributor implements IWorldEventListener
 {
-    private static Field worldEventListenersField;
-
-    static
-    {
-        try
-        {
-            worldEventListenersField = ReflectionTool.getField(World.class, "field_73021_x", "eventListeners");
-        }
-        catch (NoSuchFieldException | IllegalAccessException e)
-        {
-            MCTools.crash(e, 702, true);
-        }
-    }
+    private static Field worldEventListenersField = ReflectionTool.getField(World.class, "field_73021_x", "eventListeners");
 
     private World world;
 

@@ -29,19 +29,7 @@ public class FantasticLib
 
 
     public static boolean isClient = false;
-    private static boolean debugGui;
-
-    static
-    {
-        try
-        {
-            debugGui = ReflectionTool.getField(ItemStack.class, "stackSize") != null;
-        }
-        catch (NoSuchFieldException | IllegalAccessException e)
-        {
-            e.printStackTrace();
-        }
-    }
+    private static boolean debugGui = ReflectionTool.getField(ItemStack.class, "stackSize") != null;
 
     public FantasticLib()
     {

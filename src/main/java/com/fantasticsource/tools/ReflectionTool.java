@@ -1,36 +1,46 @@
 package com.fantasticsource.tools;
 
+import com.fantasticsource.mctools.MCTools;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 public class ReflectionTool
 {
-    public static Field getField(Class classType, String... possibleFieldnames) throws NoSuchFieldException, IllegalAccessException
+    public static Field getField(Class classType, String... possibleFieldnames)
     {
         return getField(false, classType, possibleFieldnames);
     }
 
-    public static Field getField(boolean printFound, Class classType, String... possibleFieldnames) throws NoSuchFieldException, IllegalAccessException
+    public static Field getField(boolean printFound, Class classType, String... possibleFieldnames)
     {
-        Field[] fields = classType.getDeclaredFields();
-        for (Field field : fields)
+        try
         {
-            for (String name : possibleFieldnames)
+            Field[] fields = classType.getDeclaredFields();
+            for (Field field : fields)
             {
-                if (field.getName().equals(name))
+                for (String name : possibleFieldnames)
                 {
-                    field.setAccessible(true);
+                    if (field.getName().equals(name))
+                    {
+                        field.setAccessible(true);
 
-                    Field modifiersField = Field.class.getDeclaredField("modifiers");
-                    modifiersField.setAccessible(true);
-                    modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+                        Field modifiersField = Field.class.getDeclaredField("modifiers");
+                        modifiersField.setAccessible(true);
+                        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
 
-                    if (printFound) System.out.println(name);
-                    return field;
+                        if (printFound) System.out.println(name);
+                        return field;
+                    }
                 }
             }
         }
+        catch (IllegalAccessException | NoSuchFieldException e)
+        {
+            MCTools.crash(e, 700, false);
+        }
+
         return null;
     }
 
