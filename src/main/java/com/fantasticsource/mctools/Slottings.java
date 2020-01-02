@@ -5,7 +5,7 @@ import com.fantasticsource.fantasticlib.Compat;
 
 import java.util.LinkedHashMap;
 
-public class Slots
+public class Slottings
 {
     public static final LinkedHashMap<String, int[]> SLOTS_VANILLA = new LinkedHashMap<>();
     public static final LinkedHashMap<String, int[]> SLOTS_BAUBLES = new LinkedHashMap<>();
@@ -23,7 +23,6 @@ public class Slots
         SLOTS_VANILLA.put("Chest", new int[]{38});
         SLOTS_VANILLA.put("Legs", new int[]{37});
         SLOTS_VANILLA.put("Feet", new int[]{36});
-        SLOTS_VANILLA.put("Armor", new int[]{36, 37, 38, 39});
 
         SLOTS_VANILLA.put("Hotbar", new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8});
         SLOTS_VANILLA.put("Inventory", new int[]{9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35});
@@ -74,23 +73,24 @@ public class Slots
 
         SLOTS_TIAMATRPG.put("Tiamat Shoulders", new int[]{-500 + 2});
         SLOTS_TIAMATRPG.put("Tiamat Cape", new int[]{-500 + 3});
-        SLOTS_TIAMATRPG.put("Tiamat Armor", new int[]{-500 + 2, -500 + 3});
 
         SLOTS_TIAMATRPG.put("Tiamat Pet", new int[]{-500 + 4});
 
-        SLOTS_TIAMATRPG.put("Tiamat Classes", new int[]{-500 + 5, -500 + 6});
+        SLOTS_TIAMATRPG.put("Tiamat Class", new int[]{-500 + 5, -500 + 6});
 
-        SLOTS_TIAMATRPG.put("Tiamat Skills", new int[]{-500 + 7, -500 + 8, -500 + 9, -500 + 10, -500 + 11, -500 + 12, -500 + 13, -500 + 14, -500 + 15, -500 + 16, -500 + 17, -500 + 18, -500 + 19, -500 + 20, -500 + 21, -500 + 22, -500 + 23, -500 + 24});
+        SLOTS_TIAMATRPG.put("Tiamat Skill", new int[]{-500 + 7, -500 + 8, -500 + 9, -500 + 10, -500 + 11, -500 + 12, -500 + 13, -500 + 14, -500 + 15, -500 + 16, -500 + 17, -500 + 18, -500 + 19, -500 + 20, -500 + 21, -500 + 22, -500 + 23, -500 + 24});
+        SLOTS_TIAMATRPG.put("Tiamat Active Skill", new int[]{-500 + 44, -500 + 45, -500 + 46, -500 + 47, -500 + 48, -500 + 49, -500 + 7, -500 + 8, -500 + 9, -500 + 10, -500 + 11, -500 + 12, -500 + 13, -500 + 14, -500 + 15, -500 + 16, -500 + 17, -500 + 18, -500 + 19, -500 + 20, -500 + 21, -500 + 22, -500 + 23, -500 + 24});
 
-        SLOTS_TIAMATRPG.put("Tiamat Gathering Professions", new int[]{-500 + 25, -500 + 26});
+        SLOTS_TIAMATRPG.put("Tiamat Gathering Profession", new int[]{-500 + 25, -500 + 26});
 
-        SLOTS_TIAMATRPG.put("Tiamat Crafting Professions", new int[]{-500 + 27, -500 + 28});
+        SLOTS_TIAMATRPG.put("Tiamat Crafting Profession", new int[]{-500 + 27, -500 + 28});
 
-        SLOTS_TIAMATRPG.put("Tiamat Recipes", new int[]{-500 + 29, -500 + 30, -500 + 31, -500 + 32, -500 + 33, -500 + 34, -500 + 35, -500 + 36, -500 + 37, -500 + 38, -500 + 39, -500 + 40, -500 + 41, -500 + 42, -500 + 43});
-
-        SLOTS_TIAMATRPG.put("Tiamat Ready Skills", new int[]{-500 + 44, -500 + 45, -500 + 46, -500 + 47, -500 + 48, -500 + 49});
+        SLOTS_TIAMATRPG.put("Tiamat Recipe", new int[]{-500 + 29, -500 + 30, -500 + 31, -500 + 32, -500 + 33, -500 + 34, -500 + 35, -500 + 36, -500 + 37, -500 + 38, -500 + 39, -500 + 40, -500 + 41, -500 + 42, -500 + 43});
 
         SLOTS.putAll(SLOTS_TIAMATRPG);
+
+
+        SLOTS.put("Armor", new int[]{36, 37, 38, 39, -500 + 2, -500 + 3});
     }
 
     public static String[] availableSlottings()
