@@ -43,6 +43,7 @@ public class Tools
         for (int i = 0; i < chars1.length; i++)
         {
             if (i >= chars2.length || chars2[i] < chars1[i]) return false;
+            if (chars1[i] < chars2[i]) return true;
         }
 
         return true;

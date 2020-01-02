@@ -63,12 +63,12 @@ public abstract class GUIList extends GUIScrollView
 
     public GUIList addLine(GUIElement... lineElements)
     {
-        return addLine(children.size() - 1, lineElements);
+        return addLine(lineCount(), lineElements);
     }
 
     public GUIList addLine(int index, GUIElement... lineElements)
     {
-        if (index >= children.size()) throw new ArrayIndexOutOfBoundsException("Index: " + index + ", Size: " + size());
+        if (index > lineCount()) throw new ArrayIndexOutOfBoundsException("Index: " + index + ", Size: " + lineCount());
 
         Line line = new Line(screen, editable, newLineBackgroundElement());
 

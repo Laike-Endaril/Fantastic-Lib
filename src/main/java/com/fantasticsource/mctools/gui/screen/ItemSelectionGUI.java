@@ -2,7 +2,7 @@ package com.fantasticsource.mctools.gui.screen;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
-import com.fantasticsource.mctools.gui.element.other.GUIGradient;
+import com.fantasticsource.mctools.gui.element.other.GUIDarkenedBackground;
 import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
 import com.fantasticsource.mctools.gui.element.text.GUIItemStackText;
 import com.fantasticsource.mctools.gui.element.text.GUITextSpacer;
@@ -37,7 +37,7 @@ public class ItemSelectionGUI extends GUIScreen
         selection = clickedElement.getStack();
 
 
-        root.add(new GUIGradient(this, 0, 0, 1, 1, Color.BLACK.copy().setAF(0.85f)));
+        root.add(new GUIDarkenedBackground(this));
 
 
         GUITextSpacer spacer = new GUITextSpacer(this, true);

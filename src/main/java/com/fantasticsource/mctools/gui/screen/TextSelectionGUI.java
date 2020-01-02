@@ -2,10 +2,10 @@ package com.fantasticsource.mctools.gui.screen;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
-import com.fantasticsource.mctools.gui.element.other.GUIGradient;
+import com.fantasticsource.mctools.gui.element.other.GUIDarkenedBackground;
 import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
+import com.fantasticsource.mctools.gui.element.text.GUINavbar;
 import com.fantasticsource.mctools.gui.element.text.GUIText;
-import com.fantasticsource.mctools.gui.element.text.GUITextSpacer;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
@@ -16,7 +16,7 @@ public class TextSelectionGUI extends GUIScreen
 
     public TextSelectionGUI(GUIText clickedElement, String title, String... options)
     {
-        this(clickedElement, title, 1);
+        this(clickedElement, title, 1, options);
     }
 
     public TextSelectionGUI(GUIText clickedElement, String title, double textScale, String... options)
@@ -33,30 +33,37 @@ public class TextSelectionGUI extends GUIScreen
         drawStack = false;
 
 
-        //Background
-        root.add(new GUIGradient(this, 0, 0, 1, 1, Color.BLACK.copy().setAF(0.85f)));
+        //Navigation bar
+        GUINavbar navbar = new GUINavbar(this);
 
 
-        GUITextSpacer spacer = new GUITextSpacer(this, true);
-        TextSelectionGUI gui = this;
-        GUIList list = new GUIList(this, false, 0.98 - spacer.width * 2, 1)
+        GUIList list = new GUIList(this, false, 0.98, 1 - navbar.height)
         {
             @Override
             public GUIElement[] newLineDefaultElements()
             {
-                GUIText text = new GUIText(gui, clickedElement.getText());
+                GUIText text = new GUIText(screen, clickedElement.getText());
                 return new GUIElement[]{text.addClickActions(() ->
                 {
                     clickedElement.setText(text.getText());
-                    gui.close();
+                    screen.close();
                 })};
             }
         };
-        root.add(spacer.addRecalcActions(() -> list.width = 0.98 - spacer.width * 2));
-        root.add(list);
+        GUIVerticalScrollbar scrollbar = new GUIVerticalScrollbar(this, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, list);
 
-        root.add(new GUITextSpacer(this, true));
-        root.add(new GUIVerticalScrollbar(this, 0.98, 0, 0.02, 1, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK, list));
+        //Add elements
+        root.addAll
+                (
+                        new GUIDarkenedBackground(this),
+                        navbar.addRecalcActions(() ->
+                        {
+                            list.height = 1 - height;
+                            scrollbar.height = 1 - height;
+                        }),
+                        list,
+                        scrollbar
+                );
 
         //Add options
         for (String option : options)

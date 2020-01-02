@@ -2,6 +2,7 @@ package com.fantasticsource.mctools.gui.screen;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
+import com.fantasticsource.mctools.gui.element.other.GUIDarkenedBackground;
 import com.fantasticsource.mctools.gui.element.other.GUIGradient;
 import com.fantasticsource.mctools.gui.element.other.GUIGradientBorder;
 import com.fantasticsource.mctools.gui.element.text.*;
@@ -63,7 +64,7 @@ public class ColorSelectionGUI extends GUIScreen
 
 
         //Root
-        root.add(new GUIGradient(this, 0, 0, 1, 1, Color.BLACK.copy().setAF(0.85f)));
+        root.add(new GUIDarkenedBackground(this));
         root.add(new GUINavbar(this, Color.AQUA));
 
         root.add(save.addClickActions(() ->
