@@ -58,8 +58,8 @@ public class TextSelectionGUI extends GUIScreen
                         new GUIDarkenedBackground(this),
                         navbar.addRecalcActions(() ->
                         {
-                            list.height = 1 - height;
-                            scrollbar.height = 1 - height;
+                            list.height = 1 - navbar.height;
+                            scrollbar.height = 1 - navbar.height;
                         }),
                         list,
                         scrollbar
@@ -72,6 +72,7 @@ public class TextSelectionGUI extends GUIScreen
             GUIText text = (GUIText) list.get(list.lineCount() - 1).getLineElement(0);
             text.setText(option);
             if (option.equals(clickedElement.getText())) text.setColor(getIdleColor(Color.PURPLE), getHoverColor(Color.PURPLE), Color.PURPLE);
+            else text.setColor(getIdleColor(Color.WHITE), getHoverColor(Color.WHITE), Color.WHITE);
         }
     }
 
