@@ -94,7 +94,9 @@ public class FantasticLib
     public void postInit(FMLPostInitializationEvent event)
     {
         DataFiles.output();
-        if (Loader.isModLoaded("betterportals")) Compat.betterportals = true;
-        if (Loader.isModLoaded("smoothfont")) Compat.smoothfont = true;
+        Compat.betterportals = (Loader.isModLoaded("betterportals"));
+        Compat.smoothfont = (Loader.isModLoaded("smoothfont"));
+        Compat.baubles = (Loader.isModLoaded("baubles"));
+        Compat.tiamatrpg = (Loader.isModLoaded("tiamatrpg"));
     }
 }

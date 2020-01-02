@@ -4,5 +4,7 @@ public class Compat
 {
     public static boolean
             betterportals = false,
-            smoothfont = false;
+            smoothfont = false,
+            baubles = false,
+            tiamatrpg = false;
 }
