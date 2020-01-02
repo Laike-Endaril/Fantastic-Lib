@@ -110,6 +110,13 @@ public abstract class GUIList extends GUIScrollView
         return this;
     }
 
+    public Line[] getLines()
+    {
+        Line[] result = new Line[lineCount()];
+        System.arraycopy(children.toArray(new Line[0]), 0, result, 0, result.length);
+        return result;
+    }
+
 
     public final double buttonWidth()
     {
