@@ -40,6 +40,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.util.vector.Quaternion;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -427,11 +428,12 @@ public class MCTools
 
     public static String getConfigDir()
     {
-        return Loader.instance().getConfigDir().getAbsolutePath() + '/';
+        return Loader.instance().getConfigDir().getAbsolutePath() + File.separator;
     }
 
     public static Configuration getConfig(String modid) throws IllegalAccessException
     {
+        System.out.println(getConfigDir() + modid + ".cfg");
         return ((Map<String, Configuration>) configManagerCONFIGSField.get(null)).get(getConfigDir() + modid + ".cfg");
     }
 
@@ -451,17 +453,17 @@ public class MCTools
 
     public static String getWorldSaveDir(MinecraftServer server)
     {
-        return server.worlds[0].getSaveHandler().getWorldDirectory().toString() + '/';
+        return server.worlds[0].getSaveHandler().getWorldDirectory().toString() + File.separator;
     }
 
     public static String getDataDir(MinecraftServer server)
     {
-        return server.worlds[0].getSaveHandler().getWorldDirectory().toString() + '/' + "data" + '/';
+        return server.worlds[0].getSaveHandler().getWorldDirectory().toString() + File.separator + "data" + File.separator;
     }
 
     public static String getPlayerDataDir(MinecraftServer server)
     {
-        return server.worlds[0].getSaveHandler().getWorldDirectory().toString() + '/' + "playerdata" + '/';
+        return server.worlds[0].getSaveHandler().getWorldDirectory().toString() + File.separator + "playerdata" + File.separator;
     }
 
     public static void crash(Exception e, int code, boolean hardExit)

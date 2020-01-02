@@ -95,7 +95,7 @@ public class Tools
 
     private static ArrayList<String> allRecursiveRelativeFilenames(String mainDirectory, String relativeSubDirectory)
     {
-        String fullDirectory = mainDirectory + '/' + relativeSubDirectory;
+        String fullDirectory = mainDirectory + File.separator + relativeSubDirectory;
 
         File folder = new File(fullDirectory);
         if (!folder.exists() || !folder.isDirectory())
@@ -107,7 +107,7 @@ public class Tools
         ArrayList<String> result = new ArrayList<>();
         for (File file : folder.listFiles())
         {
-            if (!file.isDirectory()) result.add(relativeSubDirectory + '/' + file.getName());
+            if (!file.isDirectory()) result.add(relativeSubDirectory + File.separator + file.getName());
             else result.addAll(allRecursiveRelativeFilenames(fullDirectory, file.getName()));
         }
 

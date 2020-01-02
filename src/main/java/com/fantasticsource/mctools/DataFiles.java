@@ -12,8 +12,8 @@ import java.io.IOException;
 
 public class DataFiles
 {
-    private static String modDir = Loader.instance().getConfigDir().getAbsolutePath() + '/' + FantasticLib.MODID + '/';
-    private static String referenceDir = modDir + "reference" + '/';
+    private static String modDir = Loader.instance().getConfigDir().getAbsolutePath() + File.separator + FantasticLib.MODID + File.separator;
+    private static String referenceDir = modDir + "reference" + File.separator;
 
     public static void output()
     {

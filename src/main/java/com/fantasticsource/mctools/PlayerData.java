@@ -21,8 +21,8 @@ public class PlayerData
 {
     public static LinkedHashMap<UUID, PlayerData> playerData = new LinkedHashMap<>();
 
-    private static String modDir = Loader.instance().getConfigDir().getAbsolutePath() + '/' + FantasticLib.MODID + '/';
-    private static String referenceDir = modDir + "reference" + '/';
+    private static String modDir = Loader.instance().getConfigDir().getAbsolutePath() + File.separator + FantasticLib.MODID + File.separator;
+    private static String referenceDir = modDir + "reference" + File.separator;
 
     public String name;
     public UUID id;
