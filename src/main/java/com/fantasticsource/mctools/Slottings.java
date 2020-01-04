@@ -135,8 +135,11 @@ public class Slottings
         for (int i : slots)
         {
             if (i == -2) return true;
-            if (i == slot) return true;
-            if (i == -1 && slot == player.inventory.currentItem && (!Compat.tiamatrpg || slot == 0 || player.isCreative())) return true;
+            if (i == -1)
+            {
+                if (slot == player.inventory.currentItem && (!Compat.tiamatrpg || slot == 0 || player.isCreative())) return true;
+            }
+            else if (i == slot && (i != 40 || !Compat.tiamatrpg || player.inventory.currentItem == 0 || player.isCreative())) return true;
         }
 
         return false;
