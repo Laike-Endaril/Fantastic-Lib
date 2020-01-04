@@ -8,6 +8,10 @@ import java.util.LinkedHashMap;
 
 public class Slottings
 {
+    public static final int
+            BAUBLES_OFFSET = Integer.MIN_VALUE,
+            TIAMAT_OFFSET = -500;
+
     public static final LinkedHashMap<String, int[]> SLOTS_VANILLA = new LinkedHashMap<>();
     public static final LinkedHashMap<String, int[]> SLOTS_BAUBLES = new LinkedHashMap<>();
     public static final LinkedHashMap<String, int[]> SLOTS_TIAMATRPG = new LinkedHashMap<>();
@@ -34,64 +38,64 @@ public class Slottings
 
         int[] temp = BaubleType.AMULET.getValidSlots();
         int[] slots = new int[temp.length];
-        for (int i = 0; i < slots.length; i++) slots[i] = Integer.MIN_VALUE + temp[i];
+        for (int i = 0; i < slots.length; i++) slots[i] = BAUBLES_OFFSET + temp[i];
         SLOTS_BAUBLES.put("Baubles Amulet", slots);
 
         temp = BaubleType.RING.getValidSlots();
         slots = new int[temp.length];
-        for (int i = 0; i < slots.length; i++) slots[i] = Integer.MIN_VALUE + temp[i];
+        for (int i = 0; i < slots.length; i++) slots[i] = BAUBLES_OFFSET + temp[i];
         SLOTS_BAUBLES.put("Baubles Ring", slots);
 
         temp = BaubleType.BELT.getValidSlots();
         slots = new int[temp.length];
-        for (int i = 0; i < slots.length; i++) slots[i] = Integer.MIN_VALUE + temp[i];
+        for (int i = 0; i < slots.length; i++) slots[i] = BAUBLES_OFFSET + temp[i];
         SLOTS_BAUBLES.put("Baubles Belt", slots);
 
         temp = BaubleType.HEAD.getValidSlots();
         slots = new int[temp.length];
-        for (int i = 0; i < slots.length; i++) slots[i] = Integer.MIN_VALUE + temp[i];
+        for (int i = 0; i < slots.length; i++) slots[i] = BAUBLES_OFFSET + temp[i];
         SLOTS_BAUBLES.put("Baubles Head", slots);
 
         temp = BaubleType.BODY.getValidSlots();
         slots = new int[temp.length];
-        for (int i = 0; i < slots.length; i++) slots[i] = Integer.MIN_VALUE + temp[i];
+        for (int i = 0; i < slots.length; i++) slots[i] = BAUBLES_OFFSET + temp[i];
         SLOTS_BAUBLES.put("Baubles Body", slots);
 
         temp = BaubleType.CHARM.getValidSlots();
         slots = new int[temp.length];
-        for (int i = 0; i < slots.length; i++) slots[i] = Integer.MIN_VALUE + temp[i];
+        for (int i = 0; i < slots.length; i++) slots[i] = BAUBLES_OFFSET + temp[i];
         SLOTS_BAUBLES.put("Baubles Charm", slots);
 
         temp = BaubleType.TRINKET.getValidSlots();
         slots = new int[temp.length];
-        for (int i = 0; i < slots.length; i++) slots[i] = Integer.MIN_VALUE + temp[i];
+        for (int i = 0; i < slots.length; i++) slots[i] = BAUBLES_OFFSET + temp[i];
         SLOTS_BAUBLES.put("Baubles Trinket", slots);
 
         SLOTS.putAll(SLOTS_BAUBLES);
 
 
-        SLOTS_TIAMATRPG.put("Tiamat 2H", new int[]{-500 - 1});
+        SLOTS_TIAMATRPG.put("Tiamat 2H", new int[]{-1, 40});
 
-        SLOTS_TIAMATRPG.put("Tiamat Shoulders", new int[]{-500 + 2});
-        SLOTS_TIAMATRPG.put("Tiamat Cape", new int[]{-500 + 3});
+        SLOTS_TIAMATRPG.put("Tiamat Shoulders", new int[]{TIAMAT_OFFSET + 2});
+        SLOTS_TIAMATRPG.put("Tiamat Cape", new int[]{TIAMAT_OFFSET + 3});
 
-        SLOTS_TIAMATRPG.put("Tiamat Pet", new int[]{-500 + 4});
+        SLOTS_TIAMATRPG.put("Tiamat Pet", new int[]{TIAMAT_OFFSET + 4});
 
-        SLOTS_TIAMATRPG.put("Tiamat Class", new int[]{-500 + 5, -500 + 6});
+        SLOTS_TIAMATRPG.put("Tiamat Class", new int[]{TIAMAT_OFFSET + 5, TIAMAT_OFFSET + 6});
 
-        SLOTS_TIAMATRPG.put("Tiamat Skill", new int[]{-500 + 7, -500 + 8, -500 + 9, -500 + 10, -500 + 11, -500 + 12, -500 + 13, -500 + 14, -500 + 15, -500 + 16, -500 + 17, -500 + 18, -500 + 19, -500 + 20, -500 + 21, -500 + 22, -500 + 23, -500 + 24});
-        SLOTS_TIAMATRPG.put("Tiamat Active Skill", new int[]{-500 + 44, -500 + 45, -500 + 46, -500 + 47, -500 + 48, -500 + 49, -500 + 7, -500 + 8, -500 + 9, -500 + 10, -500 + 11, -500 + 12, -500 + 13, -500 + 14, -500 + 15, -500 + 16, -500 + 17, -500 + 18, -500 + 19, -500 + 20, -500 + 21, -500 + 22, -500 + 23, -500 + 24});
+        SLOTS_TIAMATRPG.put("Tiamat Skill", new int[]{TIAMAT_OFFSET + 7, TIAMAT_OFFSET + 8, TIAMAT_OFFSET + 9, TIAMAT_OFFSET + 10, TIAMAT_OFFSET + 11, TIAMAT_OFFSET + 12, TIAMAT_OFFSET + 13, TIAMAT_OFFSET + 14, TIAMAT_OFFSET + 15, TIAMAT_OFFSET + 16, TIAMAT_OFFSET + 17, TIAMAT_OFFSET + 18, TIAMAT_OFFSET + 19, TIAMAT_OFFSET + 20, TIAMAT_OFFSET + 21, TIAMAT_OFFSET + 22, TIAMAT_OFFSET + 23, TIAMAT_OFFSET + 24});
+        SLOTS_TIAMATRPG.put("Tiamat Active Skill", new int[]{TIAMAT_OFFSET + 44, TIAMAT_OFFSET + 45, TIAMAT_OFFSET + 46, TIAMAT_OFFSET + 47, TIAMAT_OFFSET + 48, TIAMAT_OFFSET + 49, TIAMAT_OFFSET + 7, TIAMAT_OFFSET + 8, TIAMAT_OFFSET + 9, TIAMAT_OFFSET + 10, TIAMAT_OFFSET + 11, TIAMAT_OFFSET + 12, TIAMAT_OFFSET + 13, TIAMAT_OFFSET + 14, TIAMAT_OFFSET + 15, TIAMAT_OFFSET + 16, TIAMAT_OFFSET + 17, TIAMAT_OFFSET + 18, TIAMAT_OFFSET + 19, TIAMAT_OFFSET + 20, TIAMAT_OFFSET + 21, TIAMAT_OFFSET + 22, TIAMAT_OFFSET + 23, TIAMAT_OFFSET + 24});
 
-        SLOTS_TIAMATRPG.put("Tiamat Gathering Profession", new int[]{-500 + 25, -500 + 26});
+        SLOTS_TIAMATRPG.put("Tiamat Gathering Profession", new int[]{TIAMAT_OFFSET + 25, TIAMAT_OFFSET + 26});
 
-        SLOTS_TIAMATRPG.put("Tiamat Crafting Profession", new int[]{-500 + 27, -500 + 28});
+        SLOTS_TIAMATRPG.put("Tiamat Crafting Profession", new int[]{TIAMAT_OFFSET + 27, TIAMAT_OFFSET + 28});
 
-        SLOTS_TIAMATRPG.put("Tiamat Recipe", new int[]{-500 + 29, -500 + 30, -500 + 31, -500 + 32, -500 + 33, -500 + 34, -500 + 35, -500 + 36, -500 + 37, -500 + 38, -500 + 39, -500 + 40, -500 + 41, -500 + 42, -500 + 43});
+        SLOTS_TIAMATRPG.put("Tiamat Recipe", new int[]{TIAMAT_OFFSET + 29, TIAMAT_OFFSET + 30, TIAMAT_OFFSET + 31, TIAMAT_OFFSET + 32, TIAMAT_OFFSET + 33, TIAMAT_OFFSET + 34, TIAMAT_OFFSET + 35, TIAMAT_OFFSET + 36, TIAMAT_OFFSET + 37, TIAMAT_OFFSET + 38, TIAMAT_OFFSET + 39, TIAMAT_OFFSET + 40, TIAMAT_OFFSET + 41, TIAMAT_OFFSET + 42, TIAMAT_OFFSET + 43});
 
         SLOTS.putAll(SLOTS_TIAMATRPG);
 
 
-        SLOTS.put("Armor", new int[]{36, 37, 38, 39, -500 + 2, -500 + 3});
+        SLOTS.put("Armor", new int[]{36, 37, 38, 39, TIAMAT_OFFSET + 2, TIAMAT_OFFSET + 3});
     }
 
     public static String[] availableSlottings()
@@ -131,8 +135,8 @@ public class Slottings
         for (int i : slots)
         {
             if (i == -2) return true;
-            if (i == -1) return slot == player.inventory.currentItem;
             if (i == slot) return true;
+            if (i == -1 && slot == player.inventory.currentItem && (!Compat.tiamatrpg || slot == 0 || player.isCreative())) return true;
         }
 
         return false;
