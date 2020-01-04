@@ -2,6 +2,7 @@ package com.fantasticsource.mctools;
 
 import baubles.api.BaubleType;
 import com.fantasticsource.fantasticlib.Compat;
+import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.LinkedHashMap;
 
@@ -120,5 +121,20 @@ public class Slottings
         }
 
         return result;
+    }
+
+    public static boolean slotValidForSlotting(String slotting, int slot, EntityPlayer player)
+    {
+        if (!SLOTS.containsKey(slotting)) return false;
+
+        int[] slots = SLOTS.get(slotting);
+        for (int i : slots)
+        {
+            if (i == -2) return true;
+            if (i == -1) return slot == player.inventory.currentItem;
+            if (i == slot) return true;
+        }
+
+        return false;
     }
 }

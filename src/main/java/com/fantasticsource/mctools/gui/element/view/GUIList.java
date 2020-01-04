@@ -117,6 +117,16 @@ public abstract class GUIList extends GUIScrollView
         return result;
     }
 
+    public Line getLine(int index)
+    {
+        return get(index);
+    }
+
+    public Line getLastFilledLine()
+    {
+        return getLine(lineCount() - 1);
+    }
+
 
     public final double buttonWidth()
     {
