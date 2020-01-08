@@ -72,6 +72,20 @@ public class GUIElement
         this.subElementAutoplaceMethod = subElementAutoplaceMethod;
     }
 
+
+    public GUIElement setTooltip(String tooltip)
+    {
+        if (tooltip == null || tooltip.trim().equals(""))
+        {
+            this.tooltip = null;
+            return this;
+        }
+
+        if (this.tooltip == null) this.tooltip = new GUITooltipView(screen);
+        this.tooltip.setTooltip(tooltip);
+        return this;
+    }
+
     public boolean isWithin(double x, double y)
     {
         double xx = absoluteX(), yy = absoluteY();
