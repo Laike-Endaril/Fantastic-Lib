@@ -7,6 +7,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.InvalidMarkException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -14,6 +15,45 @@ import java.util.Random;
 @SuppressWarnings("unused")
 public class Tools
 {
+    public static ByteBuffer cloneByteBuffer(ByteBuffer original)
+    {
+        //Get position, limit, and mark
+        int pos = original.position();
+        int limit = original.limit();
+        int mark = -1;
+        try
+        {
+            original.reset();
+            mark = original.position();
+        }
+        catch (InvalidMarkException e)
+        {
+            //This happens when the original's mark is -1, so leave mark at default value of -1
+        }
+
+        //Create clone with matching capacity and byte order
+        ByteBuffer clone = (original.isDirect()) ? ByteBuffer.allocateDirect(original.capacity()) : ByteBuffer.allocate(original.capacity());
+        clone.order(original.order());
+
+        //Copy FULL buffer contents, including the "out-of-bounds" part
+        original.limit(original.capacity());
+        original.position(0);
+        clone.put(original);
+
+        //Set position, limit, and mark of original and clone to what they were
+        original.position(mark);
+        original.mark();
+        original.position(pos);
+        original.limit(limit);
+
+        clone.position(mark);
+        clone.mark();
+        clone.position(pos);
+        clone.limit(limit);
+
+        return clone;
+    }
+
     public static String[] sort(String... values)
     {
         String[] result = new String[values.length];
