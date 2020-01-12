@@ -40,14 +40,19 @@ public class Tools
         original.position(0);
         clone.put(original);
 
-        //Set position, limit, and mark of original and clone to what they were
-        original.position(mark);
-        original.mark();
+        //Set mark of both buffers to what it was originally
+        if (mark != -1)
+        {
+            original.position(mark);
+            original.mark();
+
+            clone.position(mark);
+            clone.mark();
+        }
+
+        //Set position and limit of both buffers to what they were originally
         original.position(pos);
         original.limit(limit);
-
-        clone.position(mark);
-        clone.mark();
         clone.position(pos);
         clone.limit(limit);
 
