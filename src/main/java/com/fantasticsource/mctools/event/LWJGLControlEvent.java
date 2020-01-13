@@ -12,7 +12,7 @@ import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
-public abstract class LWJGLControlEvent extends Event
+public class LWJGLControlEvent extends Event
 {
     protected static Field keyboardReadBufferField, mouseReadBufferField;
     protected static ByteBuffer keyboardBuffer, mouseBuffer, tempKeyboardBuffer, tempMouseBuffer;
@@ -50,7 +50,7 @@ public abstract class LWJGLControlEvent extends Event
         this.lwjglBytes = lwjglBytes;
     }
 
-    public LWJGLControlEvent(Network.LWJGLEventPacket packet)
+    protected LWJGLControlEvent(Network.LWJGLEventPacket packet)
     {
         lwjglBytes = packet.lwjglBytes;
         identifier = packet.identifier;
@@ -127,6 +127,7 @@ public abstract class LWJGLControlEvent extends Event
 
     public void sendToServer(String identifier)
     {
+        if (identifier == null || identifier.equals("")) throw new IllegalArgumentException("Identifier cannot be null or empty!");
         serverPackets.add(identifier);
     }
 
