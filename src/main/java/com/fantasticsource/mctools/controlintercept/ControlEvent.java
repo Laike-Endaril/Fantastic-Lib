@@ -19,7 +19,7 @@ import java.util.Map;
 public class ControlEvent extends Event
 {
     protected static Map<String, KeyBinding> keybinds;
-    protected static Map<KeyBinding, Boolean> keybindStates = new LinkedHashMap<>();
+    protected static Map<KeyBinding, Boolean> keybindStates = new LinkedHashMap<>(), rawKeybindStates = new LinkedHashMap<>();
 
     static
     {
@@ -105,14 +105,20 @@ public class ControlEvent extends Event
     {
         ArrayList<ControlEvent> result = new ArrayList<>();
 
-        boolean state, lastState;
+        boolean state, lastState, lastRawState;
         KeyBinding binding;
         for (Map.Entry<String, KeyBinding> entry : keybinds.entrySet())
         {
             binding = entry.getValue();
             state = binding.isKeyDown();
             lastState = keybindStates.computeIfAbsent(binding, o -> false);
-            if (state != lastState) result.add(new ControlEvent(entry.getKey(), binding, state, lastState));
+            lastRawState = rawKeybindStates.computeIfAbsent(binding, o -> false);
+            if (state != lastState)
+            {
+                if (state != lastRawState) result.add(new ControlEvent(entry.getKey(), binding, state, lastState));
+                else KeyBinding.setKeyBindState(binding.getKeyCode(), lastState);
+            }
+            rawKeybindStates.put(binding, state);
         }
 
         return result;
