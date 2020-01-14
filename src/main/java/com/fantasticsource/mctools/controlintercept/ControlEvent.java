@@ -8,6 +8,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -83,14 +84,14 @@ public class ControlEvent extends Event
     }
 
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void interceptControls(InputEvent inputEvent)
     {
         for (ControlEvent event : updateStatesAndReportChanged())
         {
             MinecraftForge.EVENT_BUS.post(event);
 
-            if (event.cancelOriginal) KeyBinding.setKeyBindState(event.binding.getKeyCode(), event.lastState);
+            if (event.cancelOriginal) setKeyState(event.binding, event.lastState);
             else keybindStates.put(event.binding, event.state);
 
             for (String identifier : event.serverQueue)
@@ -116,11 +117,27 @@ public class ControlEvent extends Event
             if (state != lastState)
             {
                 if (state != lastRawState) result.add(new ControlEvent(entry.getKey(), binding, state, lastState));
-                else KeyBinding.setKeyBindState(binding.getKeyCode(), lastState);
+                else setKeyState(binding, lastState);
             }
             rawKeybindStates.put(binding, state);
         }
 
         return result;
+    }
+
+    protected static void setKeyState(KeyBinding binding, boolean state)
+    {
+        if (binding.isKeyDown() == state) return;
+
+
+        KeyBinding.setKeyBindState(binding.getKeyCode(), state);
+
+        if (state) KeyBinding.onTick(binding.getKeyCode());
+        else
+        {
+            while (binding.isPressed())
+            {
+            }
+        }
     }
 }
