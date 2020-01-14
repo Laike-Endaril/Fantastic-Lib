@@ -2,7 +2,7 @@ package com.fantasticsource.mctools;
 
 import com.fantasticsource.fantasticlib.FantasticLib;
 import com.fantasticsource.mctools.component.CResourceLocation;
-import com.fantasticsource.mctools.controlintercept.LWJGLControlEvent;
+import com.fantasticsource.mctools.controlintercept.ControlEvent;
 import com.fantasticsource.mctools.sound.SimpleSound;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -27,7 +27,7 @@ public class Network
     public static void init()
     {
         WRAPPER.registerMessage(PlaySimpleSoundPacketHandler.class, PlaySimpleSoundPacket.class, discriminator++, Side.CLIENT);
-        WRAPPER.registerMessage(LWJGLMouseEventPacketHandler.class, LWJGLEventPacket.class, discriminator++, Side.SERVER);
+        WRAPPER.registerMessage(ControlEventPacketHandler.class, ControlEventPacket.class, discriminator++, Side.SERVER);
     }
 
 
@@ -71,51 +71,45 @@ public class Network
     }
 
 
-    public static class LWJGLEventPacket implements IMessage
+    public static class ControlEventPacket implements IMessage
     {
-        public boolean isMouse;
-        public byte[] lwjglBytes;
-        public String identifier;
+        public ControlEvent event;
 
-        public LWJGLEventPacket()
+        public ControlEventPacket()
         {
             //Required
         }
 
-        public LWJGLEventPacket(LWJGLControlEvent event, String identifier)
+        public ControlEventPacket(ControlEvent event)
         {
-            lwjglBytes = event.getLWJGLBytes();
-            isMouse = event instanceof LWJGLControlEvent.Mouse;
-            this.identifier = identifier;
+            this.event = event;
         }
 
         @Override
         public void toBytes(ByteBuf buf)
         {
-            buf.writeBoolean(isMouse);
-            buf.writeInt(lwjglBytes.length);
-            buf.writeBytes(lwjglBytes);
-            ByteBufUtils.writeUTF8String(buf, identifier);
+            ByteBufUtils.writeUTF8String(buf, event.name);
+            buf.writeBoolean(event.state);
+            buf.writeBoolean(event.lastState != null);
+            if (event.lastState != null) buf.writeBoolean(event.lastState);
+            ByteBufUtils.writeUTF8String(buf, event.identifier);
         }
 
         @Override
         public void fromBytes(ByteBuf buf)
         {
-            isMouse = buf.readBoolean();
-            lwjglBytes = new byte[buf.readInt()];
-            buf.readBytes(lwjglBytes);
-            identifier = ByteBufUtils.readUTF8String(buf);
+            event = new ControlEvent(ByteBufUtils.readUTF8String(buf), buf.readBoolean(), buf.readBoolean() ? buf.readBoolean() : null, ByteBufUtils.readUTF8String(buf));
         }
     }
 
-    public static class LWJGLMouseEventPacketHandler implements IMessageHandler<LWJGLEventPacket, IMessage>
+    public static class ControlEventPacketHandler implements IMessageHandler<ControlEventPacket, IMessage>
     {
         @Override
-        public IMessage onMessage(LWJGLEventPacket packet, MessageContext ctx)
+        public IMessage onMessage(ControlEventPacket packet, MessageContext ctx)
         {
             MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
 
-            server.addScheduledTask(() -> MinecraftForge.EVENT_BUS.post(packet.isMouse ? new LWJGLControlEvent.Mouse(packet, ctx.getServerHandler().player) : new LWJGLControlEvent.Keyboard(packet, ctx.getServerHandler().player)));
+            server.addScheduledTask(() -> MinecraftForge.EVENT_BUS.post(packet.event.setPlayer(ctx.getServerHandler().player)));
             return null;
         }
     }
