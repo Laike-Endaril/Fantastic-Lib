@@ -86,41 +86,33 @@ public class ControlEvent extends Event
     @SubscribeEvent
     public static void interceptControls(InputEvent inputEvent)
     {
-        ControlEvent event = updateStatesAndReportChanged();
-        if (event == null) return;
-
-        MinecraftForge.EVENT_BUS.post(event);
-
-        if (event.cancelOriginal)
+        for (ControlEvent event : updateStatesAndReportChanged())
         {
-            KeyBinding.setKeyBindState(event.binding.getKeyCode(), event.lastState);
-        }
-        else
-        {
-            keybindStates.put(event.binding, event.state);
-            if (event.state) KeyBinding.onTick(event.binding.getKeyCode());
-        }
+            MinecraftForge.EVENT_BUS.post(event);
 
-        for (String identifier : event.serverQueue)
-        {
-            event.identifier = identifier;
-            Network.WRAPPER.sendToServer(new Network.ControlEventPacket(event));
+            if (event.cancelOriginal) KeyBinding.setKeyBindState(event.binding.getKeyCode(), event.lastState);
+            else keybindStates.put(event.binding, event.state);
+
+            for (String identifier : event.serverQueue)
+            {
+                event.identifier = identifier;
+                Network.WRAPPER.sendToServer(new Network.ControlEventPacket(event));
+            }
         }
     }
 
-    protected static ControlEvent updateStatesAndReportChanged()
+    protected static ArrayList<ControlEvent> updateStatesAndReportChanged()
     {
-        ControlEvent result = null;
+        ArrayList<ControlEvent> result = new ArrayList<>();
 
-        boolean state;
-        Boolean lastState;
+        boolean state, lastState;
         KeyBinding binding;
         for (Map.Entry<String, KeyBinding> entry : keybinds.entrySet())
         {
             binding = entry.getValue();
-            state = binding.isPressed() && binding.getKeyConflictContext().isActive();
+            state = binding.isKeyDown();
             lastState = keybindStates.computeIfAbsent(binding, o -> false);
-            if (lastState != state) result = new ControlEvent(entry.getKey(), binding, state, lastState);
+            if (state != lastState) result.add(new ControlEvent(entry.getKey(), binding, state, lastState));
         }
 
         return result;
