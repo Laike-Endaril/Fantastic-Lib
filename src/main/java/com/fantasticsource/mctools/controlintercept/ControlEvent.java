@@ -91,8 +91,15 @@ public class ControlEvent extends Event
 
         MinecraftForge.EVENT_BUS.post(event);
 
-        if (event.cancelOriginal) KeyBinding.setKeyBindState(event.binding.getKeyCode(), event.lastState);
-        else keybindStates.put(event.binding, event.state);
+        if (event.cancelOriginal)
+        {
+            KeyBinding.setKeyBindState(event.binding.getKeyCode(), event.lastState);
+        }
+        else
+        {
+            keybindStates.put(event.binding, event.state);
+            if (event.state) KeyBinding.onTick(event.binding.getKeyCode());
+        }
 
         for (String identifier : event.serverQueue)
         {
