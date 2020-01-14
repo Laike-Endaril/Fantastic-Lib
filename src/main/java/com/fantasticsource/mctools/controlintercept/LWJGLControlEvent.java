@@ -1,12 +1,14 @@
-package com.fantasticsource.mctools.event;
+package com.fantasticsource.mctools.controlintercept;
 
 import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.Network;
 import com.fantasticsource.tools.ReflectionTool;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import org.lwjgl.opengl.Display;
 
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
@@ -21,6 +23,10 @@ public class LWJGLControlEvent extends Event
     {
         try
         {
+            System.out.println(Display.isCreated());
+            System.out.println(org.lwjgl.input.Mouse.isCreated());
+            System.out.println(org.lwjgl.input.Keyboard.isCreated());
+
             keyboardReadBufferField = ReflectionTool.getField(org.lwjgl.input.Keyboard.class, "readBuffer");
             mouseReadBufferField = ReflectionTool.getField(org.lwjgl.input.Mouse.class, "readBuffer");
 
@@ -43,6 +49,7 @@ public class LWJGLControlEvent extends Event
     protected boolean cancelOriginal = false;
     protected ArrayList<String> serverPackets = new ArrayList<>();
     protected String identifier = "";
+    protected EntityPlayerMP player = null;
 
 
     protected LWJGLControlEvent(byte[] lwjglBytes)
@@ -146,6 +153,11 @@ public class LWJGLControlEvent extends Event
         return identifier;
     }
 
+    public EntityPlayerMP getPlayer()
+    {
+        return player;
+    }
+
     public static class Mouse extends LWJGLControlEvent
     {
         protected Mouse(byte[] lwjglBytes)
@@ -153,9 +165,10 @@ public class LWJGLControlEvent extends Event
             super(lwjglBytes);
         }
 
-        public Mouse(Network.LWJGLEventPacket packet)
+        public Mouse(Network.LWJGLEventPacket packet, EntityPlayerMP player)
         {
             super(packet);
+            this.player = player;
         }
     }
 
@@ -166,9 +179,10 @@ public class LWJGLControlEvent extends Event
             super(lwjglBytes);
         }
 
-        public Keyboard(Network.LWJGLEventPacket packet)
+        public Keyboard(Network.LWJGLEventPacket packet, EntityPlayerMP player)
         {
             super(packet);
+            this.player = player;
         }
     }
 }

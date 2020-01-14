@@ -2,7 +2,7 @@ package com.fantasticsource.mctools;
 
 import com.fantasticsource.fantasticlib.FantasticLib;
 import com.fantasticsource.mctools.component.CResourceLocation;
-import com.fantasticsource.mctools.event.LWJGLControlEvent;
+import com.fantasticsource.mctools.controlintercept.LWJGLControlEvent;
 import com.fantasticsource.mctools.sound.SimpleSound;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -115,7 +115,7 @@ public class Network
         {
             MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
 
-            server.addScheduledTask(() -> MinecraftForge.EVENT_BUS.post(packet.isMouse ? new LWJGLControlEvent.Mouse(packet) : new LWJGLControlEvent.Keyboard(packet)));
+            server.addScheduledTask(() -> MinecraftForge.EVENT_BUS.post(packet.isMouse ? new LWJGLControlEvent.Mouse(packet, ctx.getServerHandler().player) : new LWJGLControlEvent.Keyboard(packet, ctx.getServerHandler().player)));
             return null;
         }
     }

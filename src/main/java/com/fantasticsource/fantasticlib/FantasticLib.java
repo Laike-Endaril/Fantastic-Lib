@@ -2,6 +2,7 @@ package com.fantasticsource.fantasticlib;
 
 import com.fantasticsource.fantasticlib.config.FantasticConfig;
 import com.fantasticsource.mctools.*;
+import com.fantasticsource.mctools.controlintercept.LWJGLControlEvent;
 import com.fantasticsource.mctools.gui.screen.TestGUI;
 import com.fantasticsource.tools.ReflectionTool;
 import net.minecraft.item.ItemStack;
@@ -86,5 +87,14 @@ public class FantasticLib
         Compat.smoothfont = (Loader.isModLoaded("smoothfont"));
         Compat.baubles = (Loader.isModLoaded("baubles"));
         Compat.tiamatrpg = (Loader.isModLoaded("tiamatrpg"));
+    }
+
+    @SubscribeEvent
+    public static void test(LWJGLControlEvent event)
+    {
+        if (event.getIdentifier().equals(""))
+        {
+            event.sendToServer("t");
+        }
     }
 }
