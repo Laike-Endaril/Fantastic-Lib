@@ -66,24 +66,6 @@ public class ControlEvent extends Event
         this.identifier = identifier;
     }
 
-    public void cancelOriginal()
-    {
-        cancelOriginal = true;
-    }
-
-    public void sendToServer(String identifier)
-    {
-        if (identifier == null || identifier.equals("")) throw new IllegalArgumentException("Identifier cannot be null or empty!");
-        serverQueue.add(identifier);
-    }
-
-    public ControlEvent setPlayer(EntityPlayerMP player)
-    {
-        this.player = player;
-        return this;
-    }
-
-
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void interceptControls(InputEvent inputEvent)
     {
@@ -139,5 +121,22 @@ public class ControlEvent extends Event
             {
             }
         }
+    }
+
+    public void cancelOriginal()
+    {
+        cancelOriginal = true;
+    }
+
+    public void sendToServer(String identifier)
+    {
+        if (identifier == null || identifier.equals("")) throw new IllegalArgumentException("Identifier cannot be null or empty!");
+        serverQueue.add(identifier);
+    }
+
+    public ControlEvent setPlayer(EntityPlayerMP player)
+    {
+        this.player = player;
+        return this;
     }
 }
