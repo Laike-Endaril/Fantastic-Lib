@@ -125,7 +125,7 @@ public class ControlEvent extends Event
         return result;
     }
 
-    protected static void setKeyState(KeyBinding binding, boolean state)
+    public static void setKeyState(KeyBinding binding, boolean state)
     {
         if (binding.isKeyDown() == state) return;
 
