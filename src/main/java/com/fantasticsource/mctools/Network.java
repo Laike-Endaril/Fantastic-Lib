@@ -6,7 +6,6 @@ import com.fantasticsource.mctools.controlintercept.ControlEvent;
 import com.fantasticsource.mctools.sound.SimpleSound;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
@@ -20,40 +19,15 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.ArrayList;
-
 public class Network
 {
     public static final SimpleNetworkWrapper WRAPPER = new SimpleNetworkWrapper(FantasticLib.MODID);
     private static int discriminator = 0;
-    private static ArrayList<Runnable> serverActions = new ArrayList<>(), clientActions = new ArrayList<>();
-    private static EntityPlayerMP currentActionPlayer = null;
-
 
     public static void init()
     {
         WRAPPER.registerMessage(PlaySimpleSoundPacketHandler.class, PlaySimpleSoundPacket.class, discriminator++, Side.CLIENT);
         WRAPPER.registerMessage(ControlEventPacketHandler.class, ControlEventPacket.class, discriminator++, Side.SERVER);
-        WRAPPER.registerMessage(BasicPacketToServerHandler.class, BasicPacketToServer.class, discriminator++, Side.SERVER);
-        WRAPPER.registerMessage(BasicPacketToClientHandler.class, BasicPacketToClient.class, discriminator++, Side.CLIENT);
-    }
-
-
-    public static EntityPlayerMP getCurrentActionPlayer()
-    {
-        return currentActionPlayer;
-    }
-
-    public static int registerBasicPacketToServer(Runnable action)
-    {
-        serverActions.add(action);
-        return serverActions.size() - 1;
-    }
-
-    public static int registerBasicPacketToClient(Runnable action)
-    {
-        clientActions.add(action);
-        return clientActions.size() - 1;
     }
 
 
@@ -96,6 +70,7 @@ public class Network
         }
     }
 
+
     public static class ControlEventPacket implements IMessage
     {
         public ControlEvent event;
@@ -135,88 +110,6 @@ public class Network
             MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
 
             server.addScheduledTask(() -> MinecraftForge.EVENT_BUS.post(packet.event.setPlayer(ctx.getServerHandler().player)));
-            return null;
-        }
-    }
-
-
-    public static class BasicPacketToServer implements IMessage
-    {
-        public int action;
-
-        public BasicPacketToServer()
-        {
-            //Required
-        }
-
-        public BasicPacketToServer(int action)
-        {
-            this.action = action;
-        }
-
-        @Override
-        public void toBytes(ByteBuf buf)
-        {
-            buf.writeInt(action);
-        }
-
-        @Override
-        public void fromBytes(ByteBuf buf)
-        {
-            action = buf.readInt();
-        }
-    }
-
-    public static class BasicPacketToServerHandler implements IMessageHandler<BasicPacketToServer, IMessage>
-    {
-        @Override
-        public IMessage onMessage(BasicPacketToServer packet, MessageContext ctx)
-        {
-            FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(() ->
-            {
-                currentActionPlayer = ctx.getServerHandler().player;
-                serverActions.get(packet.action).run();
-                currentActionPlayer = null;
-            });
-            return null;
-        }
-    }
-
-
-    public static class BasicPacketToClient implements IMessage
-    {
-        public int action;
-
-        public BasicPacketToClient()
-        {
-            //Required
-        }
-
-        public BasicPacketToClient(int action)
-        {
-            this.action = action;
-        }
-
-        @Override
-        public void toBytes(ByteBuf buf)
-        {
-            buf.writeInt(action);
-        }
-
-        @Override
-        public void fromBytes(ByteBuf buf)
-        {
-            action = buf.readInt();
-        }
-    }
-
-    public static class BasicPacketToClientHandler implements IMessageHandler<BasicPacketToClient, IMessage>
-    {
-        @Override
-        @SideOnly(Side.CLIENT)
-        public IMessage onMessage(BasicPacketToClient packet, MessageContext ctx)
-        {
-            Minecraft.getMinecraft().addScheduledTask(() -> clientActions.get(packet.action).run());
             return null;
         }
     }
