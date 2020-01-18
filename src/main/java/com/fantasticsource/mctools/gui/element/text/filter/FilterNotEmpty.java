@@ -4,7 +4,7 @@ public class FilterNotEmpty extends TextFilter<String>
 {
     public static final FilterNotEmpty INSTANCE = new FilterNotEmpty();
 
-    private FilterNotEmpty()
+    protected FilterNotEmpty()
     {
     }
 
@@ -17,6 +17,8 @@ public class FilterNotEmpty extends TextFilter<String>
     @Override
     public boolean acceptable(String input)
     {
+        if (input == null) return false;
+
         return !transformInput(input).equals("");
     }
 
