@@ -247,6 +247,8 @@ public class GUITextInput extends GUIText
 
         if (!active) return;
 
+        String oldText = text;
+
         CodeInput code = parent instanceof CodeInput ? (CodeInput) parent : null;
 
         if (keyCode == Keyboard.KEY_RETURN)
@@ -910,6 +912,11 @@ public class GUITextInput extends GUIText
         cursorTime = System.currentTimeMillis();
 
         screen.root.recalc(0);
+
+        if (!text.equals(oldText))
+        {
+            for (Runnable action : onEditActions) action.run();
+        }
     }
 
     @Override

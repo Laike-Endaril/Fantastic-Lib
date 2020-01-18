@@ -99,4 +99,12 @@ public class GUILabeledTextInput extends GUIAutocroppedView
     {
         input.setText(text);
     }
+
+    @Override
+    public GUILabeledTextInput addEditActions(Runnable... actions)
+    {
+        input.addEditActions(actions);
+
+        return this;
+    }
 }

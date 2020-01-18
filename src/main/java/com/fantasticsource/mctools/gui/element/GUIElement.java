@@ -29,8 +29,10 @@ public class GUIElement
             AP_CENTERED_V_LEFT_TO_RIGHT = 9,
             AP_X_0_TOP_TO_BOTTOM = 10;
 
-    public final ArrayList<Runnable> onClickActions = new ArrayList<>();
-    public final ArrayList<Runnable> onRecalcActions = new ArrayList<>();
+    public final ArrayList<Runnable>
+            onClickActions = new ArrayList<>(),
+            onRecalcActions = new ArrayList<>(),
+            onEditActions = new ArrayList<>();
 
     public double x, y, width, height;
     public GUIElement parent = null;
@@ -197,6 +199,12 @@ public class GUIElement
     public GUIElement addRecalcActions(Runnable... actions)
     {
         onRecalcActions.addAll(Arrays.asList(actions));
+        return this;
+    }
+
+    public GUIElement addEditActions(Runnable... actions)
+    {
+        onEditActions.addAll(Arrays.asList(actions));
         return this;
     }
 
