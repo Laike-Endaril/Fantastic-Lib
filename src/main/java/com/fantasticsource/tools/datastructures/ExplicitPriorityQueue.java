@@ -46,9 +46,18 @@ public class ExplicitPriorityQueue<T>
         return result == null ? null : result.object;
     }
 
-    public Entry<T>[] toArray()
+    public T[] toArray()
     {
-        return (Entry<T>[]) queue.toArray();
+        Object[] result = new Object[queue.size()];
+
+        Object[] array = queue.toArray();
+
+        for (int i = 0; i < queue.size(); i++)
+        {
+            result[i] = ((Entry<T>) array[i]).object;
+        }
+
+        return (T[]) result;
     }
 
     public void clear()
