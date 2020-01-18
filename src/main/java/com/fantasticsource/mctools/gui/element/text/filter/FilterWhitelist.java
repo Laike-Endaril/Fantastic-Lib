@@ -7,7 +7,7 @@ public class FilterWhitelist extends TextFilter<String>
 {
     protected ArrayList<String> allowed = new ArrayList<>();
 
-    protected FilterWhitelist(String... allowed)
+    public FilterWhitelist(String... allowed)
     {
         this.allowed.addAll(Arrays.asList(allowed));
     }

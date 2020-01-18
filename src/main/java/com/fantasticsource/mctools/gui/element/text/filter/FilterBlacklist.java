@@ -7,7 +7,7 @@ public class FilterBlacklist extends TextFilter<String>
 {
     protected ArrayList<String> disallowed = new ArrayList<>();
 
-    protected FilterBlacklist(String... disallowed)
+    public FilterBlacklist(String... disallowed)
     {
         this.disallowed.addAll(Arrays.asList(disallowed));
     }
