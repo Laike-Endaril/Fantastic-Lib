@@ -3,7 +3,6 @@ package com.fantasticsource.mctools.gui.element.text;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIGradientBorder;
-import com.fantasticsource.mctools.gui.element.view.GUIAutocroppedView;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 
@@ -63,8 +62,15 @@ public class GUINavbar extends GUITextButton
     }
 
     @Override
-    public GUIAutocroppedView recalc(int subIndexChanged)
+    public GUINavbar recalc(int subIndexChanged)
     {
+        if (size() > 1)
+        {
+            GUIText fore = (GUIText) children.get(1);
+            fore.text = genText(screen);
+        }
+
+
         width = 1;
         height = 1;
         if (parent == null) return this;
