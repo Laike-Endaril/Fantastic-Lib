@@ -516,6 +516,11 @@ public class GUIElement
         }
     }
 
+    public void setActive(boolean active)
+    {
+        setActive(active, false);
+    }
+
     public void setActive(boolean active, boolean external)
     {
         if (!active && externalDeactivation && !external) return;
@@ -524,14 +529,15 @@ public class GUIElement
         for (GUIElement element : linkedMouseActivity) element.active = active;
     }
 
+    public void setActiveRecursive(boolean active)
+    {
+        setActive(active, true);
+        for (GUIElement child : children) child.setActiveRecursive(active);
+    }
+
     public boolean isActive()
     {
         return active;
-    }
-
-    public void setActive(boolean active)
-    {
-        setActive(active, false);
     }
 
     public void keyTyped(char typedChar, int keyCode)
