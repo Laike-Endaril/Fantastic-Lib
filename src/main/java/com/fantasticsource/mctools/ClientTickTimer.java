@@ -49,4 +49,9 @@ public class ClientTickTimer
     {
         runnables.put(runnable, currentTick + tickDelay);
     }
+
+    public static void unschedule(Runnable runnable)
+    {
+        runnables.remove(runnable);
+    }
 }
