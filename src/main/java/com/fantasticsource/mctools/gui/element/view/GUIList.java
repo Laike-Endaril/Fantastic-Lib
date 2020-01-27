@@ -51,22 +51,22 @@ public abstract class GUIList extends GUIScrollView
     }
 
 
-    public GUIList addLine()
+    public Line addLine()
     {
         return addLine(newLineDefaultElements());
     }
 
-    public GUIList addLine(int index)
+    public Line addLine(int index)
     {
         return addLine(index, newLineDefaultElements());
     }
 
-    public GUIList addLine(GUIElement... lineElements)
+    public Line addLine(GUIElement... lineElements)
     {
         return addLine(lineCount(), lineElements);
     }
 
-    public GUIList addLine(int index, GUIElement... lineElements)
+    public Line addLine(int index, GUIElement... lineElements)
     {
         if (index > lineCount()) throw new ArrayIndexOutOfBoundsException("Index: " + index + ", Size: " + lineCount());
 
@@ -101,7 +101,7 @@ public abstract class GUIList extends GUIScrollView
         //Add line to list
         add(index, line);
 
-        return this;
+        return line;
     }
 
     public GUIList addAllLines(GUIElement[]... lines)
