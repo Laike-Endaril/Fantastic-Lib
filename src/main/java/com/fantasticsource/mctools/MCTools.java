@@ -156,13 +156,12 @@ public class MCTools
 
     public static double lookAngleDifDeg(EntityLivingBase searcher, Entity target)
     {
-        double angleDif = Vec3d.fromPitchYaw(searcher.rotationPitch, searcher.rotationYawHead).normalize().dotProduct(new Vec3d(target.posX - searcher.posX, (target.posY + target.height / 2) - (searcher.posY + searcher.getEyeHeight()), target.posZ - searcher.posZ).normalize());
+        return angleDifDeg(searcher.getPositionEyes(0), searcher.rotationYawHead, searcher.rotationPitch, target.getPositionVector().addVector(0, target.height / 2, 0));
+    }
 
-        //And because Vec3d.fromPitchYaw occasionally returns values barely out of the range of (-1, 1)...
-        if (angleDif < -1) angleDif = -1;
-        else if (angleDif > 1) angleDif = 1;
-
-        return Tools.radtodeg(TRIG_TABLE.arccos(angleDif)); //0 in front, 180 in back
+    public static double angleDifDeg(Vec3d origin, float yaw, float pitch, Vec3d p2)
+    {
+        return angleDifDeg(origin, origin.add(Vec3d.fromPitchYaw(pitch, yaw)), p2);
     }
 
     public static double angleDifDeg(Vec3d origin, Vec3d p1, Vec3d p2)
