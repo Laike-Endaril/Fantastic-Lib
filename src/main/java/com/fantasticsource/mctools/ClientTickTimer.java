@@ -5,7 +5,6 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -26,17 +25,14 @@ public class ClientTickTimer
         {
             currentTick++;
 
-            ArrayList<Runnable> removals = new ArrayList<>();
-            for (Map.Entry<Runnable, Long> entry : runnables.entrySet())
+            for (Map.Entry<Runnable, Long> entry : runnables.entrySet().toArray(new Map.Entry[0]))
             {
                 if (currentTick >= entry.getValue())
                 {
-                    removals.add(entry.getKey());
+                    runnables.remove(entry.getKey());
                     entry.getKey().run();
                 }
             }
-
-            for (Runnable runnable : removals) runnables.remove(runnable);
         }
     }
 
