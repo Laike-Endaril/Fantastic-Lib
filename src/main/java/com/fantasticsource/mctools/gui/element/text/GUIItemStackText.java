@@ -3,7 +3,6 @@ package com.fantasticsource.mctools.gui.element.text;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.view.GUIAutocroppedView;
 import com.fantasticsource.mctools.gui.element.view.GUITooltipView;
-import com.fantasticsource.mctools.gui.screen.ItemSelectionGUI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
@@ -78,12 +77,5 @@ public class GUIItemStackText extends GUIText
         }
 
         return this;
-    }
-
-    @Override
-    public void click()
-    {
-        new ItemSelectionGUI(this, screen.textScale);
-        super.click();
     }
 }
