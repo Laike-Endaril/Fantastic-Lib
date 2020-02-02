@@ -43,7 +43,7 @@ public class AttributeMods
     {
         //TODO Change this!  The name argument for attribute modifiers is not the name of the attribute it's applied to!
         String[] tokens = modString.split("=");
-        if (tokens.length < 2 || tokens.length > 3)
+        if (tokens.length != 2)
         {
             System.out.println(I18n.format(FantasticLib.MODID + ".error.malformedAMod", modString));
             return null;
