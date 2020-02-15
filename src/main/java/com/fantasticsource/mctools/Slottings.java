@@ -20,6 +20,8 @@ public class Slottings
 
     static
     {
+        SLOTS_VANILLA.put("None", new int[0]);
+
         SLOTS_VANILLA.put("Mainhand", new int[]{-1});
         SLOTS_VANILLA.put("Offhand", new int[]{40});
         SLOTS_VANILLA.put("Hand", new int[]{-1, 40});
@@ -32,7 +34,6 @@ public class Slottings
         SLOTS_VANILLA.put("Hotbar", new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8});
         SLOTS_VANILLA.put("Inventory", new int[]{9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35});
         SLOTS_VANILLA.put("Any", new int[]{-2});
-        SLOTS_VANILLA.put("None", new int[0]);
 
         SLOTS.putAll(SLOTS_VANILLA);
 
