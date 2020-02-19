@@ -17,10 +17,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntitySnowball;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
+import net.minecraft.nbt.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
@@ -73,6 +70,20 @@ public class MCTools
         catch (Exception e)
         {
             crash(e, 700, false);
+        }
+    }
+
+
+    public static ItemStack cloneItemStack(ItemStack stack)
+    {
+        try
+        {
+            return new ItemStack(JsonToNBT.getTagFromJson(stack.serializeNBT().toString()));
+        }
+        catch (NBTException e)
+        {
+            e.printStackTrace();
+            return ItemStack.EMPTY;
         }
     }
 
