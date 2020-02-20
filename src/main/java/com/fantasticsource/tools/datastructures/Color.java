@@ -489,4 +489,10 @@ public class Color
     {
         return setV((int) (vf * 255));
     }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        return obj instanceof Color && ((Color) obj).intValue == intValue;
+    }
 }
