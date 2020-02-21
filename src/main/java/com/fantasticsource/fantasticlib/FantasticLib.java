@@ -87,5 +87,11 @@ public class FantasticLib
         Compat.smoothfont = (Loader.isModLoaded("smoothfont"));
         Compat.baubles = (Loader.isModLoaded("baubles"));
         Compat.tiamatrpg = (Loader.isModLoaded("tiamatrpg"));
+
+        if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+        {
+            //Physical client
+            if (Loader.isModLoaded("armourers_workshop")) MinecraftForge.EVENT_BUS.register(CustomAWSkinHandler.class);
+        }
     }
 }

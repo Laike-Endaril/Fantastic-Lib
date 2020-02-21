@@ -67,6 +67,20 @@ public class ReflectionTool
         return null;
     }
 
+    //Never change this method's name to getClass()
+    public static Class getClassByName(String fullClassPathAndName)
+    {
+        try
+        {
+            return Class.forName(fullClassPathAndName);
+        }
+        catch (ClassNotFoundException e)
+        {
+            MCTools.crash(e, 701, false);
+        }
+        return null;
+    }
+
     public static Class getInternalClass(Class classType, String... possibleInternalClassNames)
     {
         Class[] classes = classType.getDeclaredClasses();
