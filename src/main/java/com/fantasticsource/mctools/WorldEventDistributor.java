@@ -59,14 +59,14 @@ public class WorldEventDistributor implements IWorldEventListener
         DBlockUpdateEvent event = new DBlockUpdateEvent(world, pos, oldState, newState, flags);
         if (!EVENT_BUS.post(event))
         {
-            for (IWorldEventListener listener : normalListeners) listener.notifyBlockUpdate(event.world, event.pos, event.oldState, event.newState, event.flags);
+            for (IWorldEventListener listener : normalListeners) listener.notifyBlockUpdate(event.getWorld(), event.pos, event.oldState, event.newState, event.flags);
         }
     }
 
     @Override
     public void notifyLightSet(BlockPos pos)
     {
-        DNotifyLightSetEvent event = new DNotifyLightSetEvent(pos);
+        DNotifyLightSetEvent event = new DNotifyLightSetEvent(world, pos);
         if (!EVENT_BUS.post(event))
         {
             for (IWorldEventListener listener : normalListeners) listener.notifyLightSet(event.pos);
@@ -76,7 +76,7 @@ public class WorldEventDistributor implements IWorldEventListener
     @Override
     public void markBlockRangeForRenderUpdate(int x1, int y1, int z1, int x2, int y2, int z2)
     {
-        DMarkBlockRangeForRenderUpdateEvent event = new DMarkBlockRangeForRenderUpdateEvent(x1, y1, z1, x2, y2, z2);
+        DMarkBlockRangeForRenderUpdateEvent event = new DMarkBlockRangeForRenderUpdateEvent(world, x1, y1, z1, x2, y2, z2);
         if (!EVENT_BUS.post(event))
         {
             for (IWorldEventListener listener : normalListeners) listener.markBlockRangeForRenderUpdate(event.x1, event.y1, event.z1, event.x2, event.y2, event.z2);
@@ -86,7 +86,7 @@ public class WorldEventDistributor implements IWorldEventListener
     @Override
     public void playSoundToAllNearExcept(@Nullable EntityPlayer player, SoundEvent soundEvent, SoundCategory soundCategory, double x, double y, double z, float volume, float pitch)
     {
-        DSoundEvent event = new DSoundEvent(player, soundEvent, soundCategory, x, y, z, volume, pitch);
+        DSoundEvent event = new DSoundEvent(world, player, soundEvent, soundCategory, x, y, z, volume, pitch);
         if (!EVENT_BUS.post(event))
         {
             for (IWorldEventListener listener : normalListeners) listener.playSoundToAllNearExcept(event.player, event.soundEvent, event.soundCategory, event.x, event.y, event.z, event.volume, event.pitch);
@@ -96,7 +96,7 @@ public class WorldEventDistributor implements IWorldEventListener
     @Override
     public void playRecord(SoundEvent soundEvent, BlockPos pos)
     {
-        DPlayRecordEvent event = new DPlayRecordEvent(soundEvent, pos);
+        DPlayRecordEvent event = new DPlayRecordEvent(world, soundEvent, pos);
         if (!EVENT_BUS.post(event))
         {
             for (IWorldEventListener listener : normalListeners) listener.playRecord(event.soundEvent, event.pos);
@@ -112,7 +112,7 @@ public class WorldEventDistributor implements IWorldEventListener
     @Override
     public void spawnParticle(int id, boolean ignoreRange, boolean minimumParticles, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, int... parameters)
     {
-        DSpawnParticleEvent event = new DSpawnParticleEvent(id, ignoreRange, minimumParticles, x, y, z, xSpeed, ySpeed, zSpeed, parameters);
+        DSpawnParticleEvent event = new DSpawnParticleEvent(world, id, ignoreRange, minimumParticles, x, y, z, xSpeed, ySpeed, zSpeed, parameters);
         if (!EVENT_BUS.post(event))
         {
             for (IWorldEventListener listener : normalListeners) listener.spawnParticle(event.id, event.ignoreRange, event.minimumParticles, event.x, event.y, event.z, event.xSpeed, event.ySpeed, event.zSpeed, event.parameters);
@@ -122,21 +122,21 @@ public class WorldEventDistributor implements IWorldEventListener
     @Override
     public void onEntityAdded(Entity entity)
     {
-        EVENT_BUS.post(new DEntityAddedEvent(entity));
+        EVENT_BUS.post(new DEntityAddedEvent(world, entity));
         for (IWorldEventListener listener : normalListeners) listener.onEntityAdded(entity);
     }
 
     @Override
     public void onEntityRemoved(Entity entity)
     {
-        EVENT_BUS.post(new DEntityRemovedEvent(entity));
+        EVENT_BUS.post(new DEntityRemovedEvent(world, entity));
         for (IWorldEventListener listener : normalListeners) listener.onEntityRemoved(entity);
     }
 
     @Override
     public void broadcastSound(int soundID, BlockPos pos, int data)
     {
-        DBroadcastSoundEvent event = new DBroadcastSoundEvent(soundID, pos, data);
+        DBroadcastSoundEvent event = new DBroadcastSoundEvent(world, soundID, pos, data);
         if (!EVENT_BUS.post(event))
         {
             for (IWorldEventListener listener : normalListeners) listener.broadcastSound(event.soundID, event.pos, event.data);
@@ -146,7 +146,7 @@ public class WorldEventDistributor implements IWorldEventListener
     @Override
     public void playEvent(EntityPlayer player, int type, BlockPos pos, int data)
     {
-        DPlayEvent event = new DPlayEvent(player, type, pos, data);
+        DPlayEvent event = new DPlayEvent(world, player, type, pos, data);
         if (!EVENT_BUS.post(event))
         {
             for (IWorldEventListener listener : normalListeners) listener.playEvent(event.player, event.type, event.pos, event.data);
@@ -156,7 +156,7 @@ public class WorldEventDistributor implements IWorldEventListener
     @Override
     public void sendBlockBreakProgress(int breakerID, BlockPos pos, int progress)
     {
-        DSendBlockBreakProgressEvent event = new DSendBlockBreakProgressEvent(breakerID, pos, progress);
+        DSendBlockBreakProgressEvent event = new DSendBlockBreakProgressEvent(world, breakerID, pos, progress);
         if (!EVENT_BUS.post(event))
         {
             for (IWorldEventListener listener : normalListeners) listener.sendBlockBreakProgress(event.breakerID, event.pos, event.progress);
@@ -164,17 +164,32 @@ public class WorldEventDistributor implements IWorldEventListener
     }
 
 
-    @Cancelable
-    public class DBlockUpdateEvent extends Event
+    public static class DWorldEvent extends Event
     {
-        public World world;
+        private World world;
+
+        public DWorldEvent(World world)
+        {
+            this.world = world;
+        }
+
+        public World getWorld()
+        {
+            return world;
+        }
+    }
+
+    @Cancelable
+    public static class DBlockUpdateEvent extends DWorldEvent
+    {
         public BlockPos pos;
         public IBlockState oldState, newState;
         public int flags;
 
         private DBlockUpdateEvent(World world, BlockPos pos, IBlockState oldState, IBlockState newState, int flags)
         {
-            this.world = world;
+            super(world);
+
             this.pos = pos;
             this.oldState = oldState;
             this.newState = newState;
@@ -183,23 +198,27 @@ public class WorldEventDistributor implements IWorldEventListener
     }
 
     @Cancelable
-    public class DNotifyLightSetEvent extends Event
+    public static class DNotifyLightSetEvent extends DWorldEvent
     {
         public BlockPos pos;
 
-        private DNotifyLightSetEvent(BlockPos pos)
+        private DNotifyLightSetEvent(World world, BlockPos pos)
         {
+            super(world);
+
             this.pos = pos;
         }
     }
 
     @Cancelable
-    public class DMarkBlockRangeForRenderUpdateEvent extends Event
+    public static class DMarkBlockRangeForRenderUpdateEvent extends DWorldEvent
     {
         public int x1, y1, z1, x2, y2, z2;
 
-        private DMarkBlockRangeForRenderUpdateEvent(int x1, int y1, int z1, int x2, int y2, int z2)
+        private DMarkBlockRangeForRenderUpdateEvent(World world, int x1, int y1, int z1, int x2, int y2, int z2)
         {
+            super(world);
+
             this.x1 = x1;
             this.y1 = y1;
             this.z1 = z1;
@@ -210,7 +229,7 @@ public class WorldEventDistributor implements IWorldEventListener
     }
 
     @Cancelable
-    public class DSoundEvent extends Event
+    public static class DSoundEvent extends DWorldEvent
     {
         public EntityPlayer player;
         public SoundEvent soundEvent;
@@ -219,8 +238,10 @@ public class WorldEventDistributor implements IWorldEventListener
         public float volume, pitch;
         public Entity entity = null;
 
-        private DSoundEvent(@Nullable EntityPlayer player, SoundEvent soundEvent, SoundCategory soundCategory, double x, double y, double z, float volume, float pitch)
+        private DSoundEvent(World world, @Nullable EntityPlayer player, SoundEvent soundEvent, SoundCategory soundCategory, double x, double y, double z, float volume, float pitch)
         {
+            super(world);
+
             this.player = player;
             this.soundEvent = soundEvent;
             this.soundCategory = soundCategory;
@@ -242,28 +263,32 @@ public class WorldEventDistributor implements IWorldEventListener
     }
 
     @Cancelable
-    public class DPlayRecordEvent extends Event
+    public static class DPlayRecordEvent extends DWorldEvent
     {
         public SoundEvent soundEvent;
         public BlockPos pos;
 
-        private DPlayRecordEvent(SoundEvent soundEvent, BlockPos pos)
+        private DPlayRecordEvent(World world, SoundEvent soundEvent, BlockPos pos)
         {
+            super(world);
+
             this.soundEvent = soundEvent;
             this.pos = pos;
         }
     }
 
     @Cancelable
-    public class DSpawnParticleEvent extends Event
+    public static class DSpawnParticleEvent extends DWorldEvent
     {
         public int id;
         public boolean ignoreRange, minimumParticles;
         public double x, y, z, xSpeed, ySpeed, zSpeed;
         public int[] parameters;
 
-        private DSpawnParticleEvent(int id, boolean ignoreRange, boolean minimumParticles, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, int... parameters)
+        private DSpawnParticleEvent(World world, int id, boolean ignoreRange, boolean minimumParticles, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, int... parameters)
         {
+            super(world);
+
             this.id = id;
             this.ignoreRange = ignoreRange;
             this.minimumParticles = minimumParticles;
@@ -277,12 +302,14 @@ public class WorldEventDistributor implements IWorldEventListener
         }
     }
 
-    public class DEntityAddedEvent extends Event
+    public static class DEntityAddedEvent extends DWorldEvent
     {
         private Entity entity;
 
-        private DEntityAddedEvent(Entity entity)
+        private DEntityAddedEvent(World world, Entity entity)
         {
+            super(world);
+
             this.entity = entity;
         }
 
@@ -292,12 +319,14 @@ public class WorldEventDistributor implements IWorldEventListener
         }
     }
 
-    public class DEntityRemovedEvent extends Event
+    public static class DEntityRemovedEvent extends DWorldEvent
     {
         private Entity entity;
 
-        private DEntityRemovedEvent(Entity entity)
+        private DEntityRemovedEvent(World world, Entity entity)
         {
+            super(world);
+
             this.entity = entity;
         }
 
@@ -308,13 +337,15 @@ public class WorldEventDistributor implements IWorldEventListener
     }
 
     @Cancelable
-    public class DBroadcastSoundEvent extends Event
+    public static class DBroadcastSoundEvent extends DWorldEvent
     {
         public int soundID, data;
         public BlockPos pos;
 
-        private DBroadcastSoundEvent(int soundID, BlockPos pos, int data)
+        private DBroadcastSoundEvent(World world, int soundID, BlockPos pos, int data)
         {
+            super(world);
+
             this.soundID = soundID;
             this.pos = pos;
             this.data = data;
@@ -322,14 +353,16 @@ public class WorldEventDistributor implements IWorldEventListener
     }
 
     @Cancelable
-    public class DPlayEvent extends Event
+    public static class DPlayEvent extends DWorldEvent
     {
         public EntityPlayer player;
         public int type, data;
         public BlockPos pos;
 
-        private DPlayEvent(EntityPlayer player, int type, BlockPos pos, int data)
+        private DPlayEvent(World world, EntityPlayer player, int type, BlockPos pos, int data)
         {
+            super(world);
+
             this.player = player;
             this.type = type;
             this.pos = pos;
@@ -338,13 +371,15 @@ public class WorldEventDistributor implements IWorldEventListener
     }
 
     @Cancelable
-    public class DSendBlockBreakProgressEvent extends Event
+    public static class DSendBlockBreakProgressEvent extends DWorldEvent
     {
         public int breakerID, progress;
         public BlockPos pos;
 
-        private DSendBlockBreakProgressEvent(int breakerID, BlockPos pos, int progress)
+        private DSendBlockBreakProgressEvent(World world, int breakerID, BlockPos pos, int progress)
         {
+            super(world);
+
             this.breakerID = breakerID;
             this.pos = pos;
             this.progress = progress;
