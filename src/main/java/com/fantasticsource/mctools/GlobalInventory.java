@@ -7,7 +7,6 @@ import com.fantasticsource.tiamatrpg.api.ITiamatPlayerInventory;
 import com.fantasticsource.tiamatrpg.api.TiamatRPGAPI;
 import com.fantasticsource.tools.ReflectionTool;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -33,24 +32,24 @@ public class GlobalInventory
         }
     }
 
-    public static ArrayList<ItemStack> getActiveItems(Entity entity)
+
+    public static ArrayList<ItemStack> getAllItems(Entity entity)
     {
-        ArrayList<ItemStack> calculatedStacks = new ArrayList<>(), result = new ArrayList<>();
+        ArrayList<ItemStack> result = new ArrayList<>();
 
-        if (entity instanceof EntityPlayer)
-        {
+        //Vanilla
+        ItemStack stack = getVanillaMainhandItem(entity);
+        if (stack != null) result.add(stack);
+        result.addAll(getVanillaOffhandItems(entity));
+        result.addAll(getVanillaArmorItems(entity));
+        result.addAll(getVanillaOtherInventoryItems(entity));
 
-        }
-        else if (entity instanceof EntityLiving)
-        {
+        //Baubles
+        result.addAll(getBaubles(entity));
 
-        }
-        else if (entity instanceof EntityLivingBase)
-        {
-        }
-        else
-        {
-        }
+        //Tiamat RPG
+        ITiamatPlayerInventory inventory = getTiamatInventory(entity);
+        if (inventory != null) result.addAll(inventory.getAllItems());
 
         return result;
     }

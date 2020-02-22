@@ -1,10 +1,9 @@
 package com.fantasticsource.mctools.aw;
 
-import com.fantasticsource.mctools.event.LivingBaseInventoryChangedEvent;
+import com.fantasticsource.mctools.event.InventoryChangedEvent;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -165,7 +164,7 @@ public class TransientAWSkinHandler
 
 
     @SubscribeEvent
-    public static void inventoryChanged(LivingBaseInventoryChangedEvent event)
+    public static void inventoryChanged(InventoryChangedEvent event)
     {
         EntityLivingBase livingBase = event.getEntityLiving();
         removeAllTransientSkins(livingBase);

@@ -26,4 +26,6 @@ public interface ITiamatPlayerInventory extends IInventory
     ArrayList<ItemStack> getCraftingRecipes();
 
     ArrayList<ItemStack> getReadySkills();
+
+    ArrayList<ItemStack> getAllItems();
 }

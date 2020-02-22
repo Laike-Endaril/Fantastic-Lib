@@ -10,26 +10,26 @@ public class TiamatRPGAPI
 {
     private static LinkedHashMap<UUID, ITiamatPlayerInventory> tiamatServerInventories = null;
 
-    public static ITiamatPlayerInventory getTiamatPlayerInventory(EntityPlayer player)
+    static
     {
-        if (tiamatServerInventories == null)
+        try
         {
-            try
+            for (Field field : Class.forName("com.fantasticsource.tiamatrpg.inventory.TiamatPlayerInventory").getDeclaredFields())
             {
-                for (Field field : Class.forName("com.fantasticsource.tiamatrpg.inventory.TiamatPlayerInventory").getDeclaredFields())
+                if (field.getName().equals("tiamatServerInventories"))
                 {
-                    if (field.getName().equals("tiamatServerInventories"))
-                    {
-                        tiamatServerInventories = (LinkedHashMap<UUID, ITiamatPlayerInventory>) field.get(null);
-                    }
+                    tiamatServerInventories = (LinkedHashMap<UUID, ITiamatPlayerInventory>) field.get(null);
                 }
             }
-            catch (ClassNotFoundException | IllegalAccessException e)
-            {
-                e.printStackTrace();
-            }
         }
+        catch (ClassNotFoundException | IllegalAccessException e)
+        {
+            e.printStackTrace();
+        }
+    }
 
+    public static ITiamatPlayerInventory getTiamatPlayerInventory(EntityPlayer player)
+    {
         if (tiamatServerInventories == null) return null;
 
         return tiamatServerInventories.getOrDefault(player.getPersistentID(), null);
