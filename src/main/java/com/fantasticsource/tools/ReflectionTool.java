@@ -123,15 +123,16 @@ public class ReflectionTool
         }
     }
 
-    public static void invoke(Method method, Object object, Object... args)
+    public static Object invoke(Method method, Object object, Object... args)
     {
         try
         {
-            method.invoke(object, args);
+            return method.invoke(object, args);
         }
         catch (IllegalAccessException | InvocationTargetException e)
         {
             MCTools.crash(e, 706, false);
+            return null;
         }
     }
 }

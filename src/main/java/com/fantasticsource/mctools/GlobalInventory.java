@@ -12,23 +12,50 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.profiler.Profiler;
+import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.UUID;
 
 public class GlobalInventory
 {
+    public static Object awSkinTypeRegistry = null;
+    public static Method awGetSkinTypeFromRegistryNameMethod = null, awEntitySkinCapabilityGetMethod = null, awGetSlotCountForSkinTypeMethod = null, awGetSkinStackMethod = null;
+    public static Field awValidSkinTypesField = null;
+
+    public static Profiler profiler = null;
     public static LinkedHashMap<UUID, IInventory> tiamatServerInventories = null;
 
     static
     {
+        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+        if (server != null) profiler = server.profiler;
+
+
         if (Compat.tiamatrpg)
         {
             Class tiamatPlayerInventoryClass = ReflectionTool.getClassByName("com.fantasticsource.tiamatrpg.inventory.TiamatPlayerInventory");
             Field tiamatServerInventoriesField = ReflectionTool.getField(tiamatPlayerInventoryClass, "tiamatServerInventories");
             tiamatServerInventories = (LinkedHashMap<UUID, IInventory>) ReflectionTool.get(tiamatServerInventoriesField, null);
+        }
+
+        if (Compat.armourers_workshop)
+        {
+            Class awSkinTypeRegistryClass = ReflectionTool.getClassByName("moe.plushie.armourers_workshop.common.skin.type.SkinTypeRegistry");
+            Field awSkinTypeRegistryInstanceField = ReflectionTool.getField(awSkinTypeRegistryClass, "INSTANCE");
+            awSkinTypeRegistry = ReflectionTool.get(awSkinTypeRegistryInstanceField, null);
+            awGetSkinTypeFromRegistryNameMethod = ReflectionTool.getMethod(awSkinTypeRegistryClass, "getSkinTypeFromRegistryName");
+
+            Class awEntitySkinCapabilityClass = ReflectionTool.getClassByName("moe.plushie.armourers_workshop.common.capability.entityskin.EntitySkinCapability");
+            awEntitySkinCapabilityGetMethod = ReflectionTool.getMethod(awEntitySkinCapabilityClass, "get");
+            awGetSlotCountForSkinTypeMethod = ReflectionTool.getMethod(awEntitySkinCapabilityClass, "getSlotCountForSkinType");
+            awGetSkinStackMethod = ReflectionTool.getMethod(awEntitySkinCapabilityClass, "getSkinStack");
+            awValidSkinTypesField = ReflectionTool.getField(awEntitySkinCapabilityClass, "validSkinTypes");
         }
     }
 
@@ -148,7 +175,7 @@ public class GlobalInventory
     public static ArrayList<ItemStack> getTiamatArmor(Entity entity)
     {
         ITiamatPlayerInventory inventory = getTiamatInventory(entity);
-        return inventory == null ? null : new ArrayList<>(inventory.getTiamatArmor());
+        return inventory == null ? new ArrayList<>() : new ArrayList<>(inventory.getTiamatArmor());
     }
 
     public static ItemStack getTiamatPet(Entity entity)
@@ -160,36 +187,90 @@ public class GlobalInventory
     public static ArrayList<ItemStack> getTiamatClasses(Entity entity)
     {
         ITiamatPlayerInventory inventory = getTiamatInventory(entity);
-        return inventory == null ? null : new ArrayList<>(inventory.getPlayerClasses());
+        return inventory == null ? new ArrayList<>() : new ArrayList<>(inventory.getPlayerClasses());
     }
 
     public static ArrayList<ItemStack> getTiamatSkills(Entity entity)
     {
         ITiamatPlayerInventory inventory = getTiamatInventory(entity);
-        return inventory == null ? null : new ArrayList<>(inventory.getSkills());
+        return inventory == null ? new ArrayList<>() : new ArrayList<>(inventory.getSkills());
     }
 
     public static ArrayList<ItemStack> getTiamatGatheringProfessions(Entity entity)
     {
         ITiamatPlayerInventory inventory = getTiamatInventory(entity);
-        return inventory == null ? null : new ArrayList<>(inventory.getGatheringProfessions());
+        return inventory == null ? new ArrayList<>() : new ArrayList<>(inventory.getGatheringProfessions());
     }
 
     public static ArrayList<ItemStack> getTiamatCraftingProfessions(Entity entity)
     {
         ITiamatPlayerInventory inventory = getTiamatInventory(entity);
-        return inventory == null ? null : new ArrayList<>(inventory.getCraftingProfessions());
+        return inventory == null ? new ArrayList<>() : new ArrayList<>(inventory.getCraftingProfessions());
     }
 
     public static ArrayList<ItemStack> getTiamatRecipes(Entity entity)
     {
         ITiamatPlayerInventory inventory = getTiamatInventory(entity);
-        return inventory == null ? null : new ArrayList<>(inventory.getCraftingRecipes());
+        return inventory == null ? new ArrayList<>() : new ArrayList<>(inventory.getCraftingRecipes());
     }
 
     public static ArrayList<ItemStack> getTiamatReadySkills(Entity entity)
     {
         ITiamatPlayerInventory inventory = getTiamatInventory(entity);
-        return inventory == null ? null : new ArrayList<>(inventory.getReadySkills());
+        return inventory == null ? new ArrayList<>() : new ArrayList<>(inventory.getReadySkills());
+    }
+
+
+    public static int getAWSkinSlotCount(Entity entity, String skinType)
+    {
+        if (!Compat.armourers_workshop) return 0;
+
+
+        if (profiler != null) profiler.startSection("Fantastic Lib: getAWSkinSlotCount");
+
+        Object skinTypeObject = ReflectionTool.invoke(awGetSkinTypeFromRegistryNameMethod, awSkinTypeRegistry, skinType);
+        Object skinCapabilityObject = ReflectionTool.invoke(awEntitySkinCapabilityGetMethod, null, entity);
+
+        int result = (int) ReflectionTool.invoke(awGetSlotCountForSkinTypeMethod, skinCapabilityObject, skinTypeObject);
+
+        if (profiler != null) profiler.endSection();
+        return result;
+    }
+
+    public static ItemStack getAWSkin(Entity entity, String skinType, int index)
+    {
+        if (!Compat.armourers_workshop) return null;
+
+
+        if (profiler != null) profiler.startSection("Fantastic Lib: getAWSkin");
+
+        Object skinTypeObject = ReflectionTool.invoke(awGetSkinTypeFromRegistryNameMethod, awSkinTypeRegistry, skinType);
+        Object skinCapabilityObject = ReflectionTool.invoke(awEntitySkinCapabilityGetMethod, null, entity);
+
+        ItemStack result = (ItemStack) ReflectionTool.invoke(awGetSkinStackMethod, skinCapabilityObject, skinTypeObject, index);
+
+        if (profiler != null) profiler.endSection();
+        return result;
+    }
+
+    public static ArrayList<ItemStack> getAWSkinsOfType(Entity entity, String skinType)
+    {
+        if (!Compat.armourers_workshop) return new ArrayList<>();
+
+
+        if (profiler != null) profiler.startSection("Fantastic Lib: getAWSkinsOfType");
+
+        Object skinTypeObject = ReflectionTool.invoke(awGetSkinTypeFromRegistryNameMethod, awSkinTypeRegistry, skinType);
+        Object skinCapabilityObject = ReflectionTool.invoke(awEntitySkinCapabilityGetMethod, null, entity);
+
+        int size = (int) ReflectionTool.invoke(awGetSlotCountForSkinTypeMethod, skinCapabilityObject, skinTypeObject);
+        ArrayList<ItemStack> result = new ArrayList<>();
+        for (int i = 0; i < size; i++)
+        {
+            result.add((ItemStack) ReflectionTool.invoke(awGetSkinStackMethod, skinCapabilityObject, skinTypeObject, i));
+        }
+
+        if (profiler != null) profiler.endSection();
+        return result;
     }
 }

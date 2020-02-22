@@ -92,6 +92,7 @@ public class FantasticLib
 
         if (Loader.isModLoaded("armourers_workshop"))
         {
+            Compat.armourers_workshop = true;
             MinecraftForge.EVENT_BUS.register(TransientAWSkinHandler.class);
             if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) MinecraftForge.EVENT_BUS.register(ForcedAWSkinOverrides.class);
         }

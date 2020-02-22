@@ -5,9 +5,10 @@ import com.fantasticsource.mctools.items.ItemMatcher;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -43,6 +44,19 @@ public class InventoryChangedEvent extends LivingEvent
         if (event.side == Side.CLIENT || event.phase == TickEvent.Phase.END) return;
 
 
+        previousContents.entrySet().removeIf(entry ->
+        {
+            Entity entity = entry.getKey();
+            if (!entity.isAddedToWorld()) return true;
+
+            for (World world : FMLCommonHandler.instance().getMinecraftServerInstance().worlds)
+            {
+                if (world == event.world) return false;
+            }
+
+            return true;
+        });
+
         ArrayList<ItemStack> oldInventory, newInventory;
         for (Entity entity : event.world.loadedEntityList)
         {
@@ -75,11 +89,5 @@ public class InventoryChangedEvent extends LivingEvent
                 MinecraftForge.EVENT_BUS.post(new InventoryChangedEvent((EntityLivingBase) entity, oldInventory, newInventory));
             }
         }
-    }
-
-    @SubscribeEvent
-    public static void serverStop(FMLServerStoppedEvent event)
-    {
-        previousContents.clear();
     }
 }
