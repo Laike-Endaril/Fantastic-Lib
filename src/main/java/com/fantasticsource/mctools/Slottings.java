@@ -133,8 +133,7 @@ public class Slottings
     {
         if (!SLOTS.containsKey(slotting)) return false;
 
-        int[] slots = SLOTS.get(slotting);
-        for (int i : slots)
+        for (int i : SLOTS.get(slotting))
         {
             if (i == -2) return true;
             if (i == -1)

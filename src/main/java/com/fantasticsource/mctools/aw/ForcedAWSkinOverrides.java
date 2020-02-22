@@ -1,7 +1,6 @@
-package com.fantasticsource.mctools;
+package com.fantasticsource.mctools.aw;
 
 import com.fantasticsource.tools.ReflectionTool;
-import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -13,11 +12,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagInt;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumHandSide;
 import net.minecraftforge.client.event.RenderSpecificHandEvent;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -30,11 +26,10 @@ import java.util.List;
 
 import static com.fantasticsource.fantasticlib.FantasticLib.DOMAIN;
 
-public class CustomAWSkinHandler
+public class ForcedAWSkinOverrides
 {
     public static Class
             awModAddonManagerClass = ReflectionTool.getClassByName("moe.plushie.armourers_workshop.common.addons.ModAddonManager"),
-            awIEntitySkinCapabilityClass = ReflectionTool.getClassByName("moe.plushie.armourers_workshop.common.capability.entityskin.IEntitySkinCapability"),
             awEntitySkinCapabilityClass = ReflectionTool.getClassByName("moe.plushie.armourers_workshop.common.capability.entityskin.EntitySkinCapability"),
             awSkinLayerRendererHeldItemClass = ReflectionTool.getClassByName("moe.plushie.armourers_workshop.client.render.entity.SkinLayerRendererHeldItem");
 
@@ -75,7 +70,7 @@ public class CustomAWSkinHandler
         if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
         compound = compound.getCompoundTag(DOMAIN);
 
-        compound.setString("type", skinType);
+        compound.setString("awType", skinType);
     }
 
     public static String getForcedAWSkinType(ItemStack stack)
@@ -86,8 +81,8 @@ public class CustomAWSkinHandler
         if (!compound.hasKey(DOMAIN)) return null;
         compound = compound.getCompoundTag(DOMAIN);
 
-        if (!compound.hasKey("type")) return null;
-        return compound.getString("type");
+        if (!compound.hasKey("awType")) return null;
+        return compound.getString("awType");
     }
 
     public static void removeForcedAWSkinType(ItemStack stack)
@@ -98,54 +93,7 @@ public class CustomAWSkinHandler
         if (!mainTag.hasKey(DOMAIN)) return;
         NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
 
-        compound.removeTag("type");
-        if (compound.hasNoTags())
-        {
-            mainTag.removeTag(DOMAIN);
-            if (mainTag.hasNoTags()) stack.setTagCompound(null);
-        }
-    }
-
-
-    public static void addTransientAWSkin(ItemStack stack, String libraryFile, String skinType, Color... dyes)
-    {
-        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
-        NBTTagCompound compound = stack.getTagCompound();
-
-        if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
-        compound = compound.getCompoundTag(DOMAIN);
-
-        if (!compound.hasKey("AWSkins")) compound.setTag("AWSkins", new NBTTagList());
-        NBTTagList list = compound.getTagList("AWSkins", Constants.NBT.TAG_COMPOUND);
-
-        compound = new NBTTagCompound();
-        list.appendTag(compound);
-
-        compound.setString("file", libraryFile);
-        compound.setString("type", skinType);
-
-        if (dyes.length > 0)
-        {
-            list = new NBTTagList();
-            compound.setTag("dyes", list);
-
-            for (Color dye : dyes)
-            {
-                list.appendTag(new NBTTagInt(dye.color()));
-            }
-        }
-    }
-
-    public static void clearTransientAWSkins(ItemStack stack)
-    {
-        if (!stack.hasTagCompound()) return;
-        NBTTagCompound mainTag = stack.getTagCompound();
-
-        if (!mainTag.hasKey(DOMAIN)) return;
-        NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
-
-        compound.removeTag("AWSkins");
-
+        compound.removeTag("awType");
         if (compound.hasNoTags())
         {
             mainTag.removeTag(DOMAIN);
@@ -155,7 +103,7 @@ public class CustomAWSkinHandler
 
 
     //These two methods are the core part of making AW recognize items as being skinnable via NBT
-    private static void testEnableAWSkinOverrideHack(ItemStack stack)
+    private static void tryEnableAWSkinOverrideHack(ItemStack stack)
     {
         String forcedSkinType = getForcedAWSkinType(stack);
         if (forcedSkinType == null) return;
@@ -179,10 +127,10 @@ public class CustomAWSkinHandler
 
 
         awItemOverrides.add(key);
-        compound.setString("mark1", key);
+        compound.setString("awOverride", key);
     }
 
-    private static void testDisableAWSkinOverrideHack(ItemStack stack)
+    private static void tryDisableAWSkinOverrideHack(ItemStack stack)
     {
         if (!stack.hasTagCompound()) return;
 
@@ -190,13 +138,13 @@ public class CustomAWSkinHandler
         if (!mainTag.hasKey(DOMAIN)) return;
 
         NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
-        if (!compound.hasKey("mark1")) return;
+        if (!compound.hasKey("awOverride")) return;
 
 
-        String key = compound.getString("mark1");
+        String key = compound.getString("awOverride");
         awItemOverrides.remove(key);
 
-        compound.removeTag("mark1");
+        compound.removeTag("awOverride");
         if (compound.hasNoTags())
         {
             mainTag.removeTag(DOMAIN);
@@ -210,13 +158,13 @@ public class CustomAWSkinHandler
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void renderSpecificHandBeforeAW(RenderSpecificHandEvent event)
     {
-        testEnableAWSkinOverrideHack(event.getItemStack());
+        tryEnableAWSkinOverrideHack(event.getItemStack());
     }
 
     @SubscribeEvent(priority = EventPriority.LOW, receiveCanceled = true)
     public static void renderSpecificHandAfterAW(RenderSpecificHandEvent event)
     {
-        testDisableAWSkinOverrideHack(event.getItemStack());
+        tryDisableAWSkinOverrideHack(event.getItemStack());
     }
 
 
@@ -277,13 +225,13 @@ public class CustomAWSkinHandler
                         GlStateManager.scale(0.5F, 0.5F, 0.5F);
                     }
 
-                    testEnableAWSkinOverrideHack(rightStack);
+                    tryEnableAWSkinOverrideHack(rightStack);
                     awSkinLayerRendererHeldItemRenderHeldItemMethod.invoke(awLayer, entitylivingbaseIn, rightStack, ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, EnumHandSide.RIGHT, skinCapability);
-                    testDisableAWSkinOverrideHack(rightStack);
+                    tryDisableAWSkinOverrideHack(rightStack);
 
-                    testEnableAWSkinOverrideHack(leftStack);
+                    tryEnableAWSkinOverrideHack(leftStack);
                     awSkinLayerRendererHeldItemRenderHeldItemMethod.invoke(awLayer, entitylivingbaseIn, leftStack, ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, EnumHandSide.LEFT, skinCapability);
-                    testDisableAWSkinOverrideHack(leftStack);
+                    tryDisableAWSkinOverrideHack(leftStack);
 
                     GlStateManager.popMatrix();
                 }

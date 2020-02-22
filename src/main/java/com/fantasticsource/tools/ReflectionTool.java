@@ -3,6 +3,7 @@ package com.fantasticsource.tools;
 import com.fantasticsource.mctools.MCTools;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
@@ -95,5 +96,42 @@ public class ReflectionTool
             }
         }
         return null;
+    }
+
+    public static void set(Field field, Object object, Object value)
+    {
+        try
+        {
+            field.set(object, value);
+        }
+        catch (IllegalAccessException e)
+        {
+            MCTools.crash(e, 704, false);
+        }
+    }
+
+    public static Object get(Field field, Object object)
+    {
+        try
+        {
+            return field.get(object);
+        }
+        catch (IllegalAccessException e)
+        {
+            MCTools.crash(e, 705, false);
+            return null;
+        }
+    }
+
+    public static void invoke(Method method, Object object, Object... args)
+    {
+        try
+        {
+            method.invoke(object, args);
+        }
+        catch (IllegalAccessException | InvocationTargetException e)
+        {
+            MCTools.crash(e, 706, false);
+        }
     }
 }

@@ -2,6 +2,8 @@ package com.fantasticsource.fantasticlib;
 
 import com.fantasticsource.fantasticlib.config.FantasticConfig;
 import com.fantasticsource.mctools.*;
+import com.fantasticsource.mctools.aw.ForcedAWSkinOverrides;
+import com.fantasticsource.mctools.aw.TransientAWSkinHandler;
 import com.fantasticsource.mctools.gui.screen.TestGUI;
 import com.fantasticsource.tools.ReflectionTool;
 import net.minecraft.item.ItemStack;
@@ -88,10 +90,10 @@ public class FantasticLib
         Compat.baubles = (Loader.isModLoaded("baubles"));
         Compat.tiamatrpg = (Loader.isModLoaded("tiamatrpg"));
 
-        if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+        if (Loader.isModLoaded("armourers_workshop"))
         {
-            //Physical client
-            if (Loader.isModLoaded("armourers_workshop")) MinecraftForge.EVENT_BUS.register(CustomAWSkinHandler.class);
+            MinecraftForge.EVENT_BUS.register(TransientAWSkinHandler.class);
+            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) MinecraftForge.EVENT_BUS.register(ForcedAWSkinOverrides.class);
         }
     }
 }
