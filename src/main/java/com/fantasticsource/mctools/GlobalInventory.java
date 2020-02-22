@@ -78,9 +78,14 @@ public class GlobalInventory
         ITiamatPlayerInventory inventory = getTiamatInventory(entity);
         if (inventory != null) result.addAll(inventory.getAllItems());
 
+        //Armourer's Workshop
+        result.addAll(getAWSkins(entity));
+        
         return result;
     }
 
+
+    //Vanilla
 
     public static ItemStack getVanillaMainhandItem(Entity entity)
     {
@@ -139,6 +144,8 @@ public class GlobalInventory
     }
 
 
+    //Baubles
+
     public static ArrayList<ItemStack> getBaubles(Entity entity)
     {
         ArrayList<ItemStack> result = new ArrayList<>();
@@ -153,6 +160,8 @@ public class GlobalInventory
         return result;
     }
 
+
+    //Tiamat RPG
 
     public static ITiamatPlayerInventory getTiamatInventory(Entity entity)
     {
@@ -221,6 +230,8 @@ public class GlobalInventory
     }
 
 
+    //Armourer's Workshop
+
     public static int getAWSkinSlotCount(Entity entity, String skinType)
     {
         if (!Compat.armourers_workshop) return 0;
@@ -228,10 +239,12 @@ public class GlobalInventory
 
         if (profiler != null) profiler.startSection("Fantastic Lib: getAWSkinSlotCount");
 
+
         Object skinTypeObject = ReflectionTool.invoke(awGetSkinTypeFromRegistryNameMethod, awSkinTypeRegistry, skinType);
         Object skinCapabilityObject = ReflectionTool.invoke(awEntitySkinCapabilityGetMethod, null, entity);
 
         int result = (int) ReflectionTool.invoke(awGetSlotCountForSkinTypeMethod, skinCapabilityObject, skinTypeObject);
+
 
         if (profiler != null) profiler.endSection();
         return result;
@@ -244,10 +257,12 @@ public class GlobalInventory
 
         if (profiler != null) profiler.startSection("Fantastic Lib: getAWSkin");
 
+
         Object skinTypeObject = ReflectionTool.invoke(awGetSkinTypeFromRegistryNameMethod, awSkinTypeRegistry, skinType);
         Object skinCapabilityObject = ReflectionTool.invoke(awEntitySkinCapabilityGetMethod, null, entity);
 
         ItemStack result = (ItemStack) ReflectionTool.invoke(awGetSkinStackMethod, skinCapabilityObject, skinTypeObject, index);
+
 
         if (profiler != null) profiler.endSection();
         return result;
@@ -255,20 +270,48 @@ public class GlobalInventory
 
     public static ArrayList<ItemStack> getAWSkinsOfType(Entity entity, String skinType)
     {
-        if (!Compat.armourers_workshop) return new ArrayList<>();
+        ArrayList<ItemStack> result = new ArrayList<>();
+        if (!Compat.armourers_workshop) return result;
 
 
         if (profiler != null) profiler.startSection("Fantastic Lib: getAWSkinsOfType");
+
 
         Object skinTypeObject = ReflectionTool.invoke(awGetSkinTypeFromRegistryNameMethod, awSkinTypeRegistry, skinType);
         Object skinCapabilityObject = ReflectionTool.invoke(awEntitySkinCapabilityGetMethod, null, entity);
 
         int size = (int) ReflectionTool.invoke(awGetSlotCountForSkinTypeMethod, skinCapabilityObject, skinTypeObject);
-        ArrayList<ItemStack> result = new ArrayList<>();
         for (int i = 0; i < size; i++)
         {
             result.add((ItemStack) ReflectionTool.invoke(awGetSkinStackMethod, skinCapabilityObject, skinTypeObject, i));
         }
+
+
+        if (profiler != null) profiler.endSection();
+        return result;
+    }
+
+    public static ArrayList<ItemStack> getAWSkins(Entity entity)
+    {
+        ArrayList<ItemStack> result = new ArrayList<>();
+        if (!Compat.armourers_workshop) return result;
+
+
+        if (profiler != null) profiler.startSection("Fantastic Lib: getAWSkins");
+
+
+        Object skinCapabilityObject = ReflectionTool.invoke(awEntitySkinCapabilityGetMethod, null, entity);
+
+        int size;
+        for (Object skinTypeObject : (Object[]) ReflectionTool.get(awValidSkinTypesField, skinCapabilityObject))
+        {
+            size = (int) ReflectionTool.invoke(awGetSlotCountForSkinTypeMethod, skinCapabilityObject, skinTypeObject);
+            for (int i = 0; i < size; i++)
+            {
+                result.add((ItemStack) ReflectionTool.invoke(awGetSkinStackMethod, skinCapabilityObject, skinTypeObject, i));
+            }
+        }
+
 
         if (profiler != null) profiler.endSection();
         return result;
