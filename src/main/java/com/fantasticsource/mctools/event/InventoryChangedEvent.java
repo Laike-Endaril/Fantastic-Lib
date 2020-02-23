@@ -70,7 +70,7 @@ public class InventoryChangedEvent extends EntityEvent
             }
 
 
-            newInventory = GlobalInventory.getAllItems(entity);
+            newInventory = GlobalInventory.getAllNonAWItems(entity);
             oldInventory = previousContents.getOrDefault(entity, new ArrayList<>());
             if (newInventory.size() != oldInventory.size())
             {

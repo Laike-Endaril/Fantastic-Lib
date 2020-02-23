@@ -19,7 +19,7 @@ import static com.fantasticsource.fantasticlib.FantasticLib.DOMAIN;
 
 public class TransientAWSkinHandler
 {
-    @GameRegistry.ObjectHolder("armourers_workshop:skin")
+    @GameRegistry.ObjectHolder("armourers_workshop:item.skin")
     public static Item awSkinItem;
 
     public static void addTransientAWSkin(ItemStack stack, String libraryFile, String skinType, Color... dyes)
@@ -145,7 +145,7 @@ public class TransientAWSkinHandler
             }
 
 
-            String skinType = compound.getString("skinType");
+            String skinType = compound.getString("type");
             int size = GlobalInventory.getAWSkinSlotCount(target, skinType);
             int transientSkinAt = -1;
             for (int i2 = 0; i2 < size; i2++)
@@ -154,7 +154,8 @@ public class TransientAWSkinHandler
                 if (oldSkin.isEmpty())
                 {
                     newSkin = new ItemStack(awSkinItem);
-                    applyNBTToTransientSkin(newSkin, compound.getString("libraryFile"), skinType, dyes.toArray(new Color[0]));
+                    System.out.println(compound.getString("file"));
+                    applyNBTToTransientSkin(newSkin, compound.getString("file"), skinType, dyes.toArray(new Color[0]));
                     GlobalInventory.setAWSkin(target, skinType, i2, newSkin);
                     transientSkinAt = -1;
                     break;
@@ -168,7 +169,7 @@ public class TransientAWSkinHandler
             if (transientSkinAt >= 0)
             {
                 newSkin = new ItemStack(awSkinItem);
-                applyNBTToTransientSkin(newSkin, compound.getString("libraryFile"), skinType, dyes.toArray(new Color[0]));
+                applyNBTToTransientSkin(newSkin, compound.getString("file"), skinType, dyes.toArray(new Color[0]));
                 GlobalInventory.setAWSkin(target, skinType, transientSkinAt, newSkin);
             }
         }
@@ -198,5 +199,7 @@ public class TransientAWSkinHandler
         {
             tryApplyTransientSkinsFromStack(stack, entity);
         }
+
+        GlobalInventory.syncAWWardrobeToSelf(entity);
     }
 }

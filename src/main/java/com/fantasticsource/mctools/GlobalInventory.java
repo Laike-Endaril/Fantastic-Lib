@@ -9,6 +9,7 @@ import com.fantasticsource.tools.ReflectionTool;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -28,9 +29,9 @@ public class GlobalInventory
 
     protected static LinkedHashMap<UUID, IInventory> tiamatServerInventories = null;
 
-    protected static Object awSkinTypeRegistry = null;
-    protected static Method awGetSkinTypeFromRegistryNameMethod = null, awEntitySkinCapabilityGetMethod = null, awGetSlotCountForSkinTypeMethod = null, awGetSkinStackMethod = null, awSetSkinStackMethod;
-    protected static Field awValidSkinTypesField = null;
+    protected static Object awSkinTypeRegistry;
+    protected static Method awGetSkinTypeFromRegistryNameMethod, awEntitySkinCapabilityGetMethod, awGetSlotCountForSkinTypeMethod, awGetSkinStackMethod, awSetSkinStackMethod, awSyncToPlayerMethod, awGetNameMethod;
+    protected static Field awValidSkinTypesField;
 
     static
     {
@@ -58,6 +59,10 @@ public class GlobalInventory
             awGetSkinStackMethod = ReflectionTool.getMethod(awEntitySkinCapabilityClass, "getSkinStack");
             awValidSkinTypesField = ReflectionTool.getField(awEntitySkinCapabilityClass, "validSkinTypes");
             awSetSkinStackMethod = ReflectionTool.getMethod(awEntitySkinCapabilityClass, "setSkinStack");
+            awSyncToPlayerMethod = ReflectionTool.getMethod(awEntitySkinCapabilityClass, "syncToPlayer");
+
+            Class awISkinTypeClass = ReflectionTool.getClassByName("moe.plushie.armourers_workshop.api.common.skin.type.ISkinType");
+            awGetNameMethod = ReflectionTool.getMethod(awISkinTypeClass, "getName");
         }
     }
 
@@ -106,6 +111,27 @@ public class GlobalInventory
 
         //Armourer's Workshop
         result.addAll(getAWSkins(entity));
+
+        return result;
+    }
+
+    public static ArrayList<ItemStack> getAllNonAWItems(Entity entity)
+    {
+        //TODO exclude sheathed items
+        ArrayList<ItemStack> result = new ArrayList<>();
+
+        //Vanilla
+        ItemStack stack = getVanillaMainhandItem(entity);
+        if (stack != null) result.add(stack);
+        result.addAll(getVanillaOffhandItems(entity));
+        result.addAll(getVanillaArmorItems(entity));
+
+        //Baubles
+        result.addAll(getBaubles(entity));
+
+        //Tiamat RPG
+        ITiamatPlayerInventory inventory = getTiamatInventory(entity);
+        if (inventory != null) result.addAll(inventory.getAllEquippedItems());
 
         return result;
     }
@@ -565,5 +591,54 @@ public class GlobalInventory
 
         if (profiler != null) profiler.endSection();
         return result;
+    }
+
+    public static ArrayList<String> getValidSkinTypes(Entity entity)
+    {
+        ArrayList<String> result = new ArrayList<>();
+        if (!Compat.armourers_workshop) return result;
+
+
+        if (profiler != null) profiler.startSection("Fantastic Lib: getValidSkinTypes");
+
+
+        Object skinCapabilityObject = ReflectionTool.invoke(awEntitySkinCapabilityGetMethod, null, entity);
+        if (skinCapabilityObject == null)
+        {
+            if (profiler != null) profiler.endSection();
+            return result;
+        }
+
+
+        for (Object skinTypeObject : (Object[]) ReflectionTool.get(awValidSkinTypesField, skinCapabilityObject))
+        {
+            result.add("armourers:" + ((String) ReflectionTool.invoke(awGetNameMethod, skinTypeObject)).toLowerCase());
+        }
+
+
+        if (profiler != null) profiler.endSection();
+        return result;
+    }
+
+    public static void syncAWWardrobeToSelf(Entity entity)
+    {
+        if (!Compat.armourers_workshop || !(entity instanceof EntityPlayerMP)) return;
+
+
+        if (profiler != null) profiler.startSection("Fantastic Lib: syncAWWardrobeToSelf");
+
+
+        Object skinCapabilityObject = ReflectionTool.invoke(awEntitySkinCapabilityGetMethod, null, entity);
+        if (skinCapabilityObject == null)
+        {
+            if (profiler != null) profiler.endSection();
+            return;
+        }
+
+
+        ReflectionTool.invoke(awSyncToPlayerMethod, skinCapabilityObject, entity);
+
+
+        if (profiler != null) profiler.endSection();
     }
 }
