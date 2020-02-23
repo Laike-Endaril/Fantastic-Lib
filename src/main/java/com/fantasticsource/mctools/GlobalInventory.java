@@ -30,7 +30,7 @@ public class GlobalInventory
     protected static LinkedHashMap<UUID, IInventory> tiamatServerInventories = null;
 
     protected static Object awSkinTypeRegistry;
-    protected static Method awGetSkinTypeFromRegistryNameMethod, awEntitySkinCapabilityGetMethod, awGetSlotCountForSkinTypeMethod, awGetSkinStackMethod, awSetSkinStackMethod, awSyncToPlayerMethod, awGetNameMethod;
+    protected static Method awGetSkinTypeFromRegistryNameMethod, awEntitySkinCapabilityGetMethod, awGetSlotCountForSkinTypeMethod, awGetSkinStackMethod, awSetSkinStackMethod, awGetNameMethod;
     protected static Field awValidSkinTypesField;
 
     static
@@ -59,7 +59,6 @@ public class GlobalInventory
             awGetSkinStackMethod = ReflectionTool.getMethod(awEntitySkinCapabilityClass, "getSkinStack");
             awValidSkinTypesField = ReflectionTool.getField(awEntitySkinCapabilityClass, "validSkinTypes");
             awSetSkinStackMethod = ReflectionTool.getMethod(awEntitySkinCapabilityClass, "setSkinStack");
-            awSyncToPlayerMethod = ReflectionTool.getMethod(awEntitySkinCapabilityClass, "syncToPlayer");
 
             Class awISkinTypeClass = ReflectionTool.getClassByName("moe.plushie.armourers_workshop.api.common.skin.type.ISkinType");
             awGetNameMethod = ReflectionTool.getMethod(awISkinTypeClass, "getName");
@@ -637,25 +636,12 @@ public class GlobalInventory
         return result;
     }
 
-    public static void syncAWWardrobeToSelf(Entity entity)
+    public static void syncAWWardrobe(Entity entity)
     {
         if (!Compat.armourers_workshop || !(entity instanceof EntityPlayerMP)) return;
 
 
-        if (profiler != null) profiler.startSection("Fantastic Lib: syncAWWardrobeToSelf");
-
-
-        Object skinCapabilityObject = ReflectionTool.invoke(awEntitySkinCapabilityGetMethod, null, entity);
-        if (skinCapabilityObject == null)
-        {
-            if (profiler != null) profiler.endSection();
-            return;
-        }
-
-
-        ReflectionTool.invoke(awSyncToPlayerMethod, skinCapabilityObject, entity);
-
-
-        if (profiler != null) profiler.endSection();
+        EntityPlayerMP player = (EntityPlayerMP) entity;
+        FMLCommonHandler.instance().getMinecraftServerInstance().commandManager.executeCommand(player, "/armourers resyncWardrobe " + player.getName());
     }
 }
