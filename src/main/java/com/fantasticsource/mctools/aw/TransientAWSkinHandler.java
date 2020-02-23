@@ -154,7 +154,6 @@ public class TransientAWSkinHandler
                 if (oldSkin.isEmpty())
                 {
                     newSkin = new ItemStack(awSkinItem);
-                    System.out.println(compound.getString("file"));
                     applyNBTToTransientSkin(newSkin, compound.getString("file"), skinType, dyes.toArray(new Color[0]));
                     GlobalInventory.setAWSkin(target, skinType, i2, newSkin);
                     transientSkinAt = -1;
