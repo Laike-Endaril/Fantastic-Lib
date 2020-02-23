@@ -84,6 +84,143 @@ public class GlobalInventory
         return result;
     }
 
+    public static LinkedHashMap<String, ArrayList<ItemStack>> getAllItemsCategorized(Entity entity)
+    {
+        LinkedHashMap<String, ArrayList<ItemStack>> result = new LinkedHashMap<>();
+        ArrayList<ItemStack> list = new ArrayList<>();
+
+
+        //Vanilla
+        ItemStack stack = getVanillaMainhandItem(entity);
+        if (stack != null)
+        {
+            list.add(stack);
+            result.put("Vanilla Mainhand", list);
+            list = new ArrayList<>();
+        }
+
+        list.addAll(getVanillaOffhandItems(entity));
+        if (list.size() > 0)
+        {
+            result.put("Vanilla Offhands", list);
+            list = new ArrayList<>();
+        }
+
+        list.addAll(getVanillaArmorItems(entity));
+        if (list.size() > 0)
+        {
+            result.put("Vanilla Armor", list);
+            list = new ArrayList<>();
+        }
+
+        list.addAll(getVanillaOtherInventoryItems(entity));
+        if (list.size() > 0)
+        {
+            result.put("Vanilla Other Inventory", list);
+            list = new ArrayList<>();
+        }
+
+
+        //Baubles
+        list.addAll(getBaubles(entity));
+        if (list.size() > 0)
+        {
+            result.put("Baubles Inventory", list);
+            list = new ArrayList<>();
+        }
+
+
+        //Tiamat RPG
+        ITiamatPlayerInventory inventory = getTiamatInventory(entity);
+        if (inventory != null)
+        {
+            stack = getTiamatInactiveMainhand(inventory);
+            if (stack != null)
+            {
+                list.add(stack);
+                result.put("Tiamat Inactive Weaponset Mainhand", list);
+                list = new ArrayList<>();
+            }
+
+            stack = getTiamatInactiveOffhand(inventory);
+            if (stack != null)
+            {
+                list.add(stack);
+                result.put("Tiamat Inactive Weaponset Offhand", list);
+                list = new ArrayList<>();
+            }
+
+            list.addAll(getTiamatArmor(inventory));
+            if (list.size() > 0)
+            {
+                result.put("Tiamat Armor", list);
+                list = new ArrayList<>();
+            }
+
+            stack = getTiamatPet(inventory);
+            if (stack != null)
+            {
+                list.add(stack);
+                result.put("Tiamat Pet", list);
+                list = new ArrayList<>();
+            }
+
+            list.addAll(getTiamatClasses(inventory));
+            if (list.size() > 0)
+            {
+                result.put("Tiamat Classes", list);
+                list = new ArrayList<>();
+            }
+
+            list.addAll(getTiamatSkills(inventory));
+            if (list.size() > 0)
+            {
+                result.put("Tiamat Skills", list);
+                list = new ArrayList<>();
+            }
+
+            list.addAll(getTiamatGatheringProfessions(inventory));
+            if (list.size() > 0)
+            {
+                result.put("Tiamat Gathering Professions", list);
+                list = new ArrayList<>();
+            }
+
+            list.addAll(getTiamatCraftingProfessions(inventory));
+            if (list.size() > 0)
+            {
+                result.put("Tiamat Crafting Professions", list);
+                list = new ArrayList<>();
+            }
+
+            list.addAll(getTiamatRecipes(inventory));
+            if (list.size() > 0)
+            {
+                result.put("Tiamat Recipes", list);
+                list = new ArrayList<>();
+            }
+
+            list.addAll(getTiamatReadySkills(inventory));
+            if (list.size() > 0)
+            {
+                result.put("Tiamat Ready Skills", list);
+                list = new ArrayList<>();
+            }
+        }
+
+
+        //Armourer's Workshop
+        list.addAll(getAWSkins(entity));
+        if (list.size() > 0)
+        {
+            result.put("Armourer's Workshop Skins", list);
+            list = new ArrayList<>();
+        }
+
+
+        return result;
+    }
+
 
     //Vanilla
 
@@ -171,61 +308,101 @@ public class GlobalInventory
 
     public static ItemStack getTiamatInactiveMainhand(Entity entity)
     {
-        ITiamatPlayerInventory inventory = getTiamatInventory(entity);
+        return getTiamatInactiveMainhand(getTiamatInventory(entity));
+    }
+
+    public static ItemStack getTiamatInactiveMainhand(ITiamatPlayerInventory inventory)
+    {
         return inventory == null ? null : inventory.getInactiveWeaponsetMainhand();
     }
 
     public static ItemStack getTiamatInactiveOffhand(Entity entity)
     {
-        ITiamatPlayerInventory inventory = getTiamatInventory(entity);
+        return getTiamatInactiveOffhand(getTiamatInventory(entity));
+    }
+
+    public static ItemStack getTiamatInactiveOffhand(ITiamatPlayerInventory inventory)
+    {
         return inventory == null ? null : inventory.getInactiveWeaponsetOffhand();
     }
 
     public static ArrayList<ItemStack> getTiamatArmor(Entity entity)
     {
-        ITiamatPlayerInventory inventory = getTiamatInventory(entity);
+        return getTiamatArmor(getTiamatInventory(entity));
+    }
+
+    public static ArrayList<ItemStack> getTiamatArmor(ITiamatPlayerInventory inventory)
+    {
         return inventory == null ? new ArrayList<>() : new ArrayList<>(inventory.getTiamatArmor());
     }
 
     public static ItemStack getTiamatPet(Entity entity)
     {
-        ITiamatPlayerInventory inventory = getTiamatInventory(entity);
+        return getTiamatPet(getTiamatInventory(entity));
+    }
+
+    public static ItemStack getTiamatPet(ITiamatPlayerInventory inventory)
+    {
         return inventory == null ? null : inventory.getPet();
     }
 
     public static ArrayList<ItemStack> getTiamatClasses(Entity entity)
     {
-        ITiamatPlayerInventory inventory = getTiamatInventory(entity);
+        return getTiamatClasses(getTiamatInventory(entity));
+    }
+
+    public static ArrayList<ItemStack> getTiamatClasses(ITiamatPlayerInventory inventory)
+    {
         return inventory == null ? new ArrayList<>() : new ArrayList<>(inventory.getPlayerClasses());
     }
 
     public static ArrayList<ItemStack> getTiamatSkills(Entity entity)
     {
-        ITiamatPlayerInventory inventory = getTiamatInventory(entity);
+        return getTiamatSkills(getTiamatInventory(entity));
+    }
+
+    public static ArrayList<ItemStack> getTiamatSkills(ITiamatPlayerInventory inventory)
+    {
         return inventory == null ? new ArrayList<>() : new ArrayList<>(inventory.getSkills());
     }
 
     public static ArrayList<ItemStack> getTiamatGatheringProfessions(Entity entity)
     {
-        ITiamatPlayerInventory inventory = getTiamatInventory(entity);
+        return getTiamatGatheringProfessions(getTiamatInventory(entity));
+    }
+
+    public static ArrayList<ItemStack> getTiamatGatheringProfessions(ITiamatPlayerInventory inventory)
+    {
         return inventory == null ? new ArrayList<>() : new ArrayList<>(inventory.getGatheringProfessions());
     }
 
     public static ArrayList<ItemStack> getTiamatCraftingProfessions(Entity entity)
     {
-        ITiamatPlayerInventory inventory = getTiamatInventory(entity);
+        return getTiamatCraftingProfessions(getTiamatInventory(entity));
+    }
+
+    public static ArrayList<ItemStack> getTiamatCraftingProfessions(ITiamatPlayerInventory inventory)
+    {
         return inventory == null ? new ArrayList<>() : new ArrayList<>(inventory.getCraftingProfessions());
     }
 
     public static ArrayList<ItemStack> getTiamatRecipes(Entity entity)
     {
-        ITiamatPlayerInventory inventory = getTiamatInventory(entity);
+        return getTiamatRecipes(getTiamatInventory(entity));
+    }
+
+    public static ArrayList<ItemStack> getTiamatRecipes(ITiamatPlayerInventory inventory)
+    {
         return inventory == null ? new ArrayList<>() : new ArrayList<>(inventory.getCraftingRecipes());
     }
 
     public static ArrayList<ItemStack> getTiamatReadySkills(Entity entity)
     {
-        ITiamatPlayerInventory inventory = getTiamatInventory(entity);
+        return getTiamatReadySkills(getTiamatInventory(entity));
+    }
+
+    public static ArrayList<ItemStack> getTiamatReadySkills(ITiamatPlayerInventory inventory)
+    {
         return inventory == null ? new ArrayList<>() : new ArrayList<>(inventory.getReadySkills());
     }
 
