@@ -7,7 +7,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -16,7 +16,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
-public class InventoryChangedEvent extends LivingEvent
+public class InventoryChangedEvent extends EntityEvent
 {
     public static LinkedHashMap<Entity, ArrayList<ItemStack>> previousContents = new LinkedHashMap<>();
 
@@ -29,7 +29,7 @@ public class InventoryChangedEvent extends LivingEvent
     public ArrayList<ItemStack> oldInventory, newInventory;
 
 
-    public InventoryChangedEvent(EntityLivingBase entity, ArrayList<ItemStack> oldInventory, ArrayList<ItemStack> newInventory)
+    public InventoryChangedEvent(Entity entity, ArrayList<ItemStack> oldInventory, ArrayList<ItemStack> newInventory)
     {
         super(entity);
 

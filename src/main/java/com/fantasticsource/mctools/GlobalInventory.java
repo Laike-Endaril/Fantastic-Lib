@@ -24,12 +24,13 @@ import java.util.UUID;
 
 public class GlobalInventory
 {
-    public static Object awSkinTypeRegistry = null;
-    public static Method awGetSkinTypeFromRegistryNameMethod = null, awEntitySkinCapabilityGetMethod = null, awGetSlotCountForSkinTypeMethod = null, awGetSkinStackMethod = null;
-    public static Field awValidSkinTypesField = null;
+    protected static Profiler profiler = null;
 
-    public static Profiler profiler = null;
-    public static LinkedHashMap<UUID, IInventory> tiamatServerInventories = null;
+    protected static LinkedHashMap<UUID, IInventory> tiamatServerInventories = null;
+
+    protected static Object awSkinTypeRegistry = null;
+    protected static Method awGetSkinTypeFromRegistryNameMethod = null, awEntitySkinCapabilityGetMethod = null, awGetSlotCountForSkinTypeMethod = null, awGetSkinStackMethod = null, awSetSkinStackMethod;
+    protected static Field awValidSkinTypesField = null;
 
     static
     {
@@ -56,6 +57,7 @@ public class GlobalInventory
             awGetSlotCountForSkinTypeMethod = ReflectionTool.getMethod(awEntitySkinCapabilityClass, "getSlotCountForSkinType");
             awGetSkinStackMethod = ReflectionTool.getMethod(awEntitySkinCapabilityClass, "getSkinStack");
             awValidSkinTypesField = ReflectionTool.getField(awEntitySkinCapabilityClass, "validSkinTypes");
+            awSetSkinStackMethod = ReflectionTool.getMethod(awEntitySkinCapabilityClass, "setSkinStack");
         }
     }
 
@@ -77,6 +79,30 @@ public class GlobalInventory
         //Tiamat RPG
         ITiamatPlayerInventory inventory = getTiamatInventory(entity);
         if (inventory != null) result.addAll(inventory.getAllItems());
+
+        //Armourer's Workshop
+        result.addAll(getAWSkins(entity));
+
+        return result;
+    }
+
+    public static ArrayList<ItemStack> getAllEquippedItems(Entity entity)
+    {
+        //TODO exclude sheathed items
+        ArrayList<ItemStack> result = new ArrayList<>();
+
+        //Vanilla
+        ItemStack stack = getVanillaMainhandItem(entity);
+        if (stack != null) result.add(stack);
+        result.addAll(getVanillaOffhandItems(entity));
+        result.addAll(getVanillaArmorItems(entity));
+
+        //Baubles
+        result.addAll(getBaubles(entity));
+
+        //Tiamat RPG
+        ITiamatPlayerInventory inventory = getTiamatInventory(entity);
+        if (inventory != null) result.addAll(inventory.getAllEquippedItems());
 
         //Armourer's Workshop
         result.addAll(getAWSkins(entity));
@@ -511,6 +537,30 @@ public class GlobalInventory
                 result.add((ItemStack) ReflectionTool.invoke(awGetSkinStackMethod, skinCapabilityObject, skinTypeObject, i));
             }
         }
+
+
+        if (profiler != null) profiler.endSection();
+        return result;
+    }
+
+    public static ItemStack setAWSkin(Entity entity, String skinType, int index, ItemStack newSkin)
+    {
+        if (!Compat.armourers_workshop) return null;
+
+
+        if (profiler != null) profiler.startSection("Fantastic Lib: setAWSkin");
+
+
+        Object skinCapabilityObject = ReflectionTool.invoke(awEntitySkinCapabilityGetMethod, null, entity);
+        if (skinCapabilityObject == null)
+        {
+            if (profiler != null) profiler.endSection();
+            return null;
+        }
+
+        Object skinTypeObject = ReflectionTool.invoke(awGetSkinTypeFromRegistryNameMethod, awSkinTypeRegistry, skinType);
+
+        ItemStack result = (ItemStack) ReflectionTool.invoke(awSetSkinStackMethod, skinCapabilityObject, skinTypeObject, index, newSkin);
 
 
         if (profiler != null) profiler.endSection();

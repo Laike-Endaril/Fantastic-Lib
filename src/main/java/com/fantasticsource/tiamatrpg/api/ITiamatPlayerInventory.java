@@ -28,4 +28,6 @@ public interface ITiamatPlayerInventory extends IInventory
     ArrayList<ItemStack> getReadySkills();
 
     ArrayList<ItemStack> getAllItems();
+
+    ArrayList<ItemStack> getAllEquippedItems();
 }

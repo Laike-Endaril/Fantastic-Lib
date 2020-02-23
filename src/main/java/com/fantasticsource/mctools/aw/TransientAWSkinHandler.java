@@ -1,9 +1,9 @@
 package com.fantasticsource.mctools.aw;
 
+import com.fantasticsource.mctools.GlobalInventory;
 import com.fantasticsource.mctools.event.InventoryChangedEvent;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -128,7 +128,7 @@ public class TransientAWSkinHandler
         if (!compound.hasKey("AWSkins")) return;
         NBTTagList list = compound.getTagList("AWSkins", Constants.NBT.TAG_COMPOUND);
 
-        ItemStack skin;
+        ItemStack newSkin, oldSkin;
         NBTTagList list2;
         ArrayList<Color> dyes;
         for (int i = 0; i < list.tagCount(); i++)
@@ -144,30 +144,59 @@ public class TransientAWSkinHandler
                 }
             }
 
-            skin = new ItemStack(awSkinItem);
-            applyNBTToTransientSkin(skin, compound.getString("libraryFile"), compound.getString("skinType"), dyes.toArray(new Color[0]));
 
+            String skinType = compound.getString("skinType");
+            int size = GlobalInventory.getAWSkinSlotCount(target, skinType);
+            int transientSkinAt = -1;
+            for (int i2 = 0; i2 < size; i2++)
+            {
+                oldSkin = GlobalInventory.getAWSkin(target, skinType, i2);
+                if (oldSkin.isEmpty())
+                {
+                    newSkin = new ItemStack(awSkinItem);
+                    applyNBTToTransientSkin(newSkin, compound.getString("libraryFile"), skinType, dyes.toArray(new Color[0]));
+                    GlobalInventory.setAWSkin(target, skinType, i2, newSkin);
+                    transientSkinAt = -1;
+                    break;
+                }
+                else if (transientSkinAt == -1 && isTransientSkin(oldSkin))
+                {
+                    transientSkinAt = i2;
+                }
+            }
 
-            //TODO search slots of correct type, searching for an empty one while tracking ones filled with transient items.  Fill empty slot if possible, replace other transient as a fallback, and do nothing otherwise
+            if (transientSkinAt >= 0)
+            {
+                newSkin = new ItemStack(awSkinItem);
+                applyNBTToTransientSkin(newSkin, compound.getString("libraryFile"), skinType, dyes.toArray(new Color[0]));
+                GlobalInventory.setAWSkin(target, skinType, transientSkinAt, newSkin);
+            }
         }
-    }
-
-    public static void tryAddAllTransientSkins(Entity entity)
-    {
-        //TODO
     }
 
     public static void removeAllTransientSkins(Entity entity)
     {
-        //TODO
+        for (ItemStack skin : GlobalInventory.getAWSkins(entity))
+        {
+            if (isTransientSkin(skin))
+            {
+                skin.setTagCompound(null);
+                skin.setCount(0);
+            }
+        }
     }
 
 
     @SubscribeEvent
     public static void inventoryChanged(InventoryChangedEvent event)
     {
-        EntityLivingBase livingBase = event.getEntityLiving();
-        removeAllTransientSkins(livingBase);
-        //TODO loop through all items and apply transient skins if they meet "activated" criteria
+        Entity entity = event.getEntity();
+
+        removeAllTransientSkins(entity);
+
+        for (ItemStack stack : GlobalInventory.getAllEquippedItems(entity))
+        {
+            tryApplyTransientSkinsFromStack(stack, entity);
+        }
     }
 }
