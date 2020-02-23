@@ -32,7 +32,6 @@ public class InventoryChangedEvent extends LivingEvent
     public InventoryChangedEvent(EntityLivingBase entity, ArrayList<ItemStack> oldInventory, ArrayList<ItemStack> newInventory)
     {
         super(entity);
-        System.out.println(entity.getName());
 
         this.oldInventory = oldInventory;
         this.newInventory = newInventory;
@@ -48,7 +47,10 @@ public class InventoryChangedEvent extends LivingEvent
         previousContents.entrySet().removeIf(entry ->
         {
             Entity entity = entry.getKey();
-            if (!entity.isAddedToWorld()) return true;
+            if (!entity.isAddedToWorld())
+            {
+                return true;
+            }
 
             for (World world : FMLCommonHandler.instance().getMinecraftServerInstance().worlds)
             {
@@ -73,6 +75,7 @@ public class InventoryChangedEvent extends LivingEvent
             if (newInventory.size() != oldInventory.size())
             {
                 MinecraftForge.EVENT_BUS.post(new InventoryChangedEvent((EntityLivingBase) entity, oldInventory, newInventory));
+                previousContents.put(entity, newInventory);
                 continue;
             }
 
@@ -88,6 +91,7 @@ public class InventoryChangedEvent extends LivingEvent
             if (!match)
             {
                 MinecraftForge.EVENT_BUS.post(new InventoryChangedEvent((EntityLivingBase) entity, oldInventory, newInventory));
+                previousContents.put(entity, newInventory);
             }
         }
     }
