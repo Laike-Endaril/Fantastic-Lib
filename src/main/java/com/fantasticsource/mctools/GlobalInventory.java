@@ -80,7 +80,7 @@ public class GlobalInventory
 
         //Armourer's Workshop
         result.addAll(getAWSkins(entity));
-        
+
         return result;
     }
 
@@ -240,8 +240,14 @@ public class GlobalInventory
         if (profiler != null) profiler.startSection("Fantastic Lib: getAWSkinSlotCount");
 
 
-        Object skinTypeObject = ReflectionTool.invoke(awGetSkinTypeFromRegistryNameMethod, awSkinTypeRegistry, skinType);
         Object skinCapabilityObject = ReflectionTool.invoke(awEntitySkinCapabilityGetMethod, null, entity);
+        if (skinCapabilityObject == null)
+        {
+            if (profiler != null) profiler.endSection();
+            return 0;
+        }
+
+        Object skinTypeObject = ReflectionTool.invoke(awGetSkinTypeFromRegistryNameMethod, awSkinTypeRegistry, skinType);
 
         int result = (int) ReflectionTool.invoke(awGetSlotCountForSkinTypeMethod, skinCapabilityObject, skinTypeObject);
 
@@ -258,8 +264,14 @@ public class GlobalInventory
         if (profiler != null) profiler.startSection("Fantastic Lib: getAWSkin");
 
 
-        Object skinTypeObject = ReflectionTool.invoke(awGetSkinTypeFromRegistryNameMethod, awSkinTypeRegistry, skinType);
         Object skinCapabilityObject = ReflectionTool.invoke(awEntitySkinCapabilityGetMethod, null, entity);
+        if (skinCapabilityObject == null)
+        {
+            if (profiler != null) profiler.endSection();
+            return null;
+        }
+
+        Object skinTypeObject = ReflectionTool.invoke(awGetSkinTypeFromRegistryNameMethod, awSkinTypeRegistry, skinType);
 
         ItemStack result = (ItemStack) ReflectionTool.invoke(awGetSkinStackMethod, skinCapabilityObject, skinTypeObject, index);
 
@@ -277,8 +289,14 @@ public class GlobalInventory
         if (profiler != null) profiler.startSection("Fantastic Lib: getAWSkinsOfType");
 
 
-        Object skinTypeObject = ReflectionTool.invoke(awGetSkinTypeFromRegistryNameMethod, awSkinTypeRegistry, skinType);
         Object skinCapabilityObject = ReflectionTool.invoke(awEntitySkinCapabilityGetMethod, null, entity);
+        if (skinCapabilityObject == null)
+        {
+            if (profiler != null) profiler.endSection();
+            return result;
+        }
+
+        Object skinTypeObject = ReflectionTool.invoke(awGetSkinTypeFromRegistryNameMethod, awSkinTypeRegistry, skinType);
 
         int size = (int) ReflectionTool.invoke(awGetSlotCountForSkinTypeMethod, skinCapabilityObject, skinTypeObject);
         for (int i = 0; i < size; i++)
@@ -301,6 +319,11 @@ public class GlobalInventory
 
 
         Object skinCapabilityObject = ReflectionTool.invoke(awEntitySkinCapabilityGetMethod, null, entity);
+        if (skinCapabilityObject == null)
+        {
+            if (profiler != null) profiler.endSection();
+            return result;
+        }
 
         int size;
         for (Object skinTypeObject : (Object[]) ReflectionTool.get(awValidSkinTypesField, skinCapabilityObject))

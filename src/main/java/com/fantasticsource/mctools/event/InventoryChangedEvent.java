@@ -32,6 +32,7 @@ public class InventoryChangedEvent extends LivingEvent
     public InventoryChangedEvent(EntityLivingBase entity, ArrayList<ItemStack> oldInventory, ArrayList<ItemStack> newInventory)
     {
         super(entity);
+        System.out.println(entity.getName());
 
         this.oldInventory = oldInventory;
         this.newInventory = newInventory;
