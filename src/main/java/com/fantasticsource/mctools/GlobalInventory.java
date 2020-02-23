@@ -458,6 +458,23 @@ public class GlobalInventory
         return inventory == null ? new ArrayList<>() : new ArrayList<>(inventory.getReadySkills());
     }
 
+    public static ArrayList<ItemStack> getAllTiamatItems(Entity entity)
+    {
+        return getAllTiamatItems(getTiamatInventory(entity));
+    }
+
+    public static ArrayList<ItemStack> getAllTiamatItems(ITiamatPlayerInventory inventory)
+    {
+        ArrayList<ItemStack> result = new ArrayList<>();
+        if (inventory == null) return result;
+
+        for (int i = 0; i < inventory.getSizeInventory(); i++)
+        {
+            result.add(inventory.getStackInSlot(i));
+        }
+        return result;
+    }
+
 
     //Armourer's Workshop
 
