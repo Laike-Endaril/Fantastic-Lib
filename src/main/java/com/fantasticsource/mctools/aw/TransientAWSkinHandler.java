@@ -199,6 +199,6 @@ public class TransientAWSkinHandler
             tryApplyTransientSkinsFromStack(stack, entity);
         }
 
-        GlobalInventory.syncAWWardrobe(entity);
+        GlobalInventory.syncAWWardrobeToSelf(entity);
     }
 }
