@@ -39,6 +39,7 @@ import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.commons.lang3.NotImplementedException;
 import org.lwjgl.util.vector.Quaternion;
 
 import java.io.File;
@@ -71,6 +72,114 @@ public class MCTools
         {
             crash(e, 700, false);
         }
+    }
+
+
+    public static NBTTagCompound combineNBT(NBTTagCompound... sources)
+    {
+        NBTTagCompound result = new NBTTagCompound();
+        mergeNBT(result, true, sources);
+        return result;
+    }
+
+    public static void mergeNBT(NBTTagCompound destination, boolean overwrite, NBTTagCompound... sources)
+    {
+        for (NBTTagCompound source : sources)
+        {
+            for (String key : source.getKeySet())
+            {
+                NBTBase sourceTag = source.getTag(key), destinationTag = destination.getTag(key);
+
+                if (destinationTag == null)
+                {
+                    destination.setTag(key, sourceTag.copy());
+                }
+                else if (sourceTag instanceof NBTTagCompound && destinationTag instanceof NBTTagCompound)
+                {
+                    mergeNBT((NBTTagCompound) destinationTag, overwrite, (NBTTagCompound) sourceTag);
+                }
+                else if (sourceTag instanceof NBTTagList && destinationTag instanceof NBTTagList)
+                {
+                    mergeNBT((NBTTagList) destinationTag, (NBTTagList) sourceTag);
+                }
+                else if (sourceTag instanceof NBTTagByteArray && destinationTag instanceof NBTTagByteArray)
+                {
+                    destination.setTag(key, combineNBT((NBTTagByteArray) destinationTag, (NBTTagByteArray) sourceTag));
+                }
+                else if (sourceTag instanceof NBTTagIntArray && destinationTag instanceof NBTTagIntArray)
+                {
+                    destination.setTag(key, combineNBT((NBTTagIntArray) destinationTag, (NBTTagIntArray) sourceTag));
+                }
+                else if (sourceTag instanceof NBTTagLongArray && destinationTag instanceof NBTTagLongArray)
+                {
+                    throw new NotImplementedException("Didn't feel like doing the reflection at the time, and not sure this will ever come up.  Poke Laike Endaril if you see this.");
+                }
+                else if (overwrite)
+                {
+                    destination.setTag(key, sourceTag.copy());
+                }
+            }
+        }
+    }
+
+    public static NBTTagList combineNBT(NBTTagList... sources)
+    {
+        NBTTagList result = new NBTTagList();
+        mergeNBT(result, sources);
+        return result;
+    }
+
+    public static void mergeNBT(NBTTagList destination, NBTTagList... sources)
+    {
+        for (NBTTagList source : sources)
+        {
+            int size = source.tagCount();
+            for (int i = 0; i < size; i++) destination.appendTag(source.get(i));
+        }
+    }
+
+    public static NBTTagByteArray combineNBT(NBTTagByteArray... sources)
+    {
+        byte[] sArray;
+        int size = 0, offset = 0;
+        for (NBTTagByteArray source : sources)
+        {
+            size += source.getByteArray().length;
+        }
+
+        byte[] newArray = new byte[size];
+
+        for (NBTTagByteArray source : sources)
+        {
+            sArray = source.getByteArray();
+            size = sArray.length;
+            System.arraycopy(sArray, 0, newArray, offset, size);
+            offset += size;
+        }
+
+        return new NBTTagByteArray(newArray);
+    }
+
+    public static NBTTagIntArray combineNBT(NBTTagIntArray... sources)
+    {
+        int[] sArray;
+        int size = 0, offset = 0;
+        for (NBTTagIntArray source : sources)
+        {
+            size += source.getIntArray().length;
+        }
+
+        int[] newArray = new int[size];
+
+        for (NBTTagIntArray source : sources)
+        {
+            sArray = source.getIntArray();
+            size = sArray.length;
+            System.arraycopy(sArray, 0, newArray, offset, size);
+            offset += size;
+        }
+
+        return new NBTTagIntArray(newArray);
     }
 
 
