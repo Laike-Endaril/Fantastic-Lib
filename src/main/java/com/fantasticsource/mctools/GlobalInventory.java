@@ -6,6 +6,9 @@ import com.fantasticsource.fantasticlib.Compat;
 import com.fantasticsource.tiamatrpg.api.ITiamatPlayerInventory;
 import com.fantasticsource.tiamatrpg.api.TiamatRPGAPI;
 import com.fantasticsource.tools.ReflectionTool;
+import moe.plushie.armourers_workshop.api.common.capability.IEntitySkinCapability;
+import moe.plushie.armourers_workshop.api.common.skin.type.ISkinType;
+import moe.plushie.armourers_workshop.api.common.skin.type.ISkinTypeRegistry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,32 +16,29 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.profiler.Profiler;
-import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.fml.common.Loader;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.UUID;
 
 public class GlobalInventory
 {
-    protected static Profiler profiler = null;
+    //TODO Remove this and use one from AW API if it's added
+    @CapabilityInject(IEntitySkinCapability.class)
+    public static Capability<IEntitySkinCapability> ENTITY_SKIN_CAP = null;
+
+    //TODO Remove this and use one from AW API if it's added
+    public static ISkinTypeRegistry skinTypeRegistry = null;
+
 
     protected static LinkedHashMap<UUID, IInventory> tiamatServerInventories = null;
 
-    protected static Object awSkinTypeRegistry;
-    protected static Method awGetSkinTypeFromRegistryNameMethod, awEntitySkinCapabilityGetMethod, awGetSlotCountForSkinTypeMethod, awGetSkinStackMethod, awSetSkinStackMethod, awSyncToPlayerMethod, awGetNameMethod;
-    protected static Field awValidSkinTypesField;
-
     static
     {
-        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-        if (server != null) profiler = server.profiler;
-
-
         if (Compat.tiamatrpg)
         {
             Class tiamatPlayerInventoryClass = ReflectionTool.getClassByName("com.fantasticsource.tiamatrpg.inventory.TiamatPlayerInventory");
@@ -46,23 +46,11 @@ public class GlobalInventory
             tiamatServerInventories = (LinkedHashMap<UUID, IInventory>) ReflectionTool.get(tiamatServerInventoriesField, null);
         }
 
-        if (Compat.armourers_workshop)
+        if (Loader.isModLoaded("armourers_workshop"))
         {
-            Class awSkinTypeRegistryClass = ReflectionTool.getClassByName("moe.plushie.armourers_workshop.common.skin.type.SkinTypeRegistry");
-            Field awSkinTypeRegistryInstanceField = ReflectionTool.getField(awSkinTypeRegistryClass, "INSTANCE");
-            awSkinTypeRegistry = ReflectionTool.get(awSkinTypeRegistryInstanceField, null);
-            awGetSkinTypeFromRegistryNameMethod = ReflectionTool.getMethod(awSkinTypeRegistryClass, "getSkinTypeFromRegistryName");
-
-            Class awEntitySkinCapabilityClass = ReflectionTool.getClassByName("moe.plushie.armourers_workshop.common.capability.entityskin.EntitySkinCapability");
-            awEntitySkinCapabilityGetMethod = ReflectionTool.getMethod(awEntitySkinCapabilityClass, "get");
-            awGetSlotCountForSkinTypeMethod = ReflectionTool.getMethod(awEntitySkinCapabilityClass, "getSlotCountForSkinType");
-            awGetSkinStackMethod = ReflectionTool.getMethod(awEntitySkinCapabilityClass, "getSkinStack");
-            awValidSkinTypesField = ReflectionTool.getField(awEntitySkinCapabilityClass, "validSkinTypes");
-            awSetSkinStackMethod = ReflectionTool.getMethod(awEntitySkinCapabilityClass, "setSkinStack");
-            awSyncToPlayerMethod = ReflectionTool.getMethod(awEntitySkinCapabilityClass, "syncToPlayer");
-
-            Class awISkinTypeClass = ReflectionTool.getClassByName("moe.plushie.armourers_workshop.api.common.skin.type.ISkinType");
-            awGetNameMethod = ReflectionTool.getMethod(awISkinTypeClass, "getName");
+            Class skinTypeRegistryClass = ReflectionTool.getClassByName("moe.plushie.armourers_workshop.common.skin.type.SkinTypeRegistry");
+            Field skinTypeRegistryInstanceField = ReflectionTool.getField(skinTypeRegistryClass, "INSTANCE");
+            skinTypeRegistry = (ISkinTypeRegistry) ReflectionTool.get(skinTypeRegistryInstanceField, null);
         }
     }
 
@@ -478,184 +466,148 @@ public class GlobalInventory
 
     //Armourer's Workshop
 
-    public static int getAWSkinSlotCount(Entity entity, String skinType)
+    //TODO Remove this and use one from AW API if it's added
+    public static IEntitySkinCapability getWardrobeSkinHandler(Entity entity)
     {
-        if (!Compat.armourers_workshop) return 0;
+        if (ENTITY_SKIN_CAP == null) return null;
 
-
-        if (profiler != null) profiler.startSection("Fantastic Lib: getAWSkinSlotCount");
-
-
-        Object skinCapabilityObject = ReflectionTool.invoke(awEntitySkinCapabilityGetMethod, null, entity);
-        if (skinCapabilityObject == null)
-        {
-            if (profiler != null) profiler.endSection();
-            return 0;
-        }
-
-        Object skinTypeObject = ReflectionTool.invoke(awGetSkinTypeFromRegistryNameMethod, awSkinTypeRegistry, skinType);
-
-        int result = (int) ReflectionTool.invoke(awGetSlotCountForSkinTypeMethod, skinCapabilityObject, skinTypeObject);
-
-
-        if (profiler != null) profiler.endSection();
-        return result;
+        return entity.getCapability(ENTITY_SKIN_CAP, null);
     }
 
-    public static ItemStack getAWSkin(Entity entity, String skinType, int index)
+
+    public static ISkinType getSkinType(String skinTypeName)
     {
-        if (!Compat.armourers_workshop) return null;
+        if (ENTITY_SKIN_CAP == null || skinTypeRegistry == null) return null;
 
-
-        if (profiler != null) profiler.startSection("Fantastic Lib: getAWSkin");
-
-
-        Object skinCapabilityObject = ReflectionTool.invoke(awEntitySkinCapabilityGetMethod, null, entity);
-        if (skinCapabilityObject == null)
-        {
-            if (profiler != null) profiler.endSection();
-            return null;
-        }
-
-        Object skinTypeObject = ReflectionTool.invoke(awGetSkinTypeFromRegistryNameMethod, awSkinTypeRegistry, skinType);
-
-        ItemStack result = (ItemStack) ReflectionTool.invoke(awGetSkinStackMethod, skinCapabilityObject, skinTypeObject, index);
-
-
-        if (profiler != null) profiler.endSection();
-        return result;
+        return skinTypeRegistry.getSkinTypeFromRegistryName(skinTypeName);
     }
 
-    public static ArrayList<ItemStack> getAWSkinsOfType(Entity entity, String skinType)
+
+    public static int getAWSkinSlotCount(Entity entity, String skinTypeName)
+    {
+        if (ENTITY_SKIN_CAP == null) return 0;
+
+        return getAWSkinSlotCount(entity, getSkinType(skinTypeName));
+    }
+
+    public static int getAWSkinSlotCount(Entity entity, ISkinType skinType)
+    {
+        if (ENTITY_SKIN_CAP == null) return 0;
+
+        IEntitySkinCapability wardrobeSkinHandler = getWardrobeSkinHandler(entity);
+        if (wardrobeSkinHandler == null) return 0;
+
+
+        return wardrobeSkinHandler.getSlotCountForSkinType(skinType);
+    }
+
+
+    public static ItemStack getAWSkin(Entity entity, String skinTypeName, int index)
+    {
+        if (ENTITY_SKIN_CAP == null) return null;
+
+        return getAWSkin(entity, getSkinType(skinTypeName), index);
+    }
+
+    public static ItemStack getAWSkin(Entity entity, ISkinType skinType, int index)
+    {
+        if (ENTITY_SKIN_CAP == null) return null;
+
+        IEntitySkinCapability wardrobeSkinHandler = getWardrobeSkinHandler(entity);
+        if (wardrobeSkinHandler == null) return null;
+
+
+        return wardrobeSkinHandler.getSkinStack(skinType, index);
+    }
+
+
+    public static ArrayList<ItemStack> getAWSkinsOfType(Entity entity, String skinTypeName)
+    {
+        if (ENTITY_SKIN_CAP == null) return new ArrayList<>();
+
+        return getAWSkinsOfType(entity, getSkinType(skinTypeName));
+    }
+
+    public static ArrayList<ItemStack> getAWSkinsOfType(Entity entity, ISkinType skinType)
     {
         ArrayList<ItemStack> result = new ArrayList<>();
-        if (!Compat.armourers_workshop) return result;
+        if (ENTITY_SKIN_CAP == null) return result;
 
 
-        if (profiler != null) profiler.startSection("Fantastic Lib: getAWSkinsOfType");
+        int size = getAWSkinSlotCount(entity, skinType);
+        for (int i = 0; i < size; i++) result.add(getAWSkin(entity, skinType, i));
 
-
-        Object skinCapabilityObject = ReflectionTool.invoke(awEntitySkinCapabilityGetMethod, null, entity);
-        if (skinCapabilityObject == null)
-        {
-            if (profiler != null) profiler.endSection();
-            return result;
-        }
-
-        Object skinTypeObject = ReflectionTool.invoke(awGetSkinTypeFromRegistryNameMethod, awSkinTypeRegistry, skinType);
-
-        int size = (int) ReflectionTool.invoke(awGetSlotCountForSkinTypeMethod, skinCapabilityObject, skinTypeObject);
-        for (int i = 0; i < size; i++)
-        {
-            result.add((ItemStack) ReflectionTool.invoke(awGetSkinStackMethod, skinCapabilityObject, skinTypeObject, i));
-        }
-
-
-        if (profiler != null) profiler.endSection();
         return result;
     }
+
 
     public static ArrayList<ItemStack> getAWSkins(Entity entity)
     {
         ArrayList<ItemStack> result = new ArrayList<>();
-        if (!Compat.armourers_workshop) return result;
+        if (ENTITY_SKIN_CAP == null) return result;
+
+        IEntitySkinCapability wardrobeSkinHandler = getWardrobeSkinHandler(entity);
+        if (wardrobeSkinHandler == null) return result;
 
 
-        if (profiler != null) profiler.startSection("Fantastic Lib: getAWSkins");
-
-
-        Object skinCapabilityObject = ReflectionTool.invoke(awEntitySkinCapabilityGetMethod, null, entity);
-        if (skinCapabilityObject == null)
+        for (ISkinType skinTypeObject : wardrobeSkinHandler.getValidSkinTypes())
         {
-            if (profiler != null) profiler.endSection();
-            return result;
+            result.addAll(getAWSkinsOfType(entity, skinTypeObject));
         }
 
-        int size;
-        for (Object skinTypeObject : (Object[]) ReflectionTool.get(awValidSkinTypesField, skinCapabilityObject))
-        {
-            size = (int) ReflectionTool.invoke(awGetSlotCountForSkinTypeMethod, skinCapabilityObject, skinTypeObject);
-            for (int i = 0; i < size; i++)
-            {
-                result.add((ItemStack) ReflectionTool.invoke(awGetSkinStackMethod, skinCapabilityObject, skinTypeObject, i));
-            }
-        }
-
-
-        if (profiler != null) profiler.endSection();
         return result;
     }
 
-    public static ItemStack setAWSkin(Entity entity, String skinType, int index, ItemStack newSkin)
+
+    public static ItemStack setAWSkin(Entity entity, String skinTypeName, int index, ItemStack newSkin)
     {
-        if (!Compat.armourers_workshop) return null;
-
-
-        if (profiler != null) profiler.startSection("Fantastic Lib: setAWSkin");
-
-
-        Object skinCapabilityObject = ReflectionTool.invoke(awEntitySkinCapabilityGetMethod, null, entity);
-        if (skinCapabilityObject == null)
-        {
-            if (profiler != null) profiler.endSection();
-            return null;
-        }
-
-        Object skinTypeObject = ReflectionTool.invoke(awGetSkinTypeFromRegistryNameMethod, awSkinTypeRegistry, skinType);
-
-        ItemStack result = (ItemStack) ReflectionTool.invoke(awSetSkinStackMethod, skinCapabilityObject, skinTypeObject, index, newSkin);
-
-
-        if (profiler != null) profiler.endSection();
-        return result;
+        return setAWSkin(entity, getSkinType(skinTypeName), index, newSkin);
     }
 
-    public static ArrayList<String> getValidSkinTypes(Entity entity)
+    public static ItemStack setAWSkin(Entity entity, ISkinType skinType, int index, ItemStack newSkin)
+    {
+        if (ENTITY_SKIN_CAP == null) return null;
+
+        IEntitySkinCapability wardrobeSkinHandler = getWardrobeSkinHandler(entity);
+        if (wardrobeSkinHandler == null) return null;
+
+
+        return wardrobeSkinHandler.setSkinStack(skinType, index, newSkin);
+    }
+
+
+    public static ISkinType[] getValidSkinTypes(Entity entity)
+    {
+        if (ENTITY_SKIN_CAP == null) return null;
+
+        IEntitySkinCapability wardrobeSkinHandler = getWardrobeSkinHandler(entity);
+        if (wardrobeSkinHandler == null) return null;
+
+
+        return wardrobeSkinHandler.getValidSkinTypes();
+    }
+
+    public static ArrayList<String> getValidSkinTypeNames(Entity entity)
     {
         ArrayList<String> result = new ArrayList<>();
-        if (!Compat.armourers_workshop) return result;
+        if (ENTITY_SKIN_CAP == null) return result;
 
 
-        if (profiler != null) profiler.startSection("Fantastic Lib: getValidSkinTypes");
+        for (ISkinType skinTypeObject : getValidSkinTypes(entity)) result.add(skinTypeObject.getName());
 
-
-        Object skinCapabilityObject = ReflectionTool.invoke(awEntitySkinCapabilityGetMethod, null, entity);
-        if (skinCapabilityObject == null)
-        {
-            if (profiler != null) profiler.endSection();
-            return result;
-        }
-
-
-        for (Object skinTypeObject : (Object[]) ReflectionTool.get(awValidSkinTypesField, skinCapabilityObject))
-        {
-            result.add("armourers:" + ((String) ReflectionTool.invoke(awGetNameMethod, skinTypeObject)).toLowerCase());
-        }
-
-
-        if (profiler != null) profiler.endSection();
         return result;
     }
 
-    public static void syncAWWardrobeToSelf(Entity entity)
+
+    public static void syncAWWardrobeSkins(Entity entity, boolean syncToSelf, boolean syncToOthers)
     {
-        if (!Compat.armourers_workshop || !(entity instanceof EntityPlayerMP)) return;
+        if (ENTITY_SKIN_CAP == null) return;
+
+        IEntitySkinCapability wardrobeSkinHandler = getWardrobeSkinHandler(entity);
+        if (wardrobeSkinHandler == null) return;
 
 
-        if (profiler != null) profiler.startSection("Fantastic Lib: syncAWWardrobeToSelf");
-
-
-        Object skinCapabilityObject = ReflectionTool.invoke(awEntitySkinCapabilityGetMethod, null, entity);
-        if (skinCapabilityObject == null)
-        {
-            if (profiler != null) profiler.endSection();
-            return;
-        }
-
-
-        ReflectionTool.invoke(awSyncToPlayerMethod, skinCapabilityObject, entity);
-
-
-        if (profiler != null) profiler.endSection();
+        if (syncToSelf && entity instanceof EntityPlayerMP) wardrobeSkinHandler.syncToPlayer((EntityPlayerMP) entity);
+        if (syncToOthers) wardrobeSkinHandler.syncToAllTracking();
     }
 }

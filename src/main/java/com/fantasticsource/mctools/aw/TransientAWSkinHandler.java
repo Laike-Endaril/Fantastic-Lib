@@ -120,12 +120,14 @@ public class TransientAWSkinHandler
     public static void tryApplyTransientSkinsFromStack(ItemStack stack, Entity target)
     {
         if (!stack.hasTagCompound()) return;
+
         NBTTagCompound compound = stack.getTagCompound();
-
         if (!compound.hasKey(DOMAIN)) return;
-        compound = compound.getCompoundTag(DOMAIN);
 
+        compound = compound.getCompoundTag(DOMAIN);
         if (!compound.hasKey("AWSkins")) return;
+
+
         NBTTagList list = compound.getTagList("AWSkins", Constants.NBT.TAG_COMPOUND);
 
         ItemStack newSkin, oldSkin;
@@ -199,6 +201,6 @@ public class TransientAWSkinHandler
             tryApplyTransientSkinsFromStack(stack, entity);
         }
 
-        GlobalInventory.syncAWWardrobeToSelf(entity);
+        GlobalInventory.syncAWWardrobeSkins(entity, true, true);
     }
 }
