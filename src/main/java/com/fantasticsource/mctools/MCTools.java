@@ -86,6 +86,8 @@ public class MCTools
     {
         for (NBTTagCompound source : sources)
         {
+            if (source == null) continue;
+
             for (String key : source.getKeySet())
             {
                 NBTBase sourceTag = source.getTag(key), destinationTag = destination.getTag(key);
