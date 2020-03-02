@@ -1,10 +1,11 @@
 package moe.plushie.armourers_workshop.api.common.skin.type;
 
-import java.awt.Point;
-
 import moe.plushie.armourers_workshop.api.common.IPoint3D;
 
-public interface ISkinPartTypeTextured extends ISkinPartType {
+import java.awt.*;
+
+public interface ISkinPartTypeTextured extends ISkinPartType
+{
 
     /** Location of the texture in skin storage. */
     public Point getTextureSkinPos();

@@ -1,6 +1,8 @@
 package com.fantasticsource.mctools.aw;
 
 import com.fantasticsource.tools.ReflectionTool;
+import moe.plushie.armourers_workshop.api.ArmourersWorkshopApi;
+import moe.plushie.armourers_workshop.api.common.capability.IEntitySkinCapability;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -30,16 +32,13 @@ public class ForcedAWSkinOverrides
 {
     public static Class
             awModAddonManagerClass = ReflectionTool.getClassByName("moe.plushie.armourers_workshop.common.addons.ModAddonManager"),
-            awEntitySkinCapabilityClass = ReflectionTool.getClassByName("moe.plushie.armourers_workshop.common.capability.entityskin.EntitySkinCapability"),
             awSkinLayerRendererHeldItemClass = ReflectionTool.getClassByName("moe.plushie.armourers_workshop.client.render.entity.SkinLayerRendererHeldItem");
 
     public static Field
             awItemOverridesField = ReflectionTool.getField(awModAddonManagerClass, "ITEM_OVERRIDES"),
             renderLivingBaseLayerRenderersField = ReflectionTool.getField(RenderLivingBase.class, "field_177097_h", "layerRenderers");
 
-    public static Method
-            awEntitySkinCapabilityGetMethod = ReflectionTool.getMethod(awEntitySkinCapabilityClass, "get"),
-            awSkinLayerRendererHeldItemRenderHeldItemMethod = ReflectionTool.getMethod(awSkinLayerRendererHeldItemClass, "renderHeldItem");
+    public static Method awSkinLayerRendererHeldItemRenderHeldItemMethod = ReflectionTool.getMethod(awSkinLayerRendererHeldItemClass, "renderHeldItem");
 
     public static HashSet<String> awItemOverrides = null;
 
@@ -216,7 +215,7 @@ public class ForcedAWSkinOverrides
             {
                 try
                 {
-                    Object skinCapability = awEntitySkinCapabilityGetMethod.invoke(null, entitylivingbaseIn);
+                    IEntitySkinCapability skinCapability = ArmourersWorkshopApi.getEntitySkinCapability(entitylivingbaseIn);
                     GlStateManager.pushMatrix();
 
                     if (this.livingEntityRenderer.getMainModel().isChild)

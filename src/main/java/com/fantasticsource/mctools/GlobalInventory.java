@@ -6,6 +6,7 @@ import com.fantasticsource.fantasticlib.Compat;
 import com.fantasticsource.tiamatrpg.api.ITiamatPlayerInventory;
 import com.fantasticsource.tiamatrpg.api.TiamatRPGAPI;
 import com.fantasticsource.tools.ReflectionTool;
+import moe.plushie.armourers_workshop.api.ArmourersWorkshopApi;
 import moe.plushie.armourers_workshop.api.common.capability.IEntitySkinCapability;
 import moe.plushie.armourers_workshop.api.common.skin.type.ISkinType;
 import moe.plushie.armourers_workshop.api.common.skin.type.ISkinTypeRegistry;
@@ -16,9 +17,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.fml.common.Loader;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -27,12 +25,7 @@ import java.util.UUID;
 
 public class GlobalInventory
 {
-    //TODO Remove this and use one from AW API if it's added
-    @CapabilityInject(IEntitySkinCapability.class)
-    public static Capability<IEntitySkinCapability> ENTITY_SKIN_CAP = null;
-
-    //TODO Remove this and use one from AW API if it's added
-    public static ISkinTypeRegistry skinTypeRegistry = null;
+    public static ISkinTypeRegistry skinTypeRegistry = ArmourersWorkshopApi.skinTypeRegistry;
 
 
     protected static LinkedHashMap<UUID, IInventory> tiamatServerInventories = null;
@@ -44,13 +37,6 @@ public class GlobalInventory
             Class tiamatPlayerInventoryClass = ReflectionTool.getClassByName("com.fantasticsource.tiamatrpg.inventory.TiamatPlayerInventory");
             Field tiamatServerInventoriesField = ReflectionTool.getField(tiamatPlayerInventoryClass, "tiamatServerInventories");
             tiamatServerInventories = (LinkedHashMap<UUID, IInventory>) ReflectionTool.get(tiamatServerInventoriesField, null);
-        }
-
-        if (Loader.isModLoaded("armourers_workshop"))
-        {
-            Class skinTypeRegistryClass = ReflectionTool.getClassByName("moe.plushie.armourers_workshop.common.skin.type.SkinTypeRegistry");
-            Field skinTypeRegistryInstanceField = ReflectionTool.getField(skinTypeRegistryClass, "INSTANCE");
-            skinTypeRegistry = (ISkinTypeRegistry) ReflectionTool.get(skinTypeRegistryInstanceField, null);
         }
     }
 
@@ -466,18 +452,9 @@ public class GlobalInventory
 
     //Armourer's Workshop
 
-    //TODO Remove this and use one from AW API if it's added
-    public static IEntitySkinCapability getWardrobeSkinHandler(Entity entity)
-    {
-        if (ENTITY_SKIN_CAP == null) return null;
-
-        return entity.getCapability(ENTITY_SKIN_CAP, null);
-    }
-
-
     public static ISkinType getSkinType(String skinTypeName)
     {
-        if (ENTITY_SKIN_CAP == null || skinTypeRegistry == null) return null;
+        if (skinTypeRegistry == null) return null;
 
         return skinTypeRegistry.getSkinTypeFromRegistryName(skinTypeName);
     }
@@ -485,16 +462,12 @@ public class GlobalInventory
 
     public static int getAWSkinSlotCount(Entity entity, String skinTypeName)
     {
-        if (ENTITY_SKIN_CAP == null) return 0;
-
         return getAWSkinSlotCount(entity, getSkinType(skinTypeName));
     }
 
     public static int getAWSkinSlotCount(Entity entity, ISkinType skinType)
     {
-        if (ENTITY_SKIN_CAP == null) return 0;
-
-        IEntitySkinCapability wardrobeSkinHandler = getWardrobeSkinHandler(entity);
+        IEntitySkinCapability wardrobeSkinHandler = ArmourersWorkshopApi.getEntitySkinCapability(entity);
         if (wardrobeSkinHandler == null) return 0;
 
 
@@ -504,16 +477,12 @@ public class GlobalInventory
 
     public static ItemStack getAWSkin(Entity entity, String skinTypeName, int index)
     {
-        if (ENTITY_SKIN_CAP == null) return null;
-
         return getAWSkin(entity, getSkinType(skinTypeName), index);
     }
 
     public static ItemStack getAWSkin(Entity entity, ISkinType skinType, int index)
     {
-        if (ENTITY_SKIN_CAP == null) return null;
-
-        IEntitySkinCapability wardrobeSkinHandler = getWardrobeSkinHandler(entity);
+        IEntitySkinCapability wardrobeSkinHandler = ArmourersWorkshopApi.getEntitySkinCapability(entity);
         if (wardrobeSkinHandler == null) return null;
 
 
@@ -523,16 +492,12 @@ public class GlobalInventory
 
     public static ArrayList<ItemStack> getAWSkinsOfType(Entity entity, String skinTypeName)
     {
-        if (ENTITY_SKIN_CAP == null) return new ArrayList<>();
-
         return getAWSkinsOfType(entity, getSkinType(skinTypeName));
     }
 
     public static ArrayList<ItemStack> getAWSkinsOfType(Entity entity, ISkinType skinType)
     {
         ArrayList<ItemStack> result = new ArrayList<>();
-        if (ENTITY_SKIN_CAP == null) return result;
-
 
         int size = getAWSkinSlotCount(entity, skinType);
         for (int i = 0; i < size; i++) result.add(getAWSkin(entity, skinType, i));
@@ -544,9 +509,8 @@ public class GlobalInventory
     public static ArrayList<ItemStack> getAWSkins(Entity entity)
     {
         ArrayList<ItemStack> result = new ArrayList<>();
-        if (ENTITY_SKIN_CAP == null) return result;
 
-        IEntitySkinCapability wardrobeSkinHandler = getWardrobeSkinHandler(entity);
+        IEntitySkinCapability wardrobeSkinHandler = ArmourersWorkshopApi.getEntitySkinCapability(entity);
         if (wardrobeSkinHandler == null) return result;
 
 
@@ -566,9 +530,7 @@ public class GlobalInventory
 
     public static ItemStack setAWSkin(Entity entity, ISkinType skinType, int index, ItemStack newSkin)
     {
-        if (ENTITY_SKIN_CAP == null) return null;
-
-        IEntitySkinCapability wardrobeSkinHandler = getWardrobeSkinHandler(entity);
+        IEntitySkinCapability wardrobeSkinHandler = ArmourersWorkshopApi.getEntitySkinCapability(entity);
         if (wardrobeSkinHandler == null) return null;
 
 
@@ -578,9 +540,7 @@ public class GlobalInventory
 
     public static ISkinType[] getValidSkinTypes(Entity entity)
     {
-        if (ENTITY_SKIN_CAP == null) return null;
-
-        IEntitySkinCapability wardrobeSkinHandler = getWardrobeSkinHandler(entity);
+        IEntitySkinCapability wardrobeSkinHandler = ArmourersWorkshopApi.getEntitySkinCapability(entity);
         if (wardrobeSkinHandler == null) return null;
 
 
@@ -590,8 +550,6 @@ public class GlobalInventory
     public static ArrayList<String> getValidSkinTypeNames(Entity entity)
     {
         ArrayList<String> result = new ArrayList<>();
-        if (ENTITY_SKIN_CAP == null) return result;
-
 
         for (ISkinType skinTypeObject : getValidSkinTypes(entity)) result.add(skinTypeObject.getName());
 
@@ -601,9 +559,7 @@ public class GlobalInventory
 
     public static void syncAWWardrobeSkins(Entity entity, boolean syncToSelf, boolean syncToOthers)
     {
-        if (ENTITY_SKIN_CAP == null) return;
-
-        IEntitySkinCapability wardrobeSkinHandler = getWardrobeSkinHandler(entity);
+        IEntitySkinCapability wardrobeSkinHandler = ArmourersWorkshopApi.getEntitySkinCapability(entity);
         if (wardrobeSkinHandler == null) return;
 
 

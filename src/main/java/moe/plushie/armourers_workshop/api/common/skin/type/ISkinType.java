@@ -1,12 +1,12 @@
 package moe.plushie.armourers_workshop.api.common.skin.type;
 
-import java.util.ArrayList;
-
 import moe.plushie.armourers_workshop.api.common.skin.data.ISkinProperties;
 import moe.plushie.armourers_workshop.api.common.skin.data.ISkinProperty;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.ArrayList;
 
 /**
  * 
