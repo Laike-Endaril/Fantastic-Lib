@@ -2,7 +2,8 @@ package moe.plushie.armourers_workshop.api.common.skin;
 
 import moe.plushie.armourers_workshop.api.common.IRectangle3D;
 
-public class Rectangle3D implements IRectangle3D {
+public class Rectangle3D implements IRectangle3D
+{
 
     private int x;
     private int y;

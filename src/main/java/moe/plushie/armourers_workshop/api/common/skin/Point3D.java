@@ -2,7 +2,8 @@ package moe.plushie.armourers_workshop.api.common.skin;
 
 import moe.plushie.armourers_workshop.api.common.IPoint3D;
 
-public class Point3D implements IPoint3D {
+public class Point3D implements IPoint3D
+{
     
     private final int x;
     private final int y;
