@@ -14,8 +14,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.fml.common.Loader;
 
-import javax.annotation.Nonnull;
-
 public final class ArmourersWorkshopApi {
 
     @CapabilityInject(IEntitySkinCapability.class)
@@ -56,11 +54,11 @@ public final class ArmourersWorkshopApi {
         return paintTypeRegistry;
     }
 
-    public static IEntitySkinCapability getEntitySkinCapability(@Nonnull Entity entity) {
+    public static IEntitySkinCapability getEntitySkinCapability(Entity entity) {
         return entity.getCapability(ENTITY_SKIN_CAP, null);
     }
 
-    public static IWardrobeCap getEntitWardrobeCapability(Entity entity) {
+    public static IWardrobeCap getEntityWardrobeCapability(Entity entity) {
         return entity.getCapability(ENTITY_WARDROBE_CAP, null);
     }
 
