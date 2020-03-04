@@ -15,22 +15,22 @@ public class FLibAPI
     public static final Capability<INBTCap> NBT_CAP = null;
 
 
-    static void attachNBTCapToEntityIf(Predicate<Entity> predicate)
+    public static void attachNBTCapToEntityIf(Predicate<Entity> predicate)
     {
         INBTCap.entityPredicates.add(predicate);
     }
 
-    void attachNBTCapToStackIf(Predicate<ItemStack> predicate)
+    public static void attachNBTCapToStackIf(Predicate<ItemStack> predicate)
     {
         INBTCap.stackPredicates.add(predicate);
     }
 
-    void attachNBTCapToWorldIf(Predicate<World> predicate)
+    public static void attachNBTCapToWorldIf(Predicate<World> predicate)
     {
         INBTCap.worldPredicates.add(predicate);
     }
 
-    void attachNBTCapToTEIf(Predicate<TileEntity> predicate)
+    public static void attachNBTCapToTEIf(Predicate<TileEntity> predicate)
     {
         INBTCap.tePredicates.add(predicate);
     }
