@@ -20,7 +20,7 @@ import static com.fantasticsource.fantasticlib.FantasticLib.MODID;
 public class NBTCap implements INBTCap
 {
     @SubscribeEvent
-    public void onPlayerClone(PlayerEvent.Clone event)
+    public static void onPlayerClone(PlayerEvent.Clone event)
     {
         if (event.isWasDeath()) return;
 
