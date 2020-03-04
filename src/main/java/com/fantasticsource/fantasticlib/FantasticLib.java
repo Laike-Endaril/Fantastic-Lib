@@ -1,13 +1,17 @@
 package com.fantasticsource.fantasticlib;
 
+import com.fantasticsource.api.INBTCap;
 import com.fantasticsource.fantasticlib.config.FantasticConfig;
 import com.fantasticsource.mctools.*;
 import com.fantasticsource.mctools.aw.ForcedAWSkinOverrides;
 import com.fantasticsource.mctools.aw.TransientAWSkinHandler;
 import com.fantasticsource.mctools.gui.screen.TestGUI;
+import com.fantasticsource.mctools.nbtcap.NBTCap;
+import com.fantasticsource.mctools.nbtcap.NBTCapStorage;
 import com.fantasticsource.tools.ReflectionTool;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -37,6 +41,9 @@ public class FantasticLib
     public FantasticLib()
     {
         MinecraftForge.EVENT_BUS.register(FantasticLib.class);
+
+        CapabilityManager.INSTANCE.register(INBTCap.class, new NBTCapStorage(), NBTCap.class);
+        MinecraftForge.EVENT_BUS.register(NBTCap.class);
 
         Network.init();
 
