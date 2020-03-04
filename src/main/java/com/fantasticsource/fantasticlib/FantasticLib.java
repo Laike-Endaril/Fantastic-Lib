@@ -42,7 +42,6 @@ public class FantasticLib
     {
         MinecraftForge.EVENT_BUS.register(FantasticLib.class);
 
-        CapabilityManager.INSTANCE.register(INBTCap.class, new NBTCapStorage(), NBTCap.class);
         MinecraftForge.EVENT_BUS.register(NBTCap.class);
 
         Network.init();
@@ -84,6 +83,8 @@ public class FantasticLib
     public void preInit(FMLPreInitializationEvent event)
     {
         PlayerData.load();
+
+        CapabilityManager.INSTANCE.register(INBTCap.class, new NBTCapStorage(), () -> null);
 
         if (event.getSide() == Side.CLIENT) Render.init();
     }
