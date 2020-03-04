@@ -22,8 +22,6 @@ public class NBTCap implements INBTCap
     @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone event)
     {
-        if (event.isWasDeath()) return;
-
         EntityPlayer player = event.getEntityPlayer();
         INBTCap nbtCap = player.getCapability(FLibAPI.NBT_CAP, null);
         INBTCap oldNBTCap = event.getOriginal().getCapability(FLibAPI.NBT_CAP, null);
