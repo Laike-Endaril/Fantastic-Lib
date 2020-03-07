@@ -24,6 +24,11 @@ public class TransientAWSkinHandler
 
     public static void addTransientAWSkin(ItemStack stack, String libraryFile, String skinType, Color... dyes)
     {
+        addTransientAWSkin(stack, libraryFile, skinType, null, null, dyes);
+    }
+
+    public static void addTransientAWSkin(ItemStack stack, String libraryFile, String skinType, String renderChannel, String renderMode, Color... dyes)
+    {
         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
         NBTTagCompound compound = stack.getTagCompound();
 
@@ -38,6 +43,11 @@ public class TransientAWSkinHandler
 
         compound.setString("file", libraryFile);
         compound.setString("type", skinType);
+        if (renderChannel != null && renderMode != null)
+        {
+            compound.setString("renderChannel", renderChannel);
+            compound.setString("renderMode", renderMode);
+        }
 
         if (dyes.length > 0)
         {
