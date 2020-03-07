@@ -4,6 +4,7 @@ import com.fantasticsource.api.INBTCap;
 import com.fantasticsource.fantasticlib.config.FantasticConfig;
 import com.fantasticsource.mctools.*;
 import com.fantasticsource.mctools.aw.ForcedAWSkinOverrides;
+import com.fantasticsource.mctools.aw.RenderModes;
 import com.fantasticsource.mctools.aw.TransientAWSkinHandler;
 import com.fantasticsource.mctools.gui.screen.TestGUI;
 import com.fantasticsource.mctools.nbtcap.NBTCap;
@@ -100,6 +101,7 @@ public class FantasticLib
 
         if (Loader.isModLoaded("armourers_workshop"))
         {
+            RenderModes.init();
             MinecraftForge.EVENT_BUS.register(TransientAWSkinHandler.class);
             if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) MinecraftForge.EVENT_BUS.register(ForcedAWSkinOverrides.class);
         }

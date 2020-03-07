@@ -136,6 +136,15 @@ public class TransientAWSkinHandler
         for (int i = 0; i < list.tagCount(); i++)
         {
             compound = list.getCompoundTagAt(i);
+
+            //Only render if the render mode of the render channel matches the entity's current render mode for that render channel
+            if (compound.hasKey("renderChannel"))
+            {
+                String targetRenderMode = RenderModes.getRenderMode(target, compound.getString("renderChannel"));
+                if (targetRenderMode == null && compound.hasKey("renderMode")) continue;
+                if (!compound.getString("renderMode").equals(targetRenderMode)) continue;
+            }
+
             dyes = new ArrayList<>();
             if (compound.hasKey("dyes"))
             {
