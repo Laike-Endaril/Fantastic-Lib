@@ -29,7 +29,14 @@ public class NBTCapStorage implements Capability.IStorage<INBTCap>
         NBTTagCompound compound = (NBTTagCompound) nbt;
         for (String modid : compound.getKeySet())
         {
-            instance.setCompound(modid, compound.getCompoundTag(modid));
+            for (String registeredID : instance.getRegisteredModIDs())
+            {
+                if (registeredID.equals(modid))
+                {
+                    instance.setCompound(modid, compound.getCompoundTag(modid));
+                    break;
+                }
+            }
         }
     }
 }
