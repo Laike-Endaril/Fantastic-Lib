@@ -6,18 +6,23 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.function.Predicate;
 
 public interface INBTCap
 {
-    ArrayList<Predicate<Entity>> entityPredicates = new ArrayList<>();
-    ArrayList<Predicate<ItemStack>> stackPredicates = new ArrayList<>();
-    ArrayList<Predicate<World>> worldPredicates = new ArrayList<>();
-    ArrayList<Predicate<TileEntity>> tePredicates = new ArrayList<>();
+    LinkedHashMap<String, Predicate<Entity>> entityPredicates = new LinkedHashMap<>();
+    LinkedHashMap<String, Predicate<ItemStack>> stackPredicates = new LinkedHashMap<>();
+    LinkedHashMap<String, Predicate<World>> worldPredicates = new LinkedHashMap<>();
+    LinkedHashMap<String, Predicate<TileEntity>> tePredicates = new LinkedHashMap<>();
+
+    HashSet<String> registeredModIDs = new HashSet<>();
 
 
-    NBTTagCompound getCompound();
+    String[] getRegisteredModIDs();
 
-    void setCompound(NBTTagCompound compound);
+    NBTTagCompound getCompound(String modid);
+
+    void setCompound(String modid, NBTTagCompound compound);
 }

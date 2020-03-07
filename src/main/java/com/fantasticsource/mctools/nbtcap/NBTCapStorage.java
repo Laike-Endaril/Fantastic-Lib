@@ -14,12 +14,22 @@ public class NBTCapStorage implements Capability.IStorage<INBTCap>
     @Override
     public NBTBase writeNBT(Capability<INBTCap> capability, INBTCap instance, EnumFacing side)
     {
-        return ((NBTCap) instance).compound;
+        NBTTagCompound compound = new NBTTagCompound();
+        for (String modid : instance.getRegisteredModIDs())
+        {
+            compound.setTag(modid, instance.getCompound(modid));
+        }
+
+        return compound;
     }
 
     @Override
     public void readNBT(Capability<INBTCap> capability, INBTCap instance, EnumFacing side, NBTBase nbt)
     {
-        ((NBTCap) instance).compound = (NBTTagCompound) nbt;
+        NBTTagCompound compound = (NBTTagCompound) nbt;
+        for (String modid : compound.getKeySet())
+        {
+            instance.setCompound(modid, compound.getCompoundTag(modid));
+        }
     }
 }
