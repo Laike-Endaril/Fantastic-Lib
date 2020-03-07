@@ -103,7 +103,7 @@ public class NBTCap implements INBTCap
     @Override
     public NBTTagCompound getCompound(String modid)
     {
-        return compounds.get(modid);
+        return compounds.computeIfAbsent(modid, o -> new NBTTagCompound());
     }
 
     @Override
