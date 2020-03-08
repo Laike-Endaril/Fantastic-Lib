@@ -211,8 +211,12 @@ public class TransientAWSkinHandler
     @SubscribeEvent
     public static void inventoryChanged(InventoryChangedEvent event)
     {
-        Entity entity = event.getEntity();
+        refresh(event.getEntity());
+    }
 
+
+    public static void refresh(Entity entity)
+    {
         removeAllTransientSkins(entity);
 
         for (ItemStack stack : GlobalInventory.getAllEquippedItems(entity))

@@ -13,6 +13,7 @@ public class RenderModes
         FLibAPI.attachNBTCapToEntityIf(MODID, entity -> true);
     }
 
+
     public static void setRenderMode(Entity entity, String renderModeChannel, String renderMode)
     {
         NBTTagCompound compound = FLibAPI.getNBTCap(entity).getCompound(MODID);
@@ -21,6 +22,8 @@ public class RenderModes
         compound = compound.getCompoundTag("renderModes");
 
         compound.setString(renderModeChannel, renderMode);
+
+        TransientAWSkinHandler.refresh(entity);
     }
 
     public static String getRenderMode(Entity entity, String renderModeChannel)
