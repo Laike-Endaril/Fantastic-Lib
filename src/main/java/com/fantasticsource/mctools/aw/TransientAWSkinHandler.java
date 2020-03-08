@@ -41,7 +41,7 @@ public class TransientAWSkinHandler
         compound = new NBTTagCompound();
         list.appendTag(compound);
 
-        compound.setString("file", libraryFile);
+        compound.setString("file", libraryFile.replace(".armour", ""));
         compound.setString("type", skinType);
         if (renderChannel != null && renderMode != null)
         {
