@@ -161,7 +161,7 @@ public class TransientAWSkinHandler
                 list2 = compound.getTagList("dyes", Constants.NBT.TAG_INT);
                 for (int i2 = 0; i2 < list2.tagCount(); i2++)
                 {
-                    dyes.add(new Color(list.getIntAt(i2)));
+                    dyes.add(new Color(list2.getIntAt(i2)));
                 }
             }
 
