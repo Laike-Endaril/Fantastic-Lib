@@ -17,21 +17,25 @@ public class FLibAPI
 
     public static void attachNBTCapToEntityIf(String modid, Predicate<Entity> predicate)
     {
+        INBTCap.registeredModIDs.add(modid);
         INBTCap.entityPredicates.put(modid, predicate);
     }
 
     public static void attachNBTCapToStackIf(String modid, Predicate<ItemStack> predicate)
     {
+        INBTCap.registeredModIDs.add(modid);
         INBTCap.stackPredicates.put(modid, predicate);
     }
 
     public static void attachNBTCapToWorldIf(String modid, Predicate<World> predicate)
     {
+        INBTCap.registeredModIDs.add(modid);
         INBTCap.worldPredicates.put(modid, predicate);
     }
 
     public static void attachNBTCapToTEIf(String modid, Predicate<TileEntity> predicate)
     {
+        INBTCap.registeredModIDs.add(modid);
         INBTCap.tePredicates.put(modid, predicate);
     }
 

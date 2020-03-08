@@ -68,7 +68,7 @@ public class FantasticLib
 
 
     @EventHandler
-    public static void serverStart(FMLServerAboutToStartEvent event)
+    public static void serverInit(FMLServerAboutToStartEvent event)
     {
         MCTools.serverStart(event);
     }
