@@ -11,10 +11,17 @@ import java.nio.InvalidMarkException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Matcher;
 
 @SuppressWarnings("unused")
 public class Tools
 {
+    public static String fixFileSeparators(String input)
+    {
+        return input.replaceAll("[/\\\\]", Matcher.quoteReplacement(File.separator));
+    }
+
+
     public static ByteBuffer cloneByteBuffer(ByteBuffer original)
     {
         //Get position, limit, and mark
