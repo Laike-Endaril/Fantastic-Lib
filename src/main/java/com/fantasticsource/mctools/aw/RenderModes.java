@@ -1,6 +1,6 @@
 package com.fantasticsource.mctools.aw;
 
-import com.fantasticsource.api.FLibAPI;
+import com.fantasticsource.fantasticlib.api.FLibAPI;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 

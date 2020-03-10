@@ -1,6 +1,6 @@
 package com.fantasticsource.mctools.nbtcap;
 
-import com.fantasticsource.api.INBTCap;
+import com.fantasticsource.fantasticlib.api.INBTCap;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;

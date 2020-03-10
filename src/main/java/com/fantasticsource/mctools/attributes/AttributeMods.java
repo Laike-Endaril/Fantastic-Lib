@@ -1,8 +1,8 @@
 package com.fantasticsource.mctools.attributes;
 
 import com.fantasticsource.fantasticlib.FantasticLib;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.util.text.translation.I18n;
 
 import java.util.ArrayList;
 
@@ -45,14 +45,14 @@ public class AttributeMods
         String[] tokens = modString.split("=");
         if (tokens.length != 2)
         {
-            System.out.println(I18n.format(FantasticLib.MODID + ".error.malformedAMod", modString));
+            System.out.println(I18n.translateToLocalFormatted(FantasticLib.MODID + ".error.malformedAMod", modString));
             return null;
         }
 
         String[] tokens2 = tokens[1].split("@");
         if (tokens2.length > 2)
         {
-            System.out.println(I18n.format(FantasticLib.MODID + ".error.malformedAMod", modString));
+            System.out.println(I18n.translateToLocalFormatted(FantasticLib.MODID + ".error.malformedAMod", modString));
             return null;
         }
 
@@ -62,7 +62,7 @@ public class AttributeMods
         }
         catch (NumberFormatException e)
         {
-            System.out.println(I18n.format(FantasticLib.MODID + ".error.malformedAMod", modString));
+            System.out.println(I18n.translateToLocalFormatted(FantasticLib.MODID + ".error.malformedAMod", modString));
             return null;
         }
     }

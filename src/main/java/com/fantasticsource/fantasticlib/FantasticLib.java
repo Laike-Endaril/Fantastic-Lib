@@ -1,6 +1,6 @@
 package com.fantasticsource.fantasticlib;
 
-import com.fantasticsource.api.INBTCap;
+import com.fantasticsource.fantasticlib.api.INBTCap;
 import com.fantasticsource.fantasticlib.config.FantasticConfig;
 import com.fantasticsource.mctools.*;
 import com.fantasticsource.mctools.aw.ForcedAWSkinOverrides;

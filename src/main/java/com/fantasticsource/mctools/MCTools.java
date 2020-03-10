@@ -52,8 +52,8 @@ import static com.fantasticsource.tools.Tools.radtodeg;
 
 public class MCTools
 {
-    private static final double DEFAULT_DISTRIBUTED_RAYTRACE_SPACING = 0.5;
     public static final TrigLookupTable TRIG_TABLE = new TrigLookupTable(1024);
+    private static final double DEFAULT_DISTRIBUTED_RAYTRACE_SPACING = 0.5;
     private static Field configManagerCONFIGSField, languageManagerCurrentLocaleField, localePropertiesField;
     private static boolean host = false;
 

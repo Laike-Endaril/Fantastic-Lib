@@ -2,7 +2,6 @@ package com.fantasticsource.mctools.items;
 
 import com.fantasticsource.fantasticlib.FantasticLib;
 import net.minecraft.block.Block;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -10,6 +9,7 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import java.util.Arrays;
@@ -74,12 +74,12 @@ public class ItemFilter
 
         if (registryAndNBT.length == 0)
         {
-            System.err.println(I18n.format(FantasticLib.MODID + ".error.notEnoughItemFilterArgs", itemStackString));
+            System.err.println(I18n.translateToLocalFormatted(FantasticLib.MODID + ".error.notEnoughItemFilterArgs", itemStackString));
             return null;
         }
         if (registryAndNBT.length > 2)
         {
-            System.err.println(I18n.format(FantasticLib.MODID + ".error.tooManyItemFilterArgs", itemStackString));
+            System.err.println(I18n.translateToLocalFormatted(FantasticLib.MODID + ".error.tooManyItemFilterArgs", itemStackString));
             return null;
         }
 
@@ -94,7 +94,7 @@ public class ItemFilter
             String[] innerTokens = token.split(Pattern.quote(":"));
             if (innerTokens.length > 3)
             {
-                System.err.println(I18n.format(FantasticLib.MODID + ".error.badItemName", token));
+                System.err.println(I18n.translateToLocalFormatted(FantasticLib.MODID + ".error.badItemName", token));
                 return null;
             }
             if (innerTokens.length == 3)
@@ -107,7 +107,7 @@ public class ItemFilter
                 }
                 catch (NumberFormatException e)
                 {
-                    System.err.println(I18n.format(FantasticLib.MODID + ".error.badItemMeta", token));
+                    System.err.println(I18n.translateToLocalFormatted(FantasticLib.MODID + ".error.badItemMeta", token));
                     return null;
                 }
             }
@@ -140,7 +140,7 @@ public class ItemFilter
 
             if (result.itemStack == null)
             {
-                if (!suppressItemMissingError) System.err.println(I18n.format(FantasticLib.MODID + ".error.itemForFilterNotFound", token));
+                if (!suppressItemMissingError) System.err.println(I18n.translateToLocalFormatted(FantasticLib.MODID + ".error.itemForFilterNotFound", token));
                 return null;
             }
         }
@@ -164,7 +164,7 @@ public class ItemFilter
                 String[] keyValue = tag.split(Pattern.quote("="));
                 if (keyValue.length > 2)
                 {
-                    System.err.println(I18n.format(FantasticLib.MODID + ".error.tooManyNBTValues", itemStackString));
+                    System.err.println(I18n.translateToLocalFormatted(FantasticLib.MODID + ".error.tooManyNBTValues", itemStackString));
                     return null;
                 }
 

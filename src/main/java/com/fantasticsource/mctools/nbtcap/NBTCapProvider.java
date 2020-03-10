@@ -1,12 +1,12 @@
 package com.fantasticsource.mctools.nbtcap;
 
-import com.fantasticsource.api.INBTCap;
+import com.fantasticsource.fantasticlib.api.INBTCap;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
-import static com.fantasticsource.api.FLibAPI.NBT_CAP;
+import static com.fantasticsource.fantasticlib.api.FLibAPI.NBT_CAP;
 
 public class NBTCapProvider implements ICapabilitySerializable<NBTTagCompound>
 {

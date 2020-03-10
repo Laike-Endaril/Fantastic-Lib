@@ -1,9 +1,9 @@
 package com.fantasticsource.mctools.potions;
 
 import com.fantasticsource.fantasticlib.FantasticLib;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import java.util.ArrayList;
@@ -94,7 +94,7 @@ public class Potions
         }
         if (regString.equals(""))
         {
-            System.err.println(I18n.format(FantasticLib.MODID + ".error.potionNotFound", potionString));
+            System.err.println(I18n.translateToLocalFormatted(FantasticLib.MODID + ".error.potionNotFound", potionString));
             return null;
         }
 
@@ -102,7 +102,7 @@ public class Potions
         String[] tokens = potionString.equals("") ? new String[0] : potionString.split(Pattern.quote("."));
         if (tokens.length > 3)
         {
-            System.err.println(I18n.format(FantasticLib.MODID + ".error.tooManyPotionArgs", potionString));
+            System.err.println(I18n.translateToLocalFormatted(FantasticLib.MODID + ".error.tooManyPotionArgs", potionString));
             return null;
         }
 
@@ -122,7 +122,7 @@ public class Potions
                     }
                     catch (NumberFormatException e)
                     {
-                        System.err.println(I18n.format(FantasticLib.MODID + ".error.potionAmpNotNumber", potionString));
+                        System.err.println(I18n.translateToLocalFormatted(FantasticLib.MODID + ".error.potionAmpNotNumber", potionString));
                         return null;
                     }
                 }
@@ -140,7 +140,7 @@ public class Potions
                     }
                     catch (NumberFormatException e)
                     {
-                        System.err.println(I18n.format(FantasticLib.MODID + ".error.potionDurNotNumber", potionString));
+                        System.err.println(I18n.translateToLocalFormatted(FantasticLib.MODID + ".error.potionDurNotNumber", potionString));
                         return null;
                     }
                 }
@@ -160,7 +160,7 @@ public class Potions
                     }
                     catch (NumberFormatException e)
                     {
-                        System.err.println(I18n.format(FantasticLib.MODID + ".error.potionDurNotNumber", potionString));
+                        System.err.println(I18n.translateToLocalFormatted(FantasticLib.MODID + ".error.potionDurNotNumber", potionString));
                         return null;
                     }
                 }
@@ -179,7 +179,7 @@ public class Potions
                     }
                     catch (NumberFormatException e)
                     {
-                        System.err.println(I18n.format(FantasticLib.MODID + ".error.potionAmpNotNumber", potionString));
+                        System.err.println(I18n.translateToLocalFormatted(FantasticLib.MODID + ".error.potionAmpNotNumber", potionString));
                         return null;
                     }
                 }
@@ -198,7 +198,7 @@ public class Potions
                 }
                 catch (NumberFormatException e)
                 {
-                    System.err.println(I18n.format(FantasticLib.MODID + ".error.potionIntrvNotNumber", potionString));
+                    System.err.println(I18n.translateToLocalFormatted(FantasticLib.MODID + ".error.potionIntrvNotNumber", potionString));
                     return null;
                 }
             }

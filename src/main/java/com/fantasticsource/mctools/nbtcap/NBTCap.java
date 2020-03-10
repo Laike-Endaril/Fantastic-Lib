@@ -1,7 +1,7 @@
 package com.fantasticsource.mctools.nbtcap;
 
-import com.fantasticsource.api.FLibAPI;
-import com.fantasticsource.api.INBTCap;
+import com.fantasticsource.fantasticlib.api.FLibAPI;
+import com.fantasticsource.fantasticlib.api.INBTCap;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -20,6 +20,9 @@ import static com.fantasticsource.fantasticlib.FantasticLib.MODID;
 
 public class NBTCap implements INBTCap
 {
+    protected LinkedHashMap<String, NBTTagCompound> compounds = new LinkedHashMap<>();
+
+
     @SubscribeEvent
     public static void onPlayerClone(PlayerEvent.Clone event)
     {
@@ -91,8 +94,6 @@ public class NBTCap implements INBTCap
         }
     }
 
-
-    protected LinkedHashMap<String, NBTTagCompound> compounds = new LinkedHashMap<>();
 
     @Override
     public String[] getRegisteredModIDs()

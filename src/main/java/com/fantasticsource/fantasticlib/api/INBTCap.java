@@ -1,4 +1,4 @@
-package com.fantasticsource.api;
+package com.fantasticsource.fantasticlib.api;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
