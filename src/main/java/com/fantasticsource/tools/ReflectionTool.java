@@ -45,6 +45,7 @@ public class ReflectionTool
         return null;
     }
 
+
     public static Method getMethod(Class classType, String... possibleMethodNames)
     {
         return getMethod(false, classType, possibleMethodNames);
@@ -98,6 +99,18 @@ public class ReflectionTool
         return null;
     }
 
+
+    public static void set(Class classType, String possibleFieldname, Object object, Object value)
+    {
+        set(classType, new String[]{possibleFieldname}, object, value);
+    }
+
+    public static void set(Class classType, String[] possibleFieldnames, Object object, Object value)
+    {
+        Field field = ReflectionTool.getField(classType, possibleFieldnames);
+        if (field != null) set(field, object, value);
+    }
+
     public static void set(Field field, Object object, Object value)
     {
         try
@@ -108,6 +121,18 @@ public class ReflectionTool
         {
             MCTools.crash(e, 704, false);
         }
+    }
+
+
+    public static Object get(Class classType, String possibleFieldname, Object object)
+    {
+        return get(classType, new String[]{possibleFieldname}, object);
+    }
+
+    public static Object get(Class classType, String[] possibleFieldnames, Object object)
+    {
+        Field field = ReflectionTool.getField(classType, possibleFieldnames);
+        return field == null ? null : get(field, object);
     }
 
     public static Object get(Field field, Object object)
@@ -121,6 +146,18 @@ public class ReflectionTool
             MCTools.crash(e, 705, false);
             return null;
         }
+    }
+
+
+    public static Object invoke(Class classType, String possibleMethodName, Object object, Object... args)
+    {
+        return invoke(classType, new String[]{possibleMethodName}, object, args);
+    }
+
+    public static Object invoke(Class classType, String[] possibleMethodNames, Object object, Object... args)
+    {
+        Method method = getMethod(classType, possibleMethodNames);
+        return method == null ? null : invoke(method, object, args);
     }
 
     public static Object invoke(Method method, Object object, Object... args)

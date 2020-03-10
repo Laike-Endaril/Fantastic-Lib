@@ -16,6 +16,29 @@ import java.util.regex.Matcher;
 @SuppressWarnings("unused")
 public class Tools
 {
+    protected static PrintStream out = System.out, err = System.err;
+
+    public static void disableSystemOut()
+    {
+        ReflectionTool.set(System.class, "out", null, null);
+    }
+
+    public static void enableSystemOut()
+    {
+        ReflectionTool.set(System.class, "out", null, out);
+    }
+
+    public static void disableSystemErr()
+    {
+        ReflectionTool.set(System.class, "err", null, null);
+    }
+
+    public static void enableSystemErr()
+    {
+        ReflectionTool.set(System.class, "err", null, err);
+    }
+
+
     public static String fixFileSeparators(String input)
     {
         return input.replaceAll("[/\\\\]", Matcher.quoteReplacement(File.separator));
