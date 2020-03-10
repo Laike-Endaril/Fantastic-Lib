@@ -16,25 +16,35 @@ import java.util.regex.Matcher;
 @SuppressWarnings("unused")
 public class Tools
 {
-    protected static PrintStream out = System.out, err = System.err;
+    protected static PrintStream out = null, err = null;
 
     public static void disableSystemOut()
     {
+        if (System.out == null || System.out instanceof NullPrintStream) return;
+
+        out = System.out;
         ReflectionTool.set(System.class, "out", null, null);
     }
 
     public static void enableSystemOut()
     {
+        if (out == null) return;
+
         ReflectionTool.set(System.class, "out", null, out);
     }
 
     public static void disableSystemErr()
     {
+        if (System.err == null || System.err instanceof NullPrintStream) return;
+
+        err = System.err;
         ReflectionTool.set(System.class, "err", null, null);
     }
 
     public static void enableSystemErr()
     {
+        if (err == null) return;
+
         ReflectionTool.set(System.class, "err", null, err);
     }
 
