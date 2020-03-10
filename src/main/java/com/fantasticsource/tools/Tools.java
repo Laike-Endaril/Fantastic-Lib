@@ -19,13 +19,13 @@ public class Tools
     protected static PrintStream out = null, err = null;
 
 
-    public <T> boolean contains(T[] array, T object)
+    public static <T> boolean contains(T[] array, T object)
     {
         for (T t : array) if (t.equals(object)) return true;
         return false;
     }
 
-    public <T> int indexOf(T[] array, T object)
+    public static <T> int indexOf(T[] array, T object)
     {
         int i = 0;
         for (T t : array)
