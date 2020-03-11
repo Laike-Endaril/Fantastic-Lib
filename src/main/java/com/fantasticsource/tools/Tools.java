@@ -118,6 +118,34 @@ public class Tools
         return clone;
     }
 
+
+    public static char[] sort(char... values)
+    {
+        char[] result = new char[values.length];
+        System.arraycopy(values, 0, result, 0, result.length);
+
+        char c;
+        for (int passesRemaining = result.length - 1; passesRemaining > 0; passesRemaining--)
+        {
+            for (int i = 0; i < passesRemaining; i++)
+            {
+                if (inOrder(result[i], result[i + 1])) continue;
+
+                c = result[i];
+                result[i] = result[i + 1];
+                result[i + 1] = c;
+            }
+        }
+
+        return result;
+    }
+
+    public static boolean inOrder(char s1, char s2)
+    {
+        return inOrder("" + s1, "" + s2);
+    }
+
+
     public static String[] sort(String... values)
     {
         String[] result = new String[values.length];
