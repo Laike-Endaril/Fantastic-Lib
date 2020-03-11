@@ -119,7 +119,7 @@ public class Tools
     }
 
 
-    public static char[] sort(char... values)
+    public static char[] sort(Character... values)
     {
         char[] result = new char[values.length];
         System.arraycopy(values, 0, result, 0, result.length);
@@ -140,7 +140,7 @@ public class Tools
         return result;
     }
 
-    public static boolean inOrder(char s1, char s2)
+    public static boolean inOrder(Character s1, Character s2)
     {
         return inOrder("" + s1, "" + s2);
     }
