@@ -24,6 +24,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;
@@ -74,6 +75,18 @@ public class MCTools
         }
     }
 
+
+    public static DimensionType getDimensionType(String name)
+    {
+        try
+        {
+            return DimensionType.byName(name);
+        }
+        catch (IllegalArgumentException e)
+        {
+            return null;
+        }
+    }
 
     public static NBTTagCompound combineNBT(NBTTagCompound... sources)
     {
