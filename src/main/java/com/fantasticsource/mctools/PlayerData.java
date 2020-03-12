@@ -87,6 +87,7 @@ public class PlayerData
         return result;
     }
 
+
     public static String getName(UUID id)
     {
         PlayerData data = get(id);
@@ -97,6 +98,18 @@ public class PlayerData
     {
         PlayerData data = get(name);
         return data == null ? null : data.id;
+    }
+
+    public static EntityPlayer getEntity(UUID id)
+    {
+        PlayerData data = get(id);
+        return data == null ? null : data.player;
+    }
+
+    public static EntityPlayer getEntity(String name)
+    {
+        PlayerData data = get(name);
+        return data == null ? null : data.player;
     }
 
 
