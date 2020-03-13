@@ -26,6 +26,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldProvider;
+import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
@@ -73,6 +75,13 @@ public class MCTools
         {
             crash(e, 700, false);
         }
+    }
+
+
+    public static String getSaveFolder(WorldProvider worldProvider)
+    {
+        String saveFolder = worldProvider.getSaveFolder();
+        return saveFolder != null ? saveFolder : ".";
     }
 
 
