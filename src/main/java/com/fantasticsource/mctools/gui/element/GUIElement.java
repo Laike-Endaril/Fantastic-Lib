@@ -18,16 +18,16 @@ public class GUIElement
 
     public static final byte
             AP_LEFT_TO_RIGHT_TOP_TO_BOTTOM = 0,
-            AP_RIGHT_TO_LEFT_TOP_TO_BOTTOM = 1,
-            AP_LEFT_TO_RIGHT_BOTTOM_TO_TOP = 2,
-            AP_RIGHT_TO_LEFT_BOTTOM_TO_TOP = 3,
-            AP_TOP_TO_BOTTOM_LEFT_TO_RIGHT = 4,
-            AP_TOP_TO_BOTTOM_RIGHT_TO_LEFT = 5,
-            AP_BOTTOM_TO_TOP_LEFT_TO_RIGHT = 6,
-            AP_BOTTOM_TO_TOP_RIGHT_TO_LEFT = 7,
-            AP_CENTERED_H_TOP_TO_BOTTOM = 8,
-            AP_CENTERED_V_LEFT_TO_RIGHT = 9,
-            AP_X_0_TOP_TO_BOTTOM = 10;
+    //            AP_RIGHT_TO_LEFT_TOP_TO_BOTTOM = 1,
+//            AP_LEFT_TO_RIGHT_BOTTOM_TO_TOP = 2,
+//            AP_RIGHT_TO_LEFT_BOTTOM_TO_TOP = 3,
+//            AP_TOP_TO_BOTTOM_LEFT_TO_RIGHT = 4,
+//            AP_TOP_TO_BOTTOM_RIGHT_TO_LEFT = 5,
+//            AP_BOTTOM_TO_TOP_LEFT_TO_RIGHT = 6,
+//            AP_BOTTOM_TO_TOP_RIGHT_TO_LEFT = 7,
+    AP_CENTERED_H_TOP_TO_BOTTOM = 8,
+    //            AP_CENTERED_V_LEFT_TO_RIGHT = 9,
+    AP_X_0_TOP_TO_BOTTOM = 10;
 
     public final ArrayList<Runnable>
             onClickActions = new ArrayList<>(),
