@@ -11,9 +11,15 @@ import static com.fantasticsource.fantasticlib.FantasticLib.MODID;
 
 public class GUIButton extends GUIAutocroppedView
 {
-    private GUIElement idleElement, hoverElement, activeElement;
+    protected final boolean locks;
+    protected GUIElement idleElement, hoverElement, activeElement;
 
     public GUIButton(GUIScreen screen, GUIElement idleElement, GUIElement hoverElement, GUIElement activeElement)
+    {
+        this(screen, idleElement, hoverElement, activeElement, false);
+    }
+
+    public GUIButton(GUIScreen screen, GUIElement idleElement, GUIElement hoverElement, GUIElement activeElement, boolean locks)
     {
         super(screen);
 
@@ -21,7 +27,39 @@ public class GUIButton extends GUIAutocroppedView
         this.hoverElement = hoverElement;
         this.activeElement = activeElement;
 
+        this.locks = locks;
+
         add(idleElement);
+        setExternalDeactivation(locks, true);
+    }
+
+
+    public GUIButton(GUIScreen screen, double x, double y, GUIElement idleElement, GUIElement hoverElement, GUIElement activeElement)
+    {
+        this(screen, x, y, idleElement, hoverElement, activeElement, false);
+    }
+
+    public GUIButton(GUIScreen screen, double x, double y, GUIElement idleElement, GUIElement hoverElement, GUIElement activeElement, boolean locks)
+    {
+        super(screen, x, y);
+
+        this.idleElement = idleElement;
+        this.hoverElement = hoverElement;
+        this.activeElement = activeElement;
+
+        this.locks = locks;
+
+        add(idleElement);
+        setExternalDeactivation(locks, true);
+    }
+
+
+    @Override
+    public GUIElement add(int index, GUIElement element)
+    {
+        GUIElement result = super.add(index, element);
+        setExternalDeactivation(locks, true);
+        return result;
     }
 
     public static GUIButton newAddButton(GUIScreen screen)
@@ -83,7 +121,8 @@ public class GUIButton extends GUIAutocroppedView
     @Override
     public void draw()
     {
-        if (isMouseWithin())
+        if (locks && active) set(activeElement);
+        else if (isMouseWithin())
         {
             if (active) set(activeElement);
             else set(hoverElement);
@@ -93,7 +132,7 @@ public class GUIButton extends GUIAutocroppedView
         super.draw();
     }
 
-    private void set(GUIElement element)
+    protected void set(GUIElement element)
     {
         int index = indexOf(element);
         if (index != -1) return;

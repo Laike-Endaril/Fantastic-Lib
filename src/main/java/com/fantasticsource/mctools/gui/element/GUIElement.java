@@ -301,19 +301,16 @@ public class GUIElement
         for (Runnable action : onRecalcActions) action.run();
     }
 
-    public GUIElement add(GUIElement element)
-    {
-        element.parent = this;
-        children.add(element);
-        recalc(size() - 1);
-        return element;
-    }
-
     public GUIElement addAll(GUIElement... elements)
     {
         for (GUIElement element : elements) add(element);
 
         return this;
+    }
+
+    public GUIElement add(GUIElement element)
+    {
+        return add(children.size(), element);
     }
 
     public GUIElement add(int index, GUIElement element)
