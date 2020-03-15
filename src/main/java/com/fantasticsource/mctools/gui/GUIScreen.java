@@ -202,7 +202,7 @@ public abstract class GUIScreen extends GuiScreen
         recalc();
     }
 
-    private void recalc()
+    protected void recalc()
     {
         pxWidth = Display.getWidth();
         pxHeight = Display.getHeight();
