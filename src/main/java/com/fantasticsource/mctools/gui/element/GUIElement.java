@@ -17,6 +17,7 @@ public class GUIElement
     public static final Color T_GRAY = new Color(0xAAAAAA77);
 
     public static final byte
+            AP_CENTER = -1,
             AP_LEFT_TO_RIGHT_TOP_TO_BOTTOM = 0,
     //            AP_RIGHT_TO_LEFT_TOP_TO_BOTTOM = 1,
 //            AP_LEFT_TO_RIGHT_BOTTOM_TO_TOP = 2,
@@ -327,6 +328,20 @@ public class GUIElement
     {
         switch (subElementAutoplaceMethod)
         {
+            case AP_CENTER:
+                for (int i = startIndex; i < size(); i++)
+                {
+                    GUIElement element = get(i);
+                    element.recalc(0);
+                    if (element.autoplace)
+                    {
+                        element.x = 0.5 - element.width / 2;
+                        element.y = 0.5 - element.height / 2;
+                    }
+                }
+                break;
+
+
             case AP_LEFT_TO_RIGHT_TOP_TO_BOTTOM:
                 if (size() <= 1 || startIndex != size() - 1)
                 {
@@ -375,6 +390,7 @@ public class GUIElement
                 }
                 break;
 
+
             case AP_CENTERED_H_TOP_TO_BOTTOM:
                 if (size() <= 1 || startIndex != size() - 1)
                 {
@@ -406,6 +422,7 @@ public class GUIElement
                     }
                 }
                 break;
+
 
             case AP_X_0_TOP_TO_BOTTOM:
                 if (size() <= 1 || startIndex != size() - 1)
