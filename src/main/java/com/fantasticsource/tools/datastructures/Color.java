@@ -329,165 +329,119 @@ public class Color
         return hex();
     }
 
+    public int h()
+    {
+        return (int) (255 * hf());
+    }
+
+    public float hf()
+    {
+        if (rf == gf && gf == bf) return 0;
+
+        float cmin = Tools.min(rf, gf, bf), vf = vf();
+
+        if (vf == rf) return Tools.posMod((gf - bf) / (vf - cmin) / 6, 1);
+        if (vf == gf) return Tools.posMod((bf - rf) / (vf - cmin) / 6 + 1f / 3, 1);
+        return Tools.posMod((rf - gf) / (vf - cmin) / 6 + 1f * 2 / 3, 1);
+    }
+
+    public int s()
+    {
+        int v = v();
+        return v == 0 ? 0 : (v - Tools.min(r, g, b)) / v;
+    }
+
+    public float sf()
+    {
+        float vf = vf();
+        return vf == 0 ? 0 : (vf - Tools.min(rf, gf, bf)) / vf;
+    }
+
     public int v()
     {
-        return (int) ((double) (r + g + b) / 3);
+        return Tools.max(r, g, b);
     }
 
     public float vf()
     {
-        return (rf + gf + bf) / 3;
+        return Tools.max(rf, gf, bf);
+    }
+
+    public Color setH(int h)
+    {
+        return setHF((float) h / 255);
+    }
+
+    public Color setHF(float hf)
+    {
+        return setColorHSV(hf, sf(), vf(), af);
     }
 
     public Color setV(int v)
     {
-        v = v & 0xff;
-
-        if (v == 0) setColor(0, 0, 0, a);
-        else if (v == 255) setColor(255, 255, 255, a);
-        else
-        {
-            int current = v();
-
-            int rr = (int) (((double) v / current) * r);
-            int gg = (int) (((double) v / current) * g);
-            int bb = (int) (((double) v / current) * b);
-
-            if (rr >= 255)
-            {
-                if (gg >= 255)
-                {
-                    //1 or 0 non-max
-                    bb = Tools.min(255, rr + gg + bb - 510);
-                    rr = 255;
-                    gg = 255;
-                }
-                else if (bb >= 255)
-                {
-                    //1 or 0 non-max
-                    gg = Tools.min(255, rr + gg + bb - 510);
-                    rr = 255;
-                    bb = 255;
-                }
-                else
-                {
-                    //2 non-max
-                    int overflow = rr - 255;
-                    rr = 255;
-
-                    if (gg > bb)
-                    {
-                        double ratio = (double) gg / (bb + gg);
-                        int inc = (int) (ratio * overflow);
-                        gg += inc;
-                        if (gg > 255)
-                        {
-                            overflow += gg - 255;
-                            gg = 255;
-                        }
-                        bb = Tools.min(255, bb + overflow - inc);
-                    }
-                    else
-                    {
-                        double ratio = (gg + bb == 0) ? 0.5 : (double) bb / (bb + gg);
-                        int inc = (int) (ratio * overflow);
-                        bb += inc;
-                        if (bb > 255)
-                        {
-                            overflow += bb - 255;
-                            bb = 255;
-                        }
-                        gg = Tools.min(255, gg + overflow - inc);
-                    }
-                }
-            }
-            else
-            {
-                if (gg >= 255)
-                {
-                    if (bb >= 255)
-                    {
-                        //1 or 0 non-max
-                        rr = Tools.min(255, rr + gg + bb - 510);
-                        gg = 255;
-                        bb = 255;
-                    }
-                    else
-                    {
-                        //2 non-max
-                        int overflow = gg - 255;
-                        gg = 255;
-
-                        if (rr > bb)
-                        {
-                            double ratio = (double) rr / (bb + rr);
-                            int inc = (int) (ratio * overflow);
-                            rr += inc;
-                            if (rr > 255)
-                            {
-                                overflow += rr - 255;
-                                rr = 255;
-                            }
-                            bb = Tools.min(255, bb + overflow - inc);
-                        }
-                        else
-                        {
-                            double ratio = (rr + bb == 0) ? 0.5 : (double) bb / (bb + rr);
-                            int inc = (int) (ratio * overflow);
-                            bb += inc;
-                            if (bb > 255)
-                            {
-                                overflow += bb - 255;
-                                bb = 255;
-                            }
-                            rr = Tools.min(255, rr + overflow - inc);
-                        }
-                    }
-                }
-                else if (bb >= 255)
-                {
-                    //2 non-max
-                    int overflow = bb - 255;
-                    bb = 255;
-
-                    if (rr > gg)
-                    {
-                        double ratio = (double) rr / (gg + rr);
-                        int inc = (int) (ratio * overflow);
-                        rr += inc;
-                        if (rr > 255)
-                        {
-                            overflow += rr - 255;
-                            rr = 255;
-                        }
-                        gg = Tools.min(255, gg + overflow - inc);
-                    }
-                    else
-                    {
-                        double ratio = (gg + rr == 0) ? 0.5 : (double) gg / (gg + rr);
-                        int inc = (int) (ratio * overflow);
-                        gg += inc;
-                        if (gg > 255)
-                        {
-                            overflow += gg - 255;
-                            gg = 255;
-                        }
-                        rr = Tools.min(255, rr + overflow - inc);
-                    }
-                }
-            }
-
-            setR(rr);
-            setG(gg);
-            setB(bb);
-        }
-
-        return this;
+        return setVF((float) v / 255);
     }
 
     public Color setVF(float vf)
     {
-        return setV((int) (vf * 255));
+        return setColorHSV(hf(), sf(), vf, af);
+    }
+
+    public Color setColorHSV(int h, int s, int v)
+    {
+        return setColorHSV(h, s, v, 255);
+    }
+
+    public Color setColorHSV(int h, int s, int v, int a)
+    {
+        return setColorHSV((float) h / 255, (float) s / 255, (float) v / 255, (float) a / 255);
+    }
+
+    public Color setColorHSV(float hf, float sf, float vf)
+    {
+        return setColorHSV(hf, sf, vf, 1f);
+    }
+
+    public Color setColorHSV(float hf, float sf, float vf, float af)
+    {
+        if (hf < 0 || hf > 1 || sf < 0 || sf > 1 || vf < 0 || vf > 1 || af < 0 || af > 1) throw new IllegalArgumentException("Out of bounds (0, 1): h=" + hf + ", s=" + sf + ", v=" + vf + ", a=" + af);
+
+        if (vf == 0) return setColor(0, 0, 0, af);
+        if (sf == 0) return setColor(vf, vf, vf, af);
+
+        if (hf == 1) hf = 0;
+
+        hf *= 6;
+        int hInt = (int) hf;
+        float hFrac = hf - hInt;
+
+        float p = vf * (1 - sf);
+        float q = vf * (1 - (sf * hFrac));
+        float t = vf * (1 - (sf * (1 - hFrac)));
+
+        switch (hInt)
+        {
+            case 0:
+                return setColor(vf, t, p, af);
+
+            case 1:
+                return setColor(q, vf, p, af);
+
+            case 2:
+                return setColor(p, vf, t, af);
+
+            case 3:
+                return setColor(p, q, vf, af);
+
+            case 4:
+                return setColor(t, p, vf, af);
+
+            case 5:
+                return setColor(vf, p, q, af);
+
+            default:
+                throw new IllegalStateException("This should never happen");
+        }
     }
 
     @Override
