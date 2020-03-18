@@ -115,7 +115,7 @@ public class GUIImage extends GUIElement
 
     public Color getColor()
     {
-        return color;
+        return color.copy();
     }
 
 
