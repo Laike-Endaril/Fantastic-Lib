@@ -10,7 +10,6 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.FOVUpdateEvent;
@@ -162,10 +161,11 @@ public class Render
     private static Pair<Float, Float> get2DWindowCoordsFrom3DWorldCoords(double x, double y, double z, double partialTick) throws IllegalAccessException
     {
         //Based on GLU.gluProject()
-        EntityPlayer player = Minecraft.getMinecraft().player;
-        double px = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTick;
-        double py = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTick;
-        double pz = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTick;
+        Entity viewEntity = Minecraft.getMinecraft().getRenderViewEntity();
+        if (viewEntity == null) viewEntity = Minecraft.getMinecraft().player;
+        double px = viewEntity.lastTickPosX + (viewEntity.posX - viewEntity.lastTickPosX) * partialTick;
+        double py = viewEntity.lastTickPosY + (viewEntity.posY - viewEntity.lastTickPosY) * partialTick;
+        double pz = viewEntity.lastTickPosZ + (viewEntity.posZ - viewEntity.lastTickPosZ) * partialTick;
 
         //Need to get these from stored values, because the actual current matrices are probably ortho, for drawing a HUD
         FloatBuffer modelView = getStoredModelViewMatrix();
@@ -183,6 +183,7 @@ public class Render
         multMatrix(modelView, in, out);
         multMatrix(projection, out, in);
 
+        //Added this note after I forgot this stuff, but I think this means the point is *ON* the near plane
         if (in[3] == 0.0) return null; //TODO handle this without returning null if possible
 
         in[3] = (1.0f / in[3]) * 0.5f;
@@ -344,7 +345,9 @@ public class Render
 
     public static Vec3d getCameraPosition()
     {
-        return Minecraft.getMinecraft().player.getPositionVector().add(ActiveRenderInfo.getCameraPosition());
+        Entity viewEntity = Minecraft.getMinecraft().getRenderViewEntity();
+        if (viewEntity == null) viewEntity = Minecraft.getMinecraft().player;
+        return viewEntity.getPositionVector().add(ActiveRenderInfo.getCameraPosition());
     }
 
 
