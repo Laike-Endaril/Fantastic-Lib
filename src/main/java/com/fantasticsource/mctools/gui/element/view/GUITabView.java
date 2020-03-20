@@ -282,7 +282,7 @@ public class GUITabView extends GUIView
     }
 
     @Override
-    public boolean mouseReleased(double x, double y, int button)
+    public boolean mouseReleased(int button)
     {
         boolean result = false;
         if (button == 0)
@@ -298,7 +298,7 @@ public class GUITabView extends GUIView
         int index = -1;
         for (GUIElement child : (ArrayList<GUIElement>) children.clone())
         {
-            if (child.mouseReleased(x - this.x, y - this.y, button))
+            if (child.mouseReleased(button))
             {
                 for (int i = 0; i < tabs.size(); i++)
                 {

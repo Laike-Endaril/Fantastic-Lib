@@ -1053,7 +1053,7 @@ public class GUITextInput extends GUIText
     }
 
     @Override
-    public boolean mousePressed(double x, double y, int button)
+    public boolean mousePressed(int button)
     {
         if (button == 0 && isMouseWithin())
         {
@@ -1108,23 +1108,23 @@ public class GUITextInput extends GUIText
         }
         else setActive(false);
 
-        for (GUIElement child : (ArrayList<GUIElement>) children.clone()) child.mousePressed(x - this.x, y - this.y, button);
+        for (GUIElement child : (ArrayList<GUIElement>) children.clone()) child.mousePressed(button);
 
         return active;
     }
 
     @Override
-    public boolean mouseReleased(double x, double y, int button)
+    public boolean mouseReleased(int button)
     {
         boolean result = button == 0 && active && isMouseWithin();
         if (result && !MinecraftForge.EVENT_BUS.post(new GUILeftClickEvent(screen, this))) click();
 
-        for (GUIElement child : (ArrayList<GUIElement>) children.clone()) child.mouseReleased(x - this.x, y - this.y, button);
+        for (GUIElement child : (ArrayList<GUIElement>) children.clone()) child.mouseReleased(button);
         return result;
     }
 
     @Override
-    public void mouseDrag(double x, double y, int button)
+    public void mouseDrag(int button)
     {
         if (button == 0 && ((parent instanceof CodeInput && isMouseWithin()) || (!(parent instanceof CodeInput) && active)))
         {
@@ -1210,7 +1210,7 @@ public class GUITextInput extends GUIText
 
         cursorTime = System.currentTimeMillis();
 
-        super.mouseDrag(x, y, button);
+        super.mouseDrag(button);
     }
 
     @Override

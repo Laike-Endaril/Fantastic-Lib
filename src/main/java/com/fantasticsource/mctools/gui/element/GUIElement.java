@@ -154,21 +154,21 @@ public class GUIElement
         drawChildren();
     }
 
-    public void mouseWheel(double x, double y, int delta)
+    public void mouseWheel(int delta)
     {
-        for (GUIElement child : (ArrayList<GUIElement>) children.clone()) child.mouseWheel(x - this.x, y - this.y, delta);
+        for (GUIElement child : (ArrayList<GUIElement>) children.clone()) child.mouseWheel(delta);
     }
 
-    public boolean mousePressed(double x, double y, int button)
+    public boolean mousePressed(int button)
     {
         if (button == 0 && isMouseWithin()) setActive(true);
 
-        for (GUIElement child : (ArrayList<GUIElement>) children.clone()) child.mousePressed(x - this.x, y - this.y, button);
+        for (GUIElement child : (ArrayList<GUIElement>) children.clone()) child.mousePressed(button);
 
         return active;
     }
 
-    public boolean mouseReleased(double x, double y, int button)
+    public boolean mouseReleased(int button)
     {
         boolean result = false;
         if (button == 0)
@@ -181,7 +181,7 @@ public class GUIElement
             setActive(false);
         }
 
-        for (GUIElement child : (ArrayList<GUIElement>) children.clone()) child.mouseReleased(x - this.x, y - this.y, button);
+        for (GUIElement child : (ArrayList<GUIElement>) children.clone()) child.mouseReleased(button);
 
         return result;
     }
@@ -209,9 +209,9 @@ public class GUIElement
         return this;
     }
 
-    public void mouseDrag(double x, double y, int button)
+    public void mouseDrag(int button)
     {
-        for (GUIElement child : (ArrayList<GUIElement>) children.clone()) child.mouseDrag(x - this.x, y - this.y, button);
+        for (GUIElement child : (ArrayList<GUIElement>) children.clone()) child.mouseDrag(button);
     }
 
     public final double absoluteX()

@@ -41,7 +41,7 @@ public class GUIVerticalScrollbar extends GUIGradientBorder
     }
 
     @Override
-    public void mouseWheel(double x, double y, int delta)
+    public void mouseWheel(int delta)
     {
         if (scrollView.progress != -1 && (isMouseWithin() || scrollView.isMouseWithin()))
         {
@@ -59,9 +59,9 @@ public class GUIVerticalScrollbar extends GUIGradientBorder
     }
 
     @Override
-    public boolean mousePressed(double x, double y, int button)
+    public boolean mousePressed(int button)
     {
-        setActive(super.mousePressed(x, y, button));
+        setActive(super.mousePressed(button));
 
         if (active && scrollView.progress != -1)
         {
@@ -72,7 +72,7 @@ public class GUIVerticalScrollbar extends GUIGradientBorder
     }
 
     @Override
-    public void mouseDrag(double x, double y, int button)
+    public void mouseDrag(int button)
     {
         if (active && button == 0)
         {
