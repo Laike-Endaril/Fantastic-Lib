@@ -45,7 +45,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.NotImplementedException;
 import org.lwjgl.util.vector.Quaternion;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -75,6 +77,19 @@ public class MCTools
         {
             crash(e, 700, false);
         }
+    }
+
+
+    public static BufferedReader getJarResource(Class classInJar, String resourcePathAndName)
+    {
+        return new BufferedReader(new InputStreamReader(classInJar.getClassLoader().getResourceAsStream(resourcePathAndName)));
+    }
+
+
+    @SideOnly(Side.CLIENT)
+    public static String getResourcePackDir()
+    {
+        return getConfigDir() + ".." + File.separator + "resourcepacks" + File.separator;
     }
 
 
