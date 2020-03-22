@@ -233,7 +233,7 @@ public abstract class GUIScreen extends GuiScreen
 
         //Mouse wheel
         int delta = Mouse.getDWheel();
-        if (delta != 0) root.mouseWheel(mouseX, mouseY, delta);
+        if (delta != 0) root.mouseWheel(delta);
 
 
         //Mouse press, release, and drag
@@ -243,19 +243,19 @@ public abstract class GUIScreen extends GuiScreen
             if (Mouse.isButtonDown(btn))
             {
                 if (!mouseButtons.contains(btn)) mouseButtons.add(btn);
-                root.mousePressed(mouseX, mouseY, btn);
+                root.mousePressed(btn);
             }
             else
             {
                 mouseButtons.remove((Integer) btn); //Need to cast so it uses the object-based removal and not the index-based removal
-                root.mouseReleased(mouseX, mouseY, btn);
+                root.mouseReleased(btn);
             }
         }
         else
         {
             for (int b : mouseButtons)
             {
-                root.mouseDrag(mouseX, mouseY, b);
+                root.mouseDrag(b);
             }
         }
     }
