@@ -79,7 +79,7 @@ public class TransientAWSkinHandler
     }
 
 
-    private static void applyNBTToTransientSkin(ItemStack stack, String libraryFile, String skinType, Color... dyes)
+    private static void applyTransientTag(ItemStack stack)
     {
         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
         NBTTagCompound compound = stack.getTagCompound();
@@ -90,30 +90,6 @@ public class TransientAWSkinHandler
         compound = compound.getCompoundTag(DOMAIN);
 
         compound.setBoolean("awTransient", true);
-
-
-        //Apply normal AW skin NBT
-        compound = new NBTTagCompound();
-        stack.getTagCompound().setTag("armourersWorkshop", compound);
-
-        NBTTagCompound compound2 = new NBTTagCompound();
-        compound.setTag("identifier", compound2);
-
-        compound2.setString("libraryFile", libraryFile);
-        compound2.setString("skinType", skinType);
-
-        compound2 = new NBTTagCompound();
-        compound.setTag("dyeData", compound2);
-
-        int i = 0;
-        for (Color color : dyes)
-        {
-            compound2.setByte("dye" + i + "r", (byte) color.r());
-            compound2.setByte("dye" + i + "g", (byte) color.g());
-            compound2.setByte("dye" + i + "b", (byte) color.b());
-            compound2.setByte("dye" + i + "t", (byte) color.a());
-            i++;
-        }
     }
 
     public static boolean isTransientSkin(ItemStack stack)
@@ -174,8 +150,8 @@ public class TransientAWSkinHandler
                 oldSkin = GlobalInventory.getAWSkin(target, skinType, i2);
                 if (oldSkin.isEmpty())
                 {
-                    newSkin = new ItemStack(awSkinItem);
-                    applyNBTToTransientSkin(newSkin, compound.getString("file"), skinType, dyes.toArray(new Color[0]));
+                    newSkin = AWSkinGenerator.generate(compound.getString("file"), skinType, dyes.toArray(new Color[0]));
+                    applyTransientTag(newSkin);
                     GlobalInventory.setAWSkin(target, skinType, i2, newSkin);
                     transientSkinAt = -1;
                     break;
@@ -188,8 +164,8 @@ public class TransientAWSkinHandler
 
             if (transientSkinAt >= 0)
             {
-                newSkin = new ItemStack(awSkinItem);
-                applyNBTToTransientSkin(newSkin, compound.getString("file"), skinType, dyes.toArray(new Color[0]));
+                newSkin = AWSkinGenerator.generate(compound.getString("file"), skinType, dyes.toArray(new Color[0]));
+                applyTransientTag(newSkin);
                 GlobalInventory.setAWSkin(target, skinType, transientSkinAt, newSkin);
             }
         }
