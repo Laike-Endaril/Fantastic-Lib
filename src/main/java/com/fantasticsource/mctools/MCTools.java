@@ -47,6 +47,7 @@ import org.lwjgl.util.vector.Quaternion;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -80,9 +81,14 @@ public class MCTools
     }
 
 
-    public static BufferedReader getJarResource(Class classInJar, String resourcePathAndName)
+    public static BufferedReader getJarResourceReader(Class classInJar, String resourcePathAndName)
     {
-        return new BufferedReader(new InputStreamReader(classInJar.getClassLoader().getResourceAsStream(resourcePathAndName)));
+        return new BufferedReader(new InputStreamReader(getJarResourceStream(classInJar, resourcePathAndName)));
+    }
+
+    public static InputStream getJarResourceStream(Class classInJar, String resourcePathAndName)
+    {
+        return classInJar.getClassLoader().getResourceAsStream(resourcePathAndName);
     }
 
 
