@@ -102,39 +102,43 @@ public class CodeInput extends GUIScrollView
     public GUIElement add(GUIElement element)
     {
         if (!(element instanceof GUITextInput)) throw new IllegalArgumentException("Multiline text inputs can only have text inputs added to them!");
-        return add(((GUITextInput) element).text);
+
+        return add(children.size(), element);
     }
 
     @Override
     public GUIElement add(int index, GUIElement element)
     {
         if (!(element instanceof GUITextInput)) throw new IllegalArgumentException("Multiline text inputs can only have text inputs added to them!");
-        return add(index, ((GUITextInput) element).text);
+
+        return super.add(index, element);
     }
 
     public GUIElement add(String s)
     {
-        if (children.size() == 0) return super.add(new GUITextInput(screen, 0, 0, s, FilterNone.INSTANCE, activeColor, scale));
-        else
-        {
-            GUIElement element = children.get(children.size() - 1);
-            return super.add(new GUITextInput(screen, 0, element.y + (element.height + (1d / screen.height)) / height, s, FilterNone.INSTANCE, activeColor, scale));
-        }
+        return add(children.size(), s);
     }
 
     public GUIElement add(int index, String s)
     {
-        if (index == 0) return add(s);
+        GUIElement element, newElement;
+        if (index == 0)
+        {
+            newElement = new GUITextInput(screen, 0, 0, s, FilterNone.INSTANCE, activeColor, scale);
+        }
         else
         {
-            GUIElement element = children.get(index - 1), newElement = new GUITextInput(screen, 0, element.y + (element.height + (1d / screen.height)) / height, s, FilterNone.INSTANCE, activeColor, scale);
-            for (int i = index; i < children.size(); i++)
-            {
-                element = children.get(i);
-                element.y += ((1d / screen.height) + newElement.height) / height;
-            }
-            return super.add(index, newElement);
+            element = children.get(index - 1);
+            newElement = new GUITextInput(screen, 0, element.y + (element.height + (1d / screen.height)) / height, s, FilterNone.INSTANCE, activeColor, scale);
         }
+
+        for (int i = index; i < children.size(); i++)
+        {
+            element = children.get(i);
+            element.y += ((1d / screen.height) + newElement.height) / height;
+        }
+
+        return super.add(index, newElement);
     }
 
     @Override
