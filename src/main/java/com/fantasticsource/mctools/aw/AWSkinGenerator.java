@@ -13,6 +13,9 @@ public class AWSkinGenerator
 
     public static ItemStack generate(String libraryFile, String skinType, Color... dyes)
     {
+        if (libraryFile == null || libraryFile.toLowerCase().equals("null")) return ItemStack.EMPTY;
+
+
         ItemStack result = new ItemStack(awSkinItem);
         NBTTagCompound compound = new NBTTagCompound();
         result.setTagCompound(compound);
