@@ -79,14 +79,12 @@ public class TransientAWSkinHandler
     }
 
 
-    private static void applyTransientTag(ItemStack stack)
+    protected static void applyTransientTag(ItemStack stack)
     {
-        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+        //Mark as "transient"
         NBTTagCompound compound = stack.getTagCompound();
 
-
-        //Mark as "transient"
-        if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
+        compound.setTag(DOMAIN, new NBTTagCompound());
         compound = compound.getCompoundTag(DOMAIN);
 
         compound.setBoolean("awTransient", true);
