@@ -2,18 +2,15 @@ package com.fantasticsource.mctools.aw;
 
 import com.fantasticsource.mctools.GlobalInventory;
 import com.fantasticsource.mctools.event.InventoryChangedEvent;
-import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-
-import java.util.ArrayList;
 
 import static com.fantasticsource.fantasticlib.FantasticLib.DOMAIN;
 
@@ -22,15 +19,10 @@ public class TransientAWSkinHandler
     @GameRegistry.ObjectHolder("armourers_workshop:item.skin")
     public static Item awSkinItem;
 
-    public static void addTransientAWSkin(ItemStack stack, String libraryFile, String skinType, Color... dyes)
+    public static void addTransientAWSkin(ItemStack equipmentStack, String skinType, int indexWithinSkinType, ItemStack skinStack)
     {
-        addTransientAWSkin(stack, libraryFile, skinType, null, null, dyes);
-    }
-
-    public static void addTransientAWSkin(ItemStack stack, String libraryFile, String skinType, String renderChannel, String renderMode, Color... dyes)
-    {
-        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
-        NBTTagCompound compound = stack.getTagCompound();
+        if (!equipmentStack.hasTagCompound()) equipmentStack.setTagCompound(new NBTTagCompound());
+        NBTTagCompound compound = equipmentStack.getTagCompound();
 
         if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
         compound = compound.getCompoundTag(DOMAIN);
@@ -39,26 +31,10 @@ public class TransientAWSkinHandler
         NBTTagList list = compound.getTagList("AWSkins", Constants.NBT.TAG_COMPOUND);
 
         compound = new NBTTagCompound();
-        list.appendTag(compound);
-
-        compound.setString("file", libraryFile.replace(".armour", ""));
         compound.setString("type", skinType);
-        if (renderChannel != null && renderMode != null)
-        {
-            compound.setString("renderChannel", renderChannel);
-            compound.setString("renderMode", renderMode);
-        }
-
-        if (dyes.length > 0)
-        {
-            list = new NBTTagList();
-            compound.setTag("dyes", list);
-
-            for (Color dye : dyes)
-            {
-                list.appendTag(new NBTTagInt(dye.color()));
-            }
-        }
+        compound.setInteger("index", indexWithinSkinType);
+        compound.setTag("skinCompound", skinStack.serializeNBT());
+        list.appendTag(compound);
     }
 
     public static void clearTransientAWSkins(ItemStack stack)
@@ -87,7 +63,7 @@ public class TransientAWSkinHandler
         compound.setTag(DOMAIN, new NBTTagCompound());
         compound = compound.getCompoundTag(DOMAIN);
 
-        compound.setBoolean("awTransient", true);
+        compound.setBoolean("AWTransient", true);
     }
 
     public static boolean isTransientSkin(ItemStack stack)
@@ -96,7 +72,7 @@ public class TransientAWSkinHandler
         NBTTagCompound compound = stack.getTagCompound();
 
         if (!compound.hasKey(DOMAIN)) return false;
-        return compound.getCompoundTag(DOMAIN).getBoolean("awTransient");
+        return compound.getCompoundTag(DOMAIN).getBoolean("AWTransient");
     }
 
 
@@ -115,57 +91,26 @@ public class TransientAWSkinHandler
         NBTTagList list = compound.getTagList("AWSkins", Constants.NBT.TAG_COMPOUND);
 
         ItemStack newSkin, oldSkin;
-        NBTTagList list2;
-        ArrayList<Color> dyes;
         for (int i = 0; i < list.tagCount(); i++)
         {
             compound = list.getCompoundTagAt(i);
 
-            //Only render if the render mode of the render channel matches the entity's current render mode for that render channel
-            if (compound.hasKey("renderChannel"))
-            {
-                String targetRenderMode = RenderModes.getRenderMode(target, compound.getString("renderChannel"));
-                if (targetRenderMode == null && compound.hasKey("renderMode")) continue;
-                if (!compound.getString("renderMode").equals(targetRenderMode)) continue;
-            }
-
-            dyes = new ArrayList<>();
-            if (compound.hasKey("dyes"))
-            {
-                list2 = compound.getTagList("dyes", Constants.NBT.TAG_INT);
-                for (int i2 = 0; i2 < list2.tagCount(); i2++)
-                {
-                    dyes.add(new Color(list2.getIntAt(i2)));
-                }
-            }
-
 
             String skinType = compound.getString("type");
-            int size = GlobalInventory.getAWSkinSlotCount(target, skinType);
-            int transientSkinAt = -1;
-            for (int i2 = 0; i2 < size; i2++)
+            int index = compound.getInteger("index");
+
+            oldSkin = GlobalInventory.getAWSkin(target, skinType, index);
+            if (!oldSkin.isEmpty() && !isTransientSkin(oldSkin))
             {
-                oldSkin = GlobalInventory.getAWSkin(target, skinType, i2);
-                if (oldSkin.isEmpty())
-                {
-                    newSkin = AWSkinGenerator.generate(compound.getString("file"), skinType, dyes.toArray(new Color[0]));
-                    applyTransientTag(newSkin);
-                    GlobalInventory.setAWSkin(target, skinType, i2, newSkin);
-                    transientSkinAt = -1;
-                    break;
-                }
-                else if (transientSkinAt == -1 && isTransientSkin(oldSkin))
-                {
-                    transientSkinAt = i2;
-                }
+                System.err.println(TextFormatting.RED + "Failed to place skin into slot: " + skinType + " (" + index + ")");
+                System.err.println(TextFormatting.RED + "Skin: " + stack.getDisplayName());
+                System.err.println(TextFormatting.RED + "Entity: " + target.getDisplayName() + " in world " + target.dimension + " (" + target.getPosition() + ")");
+                return;
             }
 
-            if (transientSkinAt >= 0)
-            {
-                newSkin = AWSkinGenerator.generate(compound.getString("file"), skinType, dyes.toArray(new Color[0]));
-                applyTransientTag(newSkin);
-                GlobalInventory.setAWSkin(target, skinType, transientSkinAt, newSkin);
-            }
+            newSkin = new ItemStack(compound.getCompoundTag("skinCompound"));
+            applyTransientTag(newSkin);
+            GlobalInventory.setAWSkin(target, compound.getString("type"), compound.getInteger("index"), newSkin);
         }
     }
 
