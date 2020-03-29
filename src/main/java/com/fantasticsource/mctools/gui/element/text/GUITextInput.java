@@ -1055,8 +1055,10 @@ public class GUITextInput extends GUIText
     @Override
     public boolean mousePressed(int button)
     {
+        boolean result = false;
         if (button == 0 && isMouseWithin())
         {
+            result = true;
             setActive(true);
             long time = System.currentTimeMillis();
             int absMouseX = (int) (mouseX * screen.width);
@@ -1108,9 +1110,9 @@ public class GUITextInput extends GUIText
         }
         else setActive(false);
 
-        for (GUIElement child : (ArrayList<GUIElement>) children.clone()) child.mousePressed(button);
+        for (GUIElement child : (ArrayList<GUIElement>) children.clone()) result |= child.mousePressed(button);
 
-        return active;
+        return result;
     }
 
     @Override

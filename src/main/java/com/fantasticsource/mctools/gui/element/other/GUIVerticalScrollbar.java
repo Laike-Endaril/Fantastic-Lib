@@ -61,14 +61,15 @@ public class GUIVerticalScrollbar extends GUIGradientBorder
     @Override
     public boolean mousePressed(int button)
     {
-        setActive(super.mousePressed(button));
+        boolean result = super.mousePressed(button);
+        setActive(result);
 
         if (active && scrollView.progress != -1)
         {
             scrollView.progress = Tools.min(Tools.max((mouseY() - absoluteY() - slider.absoluteHeight() * 0.5) / (absoluteHeight() - slider.absoluteHeight()), 0), 1);
         }
 
-        return active;
+        return result;
     }
 
     @Override

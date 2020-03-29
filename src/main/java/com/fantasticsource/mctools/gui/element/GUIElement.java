@@ -161,11 +161,16 @@ public class GUIElement
 
     public boolean mousePressed(int button)
     {
-        if (button == 0 && isMouseWithin()) setActive(true);
+        boolean result = false;
+        if (button == 0 && isMouseWithin())
+        {
+            result = true;
+            setActive(true);
+        }
 
-        for (GUIElement child : (ArrayList<GUIElement>) children.clone()) child.mousePressed(button);
+        for (GUIElement child : (ArrayList<GUIElement>) children.clone()) result |= child.mousePressed(button);
 
-        return active;
+        return result;
     }
 
     public boolean mouseReleased(int button)
