@@ -3,6 +3,7 @@ package com.fantasticsource.mctools;
 import baubles.api.BaublesApi;
 import baubles.api.cap.IBaublesItemHandler;
 import com.fantasticsource.fantasticlib.Compat;
+import com.fantasticsource.mctools.aw.RenderModes;
 import com.fantasticsource.tiamatrpg.api.ITiamatPlayerInventory;
 import com.fantasticsource.tiamatrpg.api.TiamatRPGAPI;
 import com.fantasticsource.tools.ReflectionTool;
@@ -534,7 +535,9 @@ public class GlobalInventory
         if (wardrobeSkinHandler == null) return null;
 
 
-        return wardrobeSkinHandler.setSkinStack(skinType, index, newSkin);
+        ItemStack result = wardrobeSkinHandler.setSkinStack(skinType, index, newSkin);
+        RenderModes.refresh(entity);
+        return result;
     }
 
 

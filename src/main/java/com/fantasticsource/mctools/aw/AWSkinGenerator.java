@@ -11,7 +11,6 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
 
 public class AWSkinGenerator
 {
@@ -77,7 +76,7 @@ public class AWSkinGenerator
             ArrayList<Pair<String, String>> reqs = new ArrayList<>();
             for (String requirement : Tools.fixedSplit(renderModeTags, "@"))
             {
-                String[] tokens = Tools.fixedSplit(requirement, Matcher.quoteReplacement("."));
+                String[] tokens = Tools.fixedSplit(requirement, "[.]");
                 reqs.add(new Pair<>(tokens[0], tokens[1]));
             }
             RenderModes.addRenderModeToSkin(result, reqs, skinType, name, dyes);

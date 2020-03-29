@@ -7,6 +7,7 @@ import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 import com.fantasticsource.tools.datastructures.Pair;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -72,8 +73,8 @@ public class RenderModes
         if (!skinStack.hasTagCompound()) skinStack.setTagCompound(new NBTTagCompound());
         NBTTagCompound compound = skinStack.getTagCompound();
 
-        if (!compound.hasKey(MODID)) compound.setTag(MODID, new NBTTagCompound());
-        compound = compound.getCompoundTag(MODID);
+        if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
+        compound = compound.getCompoundTag(DOMAIN);
 
         if (!compound.hasKey("renderModes")) compound.setTag("renderModes", new NBTTagCompound());
         compound = compound.getCompoundTag("renderModes");
@@ -116,6 +117,11 @@ public class RenderModes
 
     public static void refresh(Entity entity)
     {
+        if (entity instanceof EntityPlayer)
+        {
+            System.out.println("Test");
+        }
+
         for (ItemStack stack : GlobalInventory.getAWSkins(entity))
         {
             tryTransformRenderMode(stack, entity);
