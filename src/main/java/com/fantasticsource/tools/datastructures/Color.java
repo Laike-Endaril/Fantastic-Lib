@@ -449,4 +449,10 @@ public class Color
     {
         return obj instanceof Color && ((Color) obj).intValue == intValue;
     }
+
+    @Override
+    public int hashCode()
+    {
+        return color();
+    }
 }
