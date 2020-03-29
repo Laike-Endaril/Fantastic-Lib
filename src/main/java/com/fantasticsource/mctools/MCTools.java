@@ -19,7 +19,7 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.integrated.IntegratedServer;
+import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
@@ -102,7 +102,7 @@ public class MCTools
     public static boolean isWhitelisted(EntityPlayerMP player)
     {
         MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-        return server instanceof IntegratedServer || server.getPlayerList().getWhitelistedPlayers().isWhitelisted(player.getGameProfile());
+        return !(server instanceof DedicatedServer) || server.getPlayerList().getWhitelistedPlayers().isWhitelisted(player.getGameProfile());
     }
 
 
