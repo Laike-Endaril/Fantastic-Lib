@@ -347,8 +347,7 @@ public class Color
 
     public int s()
     {
-        int v = v();
-        return v == 0 ? 0 : (int) ((double) (v - Tools.min(r, g, b)) / v);
+        return (int) (sf() * 255);
     }
 
     public float sf()
