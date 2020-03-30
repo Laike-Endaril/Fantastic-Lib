@@ -1,3 +1,6 @@
+Fix buttons staying active if you press mouse ON the button, drag OFF the button, and then release
+Check scrollbar issue below for same behavior
+
 Fix scrollbars staying active if you release click while outside window
 
 Fix sliiiiight overclipping, usually at higher resolutions
