@@ -1206,7 +1206,8 @@ public class GUITextInput extends GUIText
                 }
             }
 
-            activeLine().setActive(false);
+            GUIElement activeLine = activeLine();
+            if (activeLine != null) activeLine.setActive(false);
             setActive(true);
         }
 
