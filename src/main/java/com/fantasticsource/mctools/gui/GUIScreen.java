@@ -2,6 +2,7 @@ package com.fantasticsource.mctools.gui;
 
 import com.fantasticsource.mctools.ClientTickTimer;
 import com.fantasticsource.mctools.Render;
+import com.fantasticsource.mctools.gui.element.text.GUITextInput;
 import com.fantasticsource.mctools.gui.element.view.GUIView;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.Stack;
 
 @SideOnly(Side.CLIENT)
@@ -30,6 +32,8 @@ public abstract class GUIScreen extends GuiScreen
     public static double mouseX = 0.5, mouseY = 0.5;
     public static FloatBuffer mcProjection, mcModelView;
     private static boolean ignoreClosure = false;
+
+
     public final GUIView root, tooltips;
     public final ArrayList<Runnable> onClosedActions = new ArrayList<>();
     public final double textScale;
@@ -38,6 +42,7 @@ public abstract class GUIScreen extends GuiScreen
     public float xPixel, yPixel;
     private ArrayList<Integer> mouseButtons = new ArrayList<>();
     private boolean initialized = false;
+    public final LinkedHashMap<String, ArrayList<GUITextInput>> namespaces = new LinkedHashMap<>();
 
 
     public GUIScreen()

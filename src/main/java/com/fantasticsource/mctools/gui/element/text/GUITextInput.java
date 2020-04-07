@@ -18,16 +18,12 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
 import static com.fantasticsource.mctools.gui.GUIScreen.*;
 import static com.fantasticsource.tools.datastructures.Color.*;
 
 public class GUITextInput extends GUIText
 {
-    public static final LinkedHashMap<String, ArrayList<GUITextInput>> NAMESPACES = new LinkedHashMap<>();
-
-
     protected String namespace = null;
 
     protected static final Color T_RED = RED.copy().setAF(0.4f);
@@ -93,9 +89,9 @@ public class GUITextInput extends GUIText
 
     public GUITextInput setNamespace(String namespace)
     {
-        if (this.namespace != null) NAMESPACES.get(this.namespace).remove(this);
+        if (this.namespace != null) screen.namespaces.get(this.namespace).remove(this);
         this.namespace = namespace;
-        NAMESPACES.computeIfAbsent(namespace, o -> new ArrayList<>()).add(this);
+        screen.namespaces.computeIfAbsent(namespace, o -> new ArrayList<>()).add(this);
 
         return this;
     }
@@ -212,7 +208,7 @@ public class GUITextInput extends GUIText
 
         if (namespace != null)
         {
-            for (GUITextInput input : NAMESPACES.get(namespace))
+            for (GUITextInput input : screen.namespaces.get(namespace))
             {
                 if (input == this) continue;
 
