@@ -1252,7 +1252,7 @@ public class GUITextInput extends GUIText
 
         double adjustedScale = scale * new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
 
-        if (!filter.acceptable(text))
+        if (!valid())
         {
             //Highlight red if text does not pass filter
             GlStateManager.color(T_RED.rf(), T_RED.gf(), T_RED.bf(), T_RED.af());
