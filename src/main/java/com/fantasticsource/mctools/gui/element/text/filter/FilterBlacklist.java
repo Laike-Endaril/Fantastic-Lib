@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 public class FilterBlacklist extends TextFilter<String>
 {
-    protected ArrayList<String> disallowed = new ArrayList<>();
+    public ArrayList<String> disallowed = new ArrayList<>();
 
     public FilterBlacklist(String... disallowed)
     {

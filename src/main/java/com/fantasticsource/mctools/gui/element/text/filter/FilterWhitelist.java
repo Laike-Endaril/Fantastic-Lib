@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 public class FilterWhitelist extends TextFilter<String>
 {
-    protected ArrayList<String> allowed = new ArrayList<>();
+    public ArrayList<String> allowed = new ArrayList<>();
 
     public FilterWhitelist(String... allowed)
     {
