@@ -18,12 +18,18 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import static com.fantasticsource.mctools.gui.GUIScreen.*;
 import static com.fantasticsource.tools.datastructures.Color.*;
 
 public class GUITextInput extends GUIText
 {
+    public static final LinkedHashMap<String, ArrayList<GUITextInput>> NAMESPACES = new LinkedHashMap<>();
+
+
+    protected String namespace = null;
+
     protected static final Color T_RED = RED.copy().setAF(0.4f);
 
     protected int cursorPosition, selectorPosition = -1;
@@ -82,6 +88,16 @@ public class GUITextInput extends GUIText
         this.filter = filter;
 
         cursorPosition = text.length();
+    }
+
+
+    public GUITextInput setNamespace(String namespace)
+    {
+        if (this.namespace != null) NAMESPACES.get(this.namespace).remove(this);
+        this.namespace = namespace;
+        NAMESPACES.computeIfAbsent(namespace, o -> new ArrayList<>()).add(this);
+
+        return this;
     }
 
 
@@ -192,7 +208,19 @@ public class GUITextInput extends GUIText
 
     public boolean valid()
     {
-        return filter != null && filter.acceptable(text);
+        if (filter == null || !filter.acceptable(text)) return false;
+
+        if (namespace != null)
+        {
+            for (GUITextInput input : NAMESPACES.get(namespace))
+            {
+                if (input == this) continue;
+
+                if (input.filter.parse(input.getText()).equals(filter.parse(getText()))) return false;
+            }
+        }
+
+        return true;
     }
 
     protected GUITextInput multilineDelete()

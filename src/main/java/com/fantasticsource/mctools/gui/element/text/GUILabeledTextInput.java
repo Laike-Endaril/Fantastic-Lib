@@ -59,9 +59,16 @@ public class GUILabeledTextInput extends GUIAutocroppedView
     }
 
 
-    public void setInput(String text)
+    public GUILabeledTextInput setInput(String text)
     {
         input.setText(text);
+        return this;
+    }
+
+    public GUILabeledTextInput setNamespace(String namespace)
+    {
+        input.setNamespace(namespace);
+        return this;
     }
 
 
