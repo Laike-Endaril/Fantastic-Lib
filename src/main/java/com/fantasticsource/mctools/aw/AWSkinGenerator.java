@@ -11,6 +11,8 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class AWSkinGenerator
 {
@@ -19,7 +21,7 @@ public class AWSkinGenerator
     @GameRegistry.ObjectHolder("armourers_workshop:item.skin")
     public static Item awSkinItem;
 
-    public static ItemStack generate(String libraryFile, String skinType, Color... dyes)
+    public static ItemStack generate(String libraryFile, String skinType, LinkedHashMap<Integer, Color> dyes)
     {
         if (libraryFile == null || libraryFile.toLowerCase().equals("null")) return ItemStack.EMPTY;
 
@@ -58,14 +60,15 @@ public class AWSkinGenerator
         compound.setTag("identifier", compound2);
 
         compound2 = new NBTTagCompound();
-        int i = 0;
-        for (Color color : dyes)
+        for (Map.Entry<Integer, Color> entry : dyes.entrySet())
         {
-            compound2.setByte("dye" + i + "r", (byte) color.r());
-            compound2.setByte("dye" + i + "g", (byte) color.g());
-            compound2.setByte("dye" + i + "b", (byte) color.b());
-            compound2.setByte("dye" + i + "t", (byte) color.a());
-            i++;
+            int i = entry.getKey();
+            Color dye = entry.getValue();
+
+            compound2.setByte("dye" + i + "r", (byte) dye.r());
+            compound2.setByte("dye" + i + "g", (byte) dye.g());
+            compound2.setByte("dye" + i + "b", (byte) dye.b());
+            compound2.setByte("dye" + i + "t", (byte) dye.a());
         }
         compound.setTag("dyeData", compound2);
 

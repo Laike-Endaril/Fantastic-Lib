@@ -13,6 +13,8 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static com.fantasticsource.fantasticlib.FantasticLib.DOMAIN;
 import static com.fantasticsource.fantasticlib.FantasticLib.MODID;
@@ -50,7 +52,7 @@ public class RenderModes
     }
 
 
-    public static ItemStack addRenderModeToSkin(ItemStack skinStack, ArrayList<Pair<String, String>> renderChannelAndModeRequirementPairs, String skinType, String libraryFile, Color... dyes)
+    public static ItemStack addRenderModeToSkin(ItemStack skinStack, ArrayList<Pair<String, String>> renderChannelAndModeRequirementPairs, String skinType, String libraryFile, LinkedHashMap<Integer, Color> dyes)
     {
         NBTTagCompound identifier = new NBTTagCompound();
         identifier.setString("skinType", skinType);
@@ -58,14 +60,15 @@ public class RenderModes
 
 
         NBTTagCompound dyeData = new NBTTagCompound();
-        int i = 0;
-        for (Color dye : dyes)
+        for (Map.Entry<Integer, Color> entry : dyes.entrySet())
         {
+            int i = entry.getKey();
+            Color dye = entry.getValue();
+
             dyeData.setByte("dye" + i + "r", (byte) dye.r());
             dyeData.setByte("dye" + i + "g", (byte) dye.g());
             dyeData.setByte("dye" + i + "b", (byte) dye.b());
             dyeData.setByte("dye" + i + "t", (byte) dye.a());
-            i++;
         }
 
 
