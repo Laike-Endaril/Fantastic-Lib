@@ -14,10 +14,4 @@ public class GUIView extends GUIElement
     {
         super(screen, x, y, width, height);
     }
-
-    @Override
-    public void draw()
-    {
-        drawChildren();
-    }
 }

@@ -10,6 +10,7 @@ import com.fantasticsource.mctools.gui.screen.TestGUI;
 import com.fantasticsource.mctools.nbtcap.NBTCap;
 import com.fantasticsource.mctools.nbtcap.NBTCapStorage;
 import com.fantasticsource.tools.ReflectionTool;
+import com.fantasticsource.tools.datastructures.ColorImmutable;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -38,6 +39,11 @@ public class FantasticLib
 
     public static boolean isClient = false;
     private static boolean debugGui = ReflectionTool.getField(ItemStack.class, "stackSize") != null;
+
+    static
+    {
+        ColorImmutable.init();
+    }
 
     public FantasticLib()
     {

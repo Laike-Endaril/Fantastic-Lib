@@ -7,67 +7,165 @@ import static com.fantasticsource.tools.Tools.min;
 
 public class Color
 {
-    public static final Color
-            BLANK = new Color(0),
-            BLACK = new Color(0xFF),
-            WHITE = new Color(0xFFFFFFFF),
-            RED = new Color(0xFF0000FF),
-            GREEN = new Color(0x00FF00FF),
-            BLUE = new Color(0x0000FFFF),
-            YELLOW = new Color(0xFFFF00FF),
-            AQUA = new Color(0x00FFFFFF),
-            PURPLE = new Color(0xFF00FFFF),
-            GRAY = new Color(0x777777FF),
-            ORANGE = new Color(0xFF7700FF);
+    public static ColorImmutable
+            BLANK,
+            BLACK,
+            WHITE,
+            RED,
+            GREEN,
+            BLUE,
+            YELLOW,
+            AQUA,
+            PURPLE,
+            GRAY,
+            ORANGE;
 
-    private int intValue, r, g, b, a;
-    private float rf, gf, bf, af;
-    private String hex;
+    protected int intValue, r, g, b, a;
+    protected float rf, gf, bf, af;
+    protected String hex;
 
 
     public Color(int color)
     {
-        setColor(color);
+        intValue = color;
+
+        r = (intValue >> 24) & 0xff;
+        g = (intValue >> 16) & 0xff;
+        b = (intValue >> 8) & 0xff;
+        a = intValue & 0xff;
+
+        rf = (float) r / 255;
+        gf = (float) g / 255;
+        bf = (float) b / 255;
+        af = (float) a / 255;
+
+        hex = Integer.toHexString(intValue);
     }
 
     public Color(int color, boolean noAlpha)
     {
-        if (noAlpha) setColorNoAlpha(color);
-        else setColor(color);
+        if (noAlpha) color = (color << 8) & 255;
+
+        intValue = color;
+
+        r = (intValue >> 24) & 0xff;
+        g = (intValue >> 16) & 0xff;
+        b = (intValue >> 8) & 0xff;
+        a = intValue & 0xff;
+
+        rf = (float) r / 255;
+        gf = (float) g / 255;
+        bf = (float) b / 255;
+        af = (float) a / 255;
+
+        hex = Integer.toHexString(intValue);
     }
 
 
     public Color(int r, int g, int b, int a)
     {
-        setColor(r, g, b, a);
+        this.r = min(max(r, 0), 255);
+        this.g = min(max(g, 0), 255);
+        this.b = min(max(b, 0), 255);
+        this.a = min(max(a, 0), 255);
+
+        rf = (float) r / 255;
+        gf = (float) g / 255;
+        bf = (float) b / 255;
+        af = (float) a / 255;
+
+        intValue = (r << 24) | (g << 16) | (b << 8) | a;
+
+        hex = Integer.toHexString(intValue);
     }
 
     public Color(int r, int g, int b)
     {
-        setColor(r, g, b);
+        this.r = min(max(r, 0), 255);
+        this.g = min(max(g, 0), 255);
+        this.b = min(max(b, 0), 255);
+        this.a = 255;
+
+        rf = (float) r / 255;
+        gf = (float) g / 255;
+        bf = (float) b / 255;
+        af = 1;
+
+        intValue = (r << 24) | (g << 16) | (b << 8) | a;
+
+        hex = Integer.toHexString(intValue);
     }
 
 
     public Color(float r, float g, float b, float a)
     {
-        setColor(r, g, b, a);
+        rf = min(max(r, 0), 1);
+        gf = min(max(g, 0), 1);
+        bf = min(max(b, 0), 1);
+        af = min(max(a, 0), 1);
+
+        this.r = min(max((int) (rf * 255), 0), 255);
+        this.g = min(max((int) (gf * 255), 0), 255);
+        this.b = min(max((int) (bf * 255), 0), 255);
+        this.a = min(max((int) (af * 255), 0), 255);
+
+        intValue = (this.r << 24) | (this.g << 16) | (this.b << 8) | this.a;
+
+        hex = Integer.toHexString(intValue);
     }
 
     public Color(float r, float g, float b)
     {
-        setColor(r, g, b);
+        rf = min(max(r, 0), 1);
+        gf = min(max(g, 0), 1);
+        bf = min(max(b, 0), 1);
+        af = 1;
+
+        this.r = min(max((int) (rf * 255), 0), 255);
+        this.g = min(max((int) (gf * 255), 0), 255);
+        this.b = min(max((int) (bf * 255), 0), 255);
+        this.a = 255;
+
+        intValue = (this.r << 24) | (this.g << 16) | (this.b << 8) | this.a;
+
+        hex = Integer.toHexString(intValue);
     }
 
 
     public Color(String hex)
     {
-        setColor(hex);
+        this.hex = hex;
+
+        intValue = Tools.parseHexInt(hex);
+
+        r = (intValue >> 24) & 0xff;
+        g = (intValue >> 16) & 0xff;
+        b = (intValue >> 8) & 0xff;
+        a = intValue & 0xff;
+
+        rf = (float) r / 255;
+        gf = (float) g / 255;
+        bf = (float) b / 255;
+        af = (float) a / 255;
     }
 
     public Color(String hex, boolean noAlpha)
     {
-        if (noAlpha) setColorNoAlpha(hex);
-        else setColor(hex);
+        if (noAlpha) hex = hex + "ff";
+
+        this.hex = hex;
+
+        intValue = Tools.parseHexInt(hex);
+
+        r = (intValue >> 24) & 0xff;
+        g = (intValue >> 16) & 0xff;
+        b = (intValue >> 8) & 0xff;
+        a = intValue & 0xff;
+
+        rf = (float) r / 255;
+        gf = (float) g / 255;
+        bf = (float) b / 255;
+        af = (float) a / 255;
     }
 
 
@@ -165,6 +263,25 @@ public class Color
         return this;
     }
 
+    public Color setColorNoAlpha(int color)
+    {
+        r = (color >> 16) & 0xff;
+        g = (color >> 8) & 0xff;
+        b = color & 0xff;
+        a = 255;
+
+        rf = (float) r / 255;
+        gf = (float) g / 255;
+        bf = (float) b / 255;
+        af = (float) a / 255;
+
+        intValue = (r << 24) | (g << 16) | (b << 8) | a;
+
+        hex = Integer.toHexString(intValue);
+
+        return this;
+    }
+
     public Color setColor(int color)
     {
         intValue = color;
@@ -184,9 +301,23 @@ public class Color
         return this;
     }
 
-    public Color setColorNoAlpha(int color)
+    public Color setColor(int r, int g, int b)
     {
-        return setColor((color << 8) | 0xff);
+        this.r = min(max(r, 0), 255);
+        this.g = min(max(g, 0), 255);
+        this.b = min(max(b, 0), 255);
+        this.a = 255;
+
+        rf = (float) r / 255;
+        gf = (float) g / 255;
+        bf = (float) b / 255;
+        af = 1;
+
+        intValue = (r << 24) | (g << 16) | (b << 8) | a;
+
+        hex = Integer.toHexString(intValue);
+
+        return this;
     }
 
     public Color setColor(int r, int g, int b, int a)
@@ -206,11 +337,6 @@ public class Color
         hex = Integer.toHexString(intValue);
 
         return this;
-    }
-
-    public Color setColor(int r, int g, int b)
-    {
-        return setColor(r, g, b, 255);
     }
 
     public Color setColor(float r, float g, float b, float a)
@@ -234,7 +360,21 @@ public class Color
 
     public Color setColor(float r, float g, float b)
     {
-        return setColor(r, g, b, 1);
+        rf = min(max(r, 0), 1);
+        gf = min(max(g, 0), 1);
+        bf = min(max(b, 0), 1);
+        af = 1;
+
+        this.r = min(max((int) (rf * 255), 0), 255);
+        this.g = min(max((int) (gf * 255), 0), 255);
+        this.b = min(max((int) (bf * 255), 0), 255);
+        this.a = 255;
+
+        intValue = (this.r << 24) | (this.g << 16) | (this.b << 8) | this.a;
+
+        hex = Integer.toHexString(intValue);
+
+        return this;
     }
 
     public Color setColor(String hex)
@@ -258,7 +398,22 @@ public class Color
 
     public Color setColorNoAlpha(String hex)
     {
-        return setColor(hex + "ff");
+        hex = hex + "ff";
+        this.hex = hex;
+
+        intValue = Tools.parseHexInt(hex);
+
+        r = (intValue >> 24) & 0xff;
+        g = (intValue >> 16) & 0xff;
+        b = (intValue >> 8) & 0xff;
+        a = intValue & 0xff;
+
+        rf = (float) r / 255;
+        gf = (float) g / 255;
+        bf = (float) b / 255;
+        af = (float) a / 255;
+
+        return this;
     }
 
 
@@ -452,6 +607,6 @@ public class Color
     @Override
     public int hashCode()
     {
-        return color();
+        return intValue;
     }
 }
