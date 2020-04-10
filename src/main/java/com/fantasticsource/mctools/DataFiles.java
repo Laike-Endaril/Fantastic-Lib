@@ -1,6 +1,8 @@
 package com.fantasticsource.mctools;
 
 import com.fantasticsource.fantasticlib.FantasticLib;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
@@ -9,6 +11,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class DataFiles
 {
@@ -35,6 +38,32 @@ public class DataFiles
 
             writer = new BufferedWriter(new FileWriter(new File(referenceDir + "blocks.txt")));
             for (ResourceLocation resourceLocation : ForgeRegistries.BLOCKS.getKeys()) writer.write(resourceLocation.toString() + "\r\n");
+            writer.close();
+
+            writer = new BufferedWriter(new FileWriter(new File(referenceDir + "blockstates.txt")));
+            for (ResourceLocation resourceLocation : ForgeRegistries.BLOCKS.getKeys())
+            {
+                Block block = ForgeRegistries.BLOCKS.getValue(resourceLocation);
+
+                ArrayList<IBlockState> states = new ArrayList<>();
+                for (int i = 0; i < 16; i++)
+                {
+                    IBlockState state;
+                    try
+                    {
+                        state = block.getStateFromMeta(i);
+                    }
+                    catch (Exception e)
+                    {
+                        continue;
+                    }
+                    if (!states.contains(state))
+                    {
+                        states.add(state);
+                        writer.write(resourceLocation.toString() + ":" + i + "\r\n");
+                    }
+                }
+            }
             writer.close();
 
             writer = new BufferedWriter(new FileWriter(new File(referenceDir + "potions.txt")));
