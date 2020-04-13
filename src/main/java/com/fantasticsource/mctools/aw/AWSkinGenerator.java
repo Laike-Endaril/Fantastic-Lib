@@ -21,6 +21,11 @@ public class AWSkinGenerator
     @GameRegistry.ObjectHolder("armourers_workshop:item.skin")
     public static Item awSkinItem;
 
+    public static ItemStack generate(String libraryFile, String skinType)
+    {
+        return generate(libraryFile, skinType, new LinkedHashMap<>());
+    }
+
     public static ItemStack generate(String libraryFile, String skinType, LinkedHashMap<Integer, Color> dyes)
     {
         if (libraryFile == null || libraryFile.toLowerCase().equals("null")) return ItemStack.EMPTY;
