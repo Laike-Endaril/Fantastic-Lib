@@ -51,6 +51,6 @@ public class FilterRangedInt extends TextFilter<Integer>
     @Override
     public Integer parse(String input)
     {
-        return !acceptable(input) ? null : Integer.parseInt(input);
+        return !acceptable(input) ? null : Integer.parseInt(transformInput(input));
     }
 }

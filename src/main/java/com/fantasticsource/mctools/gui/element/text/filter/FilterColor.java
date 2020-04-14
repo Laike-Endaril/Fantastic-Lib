@@ -36,6 +36,6 @@ public class FilterColor extends TextFilter<Integer>
     @Override
     public Integer parse(String input)
     {
-        return !acceptable(input) ? null : Tools.parseHexInt(input);
+        return !acceptable(input) ? null : Tools.parseHexInt(transformInput(input));
     }
 }

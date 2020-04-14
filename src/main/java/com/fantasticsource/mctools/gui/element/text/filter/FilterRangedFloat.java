@@ -52,6 +52,6 @@ public class FilterRangedFloat extends TextFilter<Float>
     @Override
     public Float parse(String input)
     {
-        return !acceptable(input) ? null : Float.parseFloat(input);
+        return !acceptable(input) ? null : Float.parseFloat(transformInput(input));
     }
 }

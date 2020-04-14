@@ -25,6 +25,6 @@ public class FilterNotEmpty extends TextFilter<String>
     @Override
     public String parse(String input)
     {
-        return !acceptable(input) ? null : input;
+        return !acceptable(input) ? null : transformInput(input);
     }
 }
