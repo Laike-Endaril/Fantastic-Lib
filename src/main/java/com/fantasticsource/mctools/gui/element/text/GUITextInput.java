@@ -212,7 +212,10 @@ public class GUITextInput extends GUIText
             {
                 if (input == this) continue;
 
-                if (input.filter.parse(input.getText()).equals(filter.parse(getText()))) return false;
+                Object obj1 = filter.parse(getText());
+                Object obj2 = input.filter.parse(input.getText());
+                if (obj1 == null) return obj2 == null;
+                return obj1.equals(obj2);
             }
         }
 
