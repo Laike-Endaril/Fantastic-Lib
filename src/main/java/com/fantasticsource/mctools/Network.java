@@ -4,6 +4,7 @@ import com.fantasticsource.fantasticlib.FantasticLib;
 import com.fantasticsource.mctools.component.CResourceLocation;
 import com.fantasticsource.mctools.controlintercept.ControlEvent;
 import com.fantasticsource.mctools.sound.SimpleSound;
+import com.fantasticsource.tools.component.Component;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
@@ -28,6 +29,7 @@ public class Network
     {
         WRAPPER.registerMessage(PlaySimpleSoundPacketHandler.class, PlaySimpleSoundPacket.class, discriminator++, Side.CLIENT);
         WRAPPER.registerMessage(ControlEventPacketHandler.class, ControlEventPacket.class, discriminator++, Side.SERVER);
+        WRAPPER.registerMessage(GenericComponentPacketHandler.class, GenericComponentPacket.class, discriminator++, Side.CLIENT);
     }
 
 
@@ -110,6 +112,46 @@ public class Network
             MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
 
             server.addScheduledTask(() -> MinecraftForge.EVENT_BUS.post(packet.event.setPlayer(ctx.getServerHandler().player)));
+            return null;
+        }
+    }
+
+
+    public static class GenericComponentPacket implements IMessage
+    {
+        public Component component;
+
+        public GenericComponentPacket()
+        {
+            //Required
+        }
+
+        public GenericComponentPacket(Component component)
+        {
+            this.component = component;
+        }
+
+        @Override
+        public void toBytes(ByteBuf buf)
+        {
+            Component.writeMarked(buf, component);
+        }
+
+        @Override
+        public void fromBytes(ByteBuf buf)
+        {
+            component = Component.readMarked(buf);
+        }
+    }
+
+    public static class GenericComponentPacketHandler implements IMessageHandler<GenericComponentPacket, IMessage>
+    {
+        @Override
+        @SideOnly(Side.CLIENT)
+        public IMessage onMessage(GenericComponentPacket packet, MessageContext ctx)
+        {
+            Minecraft mc = Minecraft.getMinecraft();
+            mc.addScheduledTask(() -> packet.component.onClientSync());
             return null;
         }
     }

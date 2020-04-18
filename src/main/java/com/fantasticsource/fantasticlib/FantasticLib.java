@@ -6,6 +6,8 @@ import com.fantasticsource.mctools.*;
 import com.fantasticsource.mctools.aw.ForcedAWSkinOverrides;
 import com.fantasticsource.mctools.aw.RenderModes;
 import com.fantasticsource.mctools.aw.TransientAWSkinHandler;
+import com.fantasticsource.mctools.data.CModpackDataHandler;
+import com.fantasticsource.mctools.data.CWorldDataHandler;
 import com.fantasticsource.mctools.gui.screen.TestGUI;
 import com.fantasticsource.mctools.nbtcap.NBTCap;
 import com.fantasticsource.mctools.nbtcap.NBTCapStorage;
@@ -21,10 +23,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
-import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
+import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -74,19 +73,6 @@ public class FantasticLib
 
 
     @EventHandler
-    public static void serverInit(FMLServerAboutToStartEvent event)
-    {
-        MCTools.serverStart(event);
-    }
-
-    @EventHandler
-    public static void serverStop(FMLServerStoppedEvent event)
-    {
-        MCTools.serverStop(event);
-    }
-
-
-    @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
         PlayerData.load();
@@ -94,6 +80,12 @@ public class FantasticLib
         CapabilityManager.INSTANCE.register(INBTCap.class, new NBTCapStorage(), () -> null);
 
         if (event.getSide() == Side.CLIENT) Render.init();
+    }
+
+    @EventHandler
+    public void init(FMLInitializationEvent event)
+    {
+        CModpackDataHandler.init(event);
     }
 
     @EventHandler
@@ -112,5 +104,25 @@ public class FantasticLib
             MinecraftForge.EVENT_BUS.register(TransientAWSkinHandler.class);
             if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) MinecraftForge.EVENT_BUS.register(ForcedAWSkinOverrides.class);
         }
+    }
+
+
+    @EventHandler
+    public static void serverPreInit(FMLServerAboutToStartEvent event)
+    {
+        MCTools.serverStart(event);
+    }
+
+    @EventHandler
+    public static void serverInit(FMLServerStartingEvent event)
+    {
+        CWorldDataHandler.load(event);
+    }
+
+    @EventHandler
+    public static void serverStop(FMLServerStoppedEvent event)
+    {
+        MCTools.serverStop(event);
+        CWorldDataHandler.clear(event);
     }
 }
