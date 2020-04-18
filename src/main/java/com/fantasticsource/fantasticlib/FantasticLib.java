@@ -85,7 +85,7 @@ public class FantasticLib
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
-        CModpackDataHandler.init(event);
+        CModpackDataHandler.load(event);
     }
 
     @EventHandler
