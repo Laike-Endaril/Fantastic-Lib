@@ -33,11 +33,11 @@ public class FantasticLib
     public static final String MODID = "fantasticlib";
     public static final String DOMAIN = "flib";
     public static final String NAME = "Fantastic Lib";
-    public static final String VERSION = "1.12.2.034h";
+    public static final String VERSION = "1.12.2.034i";
 
 
     public static boolean isClient = false;
-    private static boolean debugGui = ReflectionTool.getField(ItemStack.class, "stackSize") != null;
+    public static final boolean DEV_ENV = ReflectionTool.getField(ItemStack.class, "stackSize") != null;
 
     static
     {
@@ -58,7 +58,7 @@ public class FantasticLib
             isClient = true;
             if (FantasticConfig.entityRenderFixer) MinecraftForge.EVENT_BUS.register(EntityRenderFixer.class);
             MinecraftForge.EVENT_BUS.register(TooltipFixer.class);
-            if (debugGui) MinecraftForge.EVENT_BUS.register(TestGUI.class);
+            if (DEV_ENV) MinecraftForge.EVENT_BUS.register(TestGUI.class);
         }
 
         MinecraftForge.EVENT_BUS.register(PlayerData.class);

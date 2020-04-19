@@ -80,6 +80,12 @@ public class MCTools
     }
 
 
+    public static boolean devEnv()
+    {
+        return FantasticLib.DEV_ENV;
+    }
+
+
     public static BufferedReader getJarResourceReader(Class classInJar, String resourcePathAndName)
     {
         return new BufferedReader(new InputStreamReader(getJarResourceStream(classInJar, resourcePathAndName)));
