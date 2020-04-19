@@ -47,12 +47,12 @@ public class GUIVerticalScrollbar extends GUIGradientBorder
         {
             if (delta < 0)
             {
-                scrollView.progress += 0.1;
+                scrollView.progress += 0.25 / scrollView.internalHeight;
                 if (scrollView.progress > 1) scrollView.progress = 1;
             }
             else
             {
-                scrollView.progress -= 0.1;
+                scrollView.progress -= 0.25 / scrollView.internalHeight;
                 if (scrollView.progress < 0) scrollView.progress = 0;
             }
         }
