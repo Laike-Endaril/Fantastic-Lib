@@ -65,7 +65,7 @@ public class ColorSelectionGUI extends GUIScreen
 
         //Root
         root.add(new GUIDarkenedBackground(this));
-        root.add(new GUINavbar(this, Color.AQUA));
+        root.add(new GUINavbar(this));
 
         root.add(save.addClickActions(() ->
         {
@@ -81,7 +81,7 @@ public class ColorSelectionGUI extends GUIScreen
         //Left
         left.add(new GUITextSpacer(this));
         left.add(r);
-        r.input.addRecalcActions(() ->
+        r.input.addEditActions(() ->
         {
             if (r.input.isActive() && r.input.valid())
             {
@@ -92,8 +92,9 @@ public class ColorSelectionGUI extends GUIScreen
                 rf.setInput("" + color.rf());
             }
         });
+        left.add(new GUIElement(this, 1, 0));
         left.add(g);
-        g.input.addRecalcActions(() ->
+        g.input.addEditActions(() ->
         {
             if (g.input.isActive() && g.input.valid())
             {
@@ -104,8 +105,9 @@ public class ColorSelectionGUI extends GUIScreen
                 gf.setInput("" + color.gf());
             }
         });
+        left.add(new GUIElement(this, 1, 0));
         left.add(b);
-        b.input.addRecalcActions(() ->
+        b.input.addEditActions(() ->
         {
             if (b.input.isActive() && b.input.valid())
             {
@@ -116,8 +118,9 @@ public class ColorSelectionGUI extends GUIScreen
                 bf.setInput("" + color.bf());
             }
         });
+        left.add(new GUIElement(this, 1, 0));
         left.add(a);
-        a.input.addRecalcActions(() ->
+        a.input.addEditActions(() ->
         {
             if (a.input.isActive() && a.input.valid())
             {
@@ -133,7 +136,7 @@ public class ColorSelectionGUI extends GUIScreen
         //Center
         center.add(new GUITextSpacer(this));
         center.add(hex);
-        hex.input.addRecalcActions(() ->
+        hex.input.addEditActions(() ->
         {
             if (hex.input.isActive() && hex.input.valid())
             {
@@ -152,7 +155,7 @@ public class ColorSelectionGUI extends GUIScreen
         });
         center.add(new GUITextSpacer(this));
         center.add(dec);
-        dec.input.addRecalcActions(() ->
+        dec.input.addEditActions(() ->
         {
             if (dec.input.isActive() && dec.input.valid())
             {
@@ -176,7 +179,7 @@ public class ColorSelectionGUI extends GUIScreen
         //Right
         right.add(new GUITextSpacer(this));
         right.add(rf);
-        rf.input.addRecalcActions(() ->
+        rf.input.addEditActions(() ->
         {
             if (rf.input.isActive() && rf.input.valid())
             {
@@ -187,8 +190,9 @@ public class ColorSelectionGUI extends GUIScreen
                 r.setInput("" + color.r());
             }
         });
+        right.add(new GUIElement(this, 1, 0));
         right.add(gf);
-        gf.input.addRecalcActions(() ->
+        gf.input.addEditActions(() ->
         {
             if (gf.input.isActive() && gf.input.valid())
             {
@@ -199,8 +203,9 @@ public class ColorSelectionGUI extends GUIScreen
                 g.setInput("" + color.g());
             }
         });
+        right.add(new GUIElement(this, 1, 0));
         right.add(bf);
-        bf.input.addRecalcActions(() ->
+        bf.input.addEditActions(() ->
         {
             if (bf.input.isActive() && bf.input.valid())
             {
@@ -211,8 +216,9 @@ public class ColorSelectionGUI extends GUIScreen
                 b.setInput("" + color.b());
             }
         });
+        right.add(new GUIElement(this, 1, 0));
         right.add(af);
-        af.input.addRecalcActions(() ->
+        af.input.addEditActions(() ->
         {
             if (af.input.isActive() && af.input.valid())
             {
