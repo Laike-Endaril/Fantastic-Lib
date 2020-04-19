@@ -214,8 +214,8 @@ public class GUITextInput extends GUIText
 
                 Object obj1 = filter.parse(getText());
                 Object obj2 = input.filter.parse(input.getText());
-                if (obj1 == null) return obj2 == null;
-                return obj1.equals(obj2);
+                if (obj1 == null) return obj2 != null;
+                return !obj1.equals(obj2);
             }
         }
 
