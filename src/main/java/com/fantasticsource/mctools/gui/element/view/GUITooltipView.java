@@ -5,6 +5,7 @@ import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIDarkenedBackground;
 import com.fantasticsource.mctools.gui.element.text.GUIText;
 import com.fantasticsource.tools.Tools;
+import com.fantasticsource.tools.datastructures.Color;
 
 public class GUITooltipView extends GUIAutocroppedView
 {
@@ -12,7 +13,7 @@ public class GUITooltipView extends GUIAutocroppedView
 
     public GUITooltipView(GUIScreen screen)
     {
-        super(screen, 0, 0, 0, new GUIDarkenedBackground(screen));
+        super(screen, 0, 0, 0.1, new GUIDarkenedBackground(screen));
     }
 
     @Override
@@ -86,7 +87,7 @@ public class GUITooltipView extends GUIAutocroppedView
 
         for (String line : Tools.fixedSplit(tooltip, "\n"))
         {
-            add(new GUIText(screen, line));
+            add(new GUIText(screen, line, Color.YELLOW));
         }
         return this;
     }

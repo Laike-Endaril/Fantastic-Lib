@@ -73,7 +73,7 @@ public class GUIButton extends GUIAutocroppedView
         GUIImage active = new GUIImage(screen, 16, 16, new ResourceLocation(MODID, "image/gui.png"), 1d / 4, 0, 1d / 4, 1d / 4);
         active.add(new GUIImage(screen, 16, 16, new ResourceLocation(MODID, "image/gui.png"), Color.GREEN, 0, 1d / 4, 1d / 4, 1d / 4));
 
-        return new GUIButton(screen, idle, hover, active);
+        return (GUIButton) new GUIButton(screen, idle, hover, active).setTooltip("Insert Entry");
     }
 
     public static GUIButton newRemoveButton(GUIScreen screen)
@@ -87,7 +87,7 @@ public class GUIButton extends GUIAutocroppedView
         GUIImage active = new GUIImage(screen, 16, 16, new ResourceLocation(MODID, "image/gui.png"), 1d / 4, 0, 1d / 4, 1d / 4);
         active.add(new GUIImage(screen, 16, 16, new ResourceLocation(MODID, "image/gui.png"), Color.RED, 1d / 4, 1d / 4, 1d / 4, 1d / 4));
 
-        return new GUIButton(screen, idle, hover, active);
+        return (GUIButton) new GUIButton(screen, idle, hover, active).setTooltip("Remove Entry");
     }
 
     public static GUIButton newEditButton(GUIScreen screen)
@@ -101,7 +101,7 @@ public class GUIButton extends GUIAutocroppedView
         GUIImage active = new GUIImage(screen, 16, 16, new ResourceLocation(MODID, "image/gui.png"), 1d / 4, 0, 1d / 4, 1d / 4);
         active.add(new GUIImage(screen, 16, 16, new ResourceLocation(MODID, "image/gui.png"), Color.ORANGE, 2d / 4, 1d / 4, 1d / 4, 1d / 4));
 
-        return new GUIButton(screen, idle, hover, active);
+        return (GUIButton) new GUIButton(screen, idle, hover, active).setTooltip("Edit Properties");
     }
 
     public static GUIButton newListButton(GUIScreen screen)
@@ -115,7 +115,21 @@ public class GUIButton extends GUIAutocroppedView
         GUIImage active = new GUIImage(screen, 16, 16, new ResourceLocation(MODID, "image/gui.png"), 1d / 4, 0, 1d / 4, 1d / 4);
         active.add(new GUIImage(screen, 16, 16, new ResourceLocation(MODID, "image/gui.png"), Color.AQUA, 3d / 4, 1d / 4, 1d / 4, 1d / 4));
 
-        return new GUIButton(screen, idle, hover, active);
+        return (GUIButton) new GUIButton(screen, idle, hover, active).setTooltip("Edit List");
+    }
+
+    public static GUIButton newDuplicateButton(GUIScreen screen)
+    {
+        GUIImage idle = new GUIImage(screen, 16, 16, new ResourceLocation(MODID, "image/gui.png"), 0, 0, 1d / 4, 1d / 4);
+        idle.add(new GUIImage(screen, 16, 16, new ResourceLocation(MODID, "image/gui.png"), GUIScreen.getIdleColor(Color.BLUE), 3d / 4, 0, 1d / 4, 1d / 4));
+
+        GUIImage hover = new GUIImage(screen, 16, 16, new ResourceLocation(MODID, "image/gui.png"), 0, 0, 1d / 4, 1d / 4);
+        hover.add(new GUIImage(screen, 16, 16, new ResourceLocation(MODID, "image/gui.png"), GUIScreen.getHoverColor(Color.BLUE), 3d / 4, 0, 1d / 4, 1d / 4));
+
+        GUIImage active = new GUIImage(screen, 16, 16, new ResourceLocation(MODID, "image/gui.png"), 1d / 4, 0, 1d / 4, 1d / 4);
+        active.add(new GUIImage(screen, 16, 16, new ResourceLocation(MODID, "image/gui.png"), Color.BLUE, 3d / 4, 0, 1d / 4, 1d / 4));
+
+        return (GUIButton) new GUIButton(screen, idle, hover, active).setTooltip("Duplicate Entry");
     }
 
     @Override
