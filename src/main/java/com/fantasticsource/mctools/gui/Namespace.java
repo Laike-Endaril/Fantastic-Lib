@@ -6,14 +6,7 @@ import java.util.ArrayList;
 
 public class Namespace
 {
-    public final String name;
     public final ArrayList<GUITextInput> inputs = new ArrayList<>();
-
-
-    public Namespace(String name)
-    {
-        this.name = name;
-    }
 
 
     public boolean contains(String value)
@@ -56,11 +49,6 @@ public class Namespace
             }
         }
         return false;
-    }
-
-    public String getFirstAvailableNumberedName()
-    {
-        return getFirstAvailableNumberedName(name);
     }
 
     public String getFirstAvailableNumberedName(String baseName)

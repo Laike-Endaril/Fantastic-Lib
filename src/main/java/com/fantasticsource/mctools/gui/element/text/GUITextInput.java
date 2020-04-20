@@ -92,7 +92,7 @@ public class GUITextInput extends GUIText
     {
         if (this.namespace != null) screen.namespaces.get(this.namespace).inputs.remove(this);
         this.namespace = namespace;
-        screen.namespaces.computeIfAbsent(namespace, o -> new Namespace(namespace)).inputs.add(this);
+        screen.namespaces.computeIfAbsent(namespace, o -> new Namespace()).inputs.add(this);
 
         return this;
     }
