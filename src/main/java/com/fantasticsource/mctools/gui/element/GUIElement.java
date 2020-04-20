@@ -11,6 +11,7 @@ import net.minecraftforge.common.MinecraftForge;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.function.Predicate;
 
 public class GUIElement
 {
@@ -33,7 +34,9 @@ public class GUIElement
     public final ArrayList<Runnable>
             onClickActions = new ArrayList<>(),
             onRecalcActions = new ArrayList<>(),
-            onEditActions = new ArrayList<>(),
+            onEditActions = new ArrayList<>();
+
+    public final ArrayList<Predicate<GUIElement>>
             onRemoveChildActions = new ArrayList<>();
 
     public double x, y, width, height;
@@ -215,7 +218,7 @@ public class GUIElement
         return this;
     }
 
-    public GUIElement addRemoveChildActions(Runnable... actions)
+    public GUIElement addRemoveChildActions(Predicate<GUIElement>... actions)
     {
         onRemoveChildActions.addAll(Arrays.asList(actions));
         return this;
@@ -493,7 +496,7 @@ public class GUIElement
             if (element.parent == this) element.parent = null;
             recalc(Tools.max(0, index - 1));
 
-            for (Runnable action : onRemoveChildActions) action.run();
+            for (Predicate<GUIElement> action : onRemoveChildActions) action.test(element);
         }
     }
 
