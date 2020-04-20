@@ -33,7 +33,8 @@ public class GUIElement
     public final ArrayList<Runnable>
             onClickActions = new ArrayList<>(),
             onRecalcActions = new ArrayList<>(),
-            onEditActions = new ArrayList<>();
+            onEditActions = new ArrayList<>(),
+            onRemoveChildActions = new ArrayList<>();
 
     public double x, y, width, height;
     public GUIElement parent = null;
@@ -211,6 +212,12 @@ public class GUIElement
     public GUIElement addEditActions(Runnable... actions)
     {
         onEditActions.addAll(Arrays.asList(actions));
+        return this;
+    }
+
+    public GUIElement addRemoveChildActions(Runnable... actions)
+    {
+        onRemoveChildActions.addAll(Arrays.asList(actions));
         return this;
     }
 
@@ -474,16 +481,20 @@ public class GUIElement
     public void remove(GUIElement element)
     {
         int index = indexOf(element);
-        if (element.parent == this) element.parent = null;
-
         if (index != -1) remove(index);
+        else if (element.parent == this) element.parent = null;
     }
 
     public void remove(int index)
     {
         GUIElement element = children.remove(index);
-        if (element.parent == this) element.parent = null;
-        recalc(Tools.max(0, index - 1));
+        if (element != null)
+        {
+            if (element.parent == this) element.parent = null;
+            recalc(Tools.max(0, index - 1));
+
+            for (Runnable action : onRemoveChildActions) action.run();
+        }
     }
 
     public int size()
@@ -493,9 +504,7 @@ public class GUIElement
 
     public void clear()
     {
-        for (GUIElement child : (ArrayList<GUIElement>) children.clone()) if (child.parent == this) child.parent = null;
-        children.clear();
-        recalc(0);
+        for (GUIElement child : (ArrayList<GUIElement>) children.clone()) remove(child);
     }
 
     public GUIElement get(int index)
