@@ -11,6 +11,8 @@ import static com.fantasticsource.fantasticlib.FantasticLib.MODID;
 
 public class GUIButton extends GUIAutocroppedView
 {
+    protected static final Color LIGHT_BLUE = Color.BLUE.copy().setSF(0.2f);
+
     protected final boolean locks;
     protected GUIElement idleElement, hoverElement, activeElement;
 
@@ -121,13 +123,13 @@ public class GUIButton extends GUIAutocroppedView
     public static GUIButton newDuplicateButton(GUIScreen screen)
     {
         GUIImage idle = new GUIImage(screen, 16, 16, new ResourceLocation(MODID, "image/gui.png"), 0, 0, 1d / 4, 1d / 4);
-        idle.add(new GUIImage(screen, 16, 16, new ResourceLocation(MODID, "image/gui.png"), GUIScreen.getIdleColor(Color.BLUE), 3d / 4, 0, 1d / 4, 1d / 4));
+        idle.add(new GUIImage(screen, 16, 16, new ResourceLocation(MODID, "image/gui.png"), GUIScreen.getIdleColor(LIGHT_BLUE), 2d / 4, 0, 1d / 4, 1d / 4));
 
         GUIImage hover = new GUIImage(screen, 16, 16, new ResourceLocation(MODID, "image/gui.png"), 0, 0, 1d / 4, 1d / 4);
-        hover.add(new GUIImage(screen, 16, 16, new ResourceLocation(MODID, "image/gui.png"), GUIScreen.getHoverColor(Color.BLUE), 3d / 4, 0, 1d / 4, 1d / 4));
+        hover.add(new GUIImage(screen, 16, 16, new ResourceLocation(MODID, "image/gui.png"), GUIScreen.getHoverColor(LIGHT_BLUE), 2d / 4, 0, 1d / 4, 1d / 4));
 
         GUIImage active = new GUIImage(screen, 16, 16, new ResourceLocation(MODID, "image/gui.png"), 1d / 4, 0, 1d / 4, 1d / 4);
-        active.add(new GUIImage(screen, 16, 16, new ResourceLocation(MODID, "image/gui.png"), Color.BLUE, 3d / 4, 0, 1d / 4, 1d / 4));
+        active.add(new GUIImage(screen, 16, 16, new ResourceLocation(MODID, "image/gui.png"), LIGHT_BLUE, 2d / 4, 0, 1d / 4, 1d / 4));
 
         return (GUIButton) new GUIButton(screen, idle, hover, active).setTooltip("Duplicate Entry");
     }

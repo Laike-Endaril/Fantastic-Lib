@@ -531,6 +531,16 @@ public class Color
         return setColorHSV(hf, sf(), vf(), af);
     }
 
+    public Color setS(int s)
+    {
+        return setSF((float) s / 255);
+    }
+
+    public Color setSF(float sf)
+    {
+        return setColorHSV(hf(), sf, vf(), af);
+    }
+
     public Color setV(int v)
     {
         return setVF((float) v / 255);
