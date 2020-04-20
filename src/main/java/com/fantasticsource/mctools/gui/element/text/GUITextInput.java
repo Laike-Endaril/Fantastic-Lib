@@ -4,6 +4,7 @@ import com.fantasticsource.mctools.MonoASCIIFontRenderer;
 import com.fantasticsource.mctools.Render;
 import com.fantasticsource.mctools.gui.GUILeftClickEvent;
 import com.fantasticsource.mctools.gui.GUIScreen;
+import com.fantasticsource.mctools.gui.Namespace;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.text.filter.TextFilter;
 import com.fantasticsource.tools.Tools;
@@ -89,9 +90,9 @@ public class GUITextInput extends GUIText
 
     public GUITextInput setNamespace(String namespace)
     {
-        if (this.namespace != null) screen.namespaces.get(this.namespace).remove(this);
+        if (this.namespace != null) screen.namespaces.get(this.namespace).inputs.remove(this);
         this.namespace = namespace;
-        screen.namespaces.computeIfAbsent(namespace, o -> new ArrayList<>()).add(this);
+        screen.namespaces.computeIfAbsent(namespace, o -> new Namespace()).inputs.add(this);
 
         return this;
     }
@@ -208,15 +209,7 @@ public class GUITextInput extends GUIText
 
         if (namespace != null)
         {
-            for (GUITextInput input : screen.namespaces.get(namespace))
-            {
-                if (input == this) continue;
-
-                Object obj1 = filter.parse(getText());
-                Object obj2 = input.filter.parse(input.getText());
-                if (obj1 == null) return obj2 != null;
-                return !obj1.equals(obj2);
-            }
+            return (!screen.namespaces.get(namespace).containsIgnoreObject(getText(), this));
         }
 
         return true;
