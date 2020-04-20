@@ -113,6 +113,17 @@ public abstract class GUIList extends GUIScrollView
         return null;
     }
 
+    public int getLineIndexContaining(GUIElement containedElement)
+    {
+        int i = 0;
+        for (Line line : getLines())
+        {
+            if (line.children.contains(containedElement)) return i;
+            else i++;
+        }
+        return -1;
+    }
+
     public GUIList addAllLines(GUIElement[]... lines)
     {
         for (GUIElement[] line : lines) addLine(line);
