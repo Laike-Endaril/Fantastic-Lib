@@ -53,12 +53,12 @@ public abstract class GUIList extends GUIScrollView
 
     public Line addLine()
     {
-        return addLine(newLineDefaultElements());
+        return addLine(lineCount());
     }
 
     public Line addLine(int index)
     {
-        return addLine(index, newLineDefaultElements());
+        return addLine(index, newLineDefaultElements(index));
     }
 
     public Line addLine(GUIElement... lineElements)
@@ -135,7 +135,7 @@ public abstract class GUIList extends GUIScrollView
     }
 
 
-    public abstract GUIElement[] newLineDefaultElements();
+    public abstract GUIElement[] newLineDefaultElements(int lineIndex);
 
     public GUIElement newLineBackgroundElement()
     {

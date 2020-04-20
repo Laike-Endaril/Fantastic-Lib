@@ -40,7 +40,7 @@ public class TextSelectionGUI extends GUIScreen
         GUIList list = new GUIList(this, false, 0.98, 1 - navbar.height)
         {
             @Override
-            public GUIElement[] newLineDefaultElements()
+            public GUIElement[] newLineDefaultElements(int lineIndex)
             {
                 GUIText text = new GUIText(screen, clickedElement.getText());
                 return new GUIElement[]{text.addClickActions(() ->
