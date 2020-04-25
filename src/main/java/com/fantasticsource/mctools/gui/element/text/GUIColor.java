@@ -1,7 +1,6 @@
 package com.fantasticsource.mctools.gui.element.text;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
-import com.fantasticsource.mctools.gui.screen.ColorSelectionGUI;
 import com.fantasticsource.tools.datastructures.Color;
 
 public class GUIColor extends GUIText
@@ -65,12 +64,5 @@ public class GUIColor extends GUIText
         activeColor = this.value.copy().setA(255);
 
         return this;
-    }
-
-    @Override
-    public void click()
-    {
-        new ColorSelectionGUI(this, screen.textScale);
-        super.click();
     }
 }
