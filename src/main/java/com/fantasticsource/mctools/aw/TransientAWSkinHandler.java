@@ -77,15 +77,15 @@ public class TransientAWSkinHandler
 
 
     //These three methods are the core part of adding/removing transient skin ItemStacks to/from the AW wardrobe
-    public static void tryApplyTransientSkinsFromStack(ItemStack stack, Entity target)
+    public static boolean tryApplyTransientSkinsFromStack(ItemStack stack, Entity target)
     {
-        if (!stack.hasTagCompound()) return;
+        if (!stack.hasTagCompound()) return false;
 
         NBTTagCompound compound = stack.getTagCompound();
-        if (!compound.hasKey(DOMAIN)) return;
+        if (!compound.hasKey(DOMAIN)) return false;
 
         compound = compound.getCompoundTag(DOMAIN);
-        if (!compound.hasKey("AWSkins")) return;
+        if (!compound.hasKey("AWSkins")) return false;
 
 
         NBTTagList list = compound.getTagList("AWSkins", Constants.NBT.TAG_COMPOUND);
@@ -105,25 +105,29 @@ public class TransientAWSkinHandler
                 System.err.println(TextFormatting.RED + "Failed to place skin into slot: " + skinType + " (" + index + ")");
                 System.err.println(TextFormatting.RED + "Skin: " + stack.getDisplayName());
                 System.err.println(TextFormatting.RED + "Entity: " + target.getDisplayName() + " in world " + target.dimension + " (" + target.getPosition() + ")");
-                return;
+                return false;
             }
 
             newSkin = new ItemStack(compound.getCompoundTag("skinCompound"));
             applyTransientTag(newSkin);
             GlobalInventory.setAWSkin(target, compound.getString("type"), compound.getInteger("index"), newSkin);
         }
+        return list.tagCount() > 0;
     }
 
-    public static void removeAllTransientSkins(Entity entity)
+    public static boolean removeAllTransientSkins(Entity entity)
     {
+        boolean changed = false;
         for (ItemStack skin : GlobalInventory.getAWSkins(entity))
         {
             if (isTransientSkin(skin))
             {
                 skin.setTagCompound(null);
                 skin.setCount(0);
+                changed = true;
             }
         }
+        return changed;
     }
 
 
@@ -136,13 +140,13 @@ public class TransientAWSkinHandler
 
     public static void refresh(Entity entity)
     {
-        removeAllTransientSkins(entity);
+        boolean changed = removeAllTransientSkins(entity);
 
         for (ItemStack stack : GlobalInventory.getAllEquippedItems(entity))
         {
-            tryApplyTransientSkinsFromStack(stack, entity);
+            changed |= tryApplyTransientSkinsFromStack(stack, entity);
         }
 
-        GlobalInventory.syncAWWardrobeSkins(entity, true, true);
+        if (changed) GlobalInventory.syncAWWardrobeSkins(entity, true, true);
     }
 }
