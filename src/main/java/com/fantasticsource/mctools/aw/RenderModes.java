@@ -29,6 +29,13 @@ public class RenderModes
 
     public static void setRenderMode(Entity entity, String renderModeChannel, String renderMode)
     {
+        if (renderMode == null)
+        {
+            clearRenderMode(entity, renderModeChannel);
+            return;
+        }
+
+
         NBTTagCompound compound = FLibAPI.getNBTCap(entity).getCompound(MODID);
 
         if (!compound.hasKey("renderModes")) compound.setTag("renderModes", new NBTTagCompound());
@@ -64,6 +71,22 @@ public class RenderModes
             result.put(key, compound.getString(key));
         }
         return result;
+    }
+
+    public static void clearRenderMode(Entity entity, String renderModeChannel)
+    {
+        NBTTagCompound compound = FLibAPI.getNBTCap(entity).getCompound(MODID);
+
+        if (!compound.hasKey("renderModes")) return;
+
+        compound = compound.getCompoundTag("renderModes");
+        compound.removeTag(renderModeChannel);
+    }
+
+    public static void clearRenderModes(Entity entity)
+    {
+        NBTTagCompound compound = FLibAPI.getNBTCap(entity).getCompound(MODID);
+        compound.removeTag("renderModes");
     }
 
 

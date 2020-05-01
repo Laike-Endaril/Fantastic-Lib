@@ -16,7 +16,6 @@ import java.util.*;
 
 import static com.fantasticsource.fantasticlib.FantasticLib.MODID;
 import static net.minecraft.util.text.TextFormatting.AQUA;
-import static net.minecraft.util.text.TextFormatting.WHITE;
 
 public class Commands extends CommandBase
 {
@@ -24,7 +23,7 @@ public class Commands extends CommandBase
 
     static
     {
-        subcommands.put("generate", 2);
+        subcommands.put("rendermodes", 2);
     }
 
 
@@ -49,9 +48,9 @@ public class Commands extends CommandBase
     public String getUsage(ICommandSender sender)
     {
         String result = "";
-        if (sender.canUseCommand(subcommands.get("generate"), getName()))
+        if (sender.canUseCommand(subcommands.get("rendermodes"), getName()))
         {
-            result += AQUA + "/" + getName() + " rendermodes <playername> [renderchannel] [mode]" + WHITE + " - " + I18n.translateToLocalFormatted(MODID + ".cmd.rendermodes.comment");
+            result += AQUA + "/" + getName() + " rendermodes <playername> [renderchannel] [null|mode]";
         }
 
         return !result.equals("") ? result : I18n.translateToLocalFormatted("commands.generic.permission");
@@ -117,10 +116,10 @@ public class Commands extends CommandBase
 
                 if (args.length >= 4)
                 {
-                    RenderModes.setRenderMode(player, args[2], args[3]);
+                    RenderModes.setRenderMode(player, args[2], args[3].equals("null") ? null : args[3]);
                     notifyCommandListener(sender, this, MODID + ".cmd.rendermodes.get.comment", TextFormatting.GOLD + args[2] + TextFormatting.RESET, TextFormatting.GOLD + args[3] + TextFormatting.RESET, "" + TextFormatting.GOLD + player.getDisplayName() + TextFormatting.RESET);
                 }
-                else if (args.length == 3)
+                else if (args.length >= 3)
                 {
                     String result = RenderModes.getRenderMode(player, args[2]);
                     if (result == null) notifyCommandListener(sender, this, MODID + ".cmd.rendermodes.notSet.comment", TextFormatting.GOLD + args[2] + TextFormatting.RESET, "" + TextFormatting.GOLD + player.getDisplayName() + TextFormatting.RESET);
