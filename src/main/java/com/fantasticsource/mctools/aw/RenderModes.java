@@ -51,6 +51,21 @@ public class RenderModes
         return compound.getString(renderModeChannel);
     }
 
+    public static LinkedHashMap<String, String> getRenderModes(Entity entity)
+    {
+        NBTTagCompound compound = FLibAPI.getNBTCap(entity).getCompound(MODID);
+
+        if (!compound.hasKey("renderModes")) return null;
+
+        LinkedHashMap<String, String> result = new LinkedHashMap<>();
+        compound = compound.getCompoundTag("renderModes");
+        for (String key : compound.getKeySet())
+        {
+            result.put(key, compound.getString(key));
+        }
+        return result;
+    }
+
 
     public static ItemStack addRenderModeToSkin(ItemStack skinStack, ArrayList<Pair<String, String>> renderChannelAndModeRequirementPairs, String skinType, String libraryFile, LinkedHashMap<Integer, Color> dyes)
     {

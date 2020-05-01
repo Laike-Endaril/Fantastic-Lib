@@ -117,6 +117,8 @@ public class FantasticLib
     public static void serverInit(FMLServerStartingEvent event)
     {
         CWorldDataHandler.load(event);
+
+        event.registerServerCommand(new Commands());
     }
 
     @EventHandler

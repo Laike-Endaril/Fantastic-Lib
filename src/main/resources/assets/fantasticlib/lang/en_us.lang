@@ -18,7 +18,15 @@ fantasticlib.error.potionAmpNotNumber=Amplifier for potion is not a number: %s
 fantasticlib.error.potionDurNotNumber=Duration for potion is not a number: %s
 fantasticlib.error.potionIntrvNotNumber=Interval for potion is not a number: %s
 
+fantasticlib.error.playerEntityNotFound=Could not find player entity: %s
+
 
 
 fantasticlib.config.entityRenderFixer=Use Entity Render Fixer
 fantasticlib.config.entityRenderFixer.tooltip=FILLSCREEN If enabled, runs some code to reset certain openGL settings after each entity renders\n\nOnly use this if you need it to fix a graphical issue\n \n
+
+
+
+fantasticlib.cmd.rendermodes.get.comment=%s is set to %s for %s
+fantasticlib.cmd.rendermodes.notSet.comment=%s is not yet set for %s
+fantasticlib.cmd.rendermodes.noneSet.comment=No render modes set for %s
