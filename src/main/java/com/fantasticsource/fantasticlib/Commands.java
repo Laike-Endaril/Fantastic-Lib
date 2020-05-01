@@ -117,23 +117,23 @@ public class Commands extends CommandBase
                 if (args.length >= 4)
                 {
                     RenderModes.setRenderMode(player, args[2], args[3].equals("null") ? null : args[3]);
-                    notifyCommandListener(sender, this, MODID + ".cmd.rendermodes.get.comment", TextFormatting.GOLD + args[2] + TextFormatting.RESET, TextFormatting.GOLD + args[3] + TextFormatting.RESET, "" + TextFormatting.GOLD + player.getDisplayName() + TextFormatting.RESET);
+                    notifyCommandListener(sender, this, MODID + ".cmd.rendermodes.get.comment", TextFormatting.GOLD + args[2] + TextFormatting.RESET, TextFormatting.GOLD + args[3] + TextFormatting.RESET, TextFormatting.GOLD + player.getName() + TextFormatting.RESET);
                 }
                 else if (args.length >= 3)
                 {
                     String result = RenderModes.getRenderMode(player, args[2]);
-                    if (result == null) notifyCommandListener(sender, this, MODID + ".cmd.rendermodes.notSet.comment", TextFormatting.GOLD + args[2] + TextFormatting.RESET, "" + TextFormatting.GOLD + player.getDisplayName() + TextFormatting.RESET);
-                    notifyCommandListener(sender, this, MODID + ".cmd.rendermodes.get.comment", TextFormatting.GOLD + args[2] + TextFormatting.RESET, TextFormatting.GOLD + result + TextFormatting.RESET, "" + TextFormatting.GOLD + player.getDisplayName() + TextFormatting.RESET);
+                    if (result == null) notifyCommandListener(sender, this, MODID + ".cmd.rendermodes.notSet.comment", TextFormatting.GOLD + args[2] + TextFormatting.RESET, TextFormatting.GOLD + player.getName() + TextFormatting.RESET);
+                    notifyCommandListener(sender, this, MODID + ".cmd.rendermodes.get.comment", TextFormatting.GOLD + args[2] + TextFormatting.RESET, TextFormatting.GOLD + result + TextFormatting.RESET, TextFormatting.GOLD + player.getName() + TextFormatting.RESET);
                 }
                 else //2
                 {
                     LinkedHashMap<String, String> result = RenderModes.getRenderModes(player);
-                    if (result == null) notifyCommandListener(sender, this, MODID + ".cmd.rendermodes.noneSet.comment", "" + TextFormatting.GOLD + player.getDisplayName() + TextFormatting.RESET);
+                    if (result == null) notifyCommandListener(sender, this, MODID + ".cmd.rendermodes.noneSet.comment", TextFormatting.GOLD + player.getName() + TextFormatting.RESET);
                     else
                     {
                         for (Map.Entry<String, String> entry : result.entrySet())
                         {
-                            notifyCommandListener(sender, this, MODID + ".cmd.rendermodes.get.comment", TextFormatting.GOLD + entry.getKey() + TextFormatting.RESET, TextFormatting.GOLD + entry.getValue() + TextFormatting.RESET, "" + TextFormatting.GOLD + player.getDisplayName() + TextFormatting.RESET);
+                            notifyCommandListener(sender, this, MODID + ".cmd.rendermodes.get.comment", TextFormatting.GOLD + entry.getKey() + TextFormatting.RESET, TextFormatting.GOLD + entry.getValue() + TextFormatting.RESET, TextFormatting.GOLD + player.getName() + TextFormatting.RESET);
                         }
                     }
                 }
