@@ -68,21 +68,7 @@ public class GlobalInventory
 
     public static ArrayList<ItemStack> getAllEquippedItems(Entity entity)
     {
-        //TODO exclude sheathed items
-        ArrayList<ItemStack> result = new ArrayList<>();
-
-        //Vanilla
-        ItemStack stack = getVanillaMainhandItem(entity);
-        if (stack != null) result.add(stack);
-        result.addAll(getVanillaOffhandItems(entity));
-        result.addAll(getVanillaArmorItems(entity));
-
-        //Baubles
-        result.addAll(getBaubles(entity));
-
-        //Tiamat RPG
-        ITiamatPlayerInventory inventory = getTiamatInventory(entity);
-        if (inventory != null) result.addAll(inventory.getAllEquippedItems());
+        ArrayList<ItemStack> result = getAllEquippedNonAWItems(entity);
 
         //Armourer's Workshop
         result.addAll(getAWSkins(entity));
@@ -90,23 +76,29 @@ public class GlobalInventory
         return result;
     }
 
-    public static ArrayList<ItemStack> getAllNonAWItems(Entity entity)
+    public static ArrayList<ItemStack> getAllEquippedNonAWItems(Entity entity)
     {
-        //TODO exclude sheathed items
         ArrayList<ItemStack> result = new ArrayList<>();
 
+        //Sheathed status
+        ITiamatPlayerInventory tiamatInventory = getTiamatInventory(entity);
+        boolean sheathed = tiamatInventory != null && !tiamatInventory.unsheathed();
+
         //Vanilla
-        ItemStack stack = getVanillaMainhandItem(entity);
-        if (stack != null) result.add(stack);
-        result.addAll(getVanillaOffhandItems(entity));
+        if (!sheathed)
+        {
+            ItemStack stack = getVanillaMainhandItem(entity);
+            if (stack != null) result.add(stack);
+            result.addAll(getVanillaOffhandItems(entity));
+        }
         result.addAll(getVanillaArmorItems(entity));
 
         //Baubles
         result.addAll(getBaubles(entity));
 
         //Tiamat RPG
-        ITiamatPlayerInventory inventory = getTiamatInventory(entity);
-        if (inventory != null) result.addAll(inventory.getAllEquippedItems());
+        tiamatInventory = getTiamatInventory(entity);
+        if (tiamatInventory != null) result.addAll(tiamatInventory.getAllEquippedItems());
 
         return result;
     }

@@ -3,7 +3,6 @@ package com.fantasticsource.mctools.event;
 import com.fantasticsource.mctools.GlobalInventory;
 import com.fantasticsource.mctools.items.ItemMatcher;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -70,11 +69,11 @@ public class InventoryChangedEvent extends EntityEvent
             }
 
 
-            newInventory = GlobalInventory.getAllNonAWItems(entity);
+            newInventory = GlobalInventory.getAllEquippedNonAWItems(entity);
             oldInventory = previousContents.getOrDefault(entity, new ArrayList<>());
             if (newInventory.size() != oldInventory.size())
             {
-                MinecraftForge.EVENT_BUS.post(new InventoryChangedEvent((EntityLivingBase) entity, oldInventory, newInventory));
+                MinecraftForge.EVENT_BUS.post(new InventoryChangedEvent(entity, oldInventory, newInventory));
                 previousContents.put(entity, newInventory);
                 continue;
             }
@@ -90,7 +89,7 @@ public class InventoryChangedEvent extends EntityEvent
             }
             if (!match)
             {
-                MinecraftForge.EVENT_BUS.post(new InventoryChangedEvent((EntityLivingBase) entity, oldInventory, newInventory));
+                MinecraftForge.EVENT_BUS.post(new InventoryChangedEvent(entity, oldInventory, newInventory));
                 previousContents.put(entity, newInventory);
             }
         }

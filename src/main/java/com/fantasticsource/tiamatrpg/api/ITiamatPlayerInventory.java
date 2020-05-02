@@ -30,4 +30,8 @@ public interface ITiamatPlayerInventory extends IInventory
     ArrayList<ItemStack> getAllItems();
 
     ArrayList<ItemStack> getAllEquippedItems();
+
+    boolean unsheathed();
+
+    void setUnsheathed(boolean unsheathed);
 }
