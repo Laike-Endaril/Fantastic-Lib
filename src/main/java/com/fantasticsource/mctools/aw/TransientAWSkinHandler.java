@@ -3,6 +3,7 @@ package com.fantasticsource.mctools.aw;
 import com.fantasticsource.mctools.GlobalInventory;
 import com.fantasticsource.mctools.event.InventoryChangedEvent;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -135,19 +136,20 @@ public class TransientAWSkinHandler
     @SubscribeEvent
     public static void inventoryChanged(InventoryChangedEvent event)
     {
-        refresh(event.getEntity());
+        Entity entity = event.getEntity();
+        if (entity instanceof EntityPlayer) refresh((EntityPlayer) entity);
     }
 
 
-    public static void refresh(Entity entity)
+    public static void refresh(EntityPlayer player)
     {
-        boolean changed = removeAllTransientSkins(entity);
+        boolean changed = removeAllTransientSkins(player);
 
-        for (ItemStack stack : GlobalInventory.getAllEquippedItems(entity))
+        for (ItemStack stack : GlobalInventory.getValidEquippedItems(player))
         {
-            changed |= tryApplyTransientSkinsFromStack(stack, entity);
+            changed |= tryApplyTransientSkinsFromStack(stack, player);
         }
 
-        if (changed) GlobalInventory.syncAWWardrobeSkins(entity, true, true);
+        if (changed) GlobalInventory.syncAWWardrobeSkins(player, true, true);
     }
 }

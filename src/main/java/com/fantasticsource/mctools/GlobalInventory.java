@@ -18,6 +18,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -239,6 +240,61 @@ public class GlobalInventory
 
         return result;
     }
+
+    public static ArrayList<ItemStack> getValidEquippedItems(EntityPlayer player)
+    {
+        ArrayList<ItemStack> result = GlobalInventory.getAllEquippedNonAWItems(player);
+
+        //Vanilla slots
+        for (int slot = 0; slot < player.inventory.getSizeInventory(); slot++)
+        {
+            ItemStack stack = player.inventory.getStackInSlot(slot);
+            if (!Slottings.slotValidForSlotting(getItemSlotting(stack), slot, player)) continue;
+
+            result.add(stack);
+        }
+
+        //Baubles slots
+        if (Compat.baubles)
+        {
+            IBaublesItemHandler inventory = BaublesApi.getBaublesHandler(player);
+            for (int slot = 0; slot < inventory.getSlots(); slot++)
+            {
+                ItemStack stack = inventory.getStackInSlot(slot);
+                if (!Slottings.slotValidForSlotting(getItemSlotting(stack), slot + Slottings.BAUBLES_OFFSET, player)) continue;
+
+                result.add(stack);
+            }
+        }
+
+        //Tiamat slots
+        if (Compat.tiamatrpg)
+        {
+            int slot = 0;
+            for (ItemStack stack : GlobalInventory.getAllTiamatItems(player))
+            {
+                if (!Slottings.slotValidForSlotting(getItemSlotting(stack), slot + Slottings.TIAMAT_OFFSET, player)) continue;
+
+                result.add(stack);
+            }
+        }
+
+        return result;
+    }
+
+    public static String getItemSlotting(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return "None";
+
+        NBTTagCompound compound = stack.getTagCompound();
+        if (!compound.hasKey("tiamatrpg")) return "None";
+
+        compound = compound.getCompoundTag("tiamatrpg");
+        if (!compound.hasKey("slotting")) return "None";
+
+        return compound.getString("slotting");
+    }
+
 
 
     //Vanilla
