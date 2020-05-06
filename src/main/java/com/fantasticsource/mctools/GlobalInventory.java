@@ -45,6 +45,16 @@ public class GlobalInventory
 
     public static ArrayList<ItemStack> getAllItems(Entity entity)
     {
+        ArrayList<ItemStack> result = getAllNonSkinItems(entity);
+
+        //Armourer's Workshop
+        result.addAll(getAWSkins(entity));
+
+        return result;
+    }
+
+    public static ArrayList<ItemStack> getAllNonSkinItems(Entity entity)
+    {
         ArrayList<ItemStack> result = new ArrayList<>();
 
         //Vanilla
@@ -61,15 +71,12 @@ public class GlobalInventory
         ITiamatPlayerInventory inventory = getTiamatInventory(entity);
         if (inventory != null) result.addAll(inventory.getAllItems());
 
-        //Armourer's Workshop
-        result.addAll(getAWSkins(entity));
-
         return result;
     }
 
     public static ArrayList<ItemStack> getAllEquippedItems(Entity entity)
     {
-        ArrayList<ItemStack> result = getAllEquippedNonAWItems(entity);
+        ArrayList<ItemStack> result = getAllEquippedNonSkinItems(entity);
 
         //Armourer's Workshop
         result.addAll(getAWSkins(entity));
@@ -77,7 +84,7 @@ public class GlobalInventory
         return result;
     }
 
-    public static ArrayList<ItemStack> getAllEquippedNonAWItems(Entity entity)
+    public static ArrayList<ItemStack> getAllEquippedNonSkinItems(Entity entity)
     {
         ArrayList<ItemStack> result = new ArrayList<>();
 
@@ -243,7 +250,7 @@ public class GlobalInventory
 
     public static ArrayList<ItemStack> getValidEquippedItems(EntityPlayer player)
     {
-        ArrayList<ItemStack> result = GlobalInventory.getAllEquippedNonAWItems(player);
+        ArrayList<ItemStack> result = GlobalInventory.getAllEquippedNonSkinItems(player);
 
         //Vanilla slots
         for (int slot = 0; slot < player.inventory.getSizeInventory(); slot++)
@@ -294,7 +301,6 @@ public class GlobalInventory
 
         return compound.getString("slotting");
     }
-
 
 
     //Vanilla
