@@ -25,25 +25,19 @@ public class InventoryChangedEvent extends EntityEvent
     }
 
 
-    private final ArrayList<ItemStack> oldInventory, newInventory;
+    private final ArrayList<ItemStack> oldInventory;
 
 
-    public InventoryChangedEvent(Entity entity, ArrayList<ItemStack> oldInventory, ArrayList<ItemStack> newInventory)
+    public InventoryChangedEvent(Entity entity, ArrayList<ItemStack> oldInventory)
     {
         super(entity);
 
         this.oldInventory = oldInventory;
-        this.newInventory = newInventory;
     }
 
     public ArrayList<ItemStack> getOldInventory()
     {
         return new ArrayList<>(oldInventory);
-    }
-
-    public ArrayList<ItemStack> getNewInventory()
-    {
-        return new ArrayList<>(newInventory);
     }
 
 
@@ -83,7 +77,7 @@ public class InventoryChangedEvent extends EntityEvent
             oldInventory = previousContents.getOrDefault(entity, new ArrayList<>());
             if (newInventory.size() != oldInventory.size())
             {
-                MinecraftForge.EVENT_BUS.post(new InventoryChangedEvent(entity, oldInventory, newInventory));
+                MinecraftForge.EVENT_BUS.post(new InventoryChangedEvent(entity, oldInventory));
                 previousContents.put(entity, GlobalInventory.getAllNonSkinItems(entity));
                 continue;
             }
@@ -99,7 +93,7 @@ public class InventoryChangedEvent extends EntityEvent
             }
             if (!match)
             {
-                MinecraftForge.EVENT_BUS.post(new InventoryChangedEvent(entity, oldInventory, newInventory));
+                MinecraftForge.EVENT_BUS.post(new InventoryChangedEvent(entity, oldInventory));
                 previousContents.put(entity, GlobalInventory.getAllNonSkinItems(entity));
             }
         }
