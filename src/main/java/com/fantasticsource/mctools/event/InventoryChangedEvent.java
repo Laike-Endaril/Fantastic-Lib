@@ -64,7 +64,7 @@ public class InventoryChangedEvent extends EntityEvent
         });
 
         ArrayList<ItemStack> oldInventory, newInventory;
-        for (Entity entity : event.world.loadedEntityList)
+        for (Entity entity : event.world.loadedEntityList.toArray(new Entity[0]))
         {
             if (!entity.isAddedToWorld())
             {
