@@ -5,6 +5,8 @@ import com.fantasticsource.tools.ReflectionTool;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.TrigLookupTable;
 import com.fantasticsource.tools.datastructures.ExplicitPriorityQueue;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.resources.LanguageManager;
 import net.minecraft.client.resources.Locale;
 import net.minecraft.command.CommandResultStats;
@@ -13,6 +15,7 @@ import net.minecraft.entity.ai.*;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntitySnowball;
 import net.minecraft.init.SoundEvents;
@@ -25,6 +28,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DimensionType;
+import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import net.minecraftforge.common.MinecraftForge;
@@ -77,6 +81,16 @@ public class MCTools
         {
             crash(e, 700, false);
         }
+    }
+
+
+    public static GameType getGameType(EntityPlayer player)
+    {
+        if (player instanceof EntityPlayerMP) return ((EntityPlayerMP) player).interactionManager.getGameType();
+
+        if (player instanceof AbstractClientPlayer) return Minecraft.getMinecraft().getConnection().getPlayerInfo(player.getGameProfile().getId()).getGameType();
+
+        throw new IllegalArgumentException("Unknown player class: " + player.getClass().getName());
     }
 
 
