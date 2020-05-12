@@ -7,6 +7,7 @@ import com.fantasticsource.tools.TrigLookupTable;
 import com.fantasticsource.tools.datastructures.ExplicitPriorityQueue;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.resources.LanguageManager;
 import net.minecraft.client.resources.Locale;
 import net.minecraft.command.CommandResultStats;
@@ -88,7 +89,12 @@ public class MCTools
     {
         if (player instanceof EntityPlayerMP) return ((EntityPlayerMP) player).interactionManager.getGameType();
 
-        if (player instanceof AbstractClientPlayer) return Minecraft.getMinecraft().getConnection().getPlayerInfo(player.getGameProfile().getId()).getGameType();
+        if (player instanceof AbstractClientPlayer)
+        {
+            NetworkPlayerInfo info = Minecraft.getMinecraft().getConnection().getPlayerInfo(player.getGameProfile().getId());
+            if (info == null) return null;
+            return info.getGameType();
+        }
 
         throw new IllegalArgumentException("Unknown player class: " + player.getClass().getName());
     }
