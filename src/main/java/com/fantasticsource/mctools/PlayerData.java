@@ -14,7 +14,6 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 
 import java.io.*;
 import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.UUID;
 
 public class PlayerData
@@ -30,61 +29,56 @@ public class PlayerData
 
     public PlayerData(String name, UUID id)
     {
-        this(name, id, null);
-    }
-
-    public PlayerData(String name, UUID id, EntityPlayer player)
-    {
+        this.player = null;
         this.name = name;
         this.id = id;
+    }
+
+    public PlayerData(EntityPlayer player)
+    {
         this.player = player;
+        name = player.getName();
+        id = player.getPersistentID();
     }
 
 
     public static PlayerData get(UUID id)
     {
-        PlayerData result = playerData.get(id);
-        if (result != null)
+        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+        PlayerList playerList = server == null ? null : server.getPlayerList();
+        EntityPlayer player = playerList == null ? null : playerList.getPlayerByUUID(id);
+
+        if (player != null)
         {
-            if (result.player != null && !result.player.getName().equals(result.name)) result.name = result.player.getName();
-            return result;
+            PlayerData data = new PlayerData(player);
+            playerData.put(player.getPersistentID(), data);
+            return data;
         }
 
-        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-        if (server == null) return null;
-
-        PlayerList playerList = server.getPlayerList();
-        if (playerList == null) return null;
-
-        EntityPlayer player = playerList.getPlayerByUUID(id);
-        if (player == null) return null; //getPlayerByUUID() can absolutely return null
-
-        result = new PlayerData(player.getName(), player.getPersistentID(), player);
-        playerData.put(id, result);
-        return result;
+        PlayerData data = playerData.get(id);
+        if (data != null) data.player = player;
+        return data;
     }
 
     public static PlayerData get(String name)
     {
-        PlayerData result;
-        for (Map.Entry<UUID, PlayerData> entry : playerData.entrySet())
+        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+        PlayerList playerList = server == null ? null : server.getPlayerList();
+        EntityPlayer player = playerList == null ? null : playerList.getPlayerByUsername(name);
+
+        if (player != null)
         {
-            result = entry.getValue();
-            if (result.name.equals(name)) return result;
+            PlayerData data = new PlayerData(player);
+            playerData.put(player.getPersistentID(), data);
+            return data;
         }
 
-        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-        if (server == null) return null;
+        for (PlayerData data : playerData.values())
+        {
+            if (data.name.equals(name)) return data;
+        }
 
-        PlayerList playerList = server.getPlayerList();
-        if (playerList == null) return null;
-
-        EntityPlayer player = playerList.getPlayerByUsername(name);
-        if (player == null) return null;
-
-        result = new PlayerData(player.getName(), player.getPersistentID(), player);
-        playerData.put(player.getPersistentID(), result);
-        return result;
+        return null;
     }
 
 
@@ -180,7 +174,7 @@ public class PlayerData
         if (entity instanceof EntityPlayerMP)
         {
             EntityPlayerMP player = (EntityPlayerMP) entity;
-            playerData.put(player.getPersistentID(), new PlayerData(player.getName(), player.getPersistentID(), player));
+            playerData.put(player.getPersistentID(), new PlayerData(player));
             save();
         }
     }
