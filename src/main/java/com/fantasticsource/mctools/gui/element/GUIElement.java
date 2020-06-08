@@ -99,7 +99,7 @@ public class GUIElement
         return xx <= x && x < xx + absoluteWidth() && yy <= y && y < yy + absoluteHeight();
     }
 
-    protected int[] preDraw()
+    private int[] preDraw()
     {
         //Matrix
         GlStateManager.pushMatrix();
@@ -132,6 +132,8 @@ public class GUIElement
         {
             for (GUIElement element : children.toArray(new GUIElement[0]))
             {
+                element.tick();
+
                 int[] lastScissor = element.preDraw();
                 if (lastScissor != null)
                 {
@@ -151,6 +153,10 @@ public class GUIElement
 
         //Undo matrix
         GlStateManager.popMatrix();
+    }
+
+    protected void tick()
+    {
     }
 
     public void draw()

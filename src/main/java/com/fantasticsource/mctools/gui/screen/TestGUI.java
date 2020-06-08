@@ -1,10 +1,8 @@
 package com.fantasticsource.mctools.gui.screen;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
-import com.fantasticsource.mctools.gui.element.other.GUIGradient;
-import com.fantasticsource.mctools.gui.element.text.GUIText;
 import com.fantasticsource.mctools.gui.element.textured.GUIItemStack;
-import com.fantasticsource.tools.datastructures.Color;
+import com.fantasticsource.mctools.gui.element.view.GUIPanZoomView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -38,11 +36,10 @@ public class TestGUI extends GUIScreen
                 test = 0;
 
             case 0:
-                root.add(new GUIGradient(this, 0, 0, 1, 1, Color.BLACK.copy().setAF(0.85f)));
+                GUIPanZoomView view = new GUIPanZoomView(this, 1, 1);
+                root.add(view);
 
-                root.add(new GUIItemStack(this, 16, 16, new ItemStack(Items.BOW)));
-                root.add(new GUIText(this, "Test"));
-                root.add(new GUIItemStack(this, 16, 16, new ItemStack(Items.BOW)));
+                view.add(new GUIItemStack(this, 16, 16, new ItemStack(Items.BOW)));
                 break;
         }
 
