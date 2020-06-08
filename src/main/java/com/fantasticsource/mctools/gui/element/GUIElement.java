@@ -2,6 +2,7 @@ package com.fantasticsource.mctools.gui.element;
 
 import com.fantasticsource.mctools.gui.GUILeftClickEvent;
 import com.fantasticsource.mctools.gui.GUIScreen;
+import com.fantasticsource.mctools.gui.element.view.GUIPanZoomView;
 import com.fantasticsource.mctools.gui.element.view.GUIScrollView;
 import com.fantasticsource.mctools.gui.element.view.GUITooltipView;
 import com.fantasticsource.tools.Tools;
@@ -237,18 +238,50 @@ public class GUIElement
 
     public final double absoluteX()
     {
+        //TODO adjust for zoom
+        //TODO move class-specific logic into said classes and have this method reference an overwritten method in them
+
         if (parent == null) return x;
+
+        if (parent instanceof GUIPanZoomView) return parent.absoluteX() + (x - ((GUIPanZoomView) parent).viewX) * parent.absoluteWidth();
+
         return parent.absoluteX() + x * parent.absoluteWidth();
     }
 
     public final double absoluteY()
     {
+        //TODO adjust for zoom
+        //TODO move class-specific logic into said classes and have this method reference an overwritten method in them
+
         if (parent == null) return y;
+
+        if (parent instanceof GUIPanZoomView) return parent.absoluteY() + (y - ((GUIPanZoomView) parent).viewY) * parent.absoluteHeight();
 
         if (parent instanceof GUIScrollView) return parent.absoluteY() + (y - ((GUIScrollView) parent).top) * parent.absoluteHeight();
 
         return parent.absoluteY() + y * parent.absoluteHeight();
     }
+
+    public final double absoluteWidth()
+    {
+        //TODO adjust for zoom
+        //TODO move class-specific logic into said classes and have this method reference an overwritten method in them
+
+        if (parent == null) return width;
+
+        return parent.absoluteWidth() * width;
+    }
+
+    public final double absoluteHeight()
+    {
+        //TODO adjust for zoom
+        //TODO move class-specific logic into said classes and have this method reference an overwritten method in them
+
+        if (parent == null) return height;
+
+        return parent.absoluteHeight() * height;
+    }
+
 
     public final int absolutePxX()
     {
@@ -260,18 +293,6 @@ public class GUIElement
         return (int) Math.round(absoluteY() * screen.pxHeight);
     }
 
-    public final double absoluteWidth()
-    {
-        if (parent == null) return width;
-        return parent.absoluteWidth() * width;
-    }
-
-    public final double absoluteHeight()
-    {
-        if (parent == null) return height;
-        return parent.absoluteHeight() * height;
-    }
-
     public final int absolutePxWidth()
     {
         return (int) Math.round(absoluteWidth() * screen.pxWidth);
@@ -281,6 +302,7 @@ public class GUIElement
     {
         return (int) Math.round(absoluteHeight() * screen.pxHeight);
     }
+
 
     public final double mouseX()
     {

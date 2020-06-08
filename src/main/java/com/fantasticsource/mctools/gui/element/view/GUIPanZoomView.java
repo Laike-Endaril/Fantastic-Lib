@@ -6,8 +6,10 @@ import net.minecraft.client.renderer.GlStateManager;
 
 public class GUIPanZoomView extends GUIView
 {
-    double viewX = 0, viewY = 0, zoom = 1;
-    double panBorderSize = 0.1;
+    private static final double PAN_RATE = 0.0001, ZOOM_RATE = 1.1;
+
+    public double viewX = 0, viewY = 0, zoom = 1;
+    public double panBorderSize = 0.1;
 
     public GUIPanZoomView(GUIScreen screen, double width, double height, GUIElement... subElements)
     {
@@ -66,7 +68,6 @@ public class GUIPanZoomView extends GUIView
     @Override
     public void tick()
     {
-        System.out.println("Tick");
         if (isMouseWithin())
         {
             double portX = absoluteX(), portY = absoluteY(), portW = absoluteWidth(), portH = absoluteHeight();
@@ -76,24 +77,20 @@ public class GUIPanZoomView extends GUIView
 
             if (mouseXPercent < panBorderSize)
             {
-                System.out.println("Pan left");
-                viewX -= viewW() * (panBorderSize - mouseXPercent) / panBorderSize;
+                viewX -= viewW() * PAN_RATE * (panBorderSize - mouseXPercent) / panBorderSize;
             }
             else if (mouseXPercent > 1 - panBorderSize)
             {
-                System.out.println("Pan right");
-                viewX += viewW() * (mouseXPercent - (1 - panBorderSize)) / panBorderSize;
+                viewX += viewW() * PAN_RATE * (mouseXPercent - (1 - panBorderSize)) / panBorderSize;
             }
 
             if (mouseYPercent < panBorderSize)
             {
-                System.out.println("Pan up");
-                viewY -= viewH() * (panBorderSize - mouseYPercent) / panBorderSize;
+                viewY -= viewH() * PAN_RATE * (panBorderSize - mouseYPercent) / panBorderSize;
             }
             else if (mouseYPercent > 1 - panBorderSize)
             {
-                System.out.println("Pan down");
-                viewY += viewH() * (mouseYPercent - (1 - panBorderSize)) / panBorderSize;
+                viewY += viewH() * PAN_RATE * (mouseYPercent - (1 - panBorderSize)) / panBorderSize;
             }
         }
     }
@@ -136,6 +133,9 @@ public class GUIPanZoomView extends GUIView
             if (delta > 0)
             {
                 System.out.println("Zoom in");
+                System.out.println(viewX + ", " + viewY);
+                System.out.println(viewW() + ", " + viewH());
+                System.out.println();
                 viewX += viewW() * 0.5;
                 viewY += viewH() * 0.5;
                 zoom *= 1.2;
@@ -145,6 +145,9 @@ public class GUIPanZoomView extends GUIView
             else if (delta < 0)
             {
                 System.out.println("Zoom out");
+                System.out.println(viewX + ", " + viewY);
+                System.out.println(viewW() + ", " + viewH());
+                System.out.println();
                 viewX += viewW() * 0.5;
                 viewY += viewH() * 0.5;
                 zoom /= 1.2;
