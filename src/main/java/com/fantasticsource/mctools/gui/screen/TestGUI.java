@@ -38,11 +38,14 @@ public class TestGUI extends GUIScreen
                 test = 0;
 
             case 0:
+                root.add(new GUIGradient(this, 0, 0, 1, 1, Color.BLACK));
+
                 GUIPanZoomView view = new GUIPanZoomView(this, 1, 1);
                 root.add(view);
 
-                view.add(new GUIItemStack(this, 0, 0, 16, 16, new ItemStack(Items.BOW)));
-                view.add(new GUIGradient(this, 0, 0, 0.1, 0.1, Color.GREEN));
+                view.add(new GUIItemStack(this, 0.5, 0.5, 16, 16, new ItemStack(Items.BOW)));
+                view.add(new GUIGradient(this, 0.5, 0.5, 0.3, 0.3, Color.GREEN));
+                view.add(new GUIGradient(this, 0.51, 0.51, 0.28, 0.28, Color.RED));
                 break;
         }
 

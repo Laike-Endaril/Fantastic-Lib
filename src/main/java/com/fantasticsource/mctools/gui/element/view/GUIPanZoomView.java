@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.GlStateManager;
 
 public class GUIPanZoomView extends GUIView
 {
-    private static final double PAN_RATE = 0.0001, ZOOM_RATE = 1.1;
+    private static final double PAN_RATE = 0.01, ZOOM_RATE = 2;
 
     public double viewX = 0, viewY = 0, zoom = 1;
     public double panBorderSize = 0.1;
@@ -39,12 +39,12 @@ public class GUIPanZoomView extends GUIView
 
     public double viewW()
     {
-        return absolutePxWidth() / zoom;
+        return absoluteWidth() / zoom;
     }
 
     public double viewH()
     {
-        return absolutePxHeight() / zoom;
+        return absoluteHeight() / zoom;
     }
 
     public int viewPxW()
@@ -99,8 +99,8 @@ public class GUIPanZoomView extends GUIView
     public void draw()
     {
         GlStateManager.pushMatrix();
-        GlStateManager.translate(-viewX, -viewY, 0);
         GlStateManager.scale(zoom, zoom, 1);
+        GlStateManager.translate(-viewX, -viewY, 0);
 
         drawChildren();
 
@@ -132,25 +132,17 @@ public class GUIPanZoomView extends GUIView
         {
             if (delta > 0)
             {
-                System.out.println("Zoom in");
-                System.out.println(viewX + ", " + viewY);
-                System.out.println(viewW() + ", " + viewH());
-                System.out.println();
                 viewX += viewW() * 0.5;
                 viewY += viewH() * 0.5;
-                zoom *= 1.2;
+                zoom *= ZOOM_RATE;
                 viewX -= viewW() * 0.5;
                 viewY -= viewH() * 0.5;
             }
             else if (delta < 0)
             {
-                System.out.println("Zoom out");
-                System.out.println(viewX + ", " + viewY);
-                System.out.println(viewW() + ", " + viewH());
-                System.out.println();
                 viewX += viewW() * 0.5;
                 viewY += viewH() * 0.5;
-                zoom /= 1.2;
+                zoom /= ZOOM_RATE;
                 viewX -= viewW() * 0.5;
                 viewY -= viewH() * 0.5;
             }
