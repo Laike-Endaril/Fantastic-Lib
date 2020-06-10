@@ -8,7 +8,8 @@ public class GUIPanZoomView extends GUIView
 {
     private static final double PAN_RATE = 0.01, ZOOM_RATE = 2;
 
-    public double viewX = 0, viewY = 0, zoom = 1;
+    public double viewX = 0, viewY = 0;
+    protected double zoom = 1;
     public double panBorderSize = 0.1;
 
     public GUIPanZoomView(GUIScreen screen, double width, double height, GUIElement... subElements)
@@ -65,6 +66,22 @@ public class GUIPanZoomView extends GUIView
         viewY = child.y - viewH() * 0.5;
     }
 
+    public GUIPanZoomView setZoom(double zoom)
+    {
+        viewX += viewW() * 0.5;
+        viewY += viewH() * 0.5;
+        this.zoom = zoom;
+        viewX -= viewW() * 0.5;
+        viewY -= viewH() * 0.5;
+
+        return this;
+    }
+
+    public double getZoom()
+    {
+        return zoom;
+    }
+
     @Override
     public void tick()
     {
@@ -110,7 +127,15 @@ public class GUIPanZoomView extends GUIView
     @Override
     public boolean mousePressed(int button)
     {
-        return super.mousePressed(button);
+        boolean result = super.mousePressed(button);
+
+        if (button == 2)
+        {
+            setZoom(1);
+            result = true;
+        }
+
+        return result;
     }
 
     @Override
@@ -130,22 +155,8 @@ public class GUIPanZoomView extends GUIView
     {
         if (isMouseWithin())
         {
-            if (delta > 0)
-            {
-                viewX += viewW() * 0.5;
-                viewY += viewH() * 0.5;
-                zoom *= ZOOM_RATE;
-                viewX -= viewW() * 0.5;
-                viewY -= viewH() * 0.5;
-            }
-            else if (delta < 0)
-            {
-                viewX += viewW() * 0.5;
-                viewY += viewH() * 0.5;
-                zoom /= ZOOM_RATE;
-                viewX -= viewW() * 0.5;
-                viewY -= viewH() * 0.5;
-            }
+            if (delta > 0) setZoom(zoom * ZOOM_RATE);
+            else if (delta < 0) setZoom(zoom / ZOOM_RATE);
         }
 
         super.mouseWheel(delta);

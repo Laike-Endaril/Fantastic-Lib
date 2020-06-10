@@ -259,7 +259,7 @@ public class GUIText extends GUIElement
 
         GlStateManager.pushMatrix();
         double adjustedScale = scale * new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
-        if (parent instanceof GUIPanZoomView) adjustedScale *= ((GUIPanZoomView) parent).zoom;
+        if (parent instanceof GUIPanZoomView) adjustedScale *= ((GUIPanZoomView) parent).getZoom();
         GlStateManager.scale(adjustedScale / absolutePxWidth(), adjustedScale / absolutePxHeight(), 1);
 
         Color c = active ? activeColor : isMouseWithin() ? hoverColor : color;

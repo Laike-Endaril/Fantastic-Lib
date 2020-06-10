@@ -242,7 +242,7 @@ public class GUIElement
         //TODO move class-specific logic into said classes and have this method reference an overwritten method in them?
         if (parent == null) return x;
 
-        if (parent instanceof GUIPanZoomView) return parent.absoluteX() + (x - ((GUIPanZoomView) parent).viewX) * ((GUIPanZoomView) parent).zoom * parent.absoluteWidth();
+        if (parent instanceof GUIPanZoomView) return parent.absoluteX() + (x - ((GUIPanZoomView) parent).viewX) * ((GUIPanZoomView) parent).getZoom() * parent.absoluteWidth();
 
         return parent.absoluteX() + x * parent.absoluteWidth();
     }
@@ -252,7 +252,7 @@ public class GUIElement
         //TODO move class-specific logic into said classes and have this method reference an overwritten method in them?
         if (parent == null) return y;
 
-        if (parent instanceof GUIPanZoomView) return parent.absoluteY() + (y - ((GUIPanZoomView) parent).viewY) * ((GUIPanZoomView) parent).zoom * parent.absoluteHeight();
+        if (parent instanceof GUIPanZoomView) return parent.absoluteY() + (y - ((GUIPanZoomView) parent).viewY) * ((GUIPanZoomView) parent).getZoom() * parent.absoluteHeight();
 
         if (parent instanceof GUIScrollView) return parent.absoluteY() + (y - ((GUIScrollView) parent).top) * parent.absoluteHeight();
 
@@ -265,7 +265,7 @@ public class GUIElement
 
         if (parent == null) return width;
 
-        if (parent instanceof GUIPanZoomView) return parent.absoluteWidth() * width * ((GUIPanZoomView) parent).zoom;
+        if (parent instanceof GUIPanZoomView) return parent.absoluteWidth() * width * ((GUIPanZoomView) parent).getZoom();
 
         return parent.absoluteWidth() * width;
     }
@@ -276,7 +276,7 @@ public class GUIElement
 
         if (parent == null) return height;
 
-        if (parent instanceof GUIPanZoomView) return parent.absoluteHeight() * height * ((GUIPanZoomView) parent).zoom;
+        if (parent instanceof GUIPanZoomView) return parent.absoluteHeight() * height * ((GUIPanZoomView) parent).getZoom();
 
         return parent.absoluteHeight() * height;
     }

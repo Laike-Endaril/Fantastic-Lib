@@ -1244,7 +1244,7 @@ public class GUITextInput extends GUIText
 
 
         double adjustedScale = scale * new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
-        if (parent instanceof GUIPanZoomView) adjustedScale *= ((GUIPanZoomView) parent).zoom;
+        if (parent instanceof GUIPanZoomView) adjustedScale *= ((GUIPanZoomView) parent).getZoom();
 
         if (!valid())
         {

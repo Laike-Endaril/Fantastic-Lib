@@ -62,7 +62,7 @@ public class GUIMultilineTextInput extends GUITextInput
         GlStateManager.disableTexture2D();
 
         double adjustedScale = scale * new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
-        if (parent instanceof GUIPanZoomView) adjustedScale *= ((GUIPanZoomView) parent).zoom;
+        if (parent instanceof GUIPanZoomView) adjustedScale *= ((GUIPanZoomView) parent).getZoom();
 
         if (!filter.acceptable(text))
         {

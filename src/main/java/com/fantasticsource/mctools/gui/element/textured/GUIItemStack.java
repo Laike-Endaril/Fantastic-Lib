@@ -112,7 +112,7 @@ public class GUIItemStack extends GUIElement
 
         GlStateManager.pushMatrix();
         GlStateManager.translate(absolutePxX() / sr.getScaleFactor(), absolutePxY() / sr.getScaleFactor(), 0);
-        if (parent instanceof GUIPanZoomView) GlStateManager.scale(((GUIPanZoomView) parent).zoom, ((GUIPanZoomView) parent).zoom, 1);
+        if (parent instanceof GUIPanZoomView) GlStateManager.scale(((GUIPanZoomView) parent).getZoom(), ((GUIPanZoomView) parent).getZoom(), 1);
         Minecraft.getMinecraft().getRenderItem().renderItemIntoGUI(stack, 0, 0);
         GlStateManager.popMatrix();
 
