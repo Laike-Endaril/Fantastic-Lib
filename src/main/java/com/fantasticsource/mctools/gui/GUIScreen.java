@@ -126,8 +126,7 @@ public abstract class GUIScreen extends GuiScreen
         int w = currentScissor[2] - currentScissor[0], h = currentScissor[3] - currentScissor[1];
         if (w < 0 || h < 0) return false;
 
-        //TODO re-enable scissor
-//        GL11.glScissor(currentScissor[0], pxHeight - currentScissor[3], w, h);
+        GL11.glScissor(currentScissor[0], pxHeight - currentScissor[3], w, h);
         return true;
     }
 

@@ -4,6 +4,7 @@ import com.fantasticsource.mctools.MonoASCIIFontRenderer;
 import com.fantasticsource.mctools.Render;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
+import com.fantasticsource.mctools.gui.element.view.GUIPanZoomView;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
@@ -258,6 +259,7 @@ public class GUIText extends GUIElement
 
         GlStateManager.pushMatrix();
         double adjustedScale = scale * new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
+        if (parent instanceof GUIPanZoomView) adjustedScale *= ((GUIPanZoomView) parent).zoom;
         GlStateManager.scale(adjustedScale / absolutePxWidth(), adjustedScale / absolutePxHeight(), 1);
 
         Color c = active ? activeColor : isMouseWithin() ? hoverColor : color;

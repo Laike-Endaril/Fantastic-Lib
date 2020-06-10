@@ -2,6 +2,7 @@ package com.fantasticsource.mctools.gui.element.textured;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
+import com.fantasticsource.mctools.gui.element.view.GUIPanZoomView;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -90,8 +91,8 @@ public class GUIImage extends GUIElement
         width = unscaledWidth / screen.width;
         height = unscaledHeight / screen.height;
 
-        //TODO this line is cancelling a scissor offset issue of unknown origin; offset = 1 - ()
-        //TODO I might've fixed the root issue and not need this line?
+        //TODO this line is cancelling a scissor offset issue of unknown origin
+        //TODO I might've fixed the root issue and not need this line?  Test alignment sometime...
 //        width += (1 - scaledWidth) / screen.width;
 
         if (parent != null)

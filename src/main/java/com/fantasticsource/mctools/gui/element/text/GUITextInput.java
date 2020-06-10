@@ -7,6 +7,7 @@ import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.Namespace;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.text.filter.TextFilter;
+import com.fantasticsource.mctools.gui.element.view.GUIPanZoomView;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
@@ -1243,6 +1244,7 @@ public class GUITextInput extends GUIText
 
 
         double adjustedScale = scale * new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
+        if (parent instanceof GUIPanZoomView) adjustedScale *= ((GUIPanZoomView) parent).zoom;
 
         if (!valid())
         {

@@ -239,9 +239,7 @@ public class GUIElement
 
     public final double absoluteX()
     {
-        //TODO adjust for zoom
-        //TODO move class-specific logic into said classes and have this method reference an overwritten method in them
-
+        //TODO move class-specific logic into said classes and have this method reference an overwritten method in them?
         if (parent == null) return x;
 
         if (parent instanceof GUIPanZoomView) return parent.absoluteX() + (x - ((GUIPanZoomView) parent).viewX) * ((GUIPanZoomView) parent).zoom * parent.absoluteWidth();
@@ -251,9 +249,7 @@ public class GUIElement
 
     public final double absoluteY()
     {
-        //TODO adjust for zoom
-        //TODO move class-specific logic into said classes and have this method reference an overwritten method in them
-
+        //TODO move class-specific logic into said classes and have this method reference an overwritten method in them?
         if (parent == null) return y;
 
         if (parent instanceof GUIPanZoomView) return parent.absoluteY() + (y - ((GUIPanZoomView) parent).viewY) * ((GUIPanZoomView) parent).zoom * parent.absoluteHeight();
@@ -265,8 +261,7 @@ public class GUIElement
 
     public final double absoluteWidth()
     {
-        //TODO adjust for zoom
-        //TODO move class-specific logic into said classes and have this method reference an overwritten method in them
+        //TODO move class-specific logic into said classes and have this method reference an overwritten method in them?
 
         if (parent == null) return width;
 
@@ -277,8 +272,7 @@ public class GUIElement
 
     public final double absoluteHeight()
     {
-        //TODO adjust for zoom
-        //TODO move class-specific logic into said classes and have this method reference an overwritten method in them
+        //TODO move class-specific logic into said classes and have this method reference an overwritten method in them?
 
         if (parent == null) return height;
 

@@ -5,6 +5,7 @@ import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.text.GUIText;
 import com.fantasticsource.mctools.gui.element.view.GUIAutocroppedView;
+import com.fantasticsource.mctools.gui.element.view.GUIPanZoomView;
 import com.fantasticsource.mctools.gui.element.view.GUITooltipView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
@@ -16,15 +17,15 @@ import java.nio.FloatBuffer;
 
 public class GUIItemStack extends GUIElement
 {
-    private double scaledWidth, scaledHeight;
+    private double unscaledWidth, unscaledHeight;
     private ItemStack stack;
 
     public GUIItemStack(GUIScreen screen, double unscaledWidth, double unscaledHeight, ItemStack stack)
     {
         super(screen, 1, 1);
 
-        scaledWidth = unscaledWidth;
-        scaledHeight = unscaledHeight;
+        this.unscaledWidth = unscaledWidth;
+        this.unscaledHeight = unscaledHeight;
 
         this.stack = stack;
 
@@ -45,8 +46,8 @@ public class GUIItemStack extends GUIElement
     {
         super(screen, x, y, 1, 1);
 
-        this.scaledWidth = unscaledWidth;
-        this.scaledHeight = unscaledHeight;
+        this.unscaledWidth = unscaledWidth;
+        this.unscaledHeight = unscaledHeight;
 
         this.stack = stack;
 
@@ -75,12 +76,12 @@ public class GUIItemStack extends GUIElement
     @Override
     public GUIItemStack recalc(int subIndexChanged)
     {
-        width = scaledWidth / screen.width;
-        height = scaledHeight / screen.height;
+        width = unscaledWidth / screen.width;
+        height = unscaledHeight / screen.height;
 
-        //TODO this line is cancelling a scissor offset issue of unknown origin; offset = 1 - ()
-        //TODO I might've fixed the root issue and not need this line?
-//        width += (1 - scaledWidth) / screen.width;
+        //TODO this line is cancelling a scissor offset issue of unknown origin
+        //TODO I might've fixed the root issue and not need this line?  Test alignment sometime...
+//        width += (1 - unscaledWidth) / screen.width;
 
         if (parent != null)
         {
@@ -108,7 +109,12 @@ public class GUIItemStack extends GUIElement
 
         GlStateManager.enableTexture2D();
         ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
-        Minecraft.getMinecraft().getRenderItem().renderItemIntoGUI(stack, absolutePxX() / sr.getScaleFactor(), absolutePxY() / sr.getScaleFactor());
+
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(absolutePxX() / sr.getScaleFactor(), absolutePxY() / sr.getScaleFactor(), 0);
+        if (parent instanceof GUIPanZoomView) GlStateManager.scale(((GUIPanZoomView) parent).zoom, ((GUIPanZoomView) parent).zoom, 1);
+        Minecraft.getMinecraft().getRenderItem().renderItemIntoGUI(stack, 0, 0);
+        GlStateManager.popMatrix();
 
         Render.setProjectionMatrix(projection);
         Render.setModelViewMatrix(modelView);
