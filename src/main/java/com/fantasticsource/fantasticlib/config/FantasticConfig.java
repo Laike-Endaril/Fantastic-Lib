@@ -3,11 +3,13 @@ package com.fantasticsource.fantasticlib.config;
 import com.fantasticsource.fantasticlib.FantasticLib;
 import net.minecraftforge.common.config.Config;
 
-@Config(modid = FantasticLib.MODID)
+import static com.fantasticsource.fantasticlib.FantasticLib.MODID;
+
+@Config(modid = MODID)
 public class FantasticConfig
 {
     @Config.Name("Use Entity Render Fixer")
-    @Config.LangKey(FantasticLib.MODID + ".config.entityRenderFixer")
+    @Config.LangKey(MODID + ".config.entityRenderFixer")
     @Config.Comment(
             {
                     "If enabled, runs some code to reset certain openGL settings after each entity renders",
@@ -15,4 +17,8 @@ public class FantasticConfig
             })
     @Config.RequiresMcRestart
     public static boolean entityRenderFixer = false;
+
+    @Config.Name("GUI Settings")
+    @Config.LangKey(MODID + ".config.guiSettings")
+    public static GUIConfig guiSettings = new GUIConfig();
 }

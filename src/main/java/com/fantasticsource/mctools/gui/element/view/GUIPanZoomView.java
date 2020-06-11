@@ -1,13 +1,12 @@
 package com.fantasticsource.mctools.gui.element.view;
 
+import com.fantasticsource.fantasticlib.config.FantasticConfig;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import net.minecraft.client.renderer.GlStateManager;
 
 public class GUIPanZoomView extends GUIView
 {
-    private static final double PAN_RATE = 1.2, ZOOM_RATE = 1.2;
-
     public double viewX = 0, viewY = 0;
     protected double zoom = 1;
     public double panBorderSize = 0.1;
@@ -103,20 +102,20 @@ public class GUIPanZoomView extends GUIView
 
             if (mouseXPercent < panBorderSize)
             {
-                viewX -= viewW() * PAN_RATE * PAN_RATE * (panBorderSize - mouseXPercent) / panBorderSize;
+                viewX -= viewW() * FantasticConfig.guiSettings.panRate * FantasticConfig.guiSettings.panRate * (panBorderSize - mouseXPercent) / panBorderSize;
             }
             else if (mouseXPercent > 1 - panBorderSize)
             {
-                viewX += viewW() * PAN_RATE * PAN_RATE * (mouseXPercent - (1 - panBorderSize)) / panBorderSize;
+                viewX += viewW() * FantasticConfig.guiSettings.panRate * FantasticConfig.guiSettings.panRate * (mouseXPercent - (1 - panBorderSize)) / panBorderSize;
             }
 
             if (mouseYPercent < panBorderSize)
             {
-                viewY -= viewH() * PAN_RATE * PAN_RATE * (panBorderSize - mouseYPercent) / panBorderSize;
+                viewY -= viewH() * FantasticConfig.guiSettings.panRate * FantasticConfig.guiSettings.panRate * (panBorderSize - mouseYPercent) / panBorderSize;
             }
             else if (mouseYPercent > 1 - panBorderSize)
             {
-                viewY += viewH() * PAN_RATE * PAN_RATE * (mouseYPercent - (1 - panBorderSize)) / panBorderSize;
+                viewY += viewH() * FantasticConfig.guiSettings.panRate * FantasticConfig.guiSettings.panRate * (mouseYPercent - (1 - panBorderSize)) / panBorderSize;
             }
         }
     }
@@ -138,9 +137,9 @@ public class GUIPanZoomView extends GUIView
     {
         boolean result = super.mousePressed(button);
 
-        if (isMouseWithin() && button == 2)
+        if (isMouseWithin() && button == FantasticConfig.guiSettings.zoomResetButton)
         {
-            if (GUIScreen.isCtrlKeyDown())
+            if (GUIScreen.isCtrlKeyDown() != FantasticConfig.guiSettings.zoomFocusMouse)
             {
                 double portX = absoluteX(), portY = absoluteY(), portW = absoluteWidth(), portH = absoluteHeight();
                 double mouseRelX = mouseX() - portX, mouseRelY = mouseY() - portY;
@@ -179,27 +178,27 @@ public class GUIPanZoomView extends GUIView
         {
             if (delta > 0)
             {
-                if (GUIScreen.isCtrlKeyDown())
+                if (GUIScreen.isCtrlKeyDown() != FantasticConfig.guiSettings.zoomFocusMouse)
                 {
                     double portX = absoluteX(), portY = absoluteY(), portW = absoluteWidth(), portH = absoluteHeight();
                     double mouseRelX = mouseX() - portX, mouseRelY = mouseY() - portY;
                     double mouseXPercent = mouseRelX / portW, mouseYPercent = mouseRelY / portH;
 
-                    setZoom(zoom * ZOOM_RATE, mouseXPercent, mouseYPercent);
+                    setZoom(zoom * FantasticConfig.guiSettings.zoomRate, mouseXPercent, mouseYPercent);
                 }
-                else setZoom(zoom * ZOOM_RATE);
+                else setZoom(zoom * FantasticConfig.guiSettings.zoomRate);
             }
             else if (delta < 0)
             {
-                if (GUIScreen.isCtrlKeyDown())
+                if (GUIScreen.isCtrlKeyDown() != FantasticConfig.guiSettings.zoomFocusMouse)
                 {
                     double portX = absoluteX(), portY = absoluteY(), portW = absoluteWidth(), portH = absoluteHeight();
                     double mouseRelX = mouseX() - portX, mouseRelY = mouseY() - portY;
                     double mouseXPercent = mouseRelX / portW, mouseYPercent = mouseRelY / portH;
 
-                    setZoom(zoom / ZOOM_RATE, mouseXPercent, mouseYPercent);
+                    setZoom(zoom / FantasticConfig.guiSettings.zoomRate, mouseXPercent, mouseYPercent);
                 }
-                else setZoom(zoom / ZOOM_RATE);
+                else setZoom(zoom / FantasticConfig.guiSettings.zoomRate);
             }
         }
 
