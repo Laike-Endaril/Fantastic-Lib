@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.GlStateManager;
 
 public class GUIPanZoomView extends GUIView
 {
-    private static final double PAN_RATE = 1.5, ZOOM_RATE = 1.2;
+    private static final double PAN_RATE = 1.2, ZOOM_RATE = 1.2;
 
     public double viewX = 0, viewY = 0;
     protected double zoom = 1;
@@ -60,19 +60,29 @@ public class GUIPanZoomView extends GUIView
 
     public void focus(GUIElement child)
     {
-        if (!children.contains(child)) return;
-
-        viewX = child.x - viewW() * 0.5;
-        viewY = child.y - viewH() * 0.5;
+        while (!children.contains(child) && child.parent != this && child.parent != null)
+        {
+            child = child.parent;
+        }
+        if (children.contains(child))
+        {
+            viewX = child.x + child.width * 0.5 - viewW() * 0.5;
+            viewY = child.y + child.height * 0.5 - viewH() * 0.5;
+        }
     }
 
     public GUIPanZoomView setZoom(double zoom)
     {
-        viewX += viewW() * 0.5;
-        viewY += viewH() * 0.5;
+        return setZoom(zoom, 0.5, 0.5);
+    }
+
+    public GUIPanZoomView setZoom(double zoom, double originXPercent, double originYPercent)
+    {
+        viewX += viewW() * originXPercent;
+        viewY += viewH() * originYPercent;
         this.zoom = zoom;
-        viewX -= viewW() * 0.5;
-        viewY -= viewH() * 0.5;
+        viewX -= viewW() * originXPercent;
+        viewY -= viewH() * originYPercent;
 
         return this;
     }
@@ -89,7 +99,6 @@ public class GUIPanZoomView extends GUIView
         {
             double portX = absoluteX(), portY = absoluteY(), portW = absoluteWidth(), portH = absoluteHeight();
             double mouseRelX = mouseX() - portX, mouseRelY = mouseY() - portY;
-
             double mouseXPercent = mouseRelX / portW, mouseYPercent = mouseRelY / portH;
 
             if (mouseXPercent < panBorderSize)
@@ -129,9 +138,22 @@ public class GUIPanZoomView extends GUIView
     {
         boolean result = super.mousePressed(button);
 
-        if (button == 2)
+        if (isMouseWithin() && button == 2)
         {
-            setZoom(1);
+            if (GUIScreen.isCtrlKeyDown())
+            {
+                double portX = absoluteX(), portY = absoluteY(), portW = absoluteWidth(), portH = absoluteHeight();
+                double mouseRelX = mouseX() - portX, mouseRelY = mouseY() - portY;
+                double mouseXPercent = mouseRelX / portW, mouseYPercent = mouseRelY / portH;
+
+                double centerX = viewX + viewW() * mouseXPercent, centerY = viewY + viewH() * mouseYPercent;
+
+                setZoom(1);
+
+                viewX = centerX - viewW() * 0.5;
+                viewY = centerY - viewH() * 0.5;
+            }
+            else setZoom(1);
             result = true;
         }
 
@@ -155,8 +177,30 @@ public class GUIPanZoomView extends GUIView
     {
         if (isMouseWithin())
         {
-            if (delta > 0) setZoom(zoom * ZOOM_RATE);
-            else if (delta < 0) setZoom(zoom / ZOOM_RATE);
+            if (delta > 0)
+            {
+                if (GUIScreen.isCtrlKeyDown())
+                {
+                    double portX = absoluteX(), portY = absoluteY(), portW = absoluteWidth(), portH = absoluteHeight();
+                    double mouseRelX = mouseX() - portX, mouseRelY = mouseY() - portY;
+                    double mouseXPercent = mouseRelX / portW, mouseYPercent = mouseRelY / portH;
+
+                    setZoom(zoom * ZOOM_RATE, mouseXPercent, mouseYPercent);
+                }
+                else setZoom(zoom * ZOOM_RATE);
+            }
+            else if (delta < 0)
+            {
+                if (GUIScreen.isCtrlKeyDown())
+                {
+                    double portX = absoluteX(), portY = absoluteY(), portW = absoluteWidth(), portH = absoluteHeight();
+                    double mouseRelX = mouseX() - portX, mouseRelY = mouseY() - portY;
+                    double mouseXPercent = mouseRelX / portW, mouseYPercent = mouseRelY / portH;
+
+                    setZoom(zoom / ZOOM_RATE, mouseXPercent, mouseYPercent);
+                }
+                else setZoom(zoom / ZOOM_RATE);
+            }
         }
 
         super.mouseWheel(delta);
