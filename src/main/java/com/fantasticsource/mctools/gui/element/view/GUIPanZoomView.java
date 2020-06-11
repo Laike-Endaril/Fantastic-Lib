@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.GlStateManager;
 
 public class GUIPanZoomView extends GUIView
 {
-    private static final double PAN_RATE = 0.01, ZOOM_RATE = 2;
+    private static final double PAN_RATE = 1.5, ZOOM_RATE = 1.2;
 
     public double viewX = 0, viewY = 0;
     protected double zoom = 1;
@@ -94,20 +94,20 @@ public class GUIPanZoomView extends GUIView
 
             if (mouseXPercent < panBorderSize)
             {
-                viewX -= viewW() * PAN_RATE * (panBorderSize - mouseXPercent) / panBorderSize;
+                viewX -= viewW() * PAN_RATE * PAN_RATE * (panBorderSize - mouseXPercent) / panBorderSize;
             }
             else if (mouseXPercent > 1 - panBorderSize)
             {
-                viewX += viewW() * PAN_RATE * (mouseXPercent - (1 - panBorderSize)) / panBorderSize;
+                viewX += viewW() * PAN_RATE * PAN_RATE * (mouseXPercent - (1 - panBorderSize)) / panBorderSize;
             }
 
             if (mouseYPercent < panBorderSize)
             {
-                viewY -= viewH() * PAN_RATE * (panBorderSize - mouseYPercent) / panBorderSize;
+                viewY -= viewH() * PAN_RATE * PAN_RATE * (panBorderSize - mouseYPercent) / panBorderSize;
             }
             else if (mouseYPercent > 1 - panBorderSize)
             {
-                viewY += viewH() * PAN_RATE * (mouseYPercent - (1 - panBorderSize)) / panBorderSize;
+                viewY += viewH() * PAN_RATE * PAN_RATE * (mouseYPercent - (1 - panBorderSize)) / panBorderSize;
             }
         }
     }
