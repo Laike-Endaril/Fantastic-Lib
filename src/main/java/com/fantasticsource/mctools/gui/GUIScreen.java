@@ -73,6 +73,40 @@ public abstract class GUIScreen extends GuiScreen
         return activeColor.copy().setVF(0.75f * activeColor.vf());
     }
 
+
+    public void show()
+    {
+        if (Minecraft.getMinecraft().currentScreen instanceof GUIScreen) showStacked();
+        else showUnstacked();
+    }
+
+    public void showUnstacked()
+    {
+        Minecraft.getMinecraft().displayGuiScreen(this);
+    }
+
+    public void showStacked()
+    {
+        GuiScreen current = Minecraft.getMinecraft().currentScreen;
+        if (current instanceof GUIScreen) SCREEN_STACK.push(new ScreenEntry((GUIScreen) current, mouseX, mouseY));
+
+        ignoreClosure = true;
+        Minecraft.getMinecraft().displayGuiScreen(this);
+        ignoreClosure = false;
+    }
+
+
+    public static void show(GUIScreen screen)
+    {
+        if (Minecraft.getMinecraft().currentScreen instanceof GUIScreen) showStacked(screen);
+        else showUnstacked(screen);
+    }
+
+    public static void showUnstacked(GUIScreen screen)
+    {
+        Minecraft.getMinecraft().displayGuiScreen(screen);
+    }
+
     public static void showStacked(GUIScreen screen)
     {
         GuiScreen current = Minecraft.getMinecraft().currentScreen;
@@ -82,6 +116,7 @@ public abstract class GUIScreen extends GuiScreen
         Minecraft.getMinecraft().displayGuiScreen(screen);
         ignoreClosure = false;
     }
+
 
     public abstract String title();
 
