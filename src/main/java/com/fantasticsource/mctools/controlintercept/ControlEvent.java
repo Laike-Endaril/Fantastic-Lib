@@ -47,7 +47,7 @@ public class ControlEvent extends Event
     public String identifier = "";
     public EntityPlayerMP player = null;
 
-    protected ArrayList<String> serverQueue = new ArrayList<>();
+    protected ArrayList<String> queueToServer = new ArrayList<>();
     protected boolean cancelOriginal = false;
 
     protected ControlEvent(String name, KeyBinding binding, boolean state, Boolean lastState)
@@ -76,7 +76,7 @@ public class ControlEvent extends Event
             if (event.cancelOriginal) setKeyState(event.binding, event.lastState);
             else keybindStates.put(event.binding, event.state);
 
-            for (String identifier : event.serverQueue)
+            for (String identifier : event.queueToServer)
             {
                 event.identifier = identifier;
                 Network.WRAPPER.sendToServer(new Network.ControlEventPacket(event));
@@ -131,7 +131,7 @@ public class ControlEvent extends Event
     public void sendToServer(String identifier)
     {
         if (identifier == null || identifier.equals("")) throw new IllegalArgumentException("Identifier cannot be null or empty!");
-        serverQueue.add(identifier);
+        queueToServer.add(identifier);
     }
 
     public ControlEvent setPlayer(EntityPlayerMP player)
