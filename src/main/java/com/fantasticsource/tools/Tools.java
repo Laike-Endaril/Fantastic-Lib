@@ -19,6 +19,12 @@ public class Tools
     protected static PrintStream out = null, err = null;
 
 
+    public static long getLong(int upper, int lower)
+    {
+        return ((long) upper) | lower;
+    }
+
+
     public static <T> boolean contains(T[] array, T object)
     {
         for (T t : array) if (t.equals(object)) return true;
