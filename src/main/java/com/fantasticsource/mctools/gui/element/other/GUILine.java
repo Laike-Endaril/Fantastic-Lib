@@ -5,8 +5,10 @@ import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.renderer.GlStateManager;
+import org.lwjgl.opengl.GL11;
 
 import static org.lwjgl.opengl.GL11.GL_LINES;
+import static org.lwjgl.opengl.GL11.GL_SCISSOR_TEST;
 
 public class GUILine extends GUIElement
 {
@@ -48,6 +50,7 @@ public class GUILine extends GUIElement
 
         Color color = active ? activeColor : isMouseWithin() ? hoverColor : this.color;
 
+        GL11.glDisable(GL_SCISSOR_TEST);
         GlStateManager.glBegin(GL_LINES);
         GlStateManager.color(color.rf(), color.gf(), color.bf(), color.af());
         if (isDownRight)
@@ -61,6 +64,7 @@ public class GUILine extends GUIElement
             GlStateManager.glVertex3f(1, 0, 0);
         }
         GlStateManager.glEnd();
+        GL11.glEnable(GL_SCISSOR_TEST);
 
 
         drawChildren();

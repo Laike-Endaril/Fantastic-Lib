@@ -2,6 +2,7 @@ package com.fantasticsource.mctools.gui.screen;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.other.GUIGradient;
+import com.fantasticsource.mctools.gui.element.other.GUILine;
 import com.fantasticsource.mctools.gui.element.text.GUIText;
 import com.fantasticsource.mctools.gui.element.textured.GUIItemStack;
 import com.fantasticsource.mctools.gui.element.view.GUIPanZoomView;
@@ -44,10 +45,10 @@ public class TestGUI extends GUIScreen
                 GUIPanZoomView view = new GUIPanZoomView(this, 1, 1);
                 root.add(view);
 
-                view.add(new GUIItemStack(this, 0, 0, 16, 16, new ItemStack(Items.BOW)));
-                view.add(new GUIGradient(this, 0.5, 0.5, 0.3, 0.3, Color.GREEN));
-                view.add(new GUIGradient(this, 0.51, 0.51, 0.28, 0.28, Color.RED));
-                view.add(new GUIText(this, 0.50, 0.50, "Test"));
+                view.add(new GUILine(this, 0, 0, 1, 1, Color.WHITE));
+                view.add(new GUILine(this, 0, 1, 1, 0, Color.RED));
+                view.add(new GUILine(this, 0, 0, 1, 0, Color.GREEN));
+                view.add(new GUILine(this, 0, 0, 0, 1, Color.BLUE));
                 break;
         }
 
