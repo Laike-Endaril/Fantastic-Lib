@@ -60,8 +60,6 @@ public class GUIEllipse extends GUIElement
             cos = array[Tools.posMod(i + (array.length >> 2), array.length)];
             GlStateManager.glVertex3f(0.5f + (float) (cos * 0.5), 0.5f - (float) (sin * 0.5), 0);
         }
-
-
         GlStateManager.glEnd();
 
 
