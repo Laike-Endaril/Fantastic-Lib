@@ -2,7 +2,6 @@ package com.fantasticsource.mctools.gui.element.textured;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
-import com.fantasticsource.mctools.gui.element.view.GUIPanZoomView;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -15,9 +14,9 @@ import static org.lwjgl.opengl.GL11.GL_QUADS;
 
 public class GUIImage extends GUIElement
 {
-    private ResourceLocation texture;
-    private double unscaledWidth, unscaledHeight, u, v, uw, vh;
-    private Color color;
+    protected ResourceLocation texture;
+    protected double unscaledWidth, unscaledHeight, u, v, uw, vh;
+    protected Color color;
 
     public GUIImage(GUIScreen screen, double unscaledWidth, double unscaledHeight, ResourceLocation texture)
     {
