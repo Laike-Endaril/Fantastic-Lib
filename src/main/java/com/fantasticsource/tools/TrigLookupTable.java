@@ -1,13 +1,21 @@
 package com.fantasticsource.tools;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
 
 import static com.fantasticsource.tools.Tools.posMod;
 
 @SuppressWarnings("unused")
 public class TrigLookupTable
 {
+    protected static final LinkedHashMap<Integer, TrigLookupTable> TABLES = new LinkedHashMap<>();
+
     public static final TrigLookupTable TRIG_TABLE_1024 = new TrigLookupTable(1024);
+
+    static
+    {
+        TABLES.put(1024, TRIG_TABLE_1024);
+    }
 
     private double[] table, invtable;
 
@@ -30,6 +38,13 @@ public class TrigLookupTable
             invtable[i] = Math.asin(val);
         }
     }
+
+
+    public static TrigLookupTable getInstance(int granularity)
+    {
+        return TABLES.computeIfAbsent(granularity, o -> new TrigLookupTable(granularity));
+    }
+
 
     @SuppressWarnings("MismatchedReadAndWriteOfArray")
     public static void test()
@@ -138,7 +153,7 @@ public class TrigLookupTable
 
     public double cos(double theta)
     {
-        return sin(theta + Math.PI / 2);
+        return sin(theta + Math.PI * 0.5);
     }
 
     public double tan(double theta)
@@ -148,23 +163,23 @@ public class TrigLookupTable
 
     public double arcsin(double input)
     {
-        if (input < -1 || input > 1) throw new IndexOutOfBoundsException("arcsin() and arccos() can only take in from -1 to 1.  Input was " + input);
+        if (input < -1 || input > 1) throw new IllegalArgumentException("arcsin() and arccos() can only take in from -1 to 1.  Input was " + input);
 
-        int i = (int) Math.round(invtable.length * (input + 1) / 2);
-        if (i == invtable.length) return Math.PI / 2;
+        int i = (int) Math.round(invtable.length * (input + 1) * 0.5);
+        if (i == invtable.length) return Math.PI * 0.5;
         return invtable[i];
     }
 
     public double arccos(double input)
     {
-        return Math.PI / 2 - arcsin(input);
+        return Math.PI * 0.5 - arcsin(input);
     }
 
     public double arctan(double input)
     {
         if (input == 0) return 0;
-        if (input == Double.POSITIVE_INFINITY) return Math.PI / 2;
-        if (input == Double.NEGATIVE_INFINITY) return -Math.PI / 2;
+        if (input == Double.POSITIVE_INFINITY) return Math.PI * 0.5;
+        if (input == Double.NEGATIVE_INFINITY) return -Math.PI * 0.5;
         if (input > 0) //Quad 1
         {
             if (input < 1) return arcsin(input / Math.sqrt(1 + input * input));
@@ -219,8 +234,8 @@ public class TrigLookupTable
         }
         else
         {
-            if (y > 0) return Math.PI / 2;
-            else if (y < 0) return Math.PI * 3 / 2;
+            if (y > 0) return Math.PI * 0.5;
+            else if (y < 0) return Math.PI * 1.5;
             else return 0;
         }
     }

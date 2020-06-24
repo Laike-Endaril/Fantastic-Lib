@@ -1,15 +1,12 @@
 package com.fantasticsource.mctools.gui.screen;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
+import com.fantasticsource.mctools.gui.element.other.GUIEllipse;
 import com.fantasticsource.mctools.gui.element.other.GUIGradient;
 import com.fantasticsource.mctools.gui.element.other.GUILine;
-import com.fantasticsource.mctools.gui.element.text.GUIText;
-import com.fantasticsource.mctools.gui.element.textured.GUIItemStack;
 import com.fantasticsource.mctools.gui.element.view.GUIPanZoomView;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -45,6 +42,7 @@ public class TestGUI extends GUIScreen
                 GUIPanZoomView view = new GUIPanZoomView(this, 1, 1);
                 root.add(view);
 
+                view.add(new GUIEllipse(this, 0, 0, 1, 1, 64, Color.GRAY));
                 view.add(new GUILine(this, 0, 0, 1, 1, Color.WHITE));
                 view.add(new GUILine(this, 0, 1, 1, 0, Color.RED));
                 view.add(new GUILine(this, 0, 0, 1, 0, Color.GREEN));
