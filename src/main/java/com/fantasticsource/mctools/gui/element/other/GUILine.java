@@ -2,6 +2,7 @@ package com.fantasticsource.mctools.gui.element.other;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
+import com.fantasticsource.tools.Collision;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.renderer.GlStateManager;
@@ -12,6 +13,7 @@ import static org.lwjgl.opengl.GL11.GL_SCISSOR_TEST;
 
 public class GUILine extends GUIElement
 {
+    protected static final int TOLERANCE_PX = 5;
     protected Color color, hoverColor, activeColor;
     protected boolean isDownRight;
     protected float thickness;
@@ -80,6 +82,13 @@ public class GUILine extends GUIElement
         return y2;
     }
 
+
+    @Override
+    public boolean isWithin(double x, double y)
+    {
+        double[] nearest = isDownRight ? Collision.pointSegmentNearest(x, y, absoluteX(), absoluteY(), absoluteX() + absoluteWidth(), absoluteY() + absoluteHeight()) : Collision.pointSegmentNearest(x, y, absoluteX() + absoluteWidth(), absoluteY(), absoluteX(), absoluteY() + absoluteHeight());
+        return Tools.distanceSquared(nearest[0] * screen.pxWidth, nearest[1] * screen.pxHeight, x * screen.pxWidth, y * screen.pxHeight) < (thickness + TOLERANCE_PX) * (thickness + TOLERANCE_PX);
+    }
 
     @Override
     public void draw()
