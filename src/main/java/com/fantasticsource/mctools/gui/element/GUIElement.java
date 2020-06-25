@@ -239,7 +239,6 @@ public class GUIElement
 
     public final double absoluteX()
     {
-        //TODO move class-specific logic into said classes and have this method reference an overwritten method in them?
         if (parent == null) return x;
 
         if (parent instanceof GUIPanZoomView) return parent.absoluteX() + (x - ((GUIPanZoomView) parent).viewX) * ((GUIPanZoomView) parent).getZoom() * parent.absoluteWidth();
@@ -249,7 +248,6 @@ public class GUIElement
 
     public final double absoluteY()
     {
-        //TODO move class-specific logic into said classes and have this method reference an overwritten method in them?
         if (parent == null) return y;
 
         if (parent instanceof GUIPanZoomView) return parent.absoluteY() + (y - ((GUIPanZoomView) parent).viewY) * ((GUIPanZoomView) parent).getZoom() * parent.absoluteHeight();
@@ -259,10 +257,48 @@ public class GUIElement
         return parent.absoluteY() + y * parent.absoluteHeight();
     }
 
+    public final GUIElement setAbsoluteX(double absX)
+    {
+        if (parent == null)
+        {
+            x = absX;
+        }
+        else if (parent instanceof GUIPanZoomView)
+        {
+            x = (absX - parent.absoluteX()) / ((GUIPanZoomView) parent).getZoom() / parent.absoluteWidth() + ((GUIPanZoomView) parent).viewX;
+        }
+        else
+        {
+            x = (absX - parent.absoluteX()) / parent.absoluteWidth();
+        }
+
+        return this;
+    }
+
+    public final GUIElement setAbsoluteY(double absY)
+    {
+        if (parent == null)
+        {
+            y = absY;
+        }
+        else if (parent instanceof GUIPanZoomView)
+        {
+            y = (absY - parent.absoluteY()) / ((GUIPanZoomView) parent).getZoom() / parent.absoluteHeight() + ((GUIPanZoomView) parent).viewY;
+        }
+        else if (parent instanceof GUIScrollView)
+        {
+            y = (absY - parent.absoluteY()) / parent.absoluteHeight() + ((GUIScrollView) parent).top;
+        }
+        else
+        {
+            y = (absY - parent.absoluteY()) / parent.absoluteHeight();
+        }
+
+        return this;
+    }
+
     public final double absoluteWidth()
     {
-        //TODO move class-specific logic into said classes and have this method reference an overwritten method in them?
-
         if (parent == null) return width;
 
         if (parent instanceof GUIPanZoomView) return parent.absoluteWidth() * width * ((GUIPanZoomView) parent).getZoom();
@@ -272,8 +308,6 @@ public class GUIElement
 
     public final double absoluteHeight()
     {
-        //TODO move class-specific logic into said classes and have this method reference an overwritten method in them?
-
         if (parent == null) return height;
 
         if (parent instanceof GUIPanZoomView) return parent.absoluteHeight() * height * ((GUIPanZoomView) parent).getZoom();
