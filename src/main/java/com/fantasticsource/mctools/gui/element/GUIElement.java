@@ -51,6 +51,7 @@ public class GUIElement
     protected boolean active = false, externalDeactivation = false;
     private ArrayList<GUIElement> linkedMouseActivity = new ArrayList<>();
     private ArrayList<GUIElement> linkedMouseActivityReverse = new ArrayList<>();
+    protected double dragStartX, dragStartY;
 
 
     public GUIElement(GUIScreen screen, double width, double height)
@@ -172,6 +173,9 @@ public class GUIElement
 
     public boolean mousePressed(int button)
     {
+        dragStartX = x;
+        dragStartY = y;
+
         boolean result = false;
         if (button == 0 && isMouseWithin())
         {
@@ -189,7 +193,7 @@ public class GUIElement
         boolean result = false;
         if (button == 0)
         {
-            if (active && isMouseWithin())
+            if (active && isMouseWithin() && x == dragStartX && y == dragStartY)
             {
                 if (!MinecraftForge.EVENT_BUS.post(new GUILeftClickEvent(screen, this))) click();
                 result = true;
