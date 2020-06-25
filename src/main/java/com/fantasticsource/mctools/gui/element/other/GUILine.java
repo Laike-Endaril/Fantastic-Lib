@@ -15,6 +15,7 @@ public class GUILine extends GUIElement
     protected Color color, hoverColor, activeColor;
     protected boolean isDownRight;
     protected float thickness;
+    protected double x1, y1, x2, y2;
 
     public GUILine(GUIScreen screen, double x1, double y1, double x2, double y2, Color color)
     {
@@ -38,6 +39,11 @@ public class GUILine extends GUIElement
         isDownRight = (x1 < x2 == y1 < y2);
         setColor(color, hoverColor, activeColor);
         this.thickness = thickness;
+
+        this.x1 = x1;
+        this.y1 = y1;
+        this.x2 = x2;
+        this.y2 = y2;
     }
 
 
@@ -51,6 +57,27 @@ public class GUILine extends GUIElement
         this.color = color;
         this.hoverColor = hoverColor;
         this.activeColor = activeColor;
+    }
+
+
+    public double getX1()
+    {
+        return x1;
+    }
+
+    public double getY1()
+    {
+        return y1;
+    }
+
+    public double getX2()
+    {
+        return x2;
+    }
+
+    public double getY2()
+    {
+        return y2;
     }
 
 
