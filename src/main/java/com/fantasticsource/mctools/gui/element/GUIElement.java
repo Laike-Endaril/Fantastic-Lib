@@ -2,6 +2,7 @@ package com.fantasticsource.mctools.gui.element;
 
 import com.fantasticsource.mctools.gui.GUILeftClickEvent;
 import com.fantasticsource.mctools.gui.GUIScreen;
+import com.fantasticsource.mctools.gui.element.other.GUILine;
 import com.fantasticsource.mctools.gui.element.view.GUIPanZoomView;
 import com.fantasticsource.mctools.gui.element.view.GUIScrollView;
 import com.fantasticsource.mctools.gui.element.view.GUITooltipView;
@@ -112,10 +113,21 @@ public class GUIElement
         int[] lastScissor = new int[4];
         System.arraycopy(GUIScreen.currentScissor, 0, lastScissor, 0, 4);
 
-        GUIScreen.currentScissor[0] = Tools.max(GUIScreen.currentScissor[0], absolutePxX());
-        GUIScreen.currentScissor[1] = Tools.max(GUIScreen.currentScissor[1], absolutePxY());
-        GUIScreen.currentScissor[2] = Tools.min(GUIScreen.currentScissor[2], absolutePxX() + absolutePxWidth());
-        GUIScreen.currentScissor[3] = Tools.min(GUIScreen.currentScissor[3], absolutePxY() + absolutePxHeight());
+        if (this instanceof GUILine)
+        {
+            GUIScreen.currentScissor[0] = (int) Tools.max(GUIScreen.currentScissor[0], absolutePxX() - ((GUILine) this).thickness);
+            GUIScreen.currentScissor[1] = (int) Tools.max(GUIScreen.currentScissor[1], absolutePxY() - ((GUILine) this).thickness);
+            GUIScreen.currentScissor[2] = (int) Tools.min(GUIScreen.currentScissor[2], absolutePxX() + absolutePxWidth() + ((GUILine) this).thickness * 2);
+            GUIScreen.currentScissor[3] = (int) Tools.min(GUIScreen.currentScissor[3], absolutePxY() + absolutePxHeight() + ((GUILine) this).thickness * 2);
+        }
+        else
+        {
+            GUIScreen.currentScissor[0] = Tools.max(GUIScreen.currentScissor[0], absolutePxX());
+            GUIScreen.currentScissor[1] = Tools.max(GUIScreen.currentScissor[1], absolutePxY());
+            GUIScreen.currentScissor[2] = Tools.min(GUIScreen.currentScissor[2], absolutePxX() + absolutePxWidth());
+            GUIScreen.currentScissor[3] = Tools.min(GUIScreen.currentScissor[3], absolutePxY() + absolutePxHeight());
+        }
+
 
         //Attempt scissor
         if (!screen.scissor())

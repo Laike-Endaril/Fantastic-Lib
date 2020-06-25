@@ -6,17 +6,15 @@ import com.fantasticsource.tools.Collision;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.renderer.GlStateManager;
-import org.lwjgl.opengl.GL11;
 
 import static org.lwjgl.opengl.GL11.GL_LINES;
-import static org.lwjgl.opengl.GL11.GL_SCISSOR_TEST;
 
 public class GUILine extends GUIElement
 {
     protected static final int TOLERANCE_PX = 5;
     protected Color color, hoverColor, activeColor;
     protected boolean isDownRight;
-    protected float thickness;
+    public float thickness;
     protected double x1, y1, x2, y2;
 
     public GUILine(GUIScreen screen, double x1, double y1, double x2, double y2, Color color)
@@ -98,7 +96,6 @@ public class GUILine extends GUIElement
 
         Color color = active ? activeColor : isMouseWithin() ? hoverColor : this.color;
 
-        GL11.glDisable(GL_SCISSOR_TEST);
         GlStateManager.glLineWidth(thickness);
 
         GlStateManager.glBegin(GL_LINES);
@@ -116,7 +113,6 @@ public class GUILine extends GUIElement
         GlStateManager.glEnd();
 
         GlStateManager.glLineWidth(1);
-        GL11.glEnable(GL_SCISSOR_TEST);
 
 
         drawChildren();

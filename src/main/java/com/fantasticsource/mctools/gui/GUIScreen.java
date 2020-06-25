@@ -159,7 +159,7 @@ public abstract class GUIScreen extends GuiScreen
     public boolean scissor()
     {
         int w = currentScissor[2] - currentScissor[0], h = currentScissor[3] - currentScissor[1];
-        if (w < 0 || h < 0) return false;
+        if (w < 1 || h < 1) return false;
 
         GL11.glScissor(currentScissor[0], pxHeight - currentScissor[3], w, h);
         return true;
