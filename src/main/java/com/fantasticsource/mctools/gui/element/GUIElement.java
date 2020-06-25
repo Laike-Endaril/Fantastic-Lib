@@ -47,7 +47,7 @@ public class GUIElement
     public boolean autoplace = false;
     protected double autoX = 0, autoY = 0, furthestX = 0, furthestY = 0;
     protected byte subElementAutoplaceMethod;
-    protected GUIScreen screen;
+    public GUIScreen screen;
     protected boolean active = false, externalDeactivation = false;
     private ArrayList<GUIElement> linkedMouseActivity = new ArrayList<>();
     private ArrayList<GUIElement> linkedMouseActivityReverse = new ArrayList<>();
