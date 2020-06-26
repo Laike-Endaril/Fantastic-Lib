@@ -4,6 +4,8 @@ import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.other.GUIEllipse;
 import com.fantasticsource.mctools.gui.element.other.GUIGradient;
 import com.fantasticsource.mctools.gui.element.other.GUILine;
+import com.fantasticsource.mctools.gui.element.text.GUIFadingText;
+import com.fantasticsource.mctools.gui.element.text.GUIText;
 import com.fantasticsource.mctools.gui.element.view.GUIPanZoomView;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
@@ -47,6 +49,7 @@ public class TestGUI extends GUIScreen
                 view.add(new GUILine(this, 0, 1, 1, 0, Color.RED));
                 view.add(new GUILine(this, 0, 0, 1, 0, Color.GREEN));
                 view.add(new GUILine(this, 0, 0, 0, 1, Color.BLUE));
+                view.add(new GUIFadingText(this, 0, 0, "Test", 180, 240, Color.WHITE.copy().setAF(0.3f)));
                 break;
         }
 

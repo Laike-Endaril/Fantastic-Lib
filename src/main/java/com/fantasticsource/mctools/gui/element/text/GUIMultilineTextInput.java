@@ -93,22 +93,26 @@ public class GUIMultilineTextInput extends GUITextInput
         //Actual text
         if (text.length() > 0)
         {
-            GlStateManager.enableTexture2D();
-
-            GlStateManager.pushMatrix();
-            GlStateManager.scale(adjustedScale / absolutePxWidth(), adjustedScale / absolutePxHeight(), 1);
-
             Color c = active ? activeColor : isMouseWithin() ? hoverColor : color;
-            int yy = 0;
-            for (String line : lines)
+            int mcColor = (c.color() >>> 8) | c.a() << 24;
+            if ((mcColor & -67108864) != 0)
             {
-                FONT_RENDERER.drawString(line, 1, yy, (c.color() >> 8) | c.a() << 24, false);
-                yy += FONT_RENDERER.FONT_HEIGHT;
+                GlStateManager.enableTexture2D();
+
+                GlStateManager.pushMatrix();
+                GlStateManager.scale(adjustedScale / absolutePxWidth(), adjustedScale / absolutePxHeight(), 1);
+
+                int yy = 0;
+                for (String line : lines)
+                {
+                    FONT_RENDERER.drawString(line, 1, yy, mcColor, false);
+                    yy += FONT_RENDERER.FONT_HEIGHT;
+                }
+
+                GlStateManager.popMatrix();
+
+                GlStateManager.disableTexture2D();
             }
-
-            GlStateManager.popMatrix();
-
-            GlStateManager.disableTexture2D();
         }
 
 

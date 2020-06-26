@@ -255,6 +255,11 @@ public class GUIText extends GUIElement
     @Override
     public void draw()
     {
+        Color c = active ? activeColor : isMouseWithin() ? hoverColor : color;
+        int mcColor = (c.color() >>> 8) | c.a() << 24;
+        if ((mcColor & -67108864) == 0) return;
+
+
         GlStateManager.enableTexture2D();
 
         GlStateManager.pushMatrix();
@@ -262,11 +267,10 @@ public class GUIText extends GUIElement
         if (parent instanceof GUIPanZoomView) adjustedScale *= ((GUIPanZoomView) parent).getZoom();
         GlStateManager.scale(adjustedScale / absolutePxWidth(), adjustedScale / absolutePxHeight(), 1);
 
-        Color c = active ? activeColor : isMouseWithin() ? hoverColor : color;
         int yy = 0;
         for (String line : lines)
         {
-            FONT_RENDERER.drawString(line, 0, yy, (c.color() >> 8) | c.a() << 24, false);
+            FONT_RENDERER.drawString(line, 0, yy, mcColor, false);
             yy += FONT_RENDERER.FONT_HEIGHT;
         }
 

@@ -205,7 +205,7 @@ public class Tools
         while (n != 1)
         {
             if (n % 2 != 0) return false;
-            n = n >> 1;
+            n = n >>> 1;
         }
 
         return true;
@@ -614,21 +614,21 @@ public class Tools
 
     public static void insertBytes(byte[] bytes, int index, short value)
     {
-        bytes[index] = (byte) (value >> 8);
+        bytes[index] = (byte) (value >>> 8);
         bytes[index + 1] = (byte) value;
     }
 
     public static void insertBytes(byte[] bytes, int index, char value)
     {
-        bytes[index] = (byte) (value >> 8);
+        bytes[index] = (byte) (value >>> 8);
         bytes[index + 1] = (byte) value;
     }
 
     public static void insertBytes(byte[] bytes, int index, int value)
     {
-        bytes[index] = (byte) (value >> 24);
-        bytes[index + 1] = (byte) (value >> 16);
-        bytes[index + 2] = (byte) (value >> 8);
+        bytes[index] = (byte) (value >>> 24);
+        bytes[index + 1] = (byte) (value >>> 16);
+        bytes[index + 2] = (byte) (value >>> 8);
         bytes[index + 3] = (byte) value;
     }
 
@@ -639,13 +639,13 @@ public class Tools
 
     public static void insertBytes(byte[] bytes, int index, long value)
     {
-        bytes[index] = (byte) (value >> 56);
-        bytes[index + 1] = (byte) (value >> 48);
-        bytes[index + 2] = (byte) (value >> 40);
-        bytes[index + 3] = (byte) (value >> 32);
-        bytes[index + 4] = (byte) (value >> 24);
-        bytes[index + 5] = (byte) (value >> 16);
-        bytes[index + 6] = (byte) (value >> 8);
+        bytes[index] = (byte) (value >>> 56);
+        bytes[index + 1] = (byte) (value >>> 48);
+        bytes[index + 2] = (byte) (value >>> 40);
+        bytes[index + 3] = (byte) (value >>> 32);
+        bytes[index + 4] = (byte) (value >>> 24);
+        bytes[index + 5] = (byte) (value >>> 16);
+        bytes[index + 6] = (byte) (value >>> 8);
         bytes[index + 7] = (byte) value;
     }
 

@@ -17,22 +17,25 @@ public class OutlinedFontRenderer
         x += 1;
         y += 1;
 
-        int c = (shadowColor.color() >> 8) | ((shadowColor.color() & 0xFF) << 24);
-        FR.drawString(text, x - 1, y, c, false);
-        FR.drawString(text, x + 1, y, c, false);
-        FR.drawString(text, x, y - 1, c, false);
-        FR.drawString(text, x, y + 1, c, false);
-
-        if (Compat.smoothfont)
+        int c = (shadowColor.color() >>> 8) | ((shadowColor.color() & 0xFF) << 24);
+        if ((c & -67108864) != 0)
         {
-            FR.drawString(text, x + 0.5f, y + 0.5f, c, false);
-            FR.drawString(text, x + 0.5f, y - 0.5f, c, false);
-            FR.drawString(text, x - 0.5f, y + 0.5f, c, false);
-            FR.drawString(text, x - 0.5f, y - 0.5f, c, false);
+            FR.drawString(text, x - 1, y, c, false);
+            FR.drawString(text, x + 1, y, c, false);
+            FR.drawString(text, x, y - 1, c, false);
+            FR.drawString(text, x, y + 1, c, false);
+
+            if (Compat.smoothfont)
+            {
+                FR.drawString(text, x + 0.5f, y + 0.5f, c, false);
+                FR.drawString(text, x + 0.5f, y - 0.5f, c, false);
+                FR.drawString(text, x - 0.5f, y + 0.5f, c, false);
+                FR.drawString(text, x - 0.5f, y - 0.5f, c, false);
+            }
         }
 
-        c = (color.color() >> 8) | ((color.color() & 0xFF) << 24);
-        FR.drawString(text, x, y, c, false);
+        c = (color.color() >>> 8) | ((color.color() & 0xFF) << 24);
+        if ((c & -67108864) != 0) FR.drawString(text, x, y, c, false);
     }
 
     public static int getStringWidth(String text)

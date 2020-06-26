@@ -73,7 +73,7 @@ public class MonoASCIIFontRenderer
     private static void drawChar(char c, BufferBuilder bufferBuilder, double left, double top, int r, int g, int b, int a)
     {
         double u = (double) (c % 16) * CHAR_UV;
-        double v = (double) (c >> 4) * CHAR_UV;
+        double v = (double) (c >>> 4) * CHAR_UV;
 
         bufferBuilder.pos(left, top, 0).tex(u, v).lightmap(15728880, 15728880).color(r, g, b, a).endVertex();
         bufferBuilder.pos(left, top + CHAR_HEIGHT, 0).tex(u, v + CHAR_V_TO_BOTTOM).lightmap(15728880, 15728880).color(r, g, b, a).endVertex();

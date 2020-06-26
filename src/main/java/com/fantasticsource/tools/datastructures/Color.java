@@ -29,9 +29,9 @@ public class Color
     {
         intValue = color;
 
-        r = (intValue >> 24) & 0xff;
-        g = (intValue >> 16) & 0xff;
-        b = (intValue >> 8) & 0xff;
+        r = (intValue >>> 24) & 0xff;
+        g = (intValue >>> 16) & 0xff;
+        b = (intValue >>> 8) & 0xff;
         a = intValue & 0xff;
 
         rf = (float) r / 255;
@@ -48,9 +48,9 @@ public class Color
 
         intValue = color;
 
-        r = (intValue >> 24) & 0xff;
-        g = (intValue >> 16) & 0xff;
-        b = (intValue >> 8) & 0xff;
+        r = (intValue >>> 24) & 0xff;
+        g = (intValue >>> 16) & 0xff;
+        b = (intValue >>> 8) & 0xff;
         a = intValue & 0xff;
 
         rf = (float) r / 255;
@@ -138,9 +138,9 @@ public class Color
 
         intValue = Tools.parseHexInt(hex);
 
-        r = (intValue >> 24) & 0xff;
-        g = (intValue >> 16) & 0xff;
-        b = (intValue >> 8) & 0xff;
+        r = (intValue >>> 24) & 0xff;
+        g = (intValue >>> 16) & 0xff;
+        b = (intValue >>> 8) & 0xff;
         a = intValue & 0xff;
 
         rf = (float) r / 255;
@@ -157,9 +157,9 @@ public class Color
 
         intValue = Tools.parseHexInt(hex);
 
-        r = (intValue >> 24) & 0xff;
-        g = (intValue >> 16) & 0xff;
-        b = (intValue >> 8) & 0xff;
+        r = (intValue >>> 24) & 0xff;
+        g = (intValue >>> 16) & 0xff;
+        b = (intValue >>> 8) & 0xff;
         a = intValue & 0xff;
 
         rf = (float) r / 255;
@@ -265,8 +265,8 @@ public class Color
 
     public Color setColorNoAlpha(int color)
     {
-        r = (color >> 16) & 0xff;
-        g = (color >> 8) & 0xff;
+        r = (color >>> 16) & 0xff;
+        g = (color >>> 8) & 0xff;
         b = color & 0xff;
         a = 255;
 
@@ -286,9 +286,9 @@ public class Color
     {
         intValue = color;
 
-        r = (intValue >> 24) & 0xff;
-        g = (intValue >> 16) & 0xff;
-        b = (intValue >> 8) & 0xff;
+        r = (intValue >>> 24) & 0xff;
+        g = (intValue >>> 16) & 0xff;
+        b = (intValue >>> 8) & 0xff;
         a = intValue & 0xff;
 
         rf = (float) r / 255;
@@ -383,9 +383,9 @@ public class Color
 
         intValue = Tools.parseHexInt(hex);
 
-        r = (intValue >> 24) & 0xff;
-        g = (intValue >> 16) & 0xff;
-        b = (intValue >> 8) & 0xff;
+        r = (intValue >>> 24) & 0xff;
+        g = (intValue >>> 16) & 0xff;
+        b = (intValue >>> 8) & 0xff;
         a = intValue & 0xff;
 
         rf = (float) r / 255;
@@ -403,9 +403,9 @@ public class Color
 
         intValue = Tools.parseHexInt(hex);
 
-        r = (intValue >> 24) & 0xff;
-        g = (intValue >> 16) & 0xff;
-        b = (intValue >> 8) & 0xff;
+        r = (intValue >>> 24) & 0xff;
+        g = (intValue >>> 16) & 0xff;
+        b = (intValue >>> 8) & 0xff;
         a = intValue & 0xff;
 
         rf = (float) r / 255;
@@ -424,7 +424,7 @@ public class Color
 
     public int toARGB()
     {
-        return (intValue >> 8) | (a << 24);
+        return (intValue >>> 8) | (a << 24);
     }
 
     public int r()

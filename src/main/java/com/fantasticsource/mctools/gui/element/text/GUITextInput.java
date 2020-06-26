@@ -1275,18 +1275,22 @@ public class GUITextInput extends GUIText
         //Actual text
         if (text.length() > 0)
         {
-            GlStateManager.enableTexture2D();
-
-            GlStateManager.pushMatrix();
-            GlStateManager.scale(adjustedScale / absolutePxWidth(), adjustedScale / absolutePxHeight(), 1);
-
             Color c = active ? activeColor : isMouseWithin() ? hoverColor : color;
-            if (parent instanceof CodeInput) MonoASCIIFontRenderer.draw(text, 0, 0, c, BLACK);
-            else FONT_RENDERER.drawString(text, 1, 0, (c.color() >> 8) | c.a() << 24, false);
+            int mcColor = (c.color() >>> 8) | c.a() << 24;
+            if ((mcColor & -67108864) != 0)
+            {
+                GlStateManager.enableTexture2D();
 
-            GlStateManager.popMatrix();
+                GlStateManager.pushMatrix();
+                GlStateManager.scale(adjustedScale / absolutePxWidth(), adjustedScale / absolutePxHeight(), 1);
 
-            GlStateManager.disableTexture2D();
+                if (parent instanceof CodeInput) MonoASCIIFontRenderer.draw(text, 0, 0, c, BLACK);
+                else FONT_RENDERER.drawString(text, 1, 0, mcColor, false);
+
+                GlStateManager.popMatrix();
+
+                GlStateManager.disableTexture2D();
+            }
         }
 
 
