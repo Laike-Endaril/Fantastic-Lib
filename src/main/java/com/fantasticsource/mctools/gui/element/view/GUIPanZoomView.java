@@ -49,12 +49,12 @@ public class GUIPanZoomView extends GUIView
 
     public int viewPxX()
     {
-        return (int) Math.round(viewX * screen.pxWidth);
+        return (int) Math.round(viewX * absolutePxWidth());
     }
 
     public int viewPxY()
     {
-        return (int) Math.round(viewY * screen.pxHeight);
+        return (int) Math.round(viewY * absolutePxHeight());
     }
 
     public int viewPxW()
