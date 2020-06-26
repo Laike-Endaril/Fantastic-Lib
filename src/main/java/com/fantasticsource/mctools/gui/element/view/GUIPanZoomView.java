@@ -47,6 +47,16 @@ public class GUIPanZoomView extends GUIView
         return absoluteHeight() / zoom;
     }
 
+    public int viewPxX()
+    {
+        return (int) Math.round(viewX * screen.pxWidth);
+    }
+
+    public int viewPxY()
+    {
+        return (int) Math.round(viewY * screen.pxHeight);
+    }
+
     public int viewPxW()
     {
         return (int) Math.round(viewW() * screen.pxWidth);
