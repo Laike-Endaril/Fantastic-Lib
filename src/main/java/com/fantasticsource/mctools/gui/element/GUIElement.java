@@ -571,9 +571,12 @@ public class GUIElement
         if (element != null)
         {
             if (element.parent == this) element.parent = null;
-            recalc(Tools.max(0, index - 1));
+
+            recalc(0);
 
             for (Predicate<GUIElement> action : onRemoveChildActions) action.test(element);
+
+            recalc(0);
         }
     }
 

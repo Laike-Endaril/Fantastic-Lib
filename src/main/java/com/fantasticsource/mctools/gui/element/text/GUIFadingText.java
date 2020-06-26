@@ -83,15 +83,6 @@ public class GUIFadingText extends GUIText
 
 
     @Override
-    protected void tick()
-    {
-        if (++age >= endFadeTicks) parent.remove(this);
-
-        super.tick();
-    }
-
-
-    @Override
     public void draw()
     {
         Color c = (active ? activeColor : isMouseWithin() ? hoverColor : color).copy();
@@ -118,5 +109,8 @@ public class GUIFadingText extends GUIText
 
 
         drawChildren();
+
+
+        if (++age >= endFadeTicks) parent.remove(this);
     }
 }
