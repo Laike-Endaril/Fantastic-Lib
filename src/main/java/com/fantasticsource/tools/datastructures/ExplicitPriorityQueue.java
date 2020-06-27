@@ -1,5 +1,6 @@
 package com.fantasticsource.tools.datastructures;
 
+import java.util.Arrays;
 import java.util.PriorityQueue;
 import java.util.function.Predicate;
 
@@ -46,9 +47,23 @@ public class ExplicitPriorityQueue<T>
         return result == null ? null : result.object;
     }
 
-    public Entry<T>[] toArray()
+    public Object[] toArray()
     {
-        return (Entry<T>[]) queue.toArray();
+        Object[] result = new Object[queue.size()];
+        int i = 0;
+        for (Entry entry : queue.toArray(new Entry[0])) result[i++] = entry.object;
+
+        return result;
+    }
+
+    public T[] toArray(T[] a)
+    {
+        final int size = this.size();
+        if (a.length < size)
+            // Make a new array of a's runtime type, but my contents:
+            return (T[]) Arrays.copyOf(toArray(), size, a.getClass());
+        System.arraycopy(toArray(), 0, a, 0, size);
+        return a;
     }
 
     public void clear()

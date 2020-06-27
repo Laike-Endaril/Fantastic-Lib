@@ -485,7 +485,7 @@ public class MCTools
             }
         }
 
-        return queue.toArray();
+        return queue.toArray(new Entity[0]);
     }
 
 
