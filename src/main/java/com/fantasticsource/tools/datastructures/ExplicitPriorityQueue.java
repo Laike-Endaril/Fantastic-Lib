@@ -24,6 +24,11 @@ public class ExplicitPriorityQueue<T>
         queue.add(new Entry(object, priority));
     }
 
+    public void removeAll(T object)
+    {
+        queue.removeIf(e -> e.object == object);
+    }
+
     public void removeIf(Predicate<Entry> predicate)
     {
         queue.removeIf(predicate);
