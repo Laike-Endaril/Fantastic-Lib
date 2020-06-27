@@ -60,9 +60,30 @@ public class ExplicitPriorityQueue<T>
     {
         final int size = this.size();
         if (a.length < size)
+        {
             // Make a new array of a's runtime type, but my contents:
             return (T[]) Arrays.copyOf(toArray(), size, a.getClass());
+        }
+
         System.arraycopy(toArray(), 0, a, 0, size);
+        return a;
+    }
+
+    public Entry[] toEntryArray()
+    {
+        return queue.toArray(new Entry[0]);
+    }
+
+    public Entry<T>[] toEntryArray(Entry<T>[] a)
+    {
+        final int size = this.size();
+        if (a.length < size)
+        {
+            // Make a new array of a's runtime type, but my contents:
+            return (Entry<T>[]) Arrays.copyOf(toEntryArray(), size, a.getClass());
+        }
+
+        System.arraycopy(toEntryArray(), 0, a, 0, size);
         return a;
     }
 
