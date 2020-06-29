@@ -49,7 +49,7 @@ public class GUIElement
     protected double autoX = 0, autoY = 0, furthestX = 0, furthestY = 0;
     protected byte subElementAutoplaceMethod;
     public GUIScreen screen;
-    protected boolean active = false, externalDeactivation = false;
+    protected boolean active = false, externalDeactivation = false, useParentScissor = false;
     private ArrayList<GUIElement> linkedMouseActivity = new ArrayList<>();
     private ArrayList<GUIElement> linkedMouseActivityReverse = new ArrayList<>();
     protected double dragStartX, dragStartY;
@@ -83,6 +83,13 @@ public class GUIElement
     }
 
 
+    public GUIElement useParentScissor()
+    {
+        useParentScissor = true;
+        return this;
+    }
+
+
     public GUIElement setTooltip(String tooltip)
     {
         if (tooltip == null || tooltip.trim().equals(""))
@@ -113,19 +120,22 @@ public class GUIElement
         int[] lastScissor = new int[4];
         System.arraycopy(GUIScreen.currentScissor, 0, lastScissor, 0, 4);
 
-        if (this instanceof GUILine)
+        if (!useParentScissor)
         {
-            GUIScreen.currentScissor[0] = (int) Tools.max(GUIScreen.currentScissor[0], absolutePxX() - ((GUILine) this).thickness);
-            GUIScreen.currentScissor[1] = (int) Tools.max(GUIScreen.currentScissor[1], absolutePxY() - ((GUILine) this).thickness);
-            GUIScreen.currentScissor[2] = (int) Tools.min(GUIScreen.currentScissor[2], absolutePxX() + absolutePxWidth() + ((GUILine) this).thickness * 2);
-            GUIScreen.currentScissor[3] = (int) Tools.min(GUIScreen.currentScissor[3], absolutePxY() + absolutePxHeight() + ((GUILine) this).thickness * 2);
-        }
-        else
-        {
-            GUIScreen.currentScissor[0] = Tools.max(GUIScreen.currentScissor[0], absolutePxX());
-            GUIScreen.currentScissor[1] = Tools.max(GUIScreen.currentScissor[1], absolutePxY());
-            GUIScreen.currentScissor[2] = Tools.min(GUIScreen.currentScissor[2], absolutePxX() + absolutePxWidth());
-            GUIScreen.currentScissor[3] = Tools.min(GUIScreen.currentScissor[3], absolutePxY() + absolutePxHeight());
+            if (this instanceof GUILine)
+            {
+                GUIScreen.currentScissor[0] = (int) Tools.max(GUIScreen.currentScissor[0], absolutePxX() - ((GUILine) this).thickness);
+                GUIScreen.currentScissor[1] = (int) Tools.max(GUIScreen.currentScissor[1], absolutePxY() - ((GUILine) this).thickness);
+                GUIScreen.currentScissor[2] = (int) Tools.min(GUIScreen.currentScissor[2], absolutePxX() + absolutePxWidth() + ((GUILine) this).thickness * 2);
+                GUIScreen.currentScissor[3] = (int) Tools.min(GUIScreen.currentScissor[3], absolutePxY() + absolutePxHeight() + ((GUILine) this).thickness * 2);
+            }
+            else
+            {
+                GUIScreen.currentScissor[0] = Tools.max(GUIScreen.currentScissor[0], absolutePxX());
+                GUIScreen.currentScissor[1] = Tools.max(GUIScreen.currentScissor[1], absolutePxY());
+                GUIScreen.currentScissor[2] = Tools.min(GUIScreen.currentScissor[2], absolutePxX() + absolutePxWidth());
+                GUIScreen.currentScissor[3] = Tools.min(GUIScreen.currentScissor[3], absolutePxY() + absolutePxHeight());
+            }
         }
 
 
