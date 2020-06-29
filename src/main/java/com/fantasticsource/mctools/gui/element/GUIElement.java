@@ -83,9 +83,9 @@ public class GUIElement
     }
 
 
-    public GUIElement useParentScissor()
+    public GUIElement useParentScissor(boolean useParentScissor)
     {
-        useParentScissor = true;
+        this.useParentScissor = useParentScissor;
         return this;
     }
 
