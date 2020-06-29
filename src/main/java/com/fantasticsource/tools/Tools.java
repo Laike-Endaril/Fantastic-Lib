@@ -26,7 +26,7 @@ public class Tools
 
     public static boolean isA(Class c1, Class c2)
     {
-        return c2 != null && c2.isAssignableFrom(c1);
+        return c1 != null && c2 != null && c2.isAssignableFrom(c1);
     }
 
 
