@@ -19,6 +19,17 @@ public class Tools
     protected static PrintStream out = null, err = null;
 
 
+    public static boolean areRelated(Class c1, Class c2)
+    {
+        return isA(c1, c2) || isA(c2, c1);
+    }
+
+    public static boolean isA(Class c1, Class c2)
+    {
+        return c2 != null && c2.isAssignableFrom(c1);
+    }
+
+
     public static long getLong(int upper, int lower)
     {
         return (((long) upper) << 32) | lower;
