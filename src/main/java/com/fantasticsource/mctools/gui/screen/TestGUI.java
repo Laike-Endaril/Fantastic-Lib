@@ -5,7 +5,6 @@ import com.fantasticsource.mctools.gui.element.other.GUIEllipse;
 import com.fantasticsource.mctools.gui.element.other.GUIGradient;
 import com.fantasticsource.mctools.gui.element.other.GUILine;
 import com.fantasticsource.mctools.gui.element.text.GUIFadingText;
-import com.fantasticsource.mctools.gui.element.text.GUIText;
 import com.fantasticsource.mctools.gui.element.view.GUIPanZoomView;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
