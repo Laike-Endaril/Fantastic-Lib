@@ -24,7 +24,7 @@ public class GUIConfig
     @Config.RangeInt(min = 1)
     public int zoomResetButton = 2;
 
-    @Config.Name("Pan (Mouse Button")
+    @Config.Name("Pan (Mouse Button)")
     @Config.LangKey(MODID + ".config.panButton")
     @Config.Comment(
             {
