@@ -4,6 +4,7 @@ import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -17,6 +18,7 @@ public class GUIImage extends GUIElement
     protected ResourceLocation texture;
     protected double unscaledWidth, unscaledHeight, u, v, uw, vh;
     protected Color color;
+    protected boolean ignoreMCGUIScale = false;
 
     public GUIImage(GUIScreen screen, double unscaledWidth, double unscaledHeight, ResourceLocation texture)
     {
@@ -84,11 +86,26 @@ public class GUIImage extends GUIElement
     }
 
 
+    public GUIImage ignoreMCGUIScale(boolean ignoreMCGUIScale)
+    {
+        this.ignoreMCGUIScale = ignoreMCGUIScale;
+        recalc(0);
+        return this;
+    }
+
+
     @Override
     public GUIImage recalc(int subIndexChanged)
     {
         width = unscaledWidth / screen.width;
         height = unscaledHeight / screen.height;
+
+        if (ignoreMCGUIScale)
+        {
+            int mcScale = new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
+            width /= mcScale;
+            height /= mcScale;
+        }
 
         //TODO this line is cancelling a scissor offset issue of unknown origin
         //TODO I might've fixed the root issue and not need this line?  Test alignment sometime...
