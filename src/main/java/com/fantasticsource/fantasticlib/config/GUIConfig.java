@@ -21,17 +21,17 @@ public class GUIConfig
             {
                     "Which mouse button resets the zoom level in a zoomable GUI view",
             })
-    @Config.RangeInt(min = 2)
+    @Config.RangeInt(min = 1)
     public int zoomResetButton = 2;
 
-    @Config.Name("Pan Rate")
-    @Config.LangKey(MODID + ".config.panRate")
+    @Config.Name("Pan (Mouse Button")
+    @Config.LangKey(MODID + ".config.panButton")
     @Config.Comment(
             {
-                    "How fast pannable views pan",
+                    "Which mouse button pans the view in a pannable GUI view (hold and drag)",
             })
-    @Config.RangeDouble(min = 0.1, max = 0.5)
-    public double panRate = 0.2;
+    @Config.RangeInt(min = 1)
+    public int panButton = 2;
 
     @Config.Name("Zoom Rate")
     @Config.LangKey(MODID + ".config.zoomRate")

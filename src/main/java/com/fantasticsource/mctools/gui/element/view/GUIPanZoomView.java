@@ -9,7 +9,8 @@ public class GUIPanZoomView extends GUIView
 {
     public double viewX = 0, viewY = 0;
     protected double zoom = 1;
-    public double panBorderSize = 0.1;
+    protected boolean panning = false;
+    protected double zoomResetX = Double.MAX_VALUE, zoomResetY = Double.MAX_VALUE, panX = Double.MAX_VALUE, panY = Double.MAX_VALUE;
 
     public GUIPanZoomView(GUIScreen screen, double width, double height, GUIElement... subElements)
     {
@@ -102,35 +103,6 @@ public class GUIPanZoomView extends GUIView
     }
 
     @Override
-    public void tick()
-    {
-        if (isMouseWithin())
-        {
-            double portX = absoluteX(), portY = absoluteY(), portW = absoluteWidth(), portH = absoluteHeight();
-            double mouseRelX = mouseX() - portX, mouseRelY = mouseY() - portY;
-            double mouseXPercent = mouseRelX / portW, mouseYPercent = mouseRelY / portH;
-
-            if (mouseXPercent < panBorderSize)
-            {
-                viewX -= viewW() * FantasticConfig.guiSettings.panRate * FantasticConfig.guiSettings.panRate * (panBorderSize - mouseXPercent) / panBorderSize;
-            }
-            else if (mouseXPercent > 1 - panBorderSize)
-            {
-                viewX += viewW() * FantasticConfig.guiSettings.panRate * FantasticConfig.guiSettings.panRate * (mouseXPercent - (1 - panBorderSize)) / panBorderSize;
-            }
-
-            if (mouseYPercent < panBorderSize)
-            {
-                viewY -= viewH() * FantasticConfig.guiSettings.panRate * FantasticConfig.guiSettings.panRate * (panBorderSize - mouseYPercent) / panBorderSize;
-            }
-            else if (mouseYPercent > 1 - panBorderSize)
-            {
-                viewY += viewH() * FantasticConfig.guiSettings.panRate * FantasticConfig.guiSettings.panRate * (mouseYPercent - (1 - panBorderSize)) / panBorderSize;
-            }
-        }
-    }
-
-    @Override
     public void draw()
     {
         GlStateManager.pushMatrix();
@@ -147,7 +119,51 @@ public class GUIPanZoomView extends GUIView
     {
         boolean result = super.mousePressed(button);
 
+        //Zoom
         if (isMouseWithin() && button == FantasticConfig.guiSettings.zoomResetButton)
+        {
+            zoomResetX = mouseX();
+            zoomResetY = mouseY();
+            result = true;
+        }
+
+        //Pan
+        if (isMouseWithin() && button == FantasticConfig.guiSettings.panButton)
+        {
+            panX = mouseX();
+            panY = mouseY();
+            result = true;
+        }
+
+        return result;
+    }
+
+    @Override
+    public void mouseDrag(int button)
+    {
+        super.mouseDrag(button);
+
+        //Pan
+        if (button == FantasticConfig.guiSettings.panButton && (panning || ((FantasticConfig.guiSettings.panButton != FantasticConfig.guiSettings.zoomResetButton) || (panX != Double.MAX_VALUE && (panX != mouseX() || panY != mouseY())))))
+        {
+            double xDif = (panX - mouseX()) * absoluteWidth(), yDif = (panY - mouseY()) * absoluteHeight();
+
+            viewX += xDif / zoom;
+            viewY += yDif / zoom;
+
+            panning = true;
+            panX = mouseX();
+            panY = mouseY();
+        }
+    }
+
+    @Override
+    public boolean mouseReleased(int button)
+    {
+        boolean result = super.mouseReleased(button);
+
+        //Zoom
+        if (button == FantasticConfig.guiSettings.zoomResetButton && zoomResetX != Double.MAX_VALUE && ((FantasticConfig.guiSettings.zoomResetButton != FantasticConfig.guiSettings.panButton) || !panning))
         {
             if (GUIScreen.isCtrlKeyDown() != FantasticConfig.guiSettings.zoomFocusMouse)
             {
@@ -163,22 +179,24 @@ public class GUIPanZoomView extends GUIView
                 viewY = centerY - viewH() * 0.5;
             }
             else setZoom(1);
+
             result = true;
+            zoomResetX = Double.MAX_VALUE;
+            zoomResetY = Double.MAX_VALUE;
+        }
+
+        //Pan
+        if (button == FantasticConfig.guiSettings.panButton && panning)
+        {
+            //TODO
+
+            result = true;
+            panning = false;
+            panX = Double.MAX_VALUE;
+            panY = Double.MAX_VALUE;
         }
 
         return result;
-    }
-
-    @Override
-    public boolean mouseReleased(int button)
-    {
-        return super.mouseReleased(button);
-    }
-
-    @Override
-    public void mouseDrag(int button)
-    {
-        super.mouseDrag(button);
     }
 
     @Override
