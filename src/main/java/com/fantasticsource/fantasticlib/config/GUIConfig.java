@@ -19,7 +19,7 @@ public class GUIConfig
     @Config.LangKey(MODID + ".config.zoomResetButton")
     @Config.Comment(
             {
-                    "Which mouse button resets the zoom level in a zoomable GUI view",
+                    "Which mouse button resets the zoom level in a zoomable GUI view (click)",
             })
     @Config.RangeInt(min = 1)
     public int zoomResetButton = 2;
