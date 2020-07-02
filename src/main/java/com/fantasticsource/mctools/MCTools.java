@@ -863,6 +863,16 @@ public class MCTools
     }
 
 
+    public static Double getAttribute(EntityLivingBase entity, String attributeName)
+    {
+        for (IAttributeInstance instance : entity.getAttributeMap().getAllAttributes())
+        {
+            if (instance.getAttribute().getName().equals(attributeName)) return instance.getAttributeValue();
+        }
+
+        return null;
+    }
+
     public static double getAttribute(EntityLivingBase entity, IAttribute attribute)
     {
         return getAttribute(entity, attribute, attribute.getDefaultValue());
