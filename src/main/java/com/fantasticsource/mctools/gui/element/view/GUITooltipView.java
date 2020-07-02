@@ -88,6 +88,7 @@ public class GUITooltipView extends GUIAutocroppedView
         for (String line : Tools.fixedSplit(tooltip, "\n"))
         {
             add(new GUIText(screen, line, Color.YELLOW));
+            add(new GUIElement(screen, 1, 0));
         }
         return this;
     }
