@@ -14,6 +14,7 @@ public class GUITooltipView extends GUIAutocroppedView
     public GUITooltipView(GUIScreen screen)
     {
         super(screen, 0, 0, 0.1, new GUIDarkenedBackground(screen));
+        setSubElementAutoplaceMethod(AP_X_0_TOP_TO_BOTTOM);
     }
 
     @Override
@@ -88,7 +89,6 @@ public class GUITooltipView extends GUIAutocroppedView
         for (String line : Tools.fixedSplit(tooltip, "\n"))
         {
             add(new GUIText(screen, line, Color.YELLOW));
-            add(new GUIElement(screen, 1, 0));
         }
         return this;
     }
