@@ -95,7 +95,7 @@ public class FantasticLib
         Compat.betterportals = (Loader.isModLoaded("betterportals"));
         Compat.smoothfont = (Loader.isModLoaded("smoothfont"));
         Compat.baubles = (Loader.isModLoaded("baubles"));
-        Compat.tiamatrpg = (Loader.isModLoaded("tiamatrpg"));
+        Compat.tiamatinventory = (Loader.isModLoaded("tiamatinventory"));
 
         if (Loader.isModLoaded("armourers_workshop"))
         {

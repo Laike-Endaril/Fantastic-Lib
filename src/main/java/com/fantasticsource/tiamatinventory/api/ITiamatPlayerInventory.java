@@ -1,4 +1,4 @@
-package com.fantasticsource.tiamatrpg.api;
+package com.fantasticsource.tiamatinventory.api;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;

@@ -1,4 +1,4 @@
-package com.fantasticsource.tiamatrpg.api;
+package com.fantasticsource.tiamatinventory.api;
 
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -6,7 +6,7 @@ import java.lang.reflect.Field;
 import java.util.LinkedHashMap;
 import java.util.UUID;
 
-public class TiamatRPGAPI
+public class TiamatInventoryAPI
 {
     private static LinkedHashMap<UUID, ITiamatPlayerInventory> tiamatServerInventories = null;
 
@@ -14,7 +14,7 @@ public class TiamatRPGAPI
     {
         try
         {
-            for (Field field : Class.forName("com.fantasticsource.tiamatrpg.inventory.TiamatPlayerInventory").getDeclaredFields())
+            for (Field field : Class.forName("com.fantasticsource.tiamatinventory.inventory.TiamatPlayerInventory").getDeclaredFields())
             {
                 if (field.getName().equals("tiamatServerInventories"))
                 {

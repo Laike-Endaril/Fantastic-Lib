@@ -4,9 +4,8 @@ import baubles.api.BaublesApi;
 import baubles.api.cap.IBaublesItemHandler;
 import com.fantasticsource.fantasticlib.Compat;
 import com.fantasticsource.mctools.aw.RenderModes;
-import com.fantasticsource.tiamatrpg.api.ITiamatPlayerInventory;
-import com.fantasticsource.tiamatrpg.api.TiamatRPGAPI;
-import com.fantasticsource.tools.ReflectionTool;
+import com.fantasticsource.tiamatinventory.api.ITiamatPlayerInventory;
+import com.fantasticsource.tiamatinventory.api.TiamatInventoryAPI;
 import moe.plushie.armourers_workshop.api.ArmourersWorkshopApi;
 import moe.plushie.armourers_workshop.api.common.capability.IEntitySkinCapability;
 import moe.plushie.armourers_workshop.api.common.skin.type.ISkinType;
@@ -17,31 +16,15 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.UUID;
 
 public class GlobalInventory
 {
     public static ISkinTypeRegistry skinTypeRegistry = ArmourersWorkshopApi.skinTypeRegistry;
-
-
-    protected static LinkedHashMap<UUID, IInventory> tiamatServerInventories = null;
-
-    static
-    {
-        if (Compat.tiamatrpg)
-        {
-            Class tiamatPlayerInventoryClass = ReflectionTool.getClassByName("com.fantasticsource.tiamatrpg.inventory.TiamatPlayerInventory");
-            Field tiamatServerInventoriesField = ReflectionTool.getField(tiamatPlayerInventoryClass, "tiamatServerInventories");
-            tiamatServerInventories = (LinkedHashMap<UUID, IInventory>) ReflectionTool.get(tiamatServerInventoriesField, null);
-        }
-    }
 
 
     public static ArrayList<ItemStack> getAllItems(Entity entity)
@@ -68,7 +51,7 @@ public class GlobalInventory
         //Baubles
         result.addAll(getBaubles(entity));
 
-        //Tiamat RPG
+        //Tiamat Inventory
         ITiamatPlayerInventory inventory = getTiamatInventory(entity);
         if (inventory != null) result.addAll(inventory.getAllItems());
 
@@ -101,7 +84,7 @@ public class GlobalInventory
         //Baubles
         result.addAll(getBaubles(entity));
 
-        //Tiamat RPG
+        //Tiamat Inventory
         tiamatInventory = getTiamatInventory(entity);
         if (tiamatInventory != null) result.addAll(tiamatInventory.getAllEquippedItems());
 
@@ -154,7 +137,7 @@ public class GlobalInventory
         }
 
 
-        //Tiamat RPG
+        //Tiamat Inventory
         ITiamatPlayerInventory inventory = getTiamatInventory(entity);
         if (inventory != null)
         {
@@ -326,7 +309,7 @@ public class GlobalInventory
         }
 
         //Tiamat slots
-        if (Compat.tiamatrpg)
+        if (Compat.tiamatinventory)
         {
             int slot = 0;
             for (ItemStack stack : GlobalInventory.getAllTiamatItems(player))
@@ -345,9 +328,9 @@ public class GlobalInventory
         if (!stack.hasTagCompound()) return "None";
 
         NBTTagCompound compound = stack.getTagCompound();
-        if (!compound.hasKey("tiamatrpg")) return "None";
+        if (!compound.hasKey("tiamatinventory")) return "None";
 
-        compound = compound.getCompoundTag("tiamatrpg");
+        compound = compound.getCompoundTag("tiamatinventory");
         if (!compound.hasKey("slotting")) return "None";
 
         return compound.getString("slotting");
@@ -462,12 +445,12 @@ public class GlobalInventory
     }
 
 
-    //Tiamat RPG
+    //Tiamat Inventory
 
     public static ITiamatPlayerInventory getTiamatInventory(Entity entity)
     {
-        if (tiamatServerInventories == null || !(entity instanceof EntityPlayer)) return null;
-        return TiamatRPGAPI.getTiamatPlayerInventory((EntityPlayer) entity);
+        if (!(entity instanceof EntityPlayer)) return null;
+        return TiamatInventoryAPI.getTiamatPlayerInventory((EntityPlayer) entity);
     }
 
     public static ItemStack getTiamatSheathedMainhand1(Entity entity)

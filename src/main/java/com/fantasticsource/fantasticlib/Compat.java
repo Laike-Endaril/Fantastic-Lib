@@ -6,5 +6,5 @@ public class Compat
             betterportals = false,
             smoothfont = false,
             baubles = false,
-            tiamatrpg = false;
+            tiamatinventory = false;
 }
