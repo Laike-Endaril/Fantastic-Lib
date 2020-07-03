@@ -16,6 +16,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -337,6 +338,38 @@ public class GlobalInventory
         return result;
     }
 
+    public static ItemStack getVanillaHeadItem(Entity entity)
+    {
+        ArrayList<ItemStack> armor = getVanillaArmorItems(entity);
+        if (armor == null || armor.size() != 4) return null;
+
+        return armor.get(EntityEquipmentSlot.HEAD.getIndex());
+    }
+
+    public static ItemStack getVanillaChestItem(Entity entity)
+    {
+        ArrayList<ItemStack> armor = getVanillaArmorItems(entity);
+        if (armor == null || armor.size() != 4) return null;
+
+        return armor.get(EntityEquipmentSlot.CHEST.getIndex());
+    }
+
+    public static ItemStack getVanillaLegItem(Entity entity)
+    {
+        ArrayList<ItemStack> armor = getVanillaArmorItems(entity);
+        if (armor == null || armor.size() != 4) return null;
+
+        return armor.get(EntityEquipmentSlot.LEGS.getIndex());
+    }
+
+    public static ItemStack getVanillaFootItem(Entity entity)
+    {
+        ArrayList<ItemStack> armor = getVanillaArmorItems(entity);
+        if (armor == null || armor.size() != 4) return null;
+
+        return armor.get(EntityEquipmentSlot.FEET.getIndex());
+    }
+
     public static ArrayList<ItemStack> getVanillaOtherInventoryItems(Entity entity)
     {
         ArrayList<ItemStack> result = new ArrayList<>();
@@ -415,6 +448,26 @@ public class GlobalInventory
     public static ArrayList<ItemStack> getTiamatArmor(ITiamatPlayerInventory inventory)
     {
         return inventory == null ? new ArrayList<>() : new ArrayList<>(inventory.getTiamatArmor());
+    }
+
+    public static ItemStack getTiamatShoulderItem(Entity entity)
+    {
+        return getTiamatShoulderItem(getTiamatInventory(entity));
+    }
+
+    public static ItemStack getTiamatShoulderItem(ITiamatPlayerInventory inventory)
+    {
+        return inventory == null ? null : inventory.getTiamatArmor().get(0);
+    }
+
+    public static ItemStack getTiamatCapeItem(Entity entity)
+    {
+        return getTiamatCapeItem(getTiamatInventory(entity));
+    }
+
+    public static ItemStack getTiamatCapeItem(ITiamatPlayerInventory inventory)
+    {
+        return inventory == null ? null : inventory.getTiamatArmor().get(1);
     }
 
     public static ItemStack getTiamatPet(Entity entity)
