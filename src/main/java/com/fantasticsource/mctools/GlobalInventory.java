@@ -185,11 +185,34 @@ public class GlobalInventory
                 list = new ArrayList<>();
             }
 
+            list.addAll(getTiamatQuickslots(inventory));
+            if (list.size() > 0)
+            {
+                result.put("Tiamat Quickslots", list);
+                list = new ArrayList<>();
+            }
+
+            stack = getTiamatBackpack(inventory);
+            if (stack != null)
+            {
+                list.add(stack);
+                result.put("Tiamat Backpack", list);
+                list = new ArrayList<>();
+            }
+
             stack = getTiamatPet(inventory);
             if (stack != null)
             {
                 list.add(stack);
                 result.put("Tiamat Pet", list);
+                list = new ArrayList<>();
+            }
+
+            stack = getTiamatDeck(inventory);
+            if (stack != null)
+            {
+                list.add(stack);
+                result.put("Tiamat Deck", list);
                 list = new ArrayList<>();
             }
 
@@ -200,10 +223,32 @@ public class GlobalInventory
                 list = new ArrayList<>();
             }
 
-            list.addAll(getTiamatSkills(inventory));
+            list.addAll(getTiamatOffensiveSkills(inventory));
             if (list.size() > 0)
             {
-                result.put("Tiamat Skills", list);
+                result.put("Tiamat Offensive Skills", list);
+                list = new ArrayList<>();
+            }
+
+            list.addAll(getTiamatUtilitySkills(inventory));
+            if (list.size() > 0)
+            {
+                result.put("Tiamat Utility Skills", list);
+                list = new ArrayList<>();
+            }
+
+            stack = getTiamatUltimateSkill(inventory);
+            if (stack != null)
+            {
+                list.add(stack);
+                result.put("Tiamat Ultimate Skill", list);
+                list = new ArrayList<>();
+            }
+
+            list.addAll(getTiamatPassiveSkills(inventory));
+            if (list.size() > 0)
+            {
+                result.put("Tiamat Passive Skills", list);
                 list = new ArrayList<>();
             }
 
@@ -225,13 +270,6 @@ public class GlobalInventory
             if (list.size() > 0)
             {
                 result.put("Tiamat Recipes", list);
-                list = new ArrayList<>();
-            }
-
-            list.addAll(getTiamatReadySkills(inventory));
-            if (list.size() > 0)
-            {
-                result.put("Tiamat Ready Skills", list);
                 list = new ArrayList<>();
             }
         }
@@ -427,7 +465,7 @@ public class GlobalInventory
 
     public static ItemStack getTiamatInactiveMainhand(ITiamatPlayerInventory inventory)
     {
-        return inventory == null ? null : inventory.getInactiveWeaponsetMainhand();
+        return inventory == null ? null : inventory.getInactiveMainhand();
     }
 
     public static ItemStack getTiamatInactiveOffhand(Entity entity)
@@ -437,7 +475,7 @@ public class GlobalInventory
 
     public static ItemStack getTiamatInactiveOffhand(ITiamatPlayerInventory inventory)
     {
-        return inventory == null ? null : inventory.getInactiveWeaponsetOffhand();
+        return inventory == null ? null : inventory.getInactiveOffhand();
     }
 
     public static ArrayList<ItemStack> getTiamatArmor(Entity entity)
@@ -470,6 +508,26 @@ public class GlobalInventory
         return inventory == null ? null : inventory.getTiamatArmor().get(1);
     }
 
+    public static ArrayList<ItemStack> getTiamatQuickslots(Entity entity)
+    {
+        return getTiamatQuickslots(getTiamatInventory(entity));
+    }
+
+    public static ArrayList<ItemStack> getTiamatQuickslots(ITiamatPlayerInventory inventory)
+    {
+        return inventory == null ? new ArrayList<>() : new ArrayList<>(inventory.getQuickSlots());
+    }
+
+    public static ItemStack getTiamatBackpack(Entity entity)
+    {
+        return getTiamatBackpack(getTiamatInventory(entity));
+    }
+
+    public static ItemStack getTiamatBackpack(ITiamatPlayerInventory inventory)
+    {
+        return inventory == null ? null : inventory.getBackpack();
+    }
+
     public static ItemStack getTiamatPet(Entity entity)
     {
         return getTiamatPet(getTiamatInventory(entity));
@@ -478,6 +536,16 @@ public class GlobalInventory
     public static ItemStack getTiamatPet(ITiamatPlayerInventory inventory)
     {
         return inventory == null ? null : inventory.getPet();
+    }
+
+    public static ItemStack getTiamatDeck(Entity entity)
+    {
+        return getTiamatDeck(getTiamatInventory(entity));
+    }
+
+    public static ItemStack getTiamatDeck(ITiamatPlayerInventory inventory)
+    {
+        return inventory == null ? null : inventory.getDeck();
     }
 
     public static ArrayList<ItemStack> getTiamatClasses(Entity entity)
@@ -490,14 +558,44 @@ public class GlobalInventory
         return inventory == null ? new ArrayList<>() : new ArrayList<>(inventory.getPlayerClasses());
     }
 
-    public static ArrayList<ItemStack> getTiamatSkills(Entity entity)
+    public static ArrayList<ItemStack> getTiamatOffensiveSkills(Entity entity)
     {
-        return getTiamatSkills(getTiamatInventory(entity));
+        return getTiamatOffensiveSkills(getTiamatInventory(entity));
     }
 
-    public static ArrayList<ItemStack> getTiamatSkills(ITiamatPlayerInventory inventory)
+    public static ArrayList<ItemStack> getTiamatOffensiveSkills(ITiamatPlayerInventory inventory)
     {
-        return inventory == null ? new ArrayList<>() : new ArrayList<>(inventory.getSkills());
+        return inventory == null ? new ArrayList<>() : new ArrayList<>(inventory.getOffensiveSkills());
+    }
+
+    public static ArrayList<ItemStack> getTiamatUtilitySkills(Entity entity)
+    {
+        return getTiamatUtilitySkills(getTiamatInventory(entity));
+    }
+
+    public static ArrayList<ItemStack> getTiamatUtilitySkills(ITiamatPlayerInventory inventory)
+    {
+        return inventory == null ? new ArrayList<>() : new ArrayList<>(inventory.getUtilitySkills());
+    }
+
+    public static ItemStack getTiamatUltimateSkill(Entity entity)
+    {
+        return getTiamatUltimateSkill(getTiamatInventory(entity));
+    }
+
+    public static ItemStack getTiamatUltimateSkill(ITiamatPlayerInventory inventory)
+    {
+        return inventory == null ? null : inventory.getUltimateSkill();
+    }
+
+    public static ArrayList<ItemStack> getTiamatPassiveSkills(Entity entity)
+    {
+        return getTiamatPassiveSkills(getTiamatInventory(entity));
+    }
+
+    public static ArrayList<ItemStack> getTiamatPassiveSkills(ITiamatPlayerInventory inventory)
+    {
+        return inventory == null ? new ArrayList<>() : new ArrayList<>(inventory.getPassiveSkills());
     }
 
     public static ArrayList<ItemStack> getTiamatGatheringProfessions(Entity entity)
@@ -528,16 +626,6 @@ public class GlobalInventory
     public static ArrayList<ItemStack> getTiamatRecipes(ITiamatPlayerInventory inventory)
     {
         return inventory == null ? new ArrayList<>() : new ArrayList<>(inventory.getCraftingRecipes());
-    }
-
-    public static ArrayList<ItemStack> getTiamatReadySkills(Entity entity)
-    {
-        return getTiamatReadySkills(getTiamatInventory(entity));
-    }
-
-    public static ArrayList<ItemStack> getTiamatReadySkills(ITiamatPlayerInventory inventory)
-    {
-        return inventory == null ? new ArrayList<>() : new ArrayList<>(inventory.getReadySkills());
     }
 
     public static ArrayList<ItemStack> getAllTiamatItems(Entity entity)
