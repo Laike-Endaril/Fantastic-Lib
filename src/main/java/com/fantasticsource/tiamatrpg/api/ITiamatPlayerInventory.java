@@ -7,9 +7,13 @@ import java.util.ArrayList;
 
 public interface ITiamatPlayerInventory extends IInventory
 {
-    ItemStack getInactiveMainhand();
+    ItemStack getSheathedMainhand1();
 
-    ItemStack getInactiveOffhand();
+    ItemStack getSheathedOffhand1();
+
+    ItemStack getSheathedMainhand2();
+
+    ItemStack getSheathedOffhand2();
 
     ArrayList<ItemStack> getTiamatArmor();
 
@@ -40,8 +44,4 @@ public interface ITiamatPlayerInventory extends IInventory
     ArrayList<ItemStack> getAllItems();
 
     ArrayList<ItemStack> getAllEquippedItems();
-
-    boolean unsheathed();
-
-    void setUnsheathed(boolean unsheathed);
 }

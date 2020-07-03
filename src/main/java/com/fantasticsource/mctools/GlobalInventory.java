@@ -91,15 +91,11 @@ public class GlobalInventory
 
         //Sheathed status
         ITiamatPlayerInventory tiamatInventory = getTiamatInventory(entity);
-        boolean sheathed = tiamatInventory != null && !tiamatInventory.unsheathed();
 
         //Vanilla
-        if (!sheathed)
-        {
-            ItemStack stack = getVanillaMainhandItem(entity);
-            if (stack != null) result.add(stack);
-            result.addAll(getVanillaOffhandItems(entity));
-        }
+        ItemStack stack = getVanillaMainhandItem(entity);
+        if (stack != null) result.add(stack);
+        result.addAll(getVanillaOffhandItems(entity));
         result.addAll(getVanillaArmorItems(entity));
 
         //Baubles
@@ -162,19 +158,35 @@ public class GlobalInventory
         ITiamatPlayerInventory inventory = getTiamatInventory(entity);
         if (inventory != null)
         {
-            stack = getTiamatInactiveMainhand(inventory);
+            stack = getTiamatSheathedMainhand1(inventory);
             if (stack != null)
             {
                 list.add(stack);
-                result.put("Tiamat Inactive Weaponset Mainhand", list);
+                result.put("Tiamat Sheathed Mainhand 1", list);
                 list = new ArrayList<>();
             }
 
-            stack = getTiamatInactiveOffhand(inventory);
+            stack = getTiamatSheathedOffhand1(inventory);
             if (stack != null)
             {
                 list.add(stack);
-                result.put("Tiamat Inactive Weaponset Offhand", list);
+                result.put("Tiamat Sheathed Offhand 1", list);
+                list = new ArrayList<>();
+            }
+
+            stack = getTiamatSheathedMainhand2(inventory);
+            if (stack != null)
+            {
+                list.add(stack);
+                result.put("Tiamat Sheathed Mainhand 2", list);
+                list = new ArrayList<>();
+            }
+
+            stack = getTiamatSheathedOffhand2(inventory);
+            if (stack != null)
+            {
+                list.add(stack);
+                result.put("Tiamat Sheathed Offhand 2", list);
                 list = new ArrayList<>();
             }
 
@@ -458,24 +470,44 @@ public class GlobalInventory
         return TiamatRPGAPI.getTiamatPlayerInventory((EntityPlayer) entity);
     }
 
-    public static ItemStack getTiamatInactiveMainhand(Entity entity)
+    public static ItemStack getTiamatSheathedMainhand1(Entity entity)
     {
-        return getTiamatInactiveMainhand(getTiamatInventory(entity));
+        return getTiamatSheathedMainhand1(getTiamatInventory(entity));
     }
 
-    public static ItemStack getTiamatInactiveMainhand(ITiamatPlayerInventory inventory)
+    public static ItemStack getTiamatSheathedMainhand1(ITiamatPlayerInventory inventory)
     {
-        return inventory == null ? null : inventory.getInactiveMainhand();
+        return inventory == null ? null : inventory.getSheathedMainhand1();
     }
 
-    public static ItemStack getTiamatInactiveOffhand(Entity entity)
+    public static ItemStack getTiamatSheathedOffhand1(Entity entity)
     {
-        return getTiamatInactiveOffhand(getTiamatInventory(entity));
+        return getTiamatSheathedOffhand1(getTiamatInventory(entity));
     }
 
-    public static ItemStack getTiamatInactiveOffhand(ITiamatPlayerInventory inventory)
+    public static ItemStack getTiamatSheathedOffhand1(ITiamatPlayerInventory inventory)
     {
-        return inventory == null ? null : inventory.getInactiveOffhand();
+        return inventory == null ? null : inventory.getSheathedOffhand1();
+    }
+
+    public static ItemStack getTiamatSheathedMainhand2(Entity entity)
+    {
+        return getTiamatSheathedMainhand2(getTiamatInventory(entity));
+    }
+
+    public static ItemStack getTiamatSheathedMainhand2(ITiamatPlayerInventory inventory)
+    {
+        return inventory == null ? null : inventory.getSheathedMainhand2();
+    }
+
+    public static ItemStack getTiamatSheathedOffhand2(Entity entity)
+    {
+        return getTiamatSheathedOffhand2(getTiamatInventory(entity));
+    }
+
+    public static ItemStack getTiamatSheathedOffhand2(ITiamatPlayerInventory inventory)
+    {
+        return inventory == null ? null : inventory.getSheathedOffhand2();
     }
 
     public static ArrayList<ItemStack> getTiamatArmor(Entity entity)
