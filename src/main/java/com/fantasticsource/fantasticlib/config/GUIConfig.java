@@ -21,7 +21,7 @@ public class GUIConfig
             {
                     "Which mouse button resets the zoom level in a zoomable GUI view (click)",
             })
-    @Config.RangeInt(min = 1)
+    @Config.RangeInt(min = 0)
     public int zoomResetButton = 2;
 
     @Config.Name("Pan (Mouse Button)")
@@ -30,7 +30,7 @@ public class GUIConfig
             {
                     "Which mouse button pans the view in a pannable GUI view (hold and drag)",
             })
-    @Config.RangeInt(min = 1)
+    @Config.RangeInt(min = 0)
     public int panButton = 2;
 
     @Config.Name("Zoom Rate")
