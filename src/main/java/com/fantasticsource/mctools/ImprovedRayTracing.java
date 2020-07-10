@@ -14,6 +14,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 
 public class ImprovedRayTracing
 {
@@ -96,6 +97,177 @@ public class ImprovedRayTracing
     public static boolean isUnobstructed(World world, Vec3d vecStart, Vec3d vecEnd, boolean collideOnAllSolids)
     {
         return rayTraceBlocks(world, vecStart, vecEnd, collideOnAllSolids).typeOfHit == RayTraceResult.Type.MISS;
+    }
+
+
+    @Nonnull
+    public static BlockPos[] blocksInRay(Entity fromEyesOf, double maxDistance, boolean collideOnAllSolids)
+    {
+        Vec3d eyes = fromEyesOf.getPositionVector().addVector(0, fromEyesOf.getEyeHeight(), 0);
+        return blocksInRay(fromEyesOf.world, eyes, eyes.add(fromEyesOf.getLookVec().scale(maxDistance)), collideOnAllSolids);
+    }
+
+    @Nonnull
+    public static BlockPos[] blocksInRay(World world, Vec3d vecStart, Vec3d vecEnd, double maxDistance, boolean collideOnAllSolids)
+    {
+        return blocksInRay(world, vecStart, vecStart.add(vecEnd.subtract(vecStart).normalize().scale(maxDistance)), collideOnAllSolids);
+    }
+
+    @Nonnull
+    public static BlockPos[] blocksInRay(World world, Vec3d vecStart, Vec3d vecEnd, boolean collideOnAllSolids)
+    {
+        world.profiler.startSection("Fantastic Lib: Blocks In Ray");
+
+
+        RayTraceResult result;
+        ArrayList<BlockPos> blocks = new ArrayList<>();
+        BlockPos pos = new BlockPos(vecStart), endPos = new BlockPos(vecEnd);
+
+        //Special cases for ending blockpos
+        if (vecEnd.x > vecStart.x && vecEnd.x == (int) vecEnd.x) endPos = new BlockPos(endPos.getX() - 1, endPos.getY(), endPos.getZ());
+        if (vecEnd.y > vecStart.y && vecEnd.y == (int) vecEnd.y) endPos = new BlockPos(endPos.getX(), endPos.getY() - 1, endPos.getZ());
+        if (vecEnd.z > vecStart.z && vecEnd.z == (int) vecEnd.z) endPos = new BlockPos(endPos.getX(), endPos.getY(), endPos.getZ() - 1);
+
+
+        //Check starting block
+        if (!world.isBlockLoaded(pos))
+        {
+            world.profiler.endSection();
+            return new BlockPos[0];
+        }
+        IBlockState state = world.getBlockState(pos);
+        if ((collideOnAllSolids || !canSeeThrough(state)) && state.getCollisionBoundingBox(world, pos) != Block.NULL_AABB)
+        {
+            result = state.collisionRayTrace(world, pos, vecStart, vecEnd);
+            if (result != null)
+            {
+                world.profiler.endSection();
+                return new BlockPos[]{pos};
+            }
+        }
+
+        //Add starting block to results
+        blocks.add(pos);
+
+        //End if this was the last block
+        if (pos.getX() == endPos.getX() && pos.getY() == endPos.getY() && pos.getZ() == endPos.getZ())
+        {
+            world.profiler.endSection();
+            return blocks.toArray(new BlockPos[0]);
+        }
+
+
+        //Iterate through all non-starting blocks and check them
+        double xStart = vecStart.x, yStart = vecStart.y, zStart = vecStart.z;
+        double xRange = vecEnd.x - xStart, yRange = vecEnd.y - yStart, zRange = vecEnd.z - zStart;
+
+        int xDir = xRange > 0 ? 1 : xRange < 0 ? -1 : 0;
+        int yDir = yRange > 0 ? 1 : yRange < 0 ? -1 : 0;
+        int zDir = zRange > 0 ? 1 : zRange < 0 ? -1 : 0;
+
+        double xInverseRange = xDir == 0 ? Double.NaN : 1 / xRange;
+        double yInverseRange = yDir == 0 ? Double.NaN : 1 / yRange;
+        double zInverseRange = zDir == 0 ? Double.NaN : 1 / zRange;
+
+        int nextXStop = xDir == 0 ? Integer.MAX_VALUE : pos.getX();
+        if (xDir == 1) nextXStop++;
+        int nextYStop = yDir == 0 ? Integer.MAX_VALUE : pos.getY();
+        if (yDir == 1) nextYStop++;
+        int nextZStop = zDir == 0 ? Integer.MAX_VALUE : pos.getZ();
+        if (zDir == 1) nextZStop++;
+
+        double xDistToStop, yDistToStop, zDistToStop;
+        double normalizedXDistToStop = 7777777, normalizedYDistToStop = 7777777, normalizedZDistToStop;
+        int mininumNormalizedDistance; //0 == none, 1 == x, 2 == y, 3 == z
+        for (int i = 1; i <= MAX_ITERATIONS; i++)
+        {
+            //Find which direction to travel in next
+            mininumNormalizedDistance = 0;
+            if (xDir != 0)
+            {
+                xDistToStop = nextXStop - xStart;
+                normalizedXDistToStop = xDistToStop * xInverseRange;
+                mininumNormalizedDistance = 1;
+            }
+            if (yDir != 0)
+            {
+                yDistToStop = nextYStop - yStart;
+                normalizedYDistToStop = yDistToStop * yInverseRange;
+                if (normalizedYDistToStop < normalizedXDistToStop) mininumNormalizedDistance = 2;
+            }
+            if (zDir != 0)
+            {
+                zDistToStop = nextZStop - zStart;
+                normalizedZDistToStop = zDistToStop * zInverseRange;
+                if (normalizedZDistToStop < normalizedXDistToStop && normalizedZDistToStop < normalizedYDistToStop) mininumNormalizedDistance = 3;
+            }
+
+
+            //Travel to next position, and set new value for the next stopping point in the travelled direction
+            if (mininumNormalizedDistance == 1) //X
+            {
+                pos = pos.east(xDir);
+                nextXStop += xDir;
+            }
+            else if (mininumNormalizedDistance == 2) //Y
+            {
+                pos = pos.up(yDir);
+                nextYStop += yDir;
+            }
+            else //Z
+            {
+                pos = pos.south(zDir);
+                nextZStop += zDir;
+            }
+
+
+            //Add block to results
+            blocks.add(pos);
+
+
+            //Check the BlockPos
+            if (!world.isBlockLoaded(pos))
+            {
+                world.profiler.endSection();
+                return blocks.toArray(new BlockPos[0]);
+            }
+            state = world.getBlockState(pos);
+            if ((collideOnAllSolids || !canSeeThrough(state)) && state.getCollisionBoundingBox(world, pos) != Block.NULL_AABB)
+            {
+                result = state.collisionRayTrace(world, pos, vecStart, vecEnd);
+                if (result != null)
+                {
+                    world.profiler.endSection();
+                    return blocks.toArray(new BlockPos[0]);
+                }
+            }
+
+
+            //End if this was the last block
+            if (pos.getX() == endPos.getX() && pos.getY() == endPos.getY() && pos.getZ() == endPos.getZ())
+            {
+                world.profiler.endSection();
+                return blocks.toArray(new BlockPos[0]);
+            }
+        }
+
+
+        //Max iterations reached; force end and warn
+        if (lastWarning == -1 || System.currentTimeMillis() - lastWarning > 1000 * 60 * 5)
+        {
+            System.err.println("WARNING: BEYOND-LIMIT RAYTRACING DETECTED!  This warning will not show more than once every 5 minutes.  This is usually due to inefficient raytrace calls from another mod");
+            System.err.println("This type of error has occurred " + errorCount + " additional times since the last time this message was shown");
+            System.err.println("From " + vecStart + " to " + vecEnd + " (distance: " + vecStart.distanceTo(vecEnd) + ")");
+            System.err.println("Limit: " + MAX_ITERATIONS + " iterations (not synonymous to distance, but longer distances are generally more iterations)");
+            System.err.println();
+            Tools.printStackTrace();
+            lastWarning = System.currentTimeMillis();
+        }
+        else errorCount++;
+
+
+        world.profiler.endSection();
+        return blocks.toArray(new BlockPos[0]);
     }
 
 
