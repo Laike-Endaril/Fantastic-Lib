@@ -44,7 +44,7 @@ public class Color
 
     public Color(int color, boolean noAlpha)
     {
-        if (noAlpha) color = (color << 8) & 255;
+        if (noAlpha) color = (color << 8) | 255;
 
         intValue = color;
 
