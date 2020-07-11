@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 public class ImprovedRayTracing
 {
-    private static final int MAX_ITERATIONS = 200;
+    private static final int ITERATION_WARNING_THRESHOLD = 200;
     private static long lastWarning = -1;
     private static int errorCount = 0;
 
@@ -103,18 +103,36 @@ public class ImprovedRayTracing
     @Nonnull
     public static BlockPos[] blocksInRay(Entity fromEyesOf, double maxDistance, boolean collideOnAllSolids)
     {
+        return blocksInRay(fromEyesOf, maxDistance, ITERATION_WARNING_THRESHOLD, collideOnAllSolids);
+    }
+
+    @Nonnull
+    public static BlockPos[] blocksInRay(Entity fromEyesOf, double maxDistance, int maxBlocks, boolean collideOnAllSolids)
+    {
         Vec3d eyes = fromEyesOf.getPositionVector().addVector(0, fromEyesOf.getEyeHeight(), 0);
-        return blocksInRay(fromEyesOf.world, eyes, eyes.add(fromEyesOf.getLookVec().scale(maxDistance)), collideOnAllSolids);
+        return blocksInRay(fromEyesOf.world, eyes, eyes.add(fromEyesOf.getLookVec().scale(maxDistance)), maxBlocks, collideOnAllSolids);
     }
 
     @Nonnull
     public static BlockPos[] blocksInRay(World world, Vec3d vecStart, Vec3d vecEnd, double maxDistance, boolean collideOnAllSolids)
     {
-        return blocksInRay(world, vecStart, vecStart.add(vecEnd.subtract(vecStart).normalize().scale(maxDistance)), collideOnAllSolids);
+        return blocksInRay(world, vecStart, vecEnd, maxDistance, ITERATION_WARNING_THRESHOLD, collideOnAllSolids);
+    }
+
+    @Nonnull
+    public static BlockPos[] blocksInRay(World world, Vec3d vecStart, Vec3d vecEnd, double maxDistance, int maxBlocks, boolean collideOnAllSolids)
+    {
+        return blocksInRay(world, vecStart, vecStart.add(vecEnd.subtract(vecStart).normalize().scale(maxDistance)), maxBlocks, collideOnAllSolids);
     }
 
     @Nonnull
     public static BlockPos[] blocksInRay(World world, Vec3d vecStart, Vec3d vecEnd, boolean collideOnAllSolids)
+    {
+        return blocksInRay(world, vecStart, vecEnd, ITERATION_WARNING_THRESHOLD, collideOnAllSolids);
+    }
+
+    @Nonnull
+    public static BlockPos[] blocksInRay(World world, Vec3d vecStart, Vec3d vecEnd, int maxBlocks, boolean collideOnAllSolids)
     {
         world.profiler.startSection("Fantastic Lib: Blocks In Ray");
 
@@ -179,7 +197,7 @@ public class ImprovedRayTracing
         double xDistToStop, yDistToStop, zDistToStop;
         double normalizedXDistToStop = 7777777, normalizedYDistToStop = 7777777, normalizedZDistToStop;
         int mininumNormalizedDistance; //0 == none, 1 == x, 2 == y, 3 == z
-        for (int i = 1; i <= MAX_ITERATIONS; i++)
+        for (int i = 1; i <= maxBlocks; i++)
         {
             //Find which direction to travel in next
             mininumNormalizedDistance = 0;
@@ -253,12 +271,12 @@ public class ImprovedRayTracing
 
 
         //Max iterations reached; force end and warn
-        if (lastWarning == -1 || System.currentTimeMillis() - lastWarning > 1000 * 60 * 5)
+        if (maxBlocks >= ITERATION_WARNING_THRESHOLD && (lastWarning == -1 || System.currentTimeMillis() - lastWarning > 1000 * 60 * 5))
         {
             System.err.println("WARNING: BEYOND-LIMIT RAYTRACING DETECTED!  This warning will not show more than once every 5 minutes.  This is usually due to inefficient raytrace calls from another mod");
             System.err.println("This type of error has occurred " + errorCount + " additional times since the last time this message was shown");
             System.err.println("From " + vecStart + " to " + vecEnd + " (distance: " + vecStart.distanceTo(vecEnd) + ")");
-            System.err.println("Limit: " + MAX_ITERATIONS + " iterations (not synonymous to distance, but longer distances are generally more iterations)");
+            System.err.println("Limit: " + maxBlocks + " iterations (not synonymous to distance, but longer distances are generally more iterations)");
             System.err.println();
             Tools.printStackTrace();
             lastWarning = System.currentTimeMillis();
@@ -274,18 +292,36 @@ public class ImprovedRayTracing
     @Nonnull
     public static RayTraceResult rayTraceBlocks(Entity fromEyesOf, double maxDistance, boolean collideOnAllSolids)
     {
+        return rayTraceBlocks(fromEyesOf, maxDistance, ITERATION_WARNING_THRESHOLD, collideOnAllSolids);
+    }
+
+    @Nonnull
+    public static RayTraceResult rayTraceBlocks(Entity fromEyesOf, double maxDistance, int maxBlocks, boolean collideOnAllSolids)
+    {
         Vec3d eyes = fromEyesOf.getPositionVector().addVector(0, fromEyesOf.getEyeHeight(), 0);
-        return rayTraceBlocks(fromEyesOf.world, eyes, eyes.add(fromEyesOf.getLookVec().scale(maxDistance)), collideOnAllSolids);
+        return rayTraceBlocks(fromEyesOf.world, eyes, eyes.add(fromEyesOf.getLookVec().scale(maxDistance)), maxBlocks, collideOnAllSolids);
     }
 
     @Nonnull
     public static RayTraceResult rayTraceBlocks(World world, Vec3d vecStart, Vec3d vecEnd, double maxDistance, boolean collideOnAllSolids)
     {
-        return rayTraceBlocks(world, vecStart, vecStart.add(vecEnd.subtract(vecStart).normalize().scale(maxDistance)), collideOnAllSolids);
+        return rayTraceBlocks(world, vecStart, vecEnd, maxDistance, ITERATION_WARNING_THRESHOLD, collideOnAllSolids);
+    }
+
+    @Nonnull
+    public static RayTraceResult rayTraceBlocks(World world, Vec3d vecStart, Vec3d vecEnd, double maxDistance, int maxBlocks, boolean collideOnAllSolids)
+    {
+        return rayTraceBlocks(world, vecStart, vecStart.add(vecEnd.subtract(vecStart).normalize().scale(maxDistance)), maxBlocks, collideOnAllSolids);
     }
 
     @Nonnull
     public static RayTraceResult rayTraceBlocks(World world, Vec3d vecStart, Vec3d vecEnd, boolean collideOnAllSolids)
+    {
+        return rayTraceBlocks(world, vecStart, vecEnd, ITERATION_WARNING_THRESHOLD, collideOnAllSolids);
+    }
+
+    @Nonnull
+    public static RayTraceResult rayTraceBlocks(World world, Vec3d vecStart, Vec3d vecEnd, int maxBlocks, boolean collideOnAllSolids)
     {
         world.profiler.startSection("Fantastic Lib: Improved Raytrace");
 
@@ -346,7 +382,7 @@ public class ImprovedRayTracing
         double xDistToStop, yDistToStop, zDistToStop;
         double normalizedXDistToStop = 7777777, normalizedYDistToStop = 7777777, normalizedZDistToStop;
         int mininumNormalizedDistance; //0 == none, 1 == x, 2 == y, 3 == z
-        for (int i = 1; i <= MAX_ITERATIONS; i++)
+        for (int i = 1; i <= maxBlocks; i++)
         {
             //Find which direction to travel in next
             mininumNormalizedDistance = 0;
@@ -416,12 +452,12 @@ public class ImprovedRayTracing
 
 
         //Max iterations reached; force end and warn
-        if (lastWarning == -1 || System.currentTimeMillis() - lastWarning > 1000 * 60 * 5)
+        if (maxBlocks >= ITERATION_WARNING_THRESHOLD && (lastWarning == -1 || System.currentTimeMillis() - lastWarning > 1000 * 60 * 5))
         {
             System.err.println("WARNING: BEYOND-LIMIT RAYTRACING DETECTED!  This warning will not show more than once every 5 minutes.  This is usually due to inefficient raytrace calls from another mod");
             System.err.println("This type of error has occurred " + errorCount + " additional times since the last time this message was shown");
             System.err.println("From " + vecStart + " to " + vecEnd + " (distance: " + vecStart.distanceTo(vecEnd) + ")");
-            System.err.println("Limit: " + MAX_ITERATIONS + " iterations (not synonymous to distance, but longer distances are generally more iterations)");
+            System.err.println("Limit: " + maxBlocks + " iterations (not synonymous to distance, but longer distances are generally more iterations)");
             System.err.println();
             Tools.printStackTrace();
             lastWarning = System.currentTimeMillis();
