@@ -346,6 +346,11 @@ public class GlobalInventory
         return null;
     }
 
+    public static void setVanillaMainhandItem(Entity entity, ItemStack stack)
+    {
+        entity.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, stack);
+    }
+
     public static ArrayList<ItemStack> getVanillaOffhandItems(Entity entity)
     {
         ArrayList<ItemStack> result = new ArrayList<>();
@@ -357,6 +362,12 @@ public class GlobalInventory
         }
 
         return result;
+    }
+
+    public static void setVanillaOffhandItem(Entity entity, ItemStack stack)
+    {
+        //Don't see a good way of being able to set indexed offhand items
+        entity.setItemStackToSlot(EntityEquipmentSlot.OFFHAND, stack);
     }
 
     public static ArrayList<ItemStack> getVanillaArmorItems(Entity entity)
@@ -379,12 +390,22 @@ public class GlobalInventory
         return armor.get(EntityEquipmentSlot.HEAD.getIndex());
     }
 
+    public static void setVanillaHeadItem(Entity entity, ItemStack stack)
+    {
+        entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, stack);
+    }
+
     public static ItemStack getVanillaChestItem(Entity entity)
     {
         ArrayList<ItemStack> armor = getVanillaArmorItems(entity);
         if (armor == null || armor.size() != 4) return null;
 
         return armor.get(EntityEquipmentSlot.CHEST.getIndex());
+    }
+
+    public static void setVanillaChestItem(Entity entity, ItemStack stack)
+    {
+        entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, stack);
     }
 
     public static ItemStack getVanillaLegItem(Entity entity)
@@ -395,12 +416,22 @@ public class GlobalInventory
         return armor.get(EntityEquipmentSlot.LEGS.getIndex());
     }
 
+    public static void setVanillaLegItem(Entity entity, ItemStack stack)
+    {
+        entity.setItemStackToSlot(EntityEquipmentSlot.LEGS, stack);
+    }
+
     public static ItemStack getVanillaFootItem(Entity entity)
     {
         ArrayList<ItemStack> armor = getVanillaArmorItems(entity);
         if (armor == null || armor.size() != 4) return null;
 
         return armor.get(EntityEquipmentSlot.FEET.getIndex());
+    }
+
+    public static void setVanillaFootItem(Entity entity, ItemStack stack)
+    {
+        entity.setItemStackToSlot(EntityEquipmentSlot.FEET, stack);
     }
 
     public static ArrayList<ItemStack> getVanillaOtherInventoryItems(Entity entity)
@@ -463,6 +494,12 @@ public class GlobalInventory
         return inventory == null ? null : inventory.getSheathedMainhand1();
     }
 
+    public static void setTiamatSheathedMainhand1(Entity entity, ItemStack stack)
+    {
+        ITiamatPlayerInventory inv = getTiamatInventory(entity);
+        if (inv != null) inv.setSheathedMainhand1(stack);
+    }
+
     public static ItemStack getTiamatSheathedOffhand1(Entity entity)
     {
         return getTiamatSheathedOffhand1(getTiamatInventory(entity));
@@ -471,6 +508,12 @@ public class GlobalInventory
     public static ItemStack getTiamatSheathedOffhand1(ITiamatPlayerInventory inventory)
     {
         return inventory == null ? null : inventory.getSheathedOffhand1();
+    }
+
+    public static void setTiamatSheathedOffhand1(Entity entity, ItemStack stack)
+    {
+        ITiamatPlayerInventory inv = getTiamatInventory(entity);
+        if (inv != null) inv.setSheathedOffhand1(stack);
     }
 
     public static ItemStack getTiamatSheathedMainhand2(Entity entity)
@@ -483,6 +526,12 @@ public class GlobalInventory
         return inventory == null ? null : inventory.getSheathedMainhand2();
     }
 
+    public static void setTiamatSheathedMainhand2(Entity entity, ItemStack stack)
+    {
+        ITiamatPlayerInventory inv = getTiamatInventory(entity);
+        if (inv != null) inv.setSheathedMainhand2(stack);
+    }
+
     public static ItemStack getTiamatSheathedOffhand2(Entity entity)
     {
         return getTiamatSheathedOffhand2(getTiamatInventory(entity));
@@ -491,6 +540,12 @@ public class GlobalInventory
     public static ItemStack getTiamatSheathedOffhand2(ITiamatPlayerInventory inventory)
     {
         return inventory == null ? null : inventory.getSheathedOffhand2();
+    }
+
+    public static void setTiamatSheathedOffhand2(Entity entity, ItemStack stack)
+    {
+        ITiamatPlayerInventory inv = getTiamatInventory(entity);
+        if (inv != null) inv.setSheathedOffhand2(stack);
     }
 
     public static ArrayList<ItemStack> getTiamatArmor(Entity entity)
@@ -513,6 +568,12 @@ public class GlobalInventory
         return inventory == null ? null : inventory.getTiamatArmor().get(0);
     }
 
+    public static void setTiamatShoulderItem(Entity entity, ItemStack stack)
+    {
+        ITiamatPlayerInventory inv = getTiamatInventory(entity);
+        if (inv != null) inv.setShoulders(stack);
+    }
+
     public static ItemStack getTiamatCapeItem(Entity entity)
     {
         return getTiamatCapeItem(getTiamatInventory(entity));
@@ -521,6 +582,12 @@ public class GlobalInventory
     public static ItemStack getTiamatCapeItem(ITiamatPlayerInventory inventory)
     {
         return inventory == null ? null : inventory.getTiamatArmor().get(1);
+    }
+
+    public static void setTiamatCapeItem(Entity entity, ItemStack stack)
+    {
+        ITiamatPlayerInventory inv = getTiamatInventory(entity);
+        if (inv != null) inv.setCape(stack);
     }
 
     public static ArrayList<ItemStack> getTiamatQuickslots(Entity entity)
@@ -533,6 +600,12 @@ public class GlobalInventory
         return inventory == null ? new ArrayList<>() : new ArrayList<>(inventory.getQuickSlots());
     }
 
+    public static void setTiamatQuickslot(Entity entity, int index, ItemStack stack)
+    {
+        ITiamatPlayerInventory inv = getTiamatInventory(entity);
+        if (inv != null) inv.setQuickSlot(index, stack);
+    }
+
     public static ItemStack getTiamatBackpack(Entity entity)
     {
         return getTiamatBackpack(getTiamatInventory(entity));
@@ -541,6 +614,12 @@ public class GlobalInventory
     public static ItemStack getTiamatBackpack(ITiamatPlayerInventory inventory)
     {
         return inventory == null ? null : inventory.getBackpack();
+    }
+
+    public static void setTiamatBackpack(Entity entity, ItemStack stack)
+    {
+        ITiamatPlayerInventory inv = getTiamatInventory(entity);
+        if (inv != null) inv.setBackpack(stack);
     }
 
     public static ItemStack getTiamatPet(Entity entity)
@@ -553,6 +632,12 @@ public class GlobalInventory
         return inventory == null ? null : inventory.getPet();
     }
 
+    public static void setTiamatPet(Entity entity, ItemStack stack)
+    {
+        ITiamatPlayerInventory inv = getTiamatInventory(entity);
+        if (inv != null) inv.setPet(stack);
+    }
+
     public static ItemStack getTiamatDeck(Entity entity)
     {
         return getTiamatDeck(getTiamatInventory(entity));
@@ -561,6 +646,12 @@ public class GlobalInventory
     public static ItemStack getTiamatDeck(ITiamatPlayerInventory inventory)
     {
         return inventory == null ? null : inventory.getDeck();
+    }
+
+    public static void setTiamatDeck(Entity entity, ItemStack stack)
+    {
+        ITiamatPlayerInventory inv = getTiamatInventory(entity);
+        if (inv != null) inv.setDeck(stack);
     }
 
     public static ArrayList<ItemStack> getTiamatClasses(Entity entity)
@@ -573,6 +664,12 @@ public class GlobalInventory
         return inventory == null ? new ArrayList<>() : new ArrayList<>(inventory.getPlayerClasses());
     }
 
+    public static void setTiamatClass(Entity entity, int index, ItemStack stack)
+    {
+        ITiamatPlayerInventory inv = getTiamatInventory(entity);
+        if (inv != null) inv.setPlayerClass(index, stack);
+    }
+
     public static ArrayList<ItemStack> getTiamatOffensiveSkills(Entity entity)
     {
         return getTiamatOffensiveSkills(getTiamatInventory(entity));
@@ -581,6 +678,12 @@ public class GlobalInventory
     public static ArrayList<ItemStack> getTiamatOffensiveSkills(ITiamatPlayerInventory inventory)
     {
         return inventory == null ? new ArrayList<>() : new ArrayList<>(inventory.getOffensiveSkills());
+    }
+
+    public static void setTiamatOffensiveSkill(Entity entity, int index, ItemStack stack)
+    {
+        ITiamatPlayerInventory inv = getTiamatInventory(entity);
+        if (inv != null) inv.setOffensiveSkill(index, stack);
     }
 
     public static ArrayList<ItemStack> getTiamatUtilitySkills(Entity entity)
@@ -593,6 +696,12 @@ public class GlobalInventory
         return inventory == null ? new ArrayList<>() : new ArrayList<>(inventory.getUtilitySkills());
     }
 
+    public static void setTiamatUtilitySkill(Entity entity, int index, ItemStack stack)
+    {
+        ITiamatPlayerInventory inv = getTiamatInventory(entity);
+        if (inv != null) inv.setUtilitySkill(index, stack);
+    }
+
     public static ItemStack getTiamatUltimateSkill(Entity entity)
     {
         return getTiamatUltimateSkill(getTiamatInventory(entity));
@@ -601,6 +710,12 @@ public class GlobalInventory
     public static ItemStack getTiamatUltimateSkill(ITiamatPlayerInventory inventory)
     {
         return inventory == null ? null : inventory.getUltimateSkill();
+    }
+
+    public static void setTiamatUltimateSkill(Entity entity, ItemStack stack)
+    {
+        ITiamatPlayerInventory inv = getTiamatInventory(entity);
+        if (inv != null) inv.setUltimateSkill(stack);
     }
 
     public static ArrayList<ItemStack> getTiamatPassiveSkills(Entity entity)
@@ -613,6 +728,12 @@ public class GlobalInventory
         return inventory == null ? new ArrayList<>() : new ArrayList<>(inventory.getPassiveSkills());
     }
 
+    public static void setTiamatPassiveSkill(Entity entity, int index, ItemStack stack)
+    {
+        ITiamatPlayerInventory inv = getTiamatInventory(entity);
+        if (inv != null) inv.setPassiveSkill(index, stack);
+    }
+
     public static ArrayList<ItemStack> getTiamatGatheringProfessions(Entity entity)
     {
         return getTiamatGatheringProfessions(getTiamatInventory(entity));
@@ -621,6 +742,12 @@ public class GlobalInventory
     public static ArrayList<ItemStack> getTiamatGatheringProfessions(ITiamatPlayerInventory inventory)
     {
         return inventory == null ? new ArrayList<>() : new ArrayList<>(inventory.getGatheringProfessions());
+    }
+
+    public static void setTiamatGatheringProfession(Entity entity, int index, ItemStack stack)
+    {
+        ITiamatPlayerInventory inv = getTiamatInventory(entity);
+        if (inv != null) inv.setGatheringProfession(index, stack);
     }
 
     public static ArrayList<ItemStack> getTiamatCraftingProfessions(Entity entity)
@@ -633,6 +760,12 @@ public class GlobalInventory
         return inventory == null ? new ArrayList<>() : new ArrayList<>(inventory.getCraftingProfessions());
     }
 
+    public static void setTiamatCraftingProfession(Entity entity, int index, ItemStack stack)
+    {
+        ITiamatPlayerInventory inv = getTiamatInventory(entity);
+        if (inv != null) inv.setCraftingProfession(index, stack);
+    }
+
     public static ArrayList<ItemStack> getTiamatRecipes(Entity entity)
     {
         return getTiamatRecipes(getTiamatInventory(entity));
@@ -641,6 +774,12 @@ public class GlobalInventory
     public static ArrayList<ItemStack> getTiamatRecipes(ITiamatPlayerInventory inventory)
     {
         return inventory == null ? new ArrayList<>() : new ArrayList<>(inventory.getCraftingRecipes());
+    }
+
+    public static void setTiamatRecipe(Entity entity, int index, ItemStack stack)
+    {
+        ITiamatPlayerInventory inv = getTiamatInventory(entity);
+        if (inv != null) inv.setCraftingRecipe(index, stack);
     }
 
     public static ArrayList<ItemStack> getAllTiamatItems(Entity entity)
