@@ -5,6 +5,7 @@ import com.fantasticsource.tools.ReflectionTool;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.TrigLookupTable;
 import com.fantasticsource.tools.datastructures.ExplicitPriorityQueue;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.network.NetworkPlayerInfo;
@@ -20,6 +21,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntitySnowball;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
 import net.minecraft.server.MinecraftServer;
@@ -259,6 +261,48 @@ public class MCTools
         return new NBTTagIntArray(newArray);
     }
 
+
+    public static ItemStack getItemStack(String itemID)
+    {
+        String domain = "minecraft", name;
+        int meta = 0;
+
+        String[] tokens = Tools.fixedSplit("" + itemID, ":");
+        if (tokens.length == 1) name = tokens[0];
+        else if (tokens.length == 2)
+        {
+            try
+            {
+                meta = Integer.parseInt(tokens[1]);
+                name = tokens[0];
+            }
+            catch (NumberFormatException e)
+            {
+                domain = tokens[0];
+                name = tokens[1];
+            }
+        }
+        else
+        {
+            domain = tokens[0];
+            name = tokens[1];
+            meta = Integer.parseInt(tokens[2]);
+        }
+
+        return getItemStack(domain, name, meta);
+    }
+
+    public static ItemStack getItemStack(String domain, String name, int meta)
+    {
+        ResourceLocation rl = new ResourceLocation(domain, name);
+        Item item = ForgeRegistries.ITEMS.getValue(rl);
+        if (item != null) return new ItemStack(item, 1, meta);
+
+        Block block = ForgeRegistries.BLOCKS.getValue(rl);
+        if (block != null) return new ItemStack(block, 1, meta);
+
+        return null;
+    }
 
     public static ItemStack cloneItemStack(ItemStack stack)
     {
