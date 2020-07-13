@@ -5,17 +5,123 @@ import com.fantasticsource.tools.datastructures.ExplicitPriorityQueue;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.NotImplementedException;
 import org.lwjgl.util.vector.Quaternion;
+
+import java.util.ArrayList;
 
 public class EntityFilters
 {
+    public static final int
+            INCLUSION_MODE_GEOMETRIC_CENTER = 0,
+            INCLUSION_MODE_ANY_POINT = 1,
+            INCLUSION_MODE_ENTIRETY = 2,
+            INCLUSION_MODE_ENTITY_POSITION = 3;
+
     private static final double DEFAULT_DISTRIBUTED_RAYTRACE_SPACING = 0.5;
 
 
-    public static Entity[] inWorld(World world, Entity... entitiesToCheck)
+    public static ArrayList<Entity> inWorld(World world, ArrayList<Entity> entitiesToCheck)
     {
-
+        entitiesToCheck.removeIf(entity -> entity.world != world);
+        return entitiesToCheck;
     }
+
+
+    public static ArrayList<Entity> inCube(Vec3d origin, double halfSize, int inclusionMode, ArrayList<Entity> entitiesToCheck)
+    {
+        double top = origin.y + halfSize, bottom = origin.y - halfSize;
+        double west = origin.x - halfSize, east = origin.x + halfSize;
+        double north = origin.z - halfSize, south = origin.z + halfSize;
+
+        switch (inclusionMode)
+        {
+            case INCLUSION_MODE_GEOMETRIC_CENTER:
+                entitiesToCheck.removeIf(entity ->
+                {
+                    if (entity.posX < west || entity.posX > east || entity.posZ < north || entity.posZ > south) return true;
+                    double centerY = entity.posY + entity.height * 0.5;
+                    return centerY > top || centerY < bottom;
+                });
+                break;
+
+            case INCLUSION_MODE_ANY_POINT:
+                entitiesToCheck.removeIf(entity ->
+                {
+                    double halfW = entity.width * 0.5;
+
+                    double eWest = entity.posX - halfW, eEast = entity.posX + halfW;
+                    if (eWest > east || eEast < west) return true;
+
+                    double eNorth = entity.posZ - halfW, eSouth = entity.posZ + halfW;
+                    if (eNorth > south || eSouth < north) return true;
+
+                    double halfH = entity.height * 0.5;
+                    double eTop = entity.posY + halfH, eBottom = entity.posY - halfH;
+                    if (eTop < bottom || eBottom > top) return true;
+
+                    return false;
+                });
+                break;
+
+            case INCLUSION_MODE_ENTIRETY:
+                entitiesToCheck.removeIf(entity ->
+                {
+                    double halfW = entity.width * 0.5;
+
+                    double eWest = entity.posX - halfW, eEast = entity.posX + halfW;
+                    if (eWest < west || eEast > east) return true;
+
+                    double eNorth = entity.posZ - halfW, eSouth = entity.posZ + halfW;
+                    if (eNorth < north || eSouth > south) return true;
+
+                    double halfH = entity.height * 0.5;
+                    double eTop = entity.posY + halfH, eBottom = entity.posY - halfH;
+                    if (eTop > top || eBottom < bottom) return true;
+
+                    return false;
+                });
+                break;
+
+            case INCLUSION_MODE_ENTITY_POSITION:
+                entitiesToCheck.removeIf(entity -> entity.posX < west || entity.posX > east || entity.posZ < north || entity.posZ > south || entity.posY > top || entity.posY < bottom);
+                break;
+        }
+        return entitiesToCheck;
+    }
+
+
+    public static ArrayList<Entity> inSphere(Vec3d origin, double radius, int inclusionMode, ArrayList<Entity> entitiesToCheck)
+    {
+        double squareRadius = radius * radius;
+
+        switch (inclusionMode)
+        {
+            case INCLUSION_MODE_GEOMETRIC_CENTER:
+                entitiesToCheck.removeIf(entity -> origin.squareDistanceTo(entity.getPositionVector().addVector(0, entity.height * 0.5, 0)) > squareRadius);
+                break;
+
+            case INCLUSION_MODE_ANY_POINT:
+                throw new NotImplementedException("INCLUSION_MODE_ANY_POINT not currently supported for sphere check");
+
+            case INCLUSION_MODE_ENTIRETY:
+                entitiesToCheck.removeIf(entity ->
+                {
+                    double halfW = entity.width * 0.5, halfH = entity.height * 0.5;
+                    Vec3d geoCenter = entity.getPositionVector().addVector(0, halfH, 0);
+                    return origin.squareDistanceTo(geoCenter.addVector(origin.x < geoCenter.x ? halfW : -halfW, origin.y < geoCenter.y ? halfH : -halfH, origin.z < geoCenter.z ? halfW : -halfW)) > squareRadius;
+                });
+                break;
+
+            case INCLUSION_MODE_ENTITY_POSITION:
+                entitiesToCheck.removeIf(entity -> origin.squareDistanceTo(entity.getPositionVector()) > squareRadius);
+                break;
+        }
+        return entitiesToCheck;
+    }
+
+
+    //TODO remove code below here after adapting
 
 
     public static Entity[] withinCone(Vec3d origin, float yaw, float pitch, double range, double angle, boolean LOS, Entity... entitiesToCheck)
