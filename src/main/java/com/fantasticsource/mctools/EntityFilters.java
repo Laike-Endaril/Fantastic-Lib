@@ -1,6 +1,7 @@
 package com.fantasticsource.mctools;
 
 import com.fantasticsource.tools.Tools;
+import com.fantasticsource.tools.TrigLookupTable;
 import com.fantasticsource.tools.datastructures.ExplicitPriorityQueue;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
@@ -127,6 +128,20 @@ public class EntityFilters
         return entitiesToCheck;
     }
 
+
+    public static ArrayList<Entity> inCone(Vec3d origin, Vec3d direction, double range, double angle, boolean LOS, ArrayList<Entity> entitiesToCheck)
+    {
+        return inCone(origin, direction, range, angle, LOS, entitiesToCheck, DEFAULT_DISTRIBUTED_RAYTRACE_SPACING);
+    }
+
+    public static ArrayList<Entity> inCone(Vec3d origin, Vec3d direction, double range, double angle, boolean LOS, ArrayList<Entity> entitiesToCheck, double distributedRaytraceSpacing)
+    {
+        Vec3d pos2 = origin.add(direction);
+        float yaw = (float) MCTools.getYawDeg(origin, pos2, TrigLookupTable.TRIG_TABLE_1024);
+        float pitch = (float) MCTools.getPitchDeg(origin, pos2, TrigLookupTable.TRIG_TABLE_1024);
+
+        return inCone(origin, yaw, pitch, range, angle, LOS, entitiesToCheck, distributedRaytraceSpacing);
+    }
 
     public static ArrayList<Entity> inCone(Vec3d origin, float yaw, float pitch, double range, double angle, boolean LOS, ArrayList<Entity> entitiesToCheck)
     {
