@@ -9,14 +9,17 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.lwjgl.util.vector.Quaternion;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class EntityFilters
 {
     public static final int
-            INCLUSION_MODE_GEOMETRIC_CENTER = 0,
-            INCLUSION_MODE_ANY_POINT = 1,
-            INCLUSION_MODE_ENTIRETY = 2,
-            INCLUSION_MODE_ENTITY_POSITION = 3;
+            INCLUSION_MODE_ENTITY_POSITION = 0,
+            INCLUSION_MODE_GEOMETRIC_CENTER = 1,
+            INCLUSION_MODE_RECTANGULAR_PRISM_ANY = 2,
+            INCLUSION_MODE_RECTANGULAR_PRISM_FULL = 3,
+            INCLUSION_MODE_CYLINDER_ANY = 4,
+            INCLUSION_MODE_CYLINDER_FULL = 5;
 
     private static final double DEFAULT_DISTRIBUTED_RAYTRACE_SPACING = 0.5;
 
@@ -36,6 +39,10 @@ public class EntityFilters
 
         switch (inclusionMode)
         {
+            case INCLUSION_MODE_ENTITY_POSITION:
+                entitiesToCheck.removeIf(entity -> entity.posX < west || entity.posX > east || entity.posZ < north || entity.posZ > south || entity.posY > top || entity.posY < bottom);
+                break;
+
             case INCLUSION_MODE_GEOMETRIC_CENTER:
                 entitiesToCheck.removeIf(entity ->
                 {
@@ -45,7 +52,7 @@ public class EntityFilters
                 });
                 break;
 
-            case INCLUSION_MODE_ANY_POINT:
+            case INCLUSION_MODE_RECTANGULAR_PRISM_ANY:
                 entitiesToCheck.removeIf(entity ->
                 {
                     double halfW = entity.width * 0.5;
@@ -64,7 +71,8 @@ public class EntityFilters
                 });
                 break;
 
-            case INCLUSION_MODE_ENTIRETY:
+            case INCLUSION_MODE_RECTANGULAR_PRISM_FULL:
+            case INCLUSION_MODE_CYLINDER_FULL:
                 entitiesToCheck.removeIf(entity ->
                 {
                     double halfW = entity.width * 0.5;
@@ -83,9 +91,8 @@ public class EntityFilters
                 });
                 break;
 
-            case INCLUSION_MODE_ENTITY_POSITION:
-                entitiesToCheck.removeIf(entity -> entity.posX < west || entity.posX > east || entity.posZ < north || entity.posZ > south || entity.posY > top || entity.posY < bottom);
-                break;
+            default:
+                throw new NotImplementedException("Mode not implemented for this method: " + inclusionMode);
         }
         return entitiesToCheck;
     }
@@ -97,14 +104,15 @@ public class EntityFilters
 
         switch (inclusionMode)
         {
+            case INCLUSION_MODE_ENTITY_POSITION:
+                entitiesToCheck.removeIf(entity -> origin.squareDistanceTo(entity.getPositionVector()) > squareRadius);
+                break;
+
             case INCLUSION_MODE_GEOMETRIC_CENTER:
                 entitiesToCheck.removeIf(entity -> origin.squareDistanceTo(entity.getPositionVector().addVector(0, entity.height * 0.5, 0)) > squareRadius);
                 break;
 
-            case INCLUSION_MODE_ANY_POINT:
-                throw new NotImplementedException("INCLUSION_MODE_ANY_POINT not currently supported for sphere check");
-
-            case INCLUSION_MODE_ENTIRETY:
+            case INCLUSION_MODE_RECTANGULAR_PRISM_FULL:
                 entitiesToCheck.removeIf(entity ->
                 {
                     double halfW = entity.width * 0.5, halfH = entity.height * 0.5;
@@ -113,34 +121,30 @@ public class EntityFilters
                 });
                 break;
 
-            case INCLUSION_MODE_ENTITY_POSITION:
-                entitiesToCheck.removeIf(entity -> origin.squareDistanceTo(entity.getPositionVector()) > squareRadius);
-                break;
+            default:
+                throw new NotImplementedException("Mode not implemented for this method: " + inclusionMode);
         }
         return entitiesToCheck;
     }
 
 
-    //TODO remove code below here after adapting
-
-
-    public static Entity[] withinCone(Vec3d origin, float yaw, float pitch, double range, double angle, boolean LOS, Entity... entitiesToCheck)
+    public static ArrayList<Entity> inCone(Vec3d origin, float yaw, float pitch, double range, double angle, boolean LOS, ArrayList<Entity> entitiesToCheck)
     {
-        return withinCone(origin, yaw, pitch, range, angle, LOS, DEFAULT_DISTRIBUTED_RAYTRACE_SPACING, entitiesToCheck);
+        return inCone(origin, yaw, pitch, range, angle, LOS, entitiesToCheck, DEFAULT_DISTRIBUTED_RAYTRACE_SPACING);
     }
 
-    public static Entity[] withinCone(Vec3d origin, float yaw, float pitch, double range, double angle, boolean LOS, double distributedRaytraceSpacing, Entity... entitiesToCheck)
+    public static ArrayList<Entity> inCone(Vec3d origin, float yaw, float pitch, double range, double angle, boolean LOS, ArrayList<Entity> entitiesToCheck, double distributedRaytraceSpacing)
     {
         Vec3d coneAxisEnd = origin.add(Vec3d.fromPitchYaw(pitch, yaw).normalize().scale(range));
         double squareRange = origin.squareDistanceTo(coneAxisEnd), halfAngle = angle / 2;
 
-        ExplicitPriorityQueue<Entity> queue = new ExplicitPriorityQueue<>(entitiesToCheck.length);
+        ExplicitPriorityQueue<Entity> queue = new ExplicitPriorityQueue<>(entitiesToCheck.size());
 
         if (!LOS)
         {
             for (Entity target : entitiesToCheck)
             {
-                Vec3d targetCenter = target.getPositionVector().addVector(0, target.height / 2, 0);
+                Vec3d targetCenter = target.getPositionVector().addVector(0, target.height * 0.5, 0);
                 double squareDist = origin.squareDistanceTo(targetCenter);
                 if (squareDist > squareRange) continue;
 
@@ -153,7 +157,7 @@ public class EntityFilters
         {
             for (Entity target : entitiesToCheck)
             {
-                Vec3d targetCenter = target.getPositionVector().addVector(0, target.height / 2, 0);
+                Vec3d targetCenter = target.getPositionVector().addVector(0, target.height * 0.5, 0);
                 double squareDist = origin.squareDistanceTo(targetCenter);
                 if (squareDist > squareRange) continue;
 
@@ -236,6 +240,9 @@ public class EntityFilters
             }
         }
 
-        return queue.toArray(new Entity[0]);
+
+        ArrayList<Entity> result = new ArrayList<>();
+        Collections.addAll(result, queue.toArray(new Entity[0]));
+        return result;
     }
 }
