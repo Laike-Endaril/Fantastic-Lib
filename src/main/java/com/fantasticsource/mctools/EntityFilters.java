@@ -11,9 +11,12 @@ import org.lwjgl.util.vector.Quaternion;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 
 public class EntityFilters
 {
+    public static final LinkedHashMap<Integer, String> INLUSION_MODES = new LinkedHashMap<>();
+
     public static final int
             INCLUSION_MODE_ENTITY_POSITION = 0,
             INCLUSION_MODE_GEOMETRIC_CENTER = 1,
@@ -21,6 +24,16 @@ public class EntityFilters
             INCLUSION_MODE_RECTANGULAR_PRISM_FULL = 3,
             INCLUSION_MODE_CYLINDER_ANY = 4,
             INCLUSION_MODE_CYLINDER_FULL = 5;
+
+    static
+    {
+        INLUSION_MODES.put(INCLUSION_MODE_ENTITY_POSITION, "Entity Position");
+        INLUSION_MODES.put(INCLUSION_MODE_GEOMETRIC_CENTER, "Geometric Center");
+        INLUSION_MODES.put(INCLUSION_MODE_RECTANGULAR_PRISM_ANY, "Any Rectangular Prism Point");
+        INLUSION_MODES.put(INCLUSION_MODE_RECTANGULAR_PRISM_FULL, "Full Rectangular Prism");
+        INLUSION_MODES.put(INCLUSION_MODE_CYLINDER_ANY, "Any Cylinder Point");
+        INLUSION_MODES.put(INCLUSION_MODE_CYLINDER_FULL, "Full Cylinder");
+    }
 
     private static final double DEFAULT_DISTRIBUTED_RAYTRACE_SPACING = 0.5;
 
