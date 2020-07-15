@@ -15,6 +15,9 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * I wrote this a looong time ago, and haven't been using it.  I highly suggest testing stability, efficiency, and reliability if you decide to use this.
+ */
 public class Speedometer
 {
     //Player motion is smoothed over several updates to help account for inconsistent packet reception rates, but other entities are not
