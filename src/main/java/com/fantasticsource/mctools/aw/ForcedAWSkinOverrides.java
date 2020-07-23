@@ -19,6 +19,8 @@ import net.minecraftforge.client.event.RenderSpecificHandEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -30,28 +32,25 @@ import static com.fantasticsource.fantasticlib.FantasticLib.DOMAIN;
 
 public class ForcedAWSkinOverrides
 {
-    public static Class
-            awModAddonManagerClass = ReflectionTool.getClassByName("moe.plushie.armourers_workshop.common.addons.ModAddonManager"),
-            awSkinLayerRendererHeldItemClass = ReflectionTool.getClassByName("moe.plushie.armourers_workshop.client.render.entity.SkinLayerRendererHeldItem");
-
-    public static Field
-            awItemOverridesField = ReflectionTool.getField(awModAddonManagerClass, "ITEM_OVERRIDES"),
-            renderLivingBaseLayerRenderersField = ReflectionTool.getField(RenderLivingBase.class, "field_177097_h", "layerRenderers");
-
-    public static Method awSkinLayerRendererHeldItemRenderHeldItemMethod = ReflectionTool.getMethod(awSkinLayerRendererHeldItemClass, "renderHeldItem");
+    public static Class awModAddonManagerClass = null, awSkinLayerRendererHeldItemClass = null;
+    public static Field awItemOverridesField = null, renderLivingBaseLayerRenderersField = null;
+    public static Method awSkinLayerRendererHeldItemRenderHeldItemMethod = null;
 
     public static HashSet<String> awItemOverrides = null;
 
-    static
+
+    @SideOnly(Side.CLIENT)
+    public static void clientInit() throws IllegalAccessException
     {
-        try
-        {
-            awItemOverrides = (HashSet<String>) awItemOverridesField.get(null);
-        }
-        catch (IllegalAccessException e)
-        {
-            e.printStackTrace();
-        }
+        awModAddonManagerClass = ReflectionTool.getClassByName("moe.plushie.armourers_workshop.common.addons.ModAddonManager");
+        awSkinLayerRendererHeldItemClass = ReflectionTool.getClassByName("moe.plushie.armourers_workshop.client.render.entity.SkinLayerRendererHeldItem");
+
+        awItemOverridesField = ReflectionTool.getField(awModAddonManagerClass, "ITEM_OVERRIDES");
+        renderLivingBaseLayerRenderersField = ReflectionTool.getField(RenderLivingBase.class, "field_177097_h", "layerRenderers");
+
+        awSkinLayerRendererHeldItemRenderHeldItemMethod = ReflectionTool.getMethod(awSkinLayerRendererHeldItemClass, "renderHeldItem");
+
+        awItemOverrides = (HashSet<String>) awItemOverridesField.get(null);
     }
 
 
@@ -154,14 +153,16 @@ public class ForcedAWSkinOverrides
 
     //The event for these two methods only applies to the local player's own held items, rendered in 1st person view
     //This is part of making AW recognize items as being skinnable via NBT
+    @SideOnly(Side.CLIENT)
     @SubscribeEvent(priority = EventPriority.HIGH)
-    public static void renderSpecificHandBeforeAW(RenderSpecificHandEvent event)
+    public static void clientRenderSpecificHandBeforeAW(RenderSpecificHandEvent event)
     {
         tryEnableAWSkinOverrideHack(event.getItemStack());
     }
 
+    @SideOnly(Side.CLIENT)
     @SubscribeEvent(priority = EventPriority.LOW, receiveCanceled = true)
-    public static void renderSpecificHandAfterAW(RenderSpecificHandEvent event)
+    public static void clientRenderSpecificHandAfterAW(RenderSpecificHandEvent event)
     {
         tryDisableAWSkinOverrideHack(event.getItemStack());
     }
@@ -169,8 +170,9 @@ public class ForcedAWSkinOverrides
 
     //This event and the class below apply to all items except those viewed in 1st person, in your own hands
     //This is part of making AW recognize items as being skinnable via NBT
+    @SideOnly(Side.CLIENT)
     @SubscribeEvent
-    public static void entityJoinWorld(EntityJoinWorldEvent event) throws IllegalAccessException
+    public static void clientEntityJoinWorld(EntityJoinWorldEvent event) throws IllegalAccessException
     {
         if (!event.getWorld().isRemote) return;
 
@@ -183,17 +185,21 @@ public class ForcedAWSkinOverrides
         if (!(render instanceof RenderLivingBase)) return;
 
 
-        List<LayerRenderer> layerRenderers = (List<LayerRenderer>) renderLivingBaseLayerRenderersField.get(render);
-        for (LayerRenderer layer : layerRenderers.toArray(new LayerRenderer[0]))
+        if (renderLivingBaseLayerRenderersField != null)
         {
-            if (layer.getClass() == awSkinLayerRendererHeldItemClass)
+            List<LayerRenderer> layerRenderers = (List<LayerRenderer>) renderLivingBaseLayerRenderersField.get(render);
+            for (LayerRenderer layer : layerRenderers.toArray(new LayerRenderer[0]))
             {
-                layerRenderers.remove(layer);
-                layerRenderers.add(new AWSkinRenderLayerWrapper((RenderLivingBase) render, (LayerHeldItem) layer));
+                if (layer.getClass() == awSkinLayerRendererHeldItemClass)
+                {
+                    layerRenderers.remove(layer);
+                    layerRenderers.add(new AWSkinRenderLayerWrapper((RenderLivingBase) render, (LayerHeldItem) layer));
+                }
             }
         }
     }
 
+    @SideOnly(Side.CLIENT)
     public static class AWSkinRenderLayerWrapper extends LayerHeldItem
     {
         public LayerHeldItem awLayer;

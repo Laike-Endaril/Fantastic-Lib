@@ -73,13 +73,17 @@ public class FantasticLib
 
 
     @EventHandler
-    public void preInit(FMLPreInitializationEvent event)
+    public void preInit(FMLPreInitializationEvent event) throws IllegalAccessException
     {
         PlayerData.load();
 
         CapabilityManager.INSTANCE.register(INBTCap.class, new NBTCapStorage(), () -> null);
 
-        if (event.getSide() == Side.CLIENT) Render.init();
+        if (event.getSide() == Side.CLIENT)
+        {
+            ForcedAWSkinOverrides.clientInit();
+            Render.init();
+        }
     }
 
     @EventHandler
