@@ -185,16 +185,13 @@ public class ForcedAWSkinOverrides
         if (!(render instanceof RenderLivingBase)) return;
 
 
-        if (renderLivingBaseLayerRenderersField != null)
+        List<LayerRenderer> layerRenderers = (List<LayerRenderer>) renderLivingBaseLayerRenderersField.get(render);
+        for (LayerRenderer layer : layerRenderers.toArray(new LayerRenderer[0]))
         {
-            List<LayerRenderer> layerRenderers = (List<LayerRenderer>) renderLivingBaseLayerRenderersField.get(render);
-            for (LayerRenderer layer : layerRenderers.toArray(new LayerRenderer[0]))
+            if (layer.getClass() == awSkinLayerRendererHeldItemClass)
             {
-                if (layer.getClass() == awSkinLayerRendererHeldItemClass)
-                {
-                    layerRenderers.remove(layer);
-                    layerRenderers.add(new AWSkinRenderLayerWrapper((RenderLivingBase) render, (LayerHeldItem) layer));
-                }
+                layerRenderers.remove(layer);
+                layerRenderers.add(new AWSkinRenderLayerWrapper((RenderLivingBase) render, (LayerHeldItem) layer));
             }
         }
     }
