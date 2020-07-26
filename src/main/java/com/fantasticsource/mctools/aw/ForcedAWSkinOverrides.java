@@ -16,6 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHandSide;
 import net.minecraftforge.client.event.RenderSpecificHandEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -51,6 +52,9 @@ public class ForcedAWSkinOverrides
         awSkinLayerRendererHeldItemRenderHeldItemMethod = ReflectionTool.getMethod(awSkinLayerRendererHeldItemClass, "renderHeldItem");
 
         awItemOverrides = (HashSet<String>) awItemOverridesField.get(null);
+
+
+        MinecraftForge.EVENT_BUS.register(ForcedAWSkinOverrides.class);
     }
 
 

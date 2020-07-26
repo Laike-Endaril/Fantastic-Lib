@@ -9,6 +9,7 @@ import com.fantasticsource.tools.datastructures.Pair;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -24,6 +25,8 @@ public class RenderModes
     public static void init()
     {
         FLibAPI.attachNBTCapToEntityIf(MODID, entity -> true);
+
+        MinecraftForge.EVENT_BUS.register(RenderModes.class);
     }
 
 

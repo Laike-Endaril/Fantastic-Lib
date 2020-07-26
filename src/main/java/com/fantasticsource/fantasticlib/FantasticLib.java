@@ -73,17 +73,13 @@ public class FantasticLib
 
 
     @EventHandler
-    public void preInit(FMLPreInitializationEvent event) throws IllegalAccessException
+    public void preInit(FMLPreInitializationEvent event)
     {
         PlayerData.load();
 
         CapabilityManager.INSTANCE.register(INBTCap.class, new NBTCapStorage(), () -> null);
 
-        if (event.getSide() == Side.CLIENT)
-        {
-            ForcedAWSkinOverrides.clientInit();
-            Render.init();
-        }
+        if (event.getSide() == Side.CLIENT) Render.init();
     }
 
     @EventHandler
@@ -93,7 +89,7 @@ public class FantasticLib
     }
 
     @EventHandler
-    public void postInit(FMLPostInitializationEvent event)
+    public void postInit(FMLPostInitializationEvent event) throws IllegalAccessException
     {
         DataFiles.output();
         Compat.betterportals = (Loader.isModLoaded("betterportals"));
@@ -104,9 +100,9 @@ public class FantasticLib
         if (Loader.isModLoaded("armourers_workshop"))
         {
             RenderModes.init();
-            MinecraftForge.EVENT_BUS.register(RenderModes.class);
+
             MinecraftForge.EVENT_BUS.register(TransientAWSkinHandler.class);
-            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) MinecraftForge.EVENT_BUS.register(ForcedAWSkinOverrides.class);
+            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) ForcedAWSkinOverrides.clientInit();
         }
     }
 
