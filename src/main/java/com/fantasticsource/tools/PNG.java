@@ -25,8 +25,6 @@ public class PNG
 
     public static PNG load(String filename)
     {
-        PNG png = new PNG();
-
         InputStream input = null;
         try
         {
@@ -36,6 +34,13 @@ public class PNG
         {
             e.printStackTrace();
         }
+
+        return load(input);
+    }
+
+    public static PNG load(InputStream input)
+    {
+        PNG png = new PNG();
 
         try
         {

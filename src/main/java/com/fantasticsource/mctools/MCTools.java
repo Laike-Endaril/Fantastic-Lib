@@ -1,6 +1,7 @@
 package com.fantasticsource.mctools;
 
 import com.fantasticsource.fantasticlib.FantasticLib;
+import com.fantasticsource.tools.PNG;
 import com.fantasticsource.tools.ReflectionTool;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.TrigLookupTable;
@@ -51,10 +52,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.NotImplementedException;
 import org.lwjgl.util.vector.Quaternion;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -82,6 +80,20 @@ public class MCTools
         catch (Exception e)
         {
             crash(e, 700, false);
+        }
+    }
+
+
+    public static PNG getPNG(ResourceLocation rl)
+    {
+        try
+        {
+            return PNG.load(Minecraft.getMinecraft().getResourceManager().getResource(rl).getInputStream());
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return null;
         }
     }
 
