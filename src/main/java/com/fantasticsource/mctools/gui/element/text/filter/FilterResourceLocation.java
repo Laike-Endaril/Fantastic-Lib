@@ -5,6 +5,12 @@ import net.minecraft.util.ResourceLocation;
 
 public class FilterResourceLocation extends TextFilter<ResourceLocation>
 {
+    public static final FilterResourceLocation INSTANCE = new FilterResourceLocation();
+
+    protected FilterResourceLocation()
+    {
+    }
+
     @Override
     public String transformInput(String input)
     {
