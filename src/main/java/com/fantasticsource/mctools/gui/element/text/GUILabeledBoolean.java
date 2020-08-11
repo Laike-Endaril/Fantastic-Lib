@@ -21,7 +21,7 @@ public class GUILabeledBoolean extends GUIAutocroppedView
         input = new GUIText(screen, "" + defaultInput, GUIScreen.getIdleColor(Color.WHITE), GUIScreen.getHoverColor(Color.WHITE), Color.WHITE, scale);
 
         this.label = new GUIText(screen, label, scale);
-        add(this.label.addClickActions(() -> input.setText(input.getText().equals("true") ? "false" : "true")));
+        add(this.label.addClickActions(input::click));
         add(input.addClickActions(() -> input.setText(input.getText().equals("true") ? "false" : "true")));
     }
 
