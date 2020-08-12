@@ -19,6 +19,21 @@ public class Tools
     protected static PrintStream out = null, err = null;
 
 
+    public static String caselessRegex(String regex)
+    {
+        StringBuilder result = new StringBuilder();
+        for (char c : regex.toLowerCase().toCharArray())
+        {
+            if (c >= 'a' && c <= 'z')
+            {
+                result.append("[").append(c).append(c - 32).append("]");
+            }
+            else result.append(c);
+        }
+        return result.toString();
+    }
+
+
     public static boolean areRelated(Class c1, Class c2)
     {
         return isA(c1, c2) || isA(c2, c1);
