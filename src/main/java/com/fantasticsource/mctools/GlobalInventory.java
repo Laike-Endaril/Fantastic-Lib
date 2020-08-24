@@ -918,4 +918,169 @@ public class GlobalInventory
         if (syncToSelf && entity instanceof EntityPlayerMP) wardrobeSkinHandler.syncToPlayer((EntityPlayerMP) entity);
         if (syncToOthers) wardrobeSkinHandler.syncToAllTracking();
     }
+
+
+    public static ItemStack getItem(Entity entity, String slot)
+    {
+        slot = slot.toLowerCase();
+
+        //Baubles
+        if (slot.contains("bauble"))
+        {
+            try
+            {
+                return getBaubles(entity).get(Integer.parseInt(slot.replace("bauble", "")) - 1);
+            }
+            catch (NumberFormatException e)
+            {
+                return null;
+            }
+        }
+
+        switch (slot)
+        {
+            //Vanilla
+            case "mainhand":
+                return getVanillaMainhandItem(entity);
+
+            case "offhand":
+                return getVanillaOffhandItems(entity).get(0);
+
+            case "head":
+                return getVanillaHeadItem(entity);
+
+            case "chest":
+                return getVanillaChestItem(entity);
+
+            case "leg":
+                return getVanillaLegItem(entity);
+
+            case "feet":
+                return getVanillaFootItem(entity);
+
+            //Tiamat
+            case "mainhand1":
+                return getTiamatSheathedMainhand1(entity);
+
+            case "offhand1":
+                return getTiamatSheathedOffhand1(entity);
+
+            case "mainhand2":
+                return getTiamatSheathedMainhand2(entity);
+
+            case "offhand2":
+                return getTiamatSheathedOffhand2(entity);
+
+            case "shoulder":
+                return getTiamatShoulderItem(entity);
+
+            case "cape":
+                return getTiamatCapeItem(entity);
+
+            case "quickslot1":
+                return getTiamatQuickslots(entity).get(0);
+
+            case "quickslot2":
+                return getTiamatQuickslots(entity).get(1);
+
+            case "quickslot3":
+                return getTiamatQuickslots(entity).get(2);
+
+            case "backpack":
+                return getTiamatBackpack(entity);
+
+            case "pet":
+                return getTiamatPet(entity);
+
+            case "deck":
+                return getTiamatDeck(entity);
+
+            case "class1":
+                return getTiamatClasses(entity).get(0);
+
+            case "class2":
+                return getTiamatClasses(entity).get(1);
+
+            case "offensive1":
+                return getTiamatOffensiveSkills(entity).get(0);
+
+            case "offensive2":
+                return getTiamatOffensiveSkills(entity).get(1);
+
+            case "utility1":
+                return getTiamatUtilitySkills(entity).get(0);
+
+            case "utility2":
+                return getTiamatUtilitySkills(entity).get(1);
+
+            case "ultimate":
+                return getTiamatUltimateSkill(entity);
+
+            case "passive1":
+                return getTiamatPassiveSkills(entity).get(0);
+
+            case "passive2":
+                return getTiamatPassiveSkills(entity).get(1);
+
+            case "gathering1":
+                return getTiamatGatheringProfessions(entity).get(0);
+
+            case "gathering2":
+                return getTiamatGatheringProfessions(entity).get(1);
+
+            case "crafting1":
+                return getTiamatCraftingProfessions(entity).get(0);
+
+            case "crafting2":
+                return getTiamatCraftingProfessions(entity).get(1);
+
+            case "recipe1":
+                return getTiamatRecipes(entity).get(0);
+
+            case "recipe2":
+                return getTiamatRecipes(entity).get(1);
+
+            case "recipe3":
+                return getTiamatRecipes(entity).get(2);
+
+            case "recipe4":
+                return getTiamatRecipes(entity).get(3);
+
+            case "recipe5":
+                return getTiamatRecipes(entity).get(4);
+
+            case "recipe6":
+                return getTiamatRecipes(entity).get(5);
+
+            case "recipe7":
+                return getTiamatRecipes(entity).get(6);
+
+            case "recipe8":
+                return getTiamatRecipes(entity).get(7);
+
+            case "recipe9":
+                return getTiamatRecipes(entity).get(8);
+
+            case "recipe10":
+                return getTiamatRecipes(entity).get(9);
+
+            case "recipe11":
+                return getTiamatRecipes(entity).get(10);
+
+            case "recipe12":
+                return getTiamatRecipes(entity).get(11);
+
+            case "recipe13":
+                return getTiamatRecipes(entity).get(12);
+
+            case "recipe14":
+                return getTiamatRecipes(entity).get(13);
+
+            case "recipe15":
+                return getTiamatRecipes(entity).get(14);
+
+            default:
+                return null;
+        }
+    }
 }
