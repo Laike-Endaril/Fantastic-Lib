@@ -959,39 +959,39 @@ public class GlobalInventory
                 return getVanillaFootItem(entity);
 
             case "hotbar1":
-                if (entity instanceof EntityPlayerMP) return ((EntityPlayerMP) entity).inventory.getStackInSlot(0);
+                if (entity instanceof EntityPlayer) return ((EntityPlayer) entity).inventory.getStackInSlot(0);
                 return null;
 
             case "hotbar2":
-                if (entity instanceof EntityPlayerMP) return ((EntityPlayerMP) entity).inventory.getStackInSlot(1);
+                if (entity instanceof EntityPlayer) return ((EntityPlayer) entity).inventory.getStackInSlot(1);
                 return null;
 
             case "hotbar3":
-                if (entity instanceof EntityPlayerMP) return ((EntityPlayerMP) entity).inventory.getStackInSlot(2);
+                if (entity instanceof EntityPlayer) return ((EntityPlayer) entity).inventory.getStackInSlot(2);
                 return null;
 
             case "hotbar4":
-                if (entity instanceof EntityPlayerMP) return ((EntityPlayerMP) entity).inventory.getStackInSlot(3);
+                if (entity instanceof EntityPlayer) return ((EntityPlayer) entity).inventory.getStackInSlot(3);
                 return null;
 
             case "hotbar5":
-                if (entity instanceof EntityPlayerMP) return ((EntityPlayerMP) entity).inventory.getStackInSlot(4);
+                if (entity instanceof EntityPlayer) return ((EntityPlayer) entity).inventory.getStackInSlot(4);
                 return null;
 
             case "hotbar6":
-                if (entity instanceof EntityPlayerMP) return ((EntityPlayerMP) entity).inventory.getStackInSlot(5);
+                if (entity instanceof EntityPlayer) return ((EntityPlayer) entity).inventory.getStackInSlot(5);
                 return null;
 
             case "hotbar7":
-                if (entity instanceof EntityPlayerMP) return ((EntityPlayerMP) entity).inventory.getStackInSlot(6);
+                if (entity instanceof EntityPlayer) return ((EntityPlayer) entity).inventory.getStackInSlot(6);
                 return null;
 
             case "hotbar8":
-                if (entity instanceof EntityPlayerMP) return ((EntityPlayerMP) entity).inventory.getStackInSlot(7);
+                if (entity instanceof EntityPlayer) return ((EntityPlayer) entity).inventory.getStackInSlot(7);
                 return null;
 
             case "hotbar9":
-                if (entity instanceof EntityPlayerMP) return ((EntityPlayerMP) entity).inventory.getStackInSlot(8);
+                if (entity instanceof EntityPlayer) return ((EntityPlayer) entity).inventory.getStackInSlot(8);
                 return null;
 
             //Tiamat
