@@ -470,6 +470,11 @@ public class MCTools
     }
 
 
+    public static void playSimpleSoundOnClient(EntityPlayerMP player, ResourceLocation rl)
+    {
+        Network.WRAPPER.sendTo(new Network.PlaySimpleSoundPacket(rl), player);
+    }
+
     public static void playSimpleSoundAtEntityPosition(ResourceLocation rl, Entity entity)
     {
         playSimpleSoundAtEntityPosition(rl, entity, 16);
@@ -482,7 +487,12 @@ public class MCTools
 
     public static void playSimpleSoundAtEntityPosition(ResourceLocation rl, Entity entity, double maxDistance, int attenuationType, float volume, float pitch)
     {
-        playSimpleSoundAtPosition(rl, entity.dimension, entity.posX, entity.posY, entity.posZ, maxDistance, attenuationType, volume, pitch);
+        playSimpleSoundAtEntityPosition(rl, entity, maxDistance, attenuationType, volume, pitch, SoundCategory.MASTER);
+    }
+
+    public static void playSimpleSoundAtEntityPosition(ResourceLocation rl, Entity entity, double maxDistance, int attenuationType, float volume, float pitch, SoundCategory soundCategory)
+    {
+        playSimpleSoundAtPosition(rl, entity.dimension, entity.posX, entity.posY, entity.posZ, maxDistance, attenuationType, volume, pitch, soundCategory);
     }
 
     public static void playSimpleSoundAtPosition(ResourceLocation rl, int dimension, double x, double y, double z)
@@ -497,12 +507,12 @@ public class MCTools
 
     public static void playSimpleSoundAtPosition(ResourceLocation rl, int dimension, double x, double y, double z, double maxDistance, int attenuationType, float volume, float pitch)
     {
-        Network.WRAPPER.sendToAllAround(new Network.PlaySimpleSoundPacket(rl, (float) x, (float) y, (float) z, attenuationType, volume, pitch), new NetworkRegistry.TargetPoint(dimension, x, y, z, maxDistance));
+        playSimpleSoundAtPosition(rl, dimension, x, y, z, maxDistance, attenuationType, volume, pitch, SoundCategory.MASTER);
     }
 
-    public static void playSimpleSoundOnClient(EntityPlayerMP player, ResourceLocation rl)
+    public static void playSimpleSoundAtPosition(ResourceLocation rl, int dimension, double x, double y, double z, double maxDistance, int attenuationType, float volume, float pitch, SoundCategory soundCategory)
     {
-        Network.WRAPPER.sendTo(new Network.PlaySimpleSoundPacket(rl), player);
+        Network.WRAPPER.sendToAllAround(new Network.PlaySimpleSoundPacket(rl, (float) x, (float) y, (float) z, attenuationType, volume, pitch, soundCategory), new NetworkRegistry.TargetPoint(dimension, x, y, z, maxDistance));
     }
 
 

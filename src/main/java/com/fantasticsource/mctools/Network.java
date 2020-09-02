@@ -43,6 +43,7 @@ public class Network
         public CResourceLocation rl = new CResourceLocation();
         public int attenuationType;
         public float volume, pitch;
+        public SoundCategory soundCategory;
 
         public PlaySimpleSoundPacket()
         {
@@ -59,12 +60,12 @@ public class Network
             this(rl, following, 2, 1, 1);
         }
 
-        public PlaySimpleSoundPacket(ResourceLocation rl, float x, float y, float z)
+        public PlaySimpleSoundPacket(ResourceLocation rl, Entity following, int attenuationType, float volume, float pitch)
         {
-            this(rl, x, y, z, 2, 1, 1);
+            this(rl, following, attenuationType, volume, pitch, SoundCategory.MASTER);
         }
 
-        public PlaySimpleSoundPacket(ResourceLocation rl, Entity following, int attenuationType, float volume, float pitch)
+        public PlaySimpleSoundPacket(ResourceLocation rl, Entity following, int attenuationType, float volume, float pitch, SoundCategory soundCategory)
         {
             x = null;
             y = null;
@@ -75,9 +76,20 @@ public class Network
             this.attenuationType = attenuationType;
             this.volume = volume;
             this.pitch = pitch;
+            this.soundCategory = soundCategory;
+        }
+
+        public PlaySimpleSoundPacket(ResourceLocation rl, float x, float y, float z)
+        {
+            this(rl, x, y, z, 2, 1, 1);
         }
 
         public PlaySimpleSoundPacket(ResourceLocation rl, float x, float y, float z, int attenuationType, float volume, float pitch)
+        {
+            this(rl, x, y, z, attenuationType, volume, pitch, SoundCategory.MASTER);
+        }
+
+        public PlaySimpleSoundPacket(ResourceLocation rl, float x, float y, float z, int attenuationType, float volume, float pitch, SoundCategory soundCategory)
         {
             this.followingID = null;
 
@@ -88,6 +100,7 @@ public class Network
             this.attenuationType = attenuationType;
             this.volume = volume;
             this.pitch = pitch;
+            this.soundCategory = soundCategory;
         }
 
         @Override
@@ -109,6 +122,7 @@ public class Network
             buf.writeInt(attenuationType);
             buf.writeFloat(volume);
             buf.writeFloat(pitch);
+            ByteBufUtils.writeUTF8String(buf, soundCategory.getName());
         }
 
         @Override
@@ -128,6 +142,7 @@ public class Network
             attenuationType = buf.readInt();
             volume = buf.readFloat();
             pitch = buf.readFloat();
+            soundCategory = SoundCategory.getByName(ByteBufUtils.readUTF8String(buf));
         }
     }
 
@@ -149,13 +164,13 @@ public class Network
                         Entity following = world.getEntityByID(packet.followingID);
                         if (following != null)
                         {
-                            simpleSound = new SimpleSound(packet.rl.value, SoundCategory.MASTER, following);
+                            simpleSound = new SimpleSound(packet.rl.value, packet.soundCategory, following);
                             break;
                         }
                     }
                 }
-                else if (packet.x != null) simpleSound = new SimpleSound(packet.rl.value, SoundCategory.MASTER, packet.x, packet.y, packet.z);
-                else simpleSound = new SimpleSound(packet.rl.value, SoundCategory.MASTER);
+                else if (packet.x != null) simpleSound = new SimpleSound(packet.rl.value, packet.soundCategory, packet.x, packet.y, packet.z);
+                else simpleSound = new SimpleSound(packet.rl.value, packet.soundCategory);
 
                 if (simpleSound != null)
                 {
