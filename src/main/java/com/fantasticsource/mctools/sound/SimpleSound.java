@@ -5,34 +5,63 @@ import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.Sound;
 import net.minecraft.client.audio.SoundEventAccessor;
 import net.minecraft.client.audio.SoundHandler;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @SideOnly(Side.CLIENT)
 public class SimpleSound implements ISound
 {
-    public final ResourceLocation RL;
-    public final SoundCategory CATEGORY;
+    public final ResourceLocation rl;
+    public final SoundCategory category;
     protected Sound sound;
-    protected boolean repeat = false;
-    protected int repeatDelay = 0;
+    protected boolean repeat;
+    protected int repeatDelay;
+    protected final Entity following;
+    protected final float x, y, z;
 
     public SimpleSound(ResourceLocation rl, SoundCategory category)
     {
-        RL = rl;
-        CATEGORY = category;
+        this(rl, category, 0);
     }
 
     public SimpleSound(ResourceLocation rl, SoundCategory category, int repeatDelay)
     {
-        RL = rl;
-        CATEGORY = category;
-        repeat = true;
+        this(rl, category, repeatDelay, null);
+    }
+
+    public SimpleSound(ResourceLocation rl, SoundCategory category, int repeatDelay, @Nonnull Entity following)
+    {
+        x = 0;
+        y = 0;
+        z = 0;
+
+        this.rl = rl;
+        this.category = category;
         this.repeatDelay = repeatDelay;
+        this.following = following;
+
+        repeat = repeatDelay > 0;
+    }
+
+    public SimpleSound(ResourceLocation rl, SoundCategory category, int repeatDelay, float x, float y, float z)
+    {
+        following = null;
+
+        this.rl = rl;
+        this.category = category;
+        this.repeatDelay = repeatDelay;
+
+        this.x = x;
+        this.y = y;
+        this.z = z;
+
+        repeat = repeatDelay > 0;
     }
 
     @SideOnly(Side.CLIENT)
@@ -44,14 +73,14 @@ public class SimpleSound implements ISound
     @Override
     public ResourceLocation getSoundLocation()
     {
-        return RL;
+        return rl;
     }
 
     @Nullable
     @Override
     public SoundEventAccessor createAccessor(SoundHandler handler)
     {
-        SoundEventAccessor accessor = handler.getAccessor(RL);
+        SoundEventAccessor accessor = handler.getAccessor(rl);
 
         if (accessor == null)
         {
@@ -74,7 +103,7 @@ public class SimpleSound implements ISound
     @Override
     public SoundCategory getCategory()
     {
-        return CATEGORY;
+        return category;
     }
 
     @Override
@@ -104,19 +133,19 @@ public class SimpleSound implements ISound
     @Override
     public float getXPosF()
     {
-        return (float) Minecraft.getMinecraft().player.posX;
+        return following == null ? x : (float) following.posX;
     }
 
     @Override
     public float getYPosF()
     {
-        return (float) Minecraft.getMinecraft().player.posY;
+        return following == null ? y : (float) following.posY;
     }
 
     @Override
     public float getZPosF()
     {
-        return (float) Minecraft.getMinecraft().player.posZ;
+        return following == null ? z : (float) following.posZ;
     }
 
     @Override
