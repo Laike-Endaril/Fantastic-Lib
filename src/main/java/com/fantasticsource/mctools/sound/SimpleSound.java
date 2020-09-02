@@ -19,6 +19,10 @@ public class SimpleSound implements ISound
 {
     public final ResourceLocation rl;
     public final SoundCategory category;
+
+    public float volume = 1, pitch = 1;
+    public AttenuationType attenuationType = AttenuationType.LINEAR;
+
     protected Sound sound;
     protected boolean repeat;
     protected int repeatDelay;
@@ -131,13 +135,13 @@ public class SimpleSound implements ISound
     @Override
     public float getVolume()
     {
-        return sound.getVolume();
+        return sound.getVolume() * volume;
     }
 
     @Override
     public float getPitch()
     {
-        return sound.getPitch();
+        return sound.getPitch() * pitch;
     }
 
     @Override
@@ -161,6 +165,6 @@ public class SimpleSound implements ISound
     @Override
     public AttenuationType getAttenuationType()
     {
-        return AttenuationType.LINEAR;
+        return attenuationType;
     }
 }

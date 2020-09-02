@@ -7,6 +7,7 @@ import com.fantasticsource.mctools.sound.SimpleSound;
 import com.fantasticsource.tools.component.Component;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.ISound;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
@@ -40,6 +41,8 @@ public class Network
         public Integer followingID;
         public Float x, y, z;
         public CResourceLocation rl = new CResourceLocation();
+        public int attenuationType;
+        public float volume, pitch;
 
         public PlaySimpleSoundPacket()
         {
@@ -53,15 +56,28 @@ public class Network
 
         public PlaySimpleSoundPacket(ResourceLocation rl, Entity following)
         {
+            this(rl, following, 2, 1, 1);
+        }
+
+        public PlaySimpleSoundPacket(ResourceLocation rl, float x, float y, float z)
+        {
+            this(rl, x, y, z, 2, 1, 1);
+        }
+
+        public PlaySimpleSoundPacket(ResourceLocation rl, Entity following, int attenuationType, float volume, float pitch)
+        {
             x = null;
             y = null;
             z = null;
 
             this.rl.set(rl);
             this.followingID = following.getEntityId();
+            this.attenuationType = attenuationType;
+            this.volume = volume;
+            this.pitch = pitch;
         }
 
-        public PlaySimpleSoundPacket(ResourceLocation rl, float x, float y, float z)
+        public PlaySimpleSoundPacket(ResourceLocation rl, float x, float y, float z, int attenuationType, float volume, float pitch)
         {
             this.followingID = null;
 
@@ -69,6 +85,9 @@ public class Network
             this.x = x;
             this.y = y;
             this.z = z;
+            this.attenuationType = attenuationType;
+            this.volume = volume;
+            this.pitch = pitch;
         }
 
         @Override
@@ -86,6 +105,10 @@ public class Network
                 buf.writeFloat(y);
                 buf.writeFloat(z);
             }
+
+            buf.writeInt(attenuationType);
+            buf.writeFloat(volume);
+            buf.writeFloat(pitch);
         }
 
         @Override
@@ -101,6 +124,10 @@ public class Network
                 y = buf.readFloat();
                 z = buf.readFloat();
             }
+
+            attenuationType = buf.readInt();
+            volume = buf.readFloat();
+            pitch = buf.readFloat();
         }
     }
 
@@ -113,6 +140,8 @@ public class Network
             Minecraft mc = Minecraft.getMinecraft();
             mc.addScheduledTask(() ->
             {
+                SimpleSound simpleSound = null;
+
                 if (packet.followingID != null)
                 {
                     for (WorldServer world : FMLCommonHandler.instance().getMinecraftServerInstance().worlds)
@@ -120,13 +149,21 @@ public class Network
                         Entity following = world.getEntityByID(packet.followingID);
                         if (following != null)
                         {
-                            mc.getSoundHandler().playSound(new SimpleSound(packet.rl.value, SoundCategory.MASTER, following));
+                            simpleSound = new SimpleSound(packet.rl.value, SoundCategory.MASTER, following);
                             break;
                         }
                     }
                 }
-                else if (packet.x != null) mc.getSoundHandler().playSound(new SimpleSound(packet.rl.value, SoundCategory.MASTER, packet.x, packet.y, packet.z));
-                else mc.getSoundHandler().playSound(new SimpleSound(packet.rl.value, SoundCategory.MASTER));
+                else if (packet.x != null) simpleSound = new SimpleSound(packet.rl.value, SoundCategory.MASTER, packet.x, packet.y, packet.z);
+                else simpleSound = new SimpleSound(packet.rl.value, SoundCategory.MASTER);
+
+                if (simpleSound != null)
+                {
+                    simpleSound.attenuationType = packet.attenuationType == 0 ? ISound.AttenuationType.NONE : ISound.AttenuationType.LINEAR;
+                    simpleSound.volume = packet.volume;
+                    simpleSound.pitch = packet.pitch;
+                    mc.getSoundHandler().playSound(simpleSound);
+                }
             });
             return null;
         }

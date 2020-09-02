@@ -472,12 +472,32 @@ public class MCTools
 
     public static void playSimpleSoundAtEntityPosition(ResourceLocation rl, Entity entity)
     {
-        playSimpleSoundAtPosition(rl, entity.dimension, entity.posX, entity.posY, entity.posZ);
+        playSimpleSoundAtEntityPosition(rl, entity, 16);
+    }
+
+    public static void playSimpleSoundAtEntityPosition(ResourceLocation rl, Entity entity, int maxDistance)
+    {
+        playSimpleSoundAtEntityPosition(rl, entity, maxDistance, 2, 1, 1);
+    }
+
+    public static void playSimpleSoundAtEntityPosition(ResourceLocation rl, Entity entity, int maxDistance, int attenuationType, float volume, float pitch)
+    {
+        playSimpleSoundAtPosition(rl, entity.dimension, entity.posX, entity.posY, entity.posZ, maxDistance, attenuationType, volume, pitch);
     }
 
     public static void playSimpleSoundAtPosition(ResourceLocation rl, int dimension, double x, double y, double z)
     {
-        Network.WRAPPER.sendToAllAround(new Network.PlaySimpleSoundPacket(rl, (float) x, (float) y, (float) z), new NetworkRegistry.TargetPoint(dimension, x, y, z, 16));
+        playSimpleSoundAtPosition(rl, dimension, x, y, z, 16);
+    }
+
+    public static void playSimpleSoundAtPosition(ResourceLocation rl, int dimension, double x, double y, double z, int maxDistance)
+    {
+        playSimpleSoundAtPosition(rl, dimension, x, y, z, maxDistance, 2, 1, 1);
+    }
+
+    public static void playSimpleSoundAtPosition(ResourceLocation rl, int dimension, double x, double y, double z, int maxDistance, int attenuationType, float volume, float pitch)
+    {
+        Network.WRAPPER.sendToAllAround(new Network.PlaySimpleSoundPacket(rl, (float) x, (float) y, (float) z, attenuationType, volume, pitch), new NetworkRegistry.TargetPoint(dimension, x, y, z, maxDistance));
     }
 
     public static void playSimpleSoundOnClient(EntityPlayerMP player, ResourceLocation rl)
