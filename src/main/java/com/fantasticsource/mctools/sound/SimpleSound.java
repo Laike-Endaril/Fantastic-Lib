@@ -161,6 +161,6 @@ public class SimpleSound implements ISound
     @Override
     public AttenuationType getAttenuationType()
     {
-        return AttenuationType.NONE;
+        return AttenuationType.LINEAR;
     }
 }

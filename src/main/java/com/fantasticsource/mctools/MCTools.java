@@ -45,6 +45,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
@@ -468,6 +469,16 @@ public class MCTools
         return Tools.radtodeg(TRIG_TABLE.arccos(angleDif)); //0 in front, 180 in back
     }
 
+
+    public static void playSimpleSoundAtEntityPosition(ResourceLocation rl, Entity entity)
+    {
+        playSimpleSoundAtPosition(rl, entity.dimension, entity.posX, entity.posY, entity.posZ);
+    }
+
+    public static void playSimpleSoundAtPosition(ResourceLocation rl, int dimension, double x, double y, double z)
+    {
+        Network.WRAPPER.sendToAllAround(new Network.PlaySimpleSoundPacket(rl, (float) x, (float) y, (float) z), new NetworkRegistry.TargetPoint(dimension, x, y, z, 16));
+    }
 
     public static void playSimpleSoundOnClient(EntityPlayerMP player, ResourceLocation rl)
     {
