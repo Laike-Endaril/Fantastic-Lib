@@ -7,9 +7,11 @@ import com.fantasticsource.mctools.sound.SimpleSound;
 import com.fantasticsource.tools.component.Component;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -35,6 +37,8 @@ public class Network
 
     public static class PlaySimpleSoundPacket implements IMessage
     {
+        public Integer followingID;
+        public Float x, y, z;
         public CResourceLocation rl = new CResourceLocation();
 
         public PlaySimpleSoundPacket()
@@ -44,19 +48,59 @@ public class Network
 
         public PlaySimpleSoundPacket(ResourceLocation rl)
         {
+            this(rl, null);
+        }
+
+        public PlaySimpleSoundPacket(ResourceLocation rl, Entity following)
+        {
+            x = null;
+            y = null;
+            z = null;
+
             this.rl.set(rl);
+            this.followingID = following.getEntityId();
+        }
+
+        public PlaySimpleSoundPacket(ResourceLocation rl, float x, float y, float z)
+        {
+            this.followingID = null;
+
+            this.rl.set(rl);
+            this.x = x;
+            this.y = y;
+            this.z = z;
         }
 
         @Override
         public void toBytes(ByteBuf buf)
         {
             rl.write(buf);
+
+            buf.writeBoolean(followingID != null);
+            if (followingID != null) buf.writeInt(followingID);
+
+            buf.writeBoolean(x != null);
+            if (x != null)
+            {
+                buf.writeFloat(x);
+                buf.writeFloat(y);
+                buf.writeFloat(z);
+            }
         }
 
         @Override
         public void fromBytes(ByteBuf buf)
         {
             rl.read(buf);
+
+            if (buf.readBoolean()) followingID = buf.readInt();
+
+            if (buf.readBoolean())
+            {
+                x = buf.readFloat();
+                y = buf.readFloat();
+                z = buf.readFloat();
+            }
         }
     }
 
@@ -67,7 +111,23 @@ public class Network
         public IMessage onMessage(PlaySimpleSoundPacket packet, MessageContext ctx)
         {
             Minecraft mc = Minecraft.getMinecraft();
-            mc.addScheduledTask(() -> mc.getSoundHandler().playSound(new SimpleSound(packet.rl.value, SoundCategory.MASTER)));
+            mc.addScheduledTask(() ->
+            {
+                if (packet.followingID != null)
+                {
+                    for (WorldServer world : FMLCommonHandler.instance().getMinecraftServerInstance().worlds)
+                    {
+                        Entity following = world.getEntityByID(packet.followingID);
+                        if (following != null)
+                        {
+                            mc.getSoundHandler().playSound(new SimpleSound(packet.rl.value, SoundCategory.MASTER, following));
+                            break;
+                        }
+                    }
+                }
+                else if (packet.x != null) mc.getSoundHandler().playSound(new SimpleSound(packet.rl.value, SoundCategory.MASTER, packet.x, packet.y, packet.z));
+                else mc.getSoundHandler().playSound(new SimpleSound(packet.rl.value, SoundCategory.MASTER));
+            });
             return null;
         }
     }

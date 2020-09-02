@@ -30,9 +30,19 @@ public class SimpleSound implements ISound
         this(rl, category, 0);
     }
 
+    public SimpleSound(ResourceLocation rl, SoundCategory category, @Nonnull Entity following)
+    {
+        this(rl, category, 0, following);
+    }
+
+    public SimpleSound(ResourceLocation rl, SoundCategory category, float x, float y, float z)
+    {
+        this(rl, category, 0, x, y, z);
+    }
+
     public SimpleSound(ResourceLocation rl, SoundCategory category, int repeatDelay)
     {
-        this(rl, category, repeatDelay, null);
+        this(rl, category, repeatDelay, Minecraft.getMinecraft().player);
     }
 
     public SimpleSound(ResourceLocation rl, SoundCategory category, int repeatDelay, @Nonnull Entity following)
