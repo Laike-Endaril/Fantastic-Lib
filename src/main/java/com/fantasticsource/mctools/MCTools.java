@@ -475,12 +475,12 @@ public class MCTools
         playSimpleSoundAtEntityPosition(rl, entity, 16);
     }
 
-    public static void playSimpleSoundAtEntityPosition(ResourceLocation rl, Entity entity, int maxDistance)
+    public static void playSimpleSoundAtEntityPosition(ResourceLocation rl, Entity entity, double maxDistance)
     {
         playSimpleSoundAtEntityPosition(rl, entity, maxDistance, 2, 1, 1);
     }
 
-    public static void playSimpleSoundAtEntityPosition(ResourceLocation rl, Entity entity, int maxDistance, int attenuationType, float volume, float pitch)
+    public static void playSimpleSoundAtEntityPosition(ResourceLocation rl, Entity entity, double maxDistance, int attenuationType, float volume, float pitch)
     {
         playSimpleSoundAtPosition(rl, entity.dimension, entity.posX, entity.posY, entity.posZ, maxDistance, attenuationType, volume, pitch);
     }
@@ -490,12 +490,12 @@ public class MCTools
         playSimpleSoundAtPosition(rl, dimension, x, y, z, 16);
     }
 
-    public static void playSimpleSoundAtPosition(ResourceLocation rl, int dimension, double x, double y, double z, int maxDistance)
+    public static void playSimpleSoundAtPosition(ResourceLocation rl, int dimension, double x, double y, double z, double maxDistance)
     {
         playSimpleSoundAtPosition(rl, dimension, x, y, z, maxDistance, 2, 1, 1);
     }
 
-    public static void playSimpleSoundAtPosition(ResourceLocation rl, int dimension, double x, double y, double z, int maxDistance, int attenuationType, float volume, float pitch)
+    public static void playSimpleSoundAtPosition(ResourceLocation rl, int dimension, double x, double y, double z, double maxDistance, int attenuationType, float volume, float pitch)
     {
         Network.WRAPPER.sendToAllAround(new Network.PlaySimpleSoundPacket(rl, (float) x, (float) y, (float) z, attenuationType, volume, pitch), new NetworkRegistry.TargetPoint(dimension, x, y, z, maxDistance));
     }
