@@ -160,24 +160,25 @@ public class RenderModes
 
     public static void refresh(Entity entity)
     {
+        boolean changed = false;
         for (ItemStack stack : GlobalInventory.getAWSkins(entity))
         {
-            tryTransformRenderMode(stack, entity);
+            changed |= tryTransformRenderMode(stack, entity);
         }
 
-        GlobalInventory.syncAWWardrobeSkins(entity, true, true);
+        if (changed) GlobalInventory.syncAWWardrobeSkins(entity, true, true);
     }
 
 
-    protected static void tryTransformRenderMode(ItemStack stack, Entity target)
+    protected static boolean tryTransformRenderMode(ItemStack stack, Entity target)
     {
-        if (!stack.hasTagCompound()) return;
+        if (!stack.hasTagCompound()) return false;
 
         NBTTagCompound compound = stack.getTagCompound();
-        if (!compound.hasKey(DOMAIN)) return;
+        if (!compound.hasKey(DOMAIN)) return false;
 
         compound = compound.getCompoundTag(DOMAIN);
-        if (!compound.hasKey("renderModes")) return;
+        if (!compound.hasKey("renderModes")) return false;
 
         compound = compound.getCompoundTag("renderModes");
 
@@ -191,9 +192,11 @@ public class RenderModes
                 continue;
             }
 
+
             boolean failed = false;
             String[] requirementArray = Tools.fixedSplit(requirements, ",");
             if (requirementArray.length <= conditionsMet) continue;
+
 
             for (String pair : requirementArray)
             {
@@ -212,45 +215,66 @@ public class RenderModes
             newCompound = compound.getCompoundTag(requirements);
         }
 
-        if (newCompound == null) removeSkin(stack);
-        else setSkin(stack, newCompound);
+        if (newCompound == null) return removeSkin(stack);
+        return setSkin(stack, newCompound);
     }
 
 
-    protected static void removeSkin(ItemStack stack)
+    protected static boolean removeSkin(ItemStack stack)
     {
-        if (!stack.hasTagCompound()) return;
-        stack.getTagCompound().removeTag("armourersWorkshop");
-    }
+        if (!stack.hasTagCompound()) return false;
 
-    protected static void setSkin(ItemStack stack, NBTTagCompound skinInfo)
-    {
-        if (skinInfo == null || !skinInfo.hasKey("identifier"))
+        NBTTagCompound compound = stack.getTagCompound();
+        if (compound.hasKey("armourersWorkshop"))
         {
-            removeSkin(stack);
-            return;
+            stack.getTagCompound().removeTag("armourersWorkshop");
+            return true;
         }
 
-        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+        return false;
+    }
+
+    protected static boolean setSkin(ItemStack stack, NBTTagCompound skinInfo)
+    {
+        if (skinInfo == null || !skinInfo.hasKey("identifier")) return removeSkin(stack);
+
+
+        boolean changed = false;
+
+        if (!stack.hasTagCompound())
+        {
+            stack.setTagCompound(new NBTTagCompound());
+            changed = true;
+        }
         NBTTagCompound compound = stack.getTagCompound();
 
-        if (!compound.hasKey("armourersWorkshop")) compound.setTag("armourersWorkshop", new NBTTagCompound());
+        if (!compound.hasKey("armourersWorkshop"))
+        {
+            compound.setTag("armourersWorkshop", new NBTTagCompound());
+            changed = true;
+        }
         compound = compound.getCompoundTag("armourersWorkshop");
 
 
         NBTTagCompound infoCompound = skinInfo.getCompoundTag("identifier");
-        NBTTagCompound stackCompound = new NBTTagCompound();
-        stackCompound.setString("skinType", infoCompound.getString("skinType"));
-        stackCompound.setString("libraryFile", infoCompound.getString("libraryFile"));
-        compound.setTag("identifier", stackCompound);
+        NBTTagCompound newCompound = new NBTTagCompound();
+        newCompound.setString("skinType", infoCompound.getString("skinType"));
+        newCompound.setString("libraryFile", infoCompound.getString("libraryFile"));
+
+        if (!compound.hasKey("identifier") || !compound.getCompoundTag("identifier").equals(newCompound)) changed = true;
+        compound.setTag("identifier", newCompound);
 
 
         infoCompound = skinInfo.getCompoundTag("dyeData");
-        stackCompound = new NBTTagCompound();
+        newCompound = new NBTTagCompound();
         for (String key : infoCompound.getKeySet())
         {
-            stackCompound.setByte(key, infoCompound.getByte(key));
+            newCompound.setByte(key, infoCompound.getByte(key));
         }
-        compound.setTag("dyeData", stackCompound);
+
+        if (!compound.hasKey("dyeData") || !compound.getCompoundTag("dyeData").equals(newCompound)) changed = true;
+        compound.setTag("dyeData", newCompound);
+
+        return changed;
     }
 }
