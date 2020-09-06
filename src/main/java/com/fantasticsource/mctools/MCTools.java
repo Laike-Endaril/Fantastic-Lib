@@ -199,6 +199,17 @@ public class MCTools
         return compound;
     }
 
+    public static NBTTagCompound getSubCompoundIfExists(NBTTagCompound compound, String... keys)
+    {
+        for (String key : keys)
+        {
+            if (!compound.hasKey(key)) return null;
+            compound = compound.getCompoundTag(key);
+        }
+
+        return compound;
+    }
+
     public static NBTTagCompound combineNBT(NBTTagCompound... sources)
     {
         NBTTagCompound result = new NBTTagCompound();
