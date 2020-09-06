@@ -165,27 +165,30 @@ public class MCTools
     }
 
 
-    public static void removeSubNBTAndClean(NBTTagCompound compound, String... keys)
+    public static NBTBase removeSubNBTAndClean(NBTTagCompound compound, String... keys)
     {
-        if (keys.length == 0) return;
+        if (keys.length == 0) return null;
 
 
+        NBTBase result;
         String key = keys[0];
         if (keys.length == 1)
         {
+            result = compound.getTag(key);
             compound.removeTag(key);
-            return;
+            return result;
         }
 
 
-        if (!compound.hasKey(key)) return;
+        if (!compound.hasKey(key)) return null;
 
 
         String[] newKeys = new String[keys.length - 1];
         System.arraycopy(keys, 1, newKeys, 0, newKeys.length);
         NBTTagCompound subCompound = compound.getCompoundTag(key);
-        removeSubNBTAndClean(subCompound, newKeys);
+        result = removeSubNBTAndClean(subCompound, newKeys);
         if (subCompound.getKeySet().size() == 0) compound.removeTag(key);
+        return result;
     }
 
     public static NBTTagCompound getOrGenerateSubCompound(NBTTagCompound compound, String... keys)
