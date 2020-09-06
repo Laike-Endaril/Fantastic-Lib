@@ -164,6 +164,41 @@ public class MCTools
         }
     }
 
+
+    public static void removeSubNBTAndClean(NBTTagCompound compound, String... keys)
+    {
+        if (keys.length == 0) return;
+
+
+        String key = keys[0];
+        if (keys.length == 1)
+        {
+            compound.removeTag(key);
+            return;
+        }
+
+
+        if (!compound.hasKey(key)) return;
+
+
+        String[] newKeys = new String[keys.length - 1];
+        System.arraycopy(keys, 1, newKeys, 0, newKeys.length);
+        NBTTagCompound subCompound = compound.getCompoundTag(key);
+        removeSubNBTAndClean(subCompound, newKeys);
+        if (subCompound.getKeySet().size() == 0) compound.removeTag(key);
+    }
+
+    public static NBTTagCompound getOrGenerateSubCompound(NBTTagCompound compound, String... keys)
+    {
+        for (String key : keys)
+        {
+            if (!compound.hasKey(key)) compound.setTag(key, new NBTTagCompound());
+            compound = compound.getCompoundTag(key);
+        }
+
+        return compound;
+    }
+
     public static NBTTagCompound combineNBT(NBTTagCompound... sources)
     {
         NBTTagCompound result = new NBTTagCompound();
@@ -271,6 +306,53 @@ public class MCTools
         }
 
         return new NBTTagIntArray(newArray);
+    }
+
+
+    public static ArrayList<String> legibleNBT(NBTBase nbt)
+    {
+        return legibleNBT(nbt.toString());
+    }
+
+    public static ArrayList<String> legibleNBT(String nbtString)
+    {
+        ArrayList<String> result = new ArrayList<>();
+
+        char[] chars = nbtString.toCharArray();
+        StringBuilder current = new StringBuilder();
+        StringBuilder indent = new StringBuilder();
+        for (int i = 0; i < chars.length; i++)
+        {
+            char c = chars[i];
+            switch (c)
+            {
+                case '{':
+                case '[':
+                    if (!current.toString().equals("")) result.add(indent + current.toString());
+                    result.add(indent.toString() + c);
+                    current = new StringBuilder();
+                    indent.append(" ");
+                    break;
+
+                case '}':
+                case ']':
+                    if (!current.toString().equals("")) result.add(indent + current.toString());
+                    indent = new StringBuilder(indent.substring(0, indent.length() - 1));
+                    result.add(indent.toString() + c + (i + 1 < chars.length && chars[i + 1] == ',' ? ',' : ""));
+                    current = new StringBuilder();
+                    break;
+
+                case ',':
+                    if (!current.toString().equals("")) result.add(indent + current.toString() + c);
+                    current = new StringBuilder();
+                    break;
+
+                default:
+                    current.append(c);
+            }
+        }
+
+        return result;
     }
 
 
@@ -693,52 +775,6 @@ public class MCTools
         return false;
     }
 
-
-    public static ArrayList<String> legibleNBT(NBTBase nbt)
-    {
-        return legibleNBT(nbt.toString());
-    }
-
-    public static ArrayList<String> legibleNBT(String nbtString)
-    {
-        ArrayList<String> result = new ArrayList<>();
-
-        char[] chars = nbtString.toCharArray();
-        StringBuilder current = new StringBuilder();
-        StringBuilder indent = new StringBuilder();
-        for (int i = 0; i < chars.length; i++)
-        {
-            char c = chars[i];
-            switch (c)
-            {
-                case '{':
-                case '[':
-                    if (!current.toString().equals("")) result.add(indent + current.toString());
-                    result.add(indent.toString() + c);
-                    current = new StringBuilder();
-                    indent.append(" ");
-                    break;
-
-                case '}':
-                case ']':
-                    if (!current.toString().equals("")) result.add(indent + current.toString());
-                    indent = new StringBuilder(indent.substring(0, indent.length() - 1));
-                    result.add(indent.toString() + c + (i + 1 < chars.length && chars[i + 1] == ',' ? ',' : ""));
-                    current = new StringBuilder();
-                    break;
-
-                case ',':
-                    if (!current.toString().equals("")) result.add(indent + current.toString() + c);
-                    current = new StringBuilder();
-                    break;
-
-                default:
-                    current.append(c);
-            }
-        }
-
-        return result;
-    }
 
     /**
      * Whether we are hosting the game; returns true if a server is currently running within this application
