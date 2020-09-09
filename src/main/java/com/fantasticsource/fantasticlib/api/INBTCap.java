@@ -4,7 +4,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.village.Village;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -16,6 +18,8 @@ public interface INBTCap
     LinkedHashMap<String, Predicate<ItemStack>> stackPredicates = new LinkedHashMap<>();
     LinkedHashMap<String, Predicate<World>> worldPredicates = new LinkedHashMap<>();
     LinkedHashMap<String, Predicate<TileEntity>> tePredicates = new LinkedHashMap<>();
+    LinkedHashMap<String, Predicate<Chunk>> chunkPredicates = new LinkedHashMap<>();
+    LinkedHashMap<String, Predicate<Village>> villagePredicates = new LinkedHashMap<>();
 
     HashSet<String> registeredModIDs = new HashSet<>();
 

@@ -3,7 +3,9 @@ package com.fantasticsource.fantasticlib.api;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.village.Village;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 
@@ -39,6 +41,18 @@ public class FLibAPI
         INBTCap.tePredicates.put(modid, predicate);
     }
 
+    public static void attachNBTCapToChunkIf(String modid, Predicate<Chunk> predicate)
+    {
+        INBTCap.registeredModIDs.add(modid);
+        INBTCap.chunkPredicates.put(modid, predicate);
+    }
+
+    public static void attachNBTCapToVillageIf(String modid, Predicate<Village> predicate)
+    {
+        INBTCap.registeredModIDs.add(modid);
+        INBTCap.villagePredicates.put(modid, predicate);
+    }
+
 
     public static INBTCap getNBTCap(Entity entity)
     {
@@ -58,5 +72,15 @@ public class FLibAPI
     public static INBTCap getNBTCap(TileEntity te)
     {
         return te.getCapability(NBT_CAP, null);
+    }
+
+    public static INBTCap getNBTCap(Chunk chunk)
+    {
+        return chunk.getCapability(NBT_CAP, null);
+    }
+
+    public static INBTCap getNBTCap(Village village)
+    {
+        return village.getCapability(NBT_CAP, null);
     }
 }

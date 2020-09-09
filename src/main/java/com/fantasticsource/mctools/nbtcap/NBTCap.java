@@ -8,7 +8,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.village.Village;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -87,6 +89,34 @@ public class NBTCap implements INBTCap
         for (Predicate<TileEntity> predicate : tePredicates.values())
         {
             if (predicate.test(te))
+            {
+                event.addCapability(new ResourceLocation(MODID, "nbtcap"), new NBTCapProvider());
+                return;
+            }
+        }
+    }
+
+    @SubscribeEvent()
+    public static void attachToChunk(AttachCapabilitiesEvent<Chunk> event)
+    {
+        Chunk chunk = event.getObject();
+        for (Predicate<Chunk> predicate : chunkPredicates.values())
+        {
+            if (predicate.test(chunk))
+            {
+                event.addCapability(new ResourceLocation(MODID, "nbtcap"), new NBTCapProvider());
+                return;
+            }
+        }
+    }
+
+    @SubscribeEvent()
+    public static void attachToVillage(AttachCapabilitiesEvent<Village> event)
+    {
+        Village village = event.getObject();
+        for (Predicate<Village> predicate : villagePredicates.values())
+        {
+            if (predicate.test(village))
             {
                 event.addCapability(new ResourceLocation(MODID, "nbtcap"), new NBTCapProvider());
                 return;
