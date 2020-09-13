@@ -1,6 +1,5 @@
 package com.fantasticsource.fantasticlib.config;
 
-import com.fantasticsource.fantasticlib.FantasticLib;
 import net.minecraftforge.common.config.Config;
 
 import static com.fantasticsource.fantasticlib.FantasticLib.MODID;
