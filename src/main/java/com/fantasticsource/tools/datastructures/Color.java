@@ -508,7 +508,9 @@ public class Color
     public float sf()
     {
         float vf = vf();
-        return vf == 0 ? 0 : (vf - Tools.min(rf, gf, bf)) / vf;
+        if (vf <= 0) return 0;
+        if (vf >= 1) return 1 - Tools.min(rf, gf, bf);
+        return Tools.min(Tools.max((vf - Tools.min(rf, gf, bf)) / vf, 0), 1);
     }
 
     public int v()
