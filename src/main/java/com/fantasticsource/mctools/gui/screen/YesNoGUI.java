@@ -17,7 +17,7 @@ public class YesNoGUI extends GUIScreen
 
     public YesNoGUI(String title, String message)
     {
-        this(message, title, 1);
+        this(title, message, 1);
     }
 
     public YesNoGUI(String title, String message, double textScale)
@@ -39,18 +39,20 @@ public class YesNoGUI extends GUIScreen
 
 
         //Add elements
+        root.setSubElementAutoplaceMethod(GUIElement.AP_CENTERED_H_TOP_TO_BOTTOM);
         root.addAll
                 (
                         new GUIDarkenedBackground(this),
                         navbar,
                         new GUITextSpacer(this),
                         new GUIText(this, message, Color.PURPLE),
-                        new GUIElement(this, 1, 0),
+                        new GUITextSpacer(this),
                         new GUITextButton(this, "YES", Color.GREEN).addClickActions(() ->
                         {
                             pressedYes = true;
                             close();
                         }),
+                        new GUITextSpacer(this),
                         new GUITextButton(this, "NO", Color.RED).addClickActions(this::close)
                 );
     }

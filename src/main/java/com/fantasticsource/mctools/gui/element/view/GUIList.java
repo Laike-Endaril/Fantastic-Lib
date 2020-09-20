@@ -106,12 +106,11 @@ public abstract class GUIList extends GUIScrollView
                         if (!confirmLineDeletion) remove(line);
                         else
                         {
-                            YesNoGUI yesNoGUI = new YesNoGUI("Remove line?", "Are you sure you want to remove this?");
+                            YesNoGUI yesNoGUI = new YesNoGUI("Confirm Removal", "Are you sure you want to remove this line?");
                             yesNoGUI.addOnClosedActions(() ->
                             {
                                 if (yesNoGUI.pressedYes) remove(line);
                             });
-                            yesNoGUI.show();
                         }
                     }
             ));
