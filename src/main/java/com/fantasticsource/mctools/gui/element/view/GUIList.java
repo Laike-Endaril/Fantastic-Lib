@@ -4,6 +4,7 @@ import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIButton;
 import com.fantasticsource.mctools.gui.element.other.GUIGradient;
+import com.fantasticsource.mctools.gui.screen.YesNoGUI;
 import com.fantasticsource.tools.datastructures.Color;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ public abstract class GUIList extends GUIScrollView
             AL_BLACK = Color.BLACK.copy().setAF(0.3f);
 
     public final boolean editable;
+    protected boolean confirmLineDeletion = false;
 
 
     public GUIList(GUIScreen screen, boolean editable, double width, double height, GUIElement... subElements)
@@ -33,6 +35,13 @@ public abstract class GUIList extends GUIScrollView
         this.editable = editable;
 
         if (editable) addAddLineLine();
+    }
+
+
+    public GUIList setConfirmLineDeletion(boolean confirmLineDeletion)
+    {
+        this.confirmLineDeletion = confirmLineDeletion;
+        return this;
     }
 
 
@@ -92,7 +101,20 @@ public abstract class GUIList extends GUIScrollView
             });
 
             //Add "remove line" button
-            line.add(GUIButton.newRemoveButton(screen).addClickActions(() -> remove(line)));
+            line.add(GUIButton.newRemoveButton(screen).addClickActions(() ->
+                    {
+                        if (!confirmLineDeletion) remove(line);
+                        else
+                        {
+                            YesNoGUI yesNoGUI = new YesNoGUI("Remove line?", "Are you sure you want to remove this?");
+                            yesNoGUI.addOnClosedActions(() ->
+                            {
+                                if (yesNoGUI.pressedYes) remove(line);
+                            });
+                            yesNoGUI.show();
+                        }
+                    }
+            ));
         }
 
         //Line elements
