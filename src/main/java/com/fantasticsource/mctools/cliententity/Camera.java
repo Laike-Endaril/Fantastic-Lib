@@ -28,7 +28,7 @@ public class Camera extends ClientEntity
 
 
     protected boolean active = false;
-    protected int originalMode; //0 is first person, 1 is third person, 2 is third person flipped (in front)
+    protected int mode, originalMode; //0 is first person, 1 is third person, 2 is third person flipped (in front), -1 allows client control via the view mode keybind
 
 
     protected Camera(World worldIn)
@@ -71,10 +71,14 @@ public class Camera extends ClientEntity
 
 
         //Mode
-        Minecraft mc = Minecraft.getMinecraft();
-        GameSettings gs = mc.gameSettings;
-        originalMode = gs.thirdPersonView;
-        gs.thirdPersonView = mode;
+        this.mode = mode;
+        if (mode == -1) originalMode = -1;
+        else
+        {
+            GameSettings gs = Minecraft.getMinecraft().gameSettings;
+            originalMode = gs.thirdPersonView;
+            gs.thirdPersonView = mode;
+        }
 
 
         //Set camera
@@ -96,8 +100,10 @@ public class Camera extends ClientEntity
 
             //Mode
             Minecraft mc = Minecraft.getMinecraft();
-            GameSettings gs = mc.gameSettings;
-            gs.thirdPersonView = originalMode;
+            if (mode != -1)
+            {
+                mc.gameSettings.thirdPersonView = originalMode;
+            }
 
 
             //Set camera
@@ -109,7 +115,7 @@ public class Camera extends ClientEntity
     public void onUpdate()
     {
         //Mode
-        if (active) Minecraft.getMinecraft().gameSettings.thirdPersonView = 1;
+        if (active && mode != -1) Minecraft.getMinecraft().gameSettings.thirdPersonView = mode;
 
         super.onUpdate();
     }
@@ -150,11 +156,6 @@ public class Camera extends ClientEntity
         prevRotationYaw = yaw;
         rotationPitch = pitch;
         prevRotationPitch = pitch;
-    }
-
-    public void setMode(int mode)
-    {
-        Minecraft.getMinecraft().gameSettings.thirdPersonView = mode;
     }
 
     @Override
