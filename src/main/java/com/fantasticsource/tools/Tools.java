@@ -263,8 +263,9 @@ public class Tools
         ArrayList<String> result = new ArrayList<>();
         for (File file : folder.listFiles())
         {
-            if (!file.isDirectory()) result.add(relativeSubDirectory + File.separator + file.getName());
-            else result.addAll(allRecursiveRelativeFilenames(fullDirectory, file.getName()));
+            String relativeName = relativeSubDirectory + File.separator + file.getName();
+            if (!file.isDirectory()) result.add(relativeName);
+            else result.addAll(allRecursiveRelativeFilenames(mainDirectory, relativeName));
         }
 
         return result;
