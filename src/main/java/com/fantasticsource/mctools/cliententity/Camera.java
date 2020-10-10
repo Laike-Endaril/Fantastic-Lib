@@ -43,6 +43,7 @@ public class Camera extends ClientEntity
     protected Camera(World worldIn)
     {
         super(worldIn);
+        setSize(0, 0);
         forceSpawn = true;
     }
 
