@@ -51,7 +51,7 @@ public class Camera extends ClientEntity
     {
         if (active)
         {
-            if (world != this.world) deactivate();
+            if (world != this.world || mode != this.mode) deactivate();
             else
             {
                 setPositionAndRotation(x, y, z, yaw, pitch);
