@@ -150,26 +150,6 @@ public class Camera extends ClientEntity
     }
 
     @Override
-    public void setPosition(double x, double y, double z)
-    {
-        posX = x;
-        prevPosX = x;
-        posY = y;
-        prevPosY = y;
-        posZ = z;
-        prevPosZ = z;
-    }
-
-    @Override
-    public void setRotation(float yaw, float pitch)
-    {
-        rotationYaw = yaw;
-        prevRotationYaw = yaw;
-        rotationPitch = pitch;
-        prevRotationPitch = pitch;
-    }
-
-    @Override
     public float getEyeHeight()
     {
         return 0;
