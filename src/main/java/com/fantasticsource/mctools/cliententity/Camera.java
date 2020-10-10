@@ -77,6 +77,7 @@ public class Camera extends ClientEntity
         this.prevRotationYaw = yaw;
         this.rotationPitch = pitch;
         this.prevRotationPitch = pitch;
+        isDead = false;
         world.spawnEntity(this);
 
 
