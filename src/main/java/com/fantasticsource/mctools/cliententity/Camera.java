@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -182,6 +183,30 @@ public class Camera extends ClientEntity
         if (getCamera().active && event.getEntityPlayer() == mc.player)
         {
             mc.getRenderManager().renderViewEntity = getCamera();
+        }
+    }
+
+    @SubscribeEvent
+    public static void preOverlayRender(RenderGameOverlayEvent.Pre event)
+    {
+        if (event.getType() != RenderGameOverlayEvent.ElementType.ALL) return;
+
+        if (getCamera().active)
+        {
+            Minecraft mc = Minecraft.getMinecraft();
+            mc.setRenderViewEntity(mc.player);
+        }
+    }
+
+    @SubscribeEvent
+    public static void postOverlayRender(RenderGameOverlayEvent.Post event)
+    {
+        if (event.getType() != RenderGameOverlayEvent.ElementType.ALL) return;
+
+        if (getCamera().active)
+        {
+            Minecraft mc = Minecraft.getMinecraft();
+            mc.setRenderViewEntity(camera);
         }
     }
 }
