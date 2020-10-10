@@ -66,17 +66,17 @@ public class Camera extends ClientEntity
 
         //Entity
         this.world = world;
-        this.dimension = world.provider.getDimension();
-        this.posX = x;
-        this.prevPosX = x;
-        this.posY = y;
-        this.prevPosY = y;
-        this.posZ = z;
-        this.prevPosZ = z;
-        this.rotationYaw = yaw;
-        this.prevRotationYaw = yaw;
-        this.rotationPitch = pitch;
-        this.prevRotationPitch = pitch;
+        dimension = world.provider.getDimension();
+        posX = x;
+        prevPosX = x;
+        posY = y;
+        prevPosY = y;
+        posZ = z;
+        prevPosZ = z;
+        rotationYaw = yaw;
+        prevRotationYaw = yaw;
+        rotationPitch = pitch;
+        prevRotationPitch = pitch;
         isDead = false;
         world.spawnEntity(this);
 
