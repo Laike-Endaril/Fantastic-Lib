@@ -28,6 +28,14 @@ public class Camera extends ClientEntity
     }
 
 
+    public static final int
+            PLAYER_RENDER_IF_THIRD_PERSON = 0,
+            PLAYER_RENDER_ALWAYS = 1,
+            PLAYER_RENDER_NEVER = 2;
+
+    public static int playerRenderMode = PLAYER_RENDER_IF_THIRD_PERSON;
+
+
     protected boolean active = false;
     protected int mode, originalMode; //0 is first person, 1 is third person, 2 is third person flipped (in front), -1 allows client control via the view mode keybind
 
@@ -170,6 +178,19 @@ public class Camera extends ClientEntity
     public static void renderPlayerPre(RenderPlayerEvent.Pre event)
     {
         Minecraft mc = Minecraft.getMinecraft();
+        switch (playerRenderMode)
+        {
+            case PLAYER_RENDER_NEVER:
+                return;
+
+            case PLAYER_RENDER_ALWAYS:
+                break;
+
+            case PLAYER_RENDER_IF_THIRD_PERSON:
+            default:
+                if (mc.gameSettings.thirdPersonView == 0) return;
+        }
+
         if (getCamera().active && event.getEntityPlayer() == mc.player)
         {
             mc.getRenderManager().renderViewEntity = mc.player;
@@ -182,7 +203,7 @@ public class Camera extends ClientEntity
         Minecraft mc = Minecraft.getMinecraft();
         if (getCamera().active && event.getEntityPlayer() == mc.player)
         {
-            mc.getRenderManager().renderViewEntity = getCamera();
+            mc.getRenderManager().renderViewEntity = camera;
         }
     }
 
