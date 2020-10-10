@@ -2,6 +2,8 @@ package com.fantasticsource.mctools.cliententity;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -38,6 +40,7 @@ public class Camera extends ClientEntity
 
     protected boolean active = false;
     protected int mode, originalMode; //0 is first person, 1 is third person, 2 is third person flipped (in front), -1 allows client control via the view mode keybind
+    protected Entity toFollow = null;
 
 
     protected Camera(World worldIn)
@@ -47,21 +50,24 @@ public class Camera extends ClientEntity
         forceSpawn = true;
     }
 
+    public void activate(Entity toFollow, int mode)
+    {
+        activate(toFollow, toFollow.world, toFollow.posX, toFollow.posY + toFollow.getEyeHeight(), toFollow.posZ, toFollow.getRotationYawHead(), toFollow.rotationPitch, mode);
+    }
+
     public void activate(World world, double x, double y, double z, float yaw, float pitch, int mode)
     {
-        if (active)
-        {
-            if (world != this.world || mode != this.mode) deactivate();
-            else
-            {
-                setPositionAndRotation(x, y, z, yaw, pitch);
-                return;
-            }
-        }
+        activate(null, world, x, y, z, yaw, pitch, mode);
+    }
+
+    protected void activate(Entity toFollow, World world, double x, double y, double z, float yaw, float pitch, int mode)
+    {
+        if (active) deactivate();
 
 
         //Set state
         active = true;
+        this.toFollow = toFollow;
 
 
         //Entity
@@ -129,6 +135,25 @@ public class Camera extends ClientEntity
         if (active && mode != -1) Minecraft.getMinecraft().gameSettings.thirdPersonView = mode;
 
         super.onUpdate();
+    }
+
+    @Override
+    public void onEntityUpdate()
+    {
+        if (toFollow != null)
+        {
+            float eyeHeight = toFollow.getEyeHeight();
+            posX = toFollow.posX;
+            posY = toFollow.posY + eyeHeight;
+            posZ = toFollow.posZ;
+            prevPosX = toFollow.prevPosX;
+            prevPosY = toFollow.prevPosY + eyeHeight;
+            prevPosZ = toFollow.prevPosZ;
+
+            rotationYaw = toFollow instanceof EntityLivingBase ? ((EntityLivingBase) toFollow).rotationYawHead : toFollow.rotationYaw;
+            rotationPitch = toFollow.rotationPitch;
+            prevRotationYaw = toFollow instanceof EntityLivingBase ? ((EntityLivingBase) toFollow).prevRotationYawHead : toFollow.prevRotationYaw;
+        }
     }
 
     public void setPositionAndRotation(Vec3d position, float yaw, float pitch)
