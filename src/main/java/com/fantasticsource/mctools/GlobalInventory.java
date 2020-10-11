@@ -789,14 +789,7 @@ public class GlobalInventory
 
     public static ArrayList<ItemStack> getAllTiamatItems(ITiamatPlayerInventory inventory)
     {
-        ArrayList<ItemStack> result = new ArrayList<>();
-        if (inventory == null) return result;
-
-        for (int i = 0; i < inventory.getSizeInventory(); i++)
-        {
-            result.add(inventory.getStackInSlot(i));
-        }
-        return result;
+        return inventory == null ? new ArrayList<>() : inventory.getAllItems();
     }
 
 
