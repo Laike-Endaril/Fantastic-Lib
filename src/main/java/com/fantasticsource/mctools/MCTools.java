@@ -536,12 +536,18 @@ public class MCTools
     }
 
 
-    public static void spawnDebugSnowball(World world, double x, double y, double z)
+    public static EntitySnowball spawnDebugSnowball(World world, Vec3d position)
+    {
+        return spawnDebugSnowball(world, position.x, position.y, position.z);
+    }
+
+    public static EntitySnowball spawnDebugSnowball(World world, double x, double y, double z)
     {
         EntitySnowball snowball = new EntitySnowball(world, x, y, z);
         snowball.setVelocity(0, 0, 0);
         snowball.setNoGravity(true);
         world.spawnEntity(snowball);
+        return snowball;
     }
 
     public static double lookAngleDifDeg(EntityLivingBase searcher, Entity target)
