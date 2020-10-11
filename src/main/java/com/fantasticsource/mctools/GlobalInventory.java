@@ -923,19 +923,27 @@ public class GlobalInventory
     public static ItemStack getItem(Entity entity, String slot)
     {
         slot = slot.toLowerCase();
+        ArrayList<ItemStack> list;
+
 
         //Baubles
         if (slot.contains("bauble"))
         {
+            list = getBaubles(entity);
+            if (list.size() == 0) return null;
+
             try
             {
-                return getBaubles(entity).get(Integer.parseInt(slot.replace("bauble", "")) - 1);
+                int index = Integer.parseInt(slot.replace("bauble", "")) - 1;
+                if (index < 0 || index >= list.size()) return null;
+                return list.get(index);
             }
             catch (NumberFormatException e)
             {
                 return null;
             }
         }
+
 
         switch (slot)
         {
@@ -944,7 +952,8 @@ public class GlobalInventory
                 return getVanillaMainhandItem(entity);
 
             case "offhand":
-                return getVanillaOffhandItems(entity).get(0);
+                list = getVanillaOffhandItems(entity);
+                return list.size() == 0 ? null : list.get(0);
 
             case "head":
                 return getVanillaHeadItem(entity);
@@ -994,6 +1003,7 @@ public class GlobalInventory
                 if (entity instanceof EntityPlayer) return ((EntityPlayer) entity).inventory.getStackInSlot(8);
                 return null;
 
+
             //Tiamat
             case "mainhand1":
                 return getTiamatSheathedMainhand1(entity);
@@ -1014,13 +1024,16 @@ public class GlobalInventory
                 return getTiamatCapeItem(entity);
 
             case "quickslot1":
-                return getTiamatQuickslots(entity).get(0);
+                list = getTiamatQuickslots(entity);
+                return list.size() == 0 ? null : list.get(0);
 
             case "quickslot2":
-                return getTiamatQuickslots(entity).get(1);
+                list = getTiamatQuickslots(entity);
+                return list.size() == 0 ? null : list.get(1);
 
             case "quickslot3":
-                return getTiamatQuickslots(entity).get(2);
+                list = getTiamatQuickslots(entity);
+                return list.size() == 0 ? null : list.get(2);
 
             case "backpack":
                 return getTiamatBackpack(entity);
@@ -1032,88 +1045,115 @@ public class GlobalInventory
                 return getTiamatDeck(entity);
 
             case "class1":
-                return getTiamatClasses(entity).get(0);
+                list = getTiamatClasses(entity);
+                return list.size() == 0 ? null : list.get(0);
 
             case "class2":
-                return getTiamatClasses(entity).get(1);
+                list = getTiamatClasses(entity);
+                return list.size() == 0 ? null : list.get(1);
 
             case "offensive1":
-                return getTiamatOffensiveSkills(entity).get(0);
+                list = getTiamatOffensiveSkills(entity);
+                return list.size() == 0 ? null : list.get(0);
 
             case "offensive2":
-                return getTiamatOffensiveSkills(entity).get(1);
+                list = getTiamatOffensiveSkills(entity);
+                return list.size() == 0 ? null : list.get(1);
 
             case "utility1":
-                return getTiamatUtilitySkills(entity).get(0);
+                list = getTiamatUtilitySkills(entity);
+                return list.size() == 0 ? null : list.get(0);
 
             case "utility2":
-                return getTiamatUtilitySkills(entity).get(1);
+                list = getTiamatUtilitySkills(entity);
+                return list.size() == 0 ? null : list.get(1);
 
             case "ultimate":
                 return getTiamatUltimateSkill(entity);
 
             case "passive1":
-                return getTiamatPassiveSkills(entity).get(0);
+                list = getTiamatPassiveSkills(entity);
+                return list.size() == 0 ? null : list.get(0);
 
             case "passive2":
-                return getTiamatPassiveSkills(entity).get(1);
+                list = getTiamatPassiveSkills(entity);
+                return list.size() == 0 ? null : list.get(1);
 
             case "gathering1":
-                return getTiamatGatheringProfessions(entity).get(0);
+                list = getTiamatGatheringProfessions(entity);
+                return list.size() == 0 ? null : list.get(0);
 
             case "gathering2":
-                return getTiamatGatheringProfessions(entity).get(1);
+                list = getTiamatGatheringProfessions(entity);
+                return list.size() == 0 ? null : list.get(1);
 
             case "crafting1":
-                return getTiamatCraftingProfessions(entity).get(0);
+                list = getTiamatCraftingProfessions(entity);
+                return list.size() == 0 ? null : list.get(0);
 
             case "crafting2":
-                return getTiamatCraftingProfessions(entity).get(1);
+                list = getTiamatCraftingProfessions(entity);
+                return list.size() == 0 ? null : list.get(1);
 
             case "recipe1":
-                return getTiamatRecipes(entity).get(0);
+                list = getTiamatRecipes(entity);
+                return list.size() == 0 ? null : list.get(0);
 
             case "recipe2":
-                return getTiamatRecipes(entity).get(1);
+                list = getTiamatRecipes(entity);
+                return list.size() == 0 ? null : list.get(1);
 
             case "recipe3":
-                return getTiamatRecipes(entity).get(2);
+                list = getTiamatRecipes(entity);
+                return list.size() == 0 ? null : list.get(2);
 
             case "recipe4":
-                return getTiamatRecipes(entity).get(3);
+                list = getTiamatRecipes(entity);
+                return list.size() == 0 ? null : list.get(3);
 
             case "recipe5":
-                return getTiamatRecipes(entity).get(4);
+                list = getTiamatRecipes(entity);
+                return list.size() == 0 ? null : list.get(4);
 
             case "recipe6":
-                return getTiamatRecipes(entity).get(5);
+                list = getTiamatRecipes(entity);
+                return list.size() == 0 ? null : list.get(5);
 
             case "recipe7":
-                return getTiamatRecipes(entity).get(6);
+                list = getTiamatRecipes(entity);
+                return list.size() == 0 ? null : list.get(6);
 
             case "recipe8":
-                return getTiamatRecipes(entity).get(7);
+                list = getTiamatRecipes(entity);
+                return list.size() == 0 ? null : list.get(7);
 
             case "recipe9":
-                return getTiamatRecipes(entity).get(8);
+                list = getTiamatRecipes(entity);
+                return list.size() == 0 ? null : list.get(8);
 
             case "recipe10":
-                return getTiamatRecipes(entity).get(9);
+                list = getTiamatRecipes(entity);
+                return list.size() == 0 ? null : list.get(9);
 
             case "recipe11":
-                return getTiamatRecipes(entity).get(10);
+                list = getTiamatRecipes(entity);
+                return list.size() == 0 ? null : list.get(10);
 
             case "recipe12":
-                return getTiamatRecipes(entity).get(11);
+                list = getTiamatRecipes(entity);
+                return list.size() == 0 ? null : list.get(11);
 
             case "recipe13":
-                return getTiamatRecipes(entity).get(12);
+                list = getTiamatRecipes(entity);
+                return list.size() == 0 ? null : list.get(12);
 
             case "recipe14":
-                return getTiamatRecipes(entity).get(13);
+                list = getTiamatRecipes(entity);
+                return list.size() == 0 ? null : list.get(13);
 
             case "recipe15":
-                return getTiamatRecipes(entity).get(14);
+                list = getTiamatRecipes(entity);
+                return list.size() == 0 ? null : list.get(14);
 
             default:
                 return null;
