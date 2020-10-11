@@ -151,24 +151,29 @@ public class Camera extends ClientEntity
         super.onUpdate();
     }
 
-    @Override
-    public void onEntityUpdate()
+    @SubscribeEvent
+    public static void trackFollowed(TickEvent.RenderTickEvent event)
     {
-        if (toFollow != null)
-        {
-            float eyeHeight = toFollow.getEyeHeight();
-            posX = toFollow.posX;
-            posY = toFollow.posY + eyeHeight;
-            posZ = toFollow.posZ;
-            prevPosX = toFollow.prevPosX;
-            prevPosY = toFollow.prevPosY + eyeHeight;
-            prevPosZ = toFollow.prevPosZ;
+        if (!getCamera().active || event.phase != TickEvent.Phase.START) return;
 
-            rotationYaw = toFollow instanceof EntityLivingBase ? ((EntityLivingBase) toFollow).rotationYawHead : toFollow.rotationYaw;
-            rotationPitch = toFollow.rotationPitch;
-            prevRotationYaw = toFollow instanceof EntityLivingBase ? ((EntityLivingBase) toFollow).prevRotationYawHead : toFollow.prevRotationYaw;
+        if (camera.toFollow != null)
+        {
+            Entity entity = camera.toFollow;
+
+            float eyeHeight = entity.getEyeHeight();
+            camera.posX = entity.posX;
+            camera.posY = entity.posY + eyeHeight;
+            camera.posZ = entity.posZ;
+            camera.prevPosX = entity.prevPosX;
+            camera.prevPosY = entity.prevPosY + eyeHeight;
+            camera.prevPosZ = entity.prevPosZ;
+
+            camera.rotationYaw = entity instanceof EntityLivingBase ? ((EntityLivingBase) entity).rotationYawHead : entity.rotationYaw;
+            camera.rotationPitch = entity.rotationPitch;
+            camera.prevRotationYaw = entity instanceof EntityLivingBase ? ((EntityLivingBase) entity).prevRotationYawHead : entity.prevRotationYaw;
         }
     }
+
 
     public void setPositionAndRotation(Vec3d position, float yaw, float pitch)
     {
@@ -253,7 +258,7 @@ public class Camera extends ClientEntity
     }
 
 
-    protected static boolean one = false, two = false;
+    protected static boolean control1 = false, control2 = false;
 
     @SubscribeEvent
     public static void controlFixPre1(PlayerSPPushOutOfBlocksEvent event)
@@ -264,7 +269,7 @@ public class Camera extends ClientEntity
         if (getCamera().active && event.getEntityPlayer() == mc.player)
         {
             ReflectionTool.set(MINECRAFT_RENDER_VIEW_ENTITY_FIELD, mc, mc.player);
-            one = true;
+            control1 = true;
         }
     }
 
@@ -277,7 +282,7 @@ public class Camera extends ClientEntity
         if (event.phase == TickEvent.Phase.END && getCamera().active && event.player == mc.player)
         {
             ReflectionTool.set(MINECRAFT_RENDER_VIEW_ENTITY_FIELD, mc, mc.player);
-            two = true;
+            control2 = true;
         }
     }
 
@@ -285,10 +290,10 @@ public class Camera extends ClientEntity
     public static void controlFixPost(GetCollisionBoxesEvent event)
     {
         Minecraft mc = Minecraft.getMinecraft();
-        if ((one || two) && getCamera().active && event.getWorld().isRemote)
+        if ((control1 || control2) && getCamera().active && event.getWorld().isRemote)
         {
-            one = false;
-            two = false;
+            control1 = false;
+            control2 = false;
             ReflectionTool.set(MINECRAFT_RENDER_VIEW_ENTITY_FIELD, mc, camera);
         }
     }
