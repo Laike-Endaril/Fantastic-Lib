@@ -13,11 +13,12 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class InventoryChangedEvent extends EntityEvent
 {
-    public static LinkedHashMap<Entity, ArrayList<ItemStack>> previousContents = new LinkedHashMap<>();
+    public static LinkedHashMap<Entity, GlobalInventoryData> previousContents = new LinkedHashMap<>();
 
     static
     {
@@ -25,19 +26,39 @@ public class InventoryChangedEvent extends EntityEvent
     }
 
 
-    private final ArrayList<ItemStack> oldInventory;
+    public final GlobalInventoryData oldInventory, newInventory;
+    public final HashMap<Integer, ItemStack> newTiamatItems = new HashMap<>();
 
 
-    public InventoryChangedEvent(Entity entity, ArrayList<ItemStack> oldInventory)
+    public InventoryChangedEvent(Entity entity, GlobalInventoryData oldInventory, GlobalInventoryData newInventory)
     {
         super(entity);
-
         this.oldInventory = oldInventory;
-    }
+        this.newInventory = newInventory;
 
-    public ArrayList<ItemStack> getOldInventory()
-    {
-        return new ArrayList<>(oldInventory);
+        if (newInventory.tiamatInventory != null)
+        {
+            ArrayList<ItemStack> n = newInventory.tiamatInventory;
+            if (oldInventory == null)
+            {
+                int i = 0;
+                for (ItemStack stack : newInventory.tiamatInventory)
+                {
+                    newTiamatItems.put(i++, stack);
+                }
+            }
+            else
+            {
+                ItemStack stack;
+                ArrayList<ItemStack> o = oldInventory.tiamatInventory;
+                int size = newInventory.tiamatInventory.size();
+                for (int i = 0; i < size; i++)
+                {
+                    stack = n.get(i);
+                    if (!ItemMatcher.stacksMatch(stack, o.get(i))) newTiamatItems.put(i, stack);
+                }
+            }
+        }
     }
 
 
@@ -50,10 +71,7 @@ public class InventoryChangedEvent extends EntityEvent
         previousContents.entrySet().removeIf(entry ->
         {
             Entity entity = entry.getKey();
-            if (!entity.isAddedToWorld())
-            {
-                return true;
-            }
+            if (!entity.isAddedToWorld()) return true;
 
             for (World world : FMLCommonHandler.instance().getMinecraftServerInstance().worlds)
             {
@@ -63,7 +81,7 @@ public class InventoryChangedEvent extends EntityEvent
             return true;
         });
 
-        ArrayList<ItemStack> oldInventory, newInventory;
+        GlobalInventoryData oldInventory, newInventory;
         for (Entity entity : event.world.loadedEntityList.toArray(new Entity[0]))
         {
             if (!entity.isAddedToWorld())
@@ -73,29 +91,49 @@ public class InventoryChangedEvent extends EntityEvent
             }
 
 
-            newInventory = GlobalInventory.getAllNonSkinItems(entity);
-            oldInventory = previousContents.getOrDefault(entity, new ArrayList<>());
-            if (newInventory.size() != oldInventory.size())
+            newInventory = new GlobalInventoryData(entity);
+            oldInventory = previousContents.get(entity);
+            if (oldInventory == null || !oldInventory.equals(newInventory))
             {
-                MinecraftForge.EVENT_BUS.post(new InventoryChangedEvent(entity, oldInventory));
-                previousContents.put(entity, GlobalInventory.getAllNonSkinItems(entity));
-                continue;
+                MinecraftForge.EVENT_BUS.post(new InventoryChangedEvent(entity, oldInventory, newInventory));
+                previousContents.put(entity, newInventory);
+            }
+        }
+    }
+
+
+    public static class GlobalInventoryData
+    {
+        public final ArrayList<ItemStack> allNonSkin, tiamatInventory;
+        public final LinkedHashMap<String, ArrayList<ItemStack>> allCategorized;
+
+        public GlobalInventoryData(Entity entity)
+        {
+            this(GlobalInventory.getAllNonSkinItems(entity), GlobalInventory.getAllTiamatItems(entity), GlobalInventory.getAllItemsCategorized(entity));
+        }
+
+        public GlobalInventoryData(ArrayList<ItemStack> allNonSkin, ArrayList<ItemStack> tiamatInventory, LinkedHashMap<String, ArrayList<ItemStack>> allCategorized)
+        {
+            this.allNonSkin = allNonSkin;
+            this.tiamatInventory = tiamatInventory;
+            this.allCategorized = allCategorized;
+        }
+
+        @Override
+        public boolean equals(Object obj)
+        {
+            if (!(obj instanceof GlobalInventoryData)) return false;
+
+            GlobalInventoryData other = (GlobalInventoryData) obj;
+            int size = allNonSkin.size();
+            if (size != other.allNonSkin.size()) return false;
+
+            for (int i = 0; i < size; i++)
+            {
+                if (!ItemMatcher.stacksMatch(allNonSkin.get(i), other.allNonSkin.get(i))) return false;
             }
 
-            boolean match = true;
-            for (int i = 0; i < newInventory.size(); i++)
-            {
-                if (!ItemMatcher.stacksMatch(oldInventory.get(i), newInventory.get(i)))
-                {
-                    match = false;
-                    break;
-                }
-            }
-            if (!match)
-            {
-                MinecraftForge.EVENT_BUS.post(new InventoryChangedEvent(entity, oldInventory));
-                previousContents.put(entity, GlobalInventory.getAllNonSkinItems(entity));
-            }
+            return true;
         }
     }
 }
