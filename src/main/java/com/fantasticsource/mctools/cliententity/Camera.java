@@ -44,6 +44,7 @@ public class Camera extends ClientEntity
             PLAYER_RENDER_NEVER = 2;
 
     public static int playerRenderMode = PLAYER_RENDER_IF_THIRD_PERSON;
+    public static boolean allowControl = true;
 
 
     protected boolean active = false;
@@ -257,6 +258,8 @@ public class Camera extends ClientEntity
     @SubscribeEvent
     public static void controlFixPre1(PlayerSPPushOutOfBlocksEvent event)
     {
+        if (!allowControl) return;
+
         Minecraft mc = Minecraft.getMinecraft();
         if (getCamera().active && event.getEntityPlayer() == mc.player)
         {
@@ -268,6 +271,8 @@ public class Camera extends ClientEntity
     @SubscribeEvent
     public static void controlFixPre2(TickEvent.PlayerTickEvent event)
     {
+        if (!allowControl) return;
+
         Minecraft mc = Minecraft.getMinecraft();
         if (event.phase == TickEvent.Phase.END && getCamera().active && event.player == mc.player)
         {
