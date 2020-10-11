@@ -1,5 +1,6 @@
 package com.fantasticsource.mctools.cliententity;
 
+import com.fantasticsource.mctools.ImprovedRayTracing;
 import com.fantasticsource.tools.ReflectionTool;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.TrigLookupTable;
@@ -7,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.PlayerSPPushOutOfBlocksEvent;
@@ -24,6 +26,7 @@ import java.lang.reflect.Field;
 @SideOnly(Side.CLIENT)
 public class Camera extends ClientEntity
 {
+    protected static final double OFFSET_COLLISION_BUFFER_DIRECT = 0.1, OFFSET_COLLISION_BUFFER_FORWARD = 0.1;
     protected static final Field MINECRAFT_RENDER_VIEW_ENTITY_FIELD = ReflectionTool.getField(Minecraft.class, "field_175622_Z", "renderViewEntity");
 
     static
@@ -172,24 +175,39 @@ public class Camera extends ClientEntity
     {
         Entity entity = camera.toFollow;
 
+
         camera.rotationYaw = entity instanceof EntityLivingBase ? ((EntityLivingBase) entity).rotationYawHead : entity.rotationYaw;
         camera.rotationPitch = entity.rotationPitch;
         camera.prevRotationYaw = entity instanceof EntityLivingBase ? ((EntityLivingBase) entity).prevRotationYawHead : entity.prevRotationYaw;
         camera.prevRotationPitch = entity.prevRotationPitch;
 
-        float eyeHeight = entity.getEyeHeight();
-        camera.posY = entity.posY + eyeHeight;
-        camera.prevPosY = entity.prevPosY + eyeHeight;
-
-        camera.posX = entity.posX;
-        camera.posZ = entity.posZ;
         if (followOffsetLR != 0)
         {
-            camera.posX -= followOffsetLR * TrigLookupTable.TRIG_TABLE_1024.cos(Tools.degtorad(camera.rotationYaw));
-            camera.posZ -= followOffsetLR * TrigLookupTable.TRIG_TABLE_1024.sin(Tools.degtorad(camera.rotationYaw));
+            World world = entity.world;
+            double testFollowOffsetLR = followOffsetLR > 0 ? followOffsetLR + OFFSET_COLLISION_BUFFER_DIRECT : followOffsetLR - OFFSET_COLLISION_BUFFER_DIRECT;
+            Vec3d start = entity.getPositionEyes(1);
+            Vec3d testStart = start.addVector(-OFFSET_COLLISION_BUFFER_FORWARD * TrigLookupTable.TRIG_TABLE_1024.sin(Tools.degtorad(camera.rotationYaw)), 0, OFFSET_COLLISION_BUFFER_FORWARD * TrigLookupTable.TRIG_TABLE_1024.cos(Tools.degtorad(camera.rotationYaw)));
+            Vec3d testEnd = testStart.subtract(testFollowOffsetLR * TrigLookupTable.TRIG_TABLE_1024.cos(Tools.degtorad(camera.rotationYaw)), 0, testFollowOffsetLR * TrigLookupTable.TRIG_TABLE_1024.sin(Tools.degtorad(camera.rotationYaw)));
+            RayTraceResult testResult = ImprovedRayTracing.rayTraceBlocks(world, testStart, testEnd, true);
+            Vec3d testDif = testResult.hitVec.subtract(testStart);
+            double testDist = testDif.lengthVector() - OFFSET_COLLISION_BUFFER_DIRECT;
+
+            if (testDist > 0)
+            {
+                Vec3d end = start.subtract(testFollowOffsetLR * TrigLookupTable.TRIG_TABLE_1024.cos(Tools.degtorad(camera.rotationYaw)), 0, testFollowOffsetLR * TrigLookupTable.TRIG_TABLE_1024.sin(Tools.degtorad(camera.rotationYaw)));
+                RayTraceResult result = ImprovedRayTracing.rayTraceBlocks(world, start, end, testDist + OFFSET_COLLISION_BUFFER_DIRECT, true);
+                Vec3d dif = result.hitVec.subtract(start);
+                double dist = dif.lengthVector() - OFFSET_COLLISION_BUFFER_DIRECT;
+
+                if (dist > 0)
+                {
+                    camera.setPosition(dif.normalize().scale(Tools.min(testDist, dist)).add(start));
+                }
+            }
         }
 
         camera.prevPosX = entity.prevPosX;
+        camera.prevPosY = entity.prevPosY + entity.getEyeHeight();
         camera.prevPosZ = entity.prevPosZ;
     }
 
