@@ -1,6 +1,8 @@
 package com.fantasticsource.mctools.cliententity;
 
 import com.fantasticsource.tools.ReflectionTool;
+import com.fantasticsource.tools.Tools;
+import com.fantasticsource.tools.TrigLookupTable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.Entity;
@@ -45,6 +47,7 @@ public class Camera extends ClientEntity
 
     public static int playerRenderMode = PLAYER_RENDER_IF_THIRD_PERSON;
     public static boolean allowControl = true;
+    public static double followOffsetLR = 1;
 
 
     protected boolean active = false;
@@ -67,6 +70,7 @@ public class Camera extends ClientEntity
     public void activate(Entity toFollow, int mode)
     {
         activate(toFollow, toFollow.world, toFollow.posX, toFollow.posY + toFollow.getEyeHeight(), toFollow.posZ, toFollow.getRotationYawHead(), toFollow.rotationPitch, mode);
+        followEntity();
     }
 
     public void activate(World world, double x, double y, double z, float yaw, float pitch, int mode)
@@ -151,27 +155,41 @@ public class Camera extends ClientEntity
         super.onUpdate();
     }
 
+    @Override
+    public void onEntityUpdate()
+    {
+    }
+
     @SubscribeEvent
     public static void trackFollowed(TickEvent.RenderTickEvent event)
     {
         if (!getCamera().active || event.phase != TickEvent.Phase.START) return;
 
-        if (camera.toFollow != null)
+        if (camera.toFollow != null) followEntity();
+    }
+
+    protected static void followEntity()
+    {
+        Entity entity = camera.toFollow;
+
+        camera.rotationYaw = entity instanceof EntityLivingBase ? ((EntityLivingBase) entity).rotationYawHead : entity.rotationYaw;
+        camera.rotationPitch = entity.rotationPitch;
+        camera.prevRotationYaw = entity instanceof EntityLivingBase ? ((EntityLivingBase) entity).prevRotationYawHead : entity.prevRotationYaw;
+
+        float eyeHeight = entity.getEyeHeight();
+        camera.posY = entity.posY + eyeHeight;
+        camera.prevPosY = entity.prevPosY + eyeHeight;
+
+        camera.posX = entity.posX;
+        camera.posZ = entity.posZ;
+        if (followOffsetLR != 0)
         {
-            Entity entity = camera.toFollow;
-
-            float eyeHeight = entity.getEyeHeight();
-            camera.posX = entity.posX;
-            camera.posY = entity.posY + eyeHeight;
-            camera.posZ = entity.posZ;
-            camera.prevPosX = entity.prevPosX;
-            camera.prevPosY = entity.prevPosY + eyeHeight;
-            camera.prevPosZ = entity.prevPosZ;
-
-            camera.rotationYaw = entity instanceof EntityLivingBase ? ((EntityLivingBase) entity).rotationYawHead : entity.rotationYaw;
-            camera.rotationPitch = entity.rotationPitch;
-            camera.prevRotationYaw = entity instanceof EntityLivingBase ? ((EntityLivingBase) entity).prevRotationYawHead : entity.prevRotationYaw;
+            camera.posX -= TrigLookupTable.TRIG_TABLE_1024.cos(Tools.degtorad(camera.rotationYaw));
+            camera.posZ -= TrigLookupTable.TRIG_TABLE_1024.sin(Tools.degtorad(camera.rotationYaw));
         }
+
+        camera.prevPosX = entity.prevPosX;
+        camera.prevPosZ = entity.prevPosZ;
     }
 
 
