@@ -185,8 +185,8 @@ public class Camera extends ClientEntity
         camera.posZ = entity.posZ;
         if (followOffsetLR != 0)
         {
-            camera.posX -= TrigLookupTable.TRIG_TABLE_1024.cos(Tools.degtorad(camera.rotationYaw));
-            camera.posZ -= TrigLookupTable.TRIG_TABLE_1024.sin(Tools.degtorad(camera.rotationYaw));
+            camera.posX -= followOffsetLR * TrigLookupTable.TRIG_TABLE_1024.cos(Tools.degtorad(camera.rotationYaw));
+            camera.posZ -= followOffsetLR * TrigLookupTable.TRIG_TABLE_1024.sin(Tools.degtorad(camera.rotationYaw));
         }
 
         camera.prevPosX = entity.prevPosX;
