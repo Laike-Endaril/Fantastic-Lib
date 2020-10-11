@@ -47,7 +47,7 @@ public class Camera extends ClientEntity
 
     public static int playerRenderMode = PLAYER_RENDER_IF_THIRD_PERSON;
     public static boolean allowControl = true;
-    public static double followOffsetLR = 1;
+    public static double followOffsetLR = 0;
 
 
     protected boolean active = false;
@@ -175,6 +175,7 @@ public class Camera extends ClientEntity
         camera.rotationYaw = entity instanceof EntityLivingBase ? ((EntityLivingBase) entity).rotationYawHead : entity.rotationYaw;
         camera.rotationPitch = entity.rotationPitch;
         camera.prevRotationYaw = entity instanceof EntityLivingBase ? ((EntityLivingBase) entity).prevRotationYawHead : entity.prevRotationYaw;
+        camera.prevRotationPitch = entity.prevRotationPitch;
 
         float eyeHeight = entity.getEyeHeight();
         camera.posY = entity.posY + eyeHeight;
