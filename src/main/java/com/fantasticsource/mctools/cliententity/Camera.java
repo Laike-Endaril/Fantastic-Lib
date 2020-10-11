@@ -50,6 +50,11 @@ public class Camera extends ClientEntity
         forceSpawn = true;
     }
 
+    public boolean isActive()
+    {
+        return active;
+    }
+
     public void activate(Entity toFollow, int mode)
     {
         activate(toFollow, toFollow.world, toFollow.posX, toFollow.posY + toFollow.getEyeHeight(), toFollow.posZ, toFollow.getRotationYawHead(), toFollow.rotationPitch, mode);
