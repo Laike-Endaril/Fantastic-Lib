@@ -1,21 +1,29 @@
 package com.fantasticsource.mctools.cliententity;
 
+import com.fantasticsource.tools.ReflectionTool;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.PlayerSPPushOutOfBlocksEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.lang.reflect.Field;
 
 @SideOnly(Side.CLIENT)
 public class Camera extends ClientEntity
 {
+    protected static final Field MINECRAFT_RENDER_VIEW_ENTITY_FIELD = ReflectionTool.getField(Minecraft.class, "field_175622_Z", "renderViewEntity");
+
     static
     {
         MinecraftForge.EVENT_BUS.register(Camera.class);
@@ -240,6 +248,43 @@ public class Camera extends ClientEntity
         {
             Minecraft mc = Minecraft.getMinecraft();
             mc.setRenderViewEntity(camera);
+        }
+    }
+
+
+    protected static boolean one = false, two = false;
+
+    @SubscribeEvent
+    public static void controlFixPre1(PlayerSPPushOutOfBlocksEvent event)
+    {
+        Minecraft mc = Minecraft.getMinecraft();
+        if (getCamera().active && event.getEntityPlayer() == mc.player)
+        {
+            ReflectionTool.set(MINECRAFT_RENDER_VIEW_ENTITY_FIELD, mc, mc.player);
+            one = true;
+        }
+    }
+
+    @SubscribeEvent
+    public static void controlFixPre2(TickEvent.PlayerTickEvent event)
+    {
+        Minecraft mc = Minecraft.getMinecraft();
+        if (event.phase == TickEvent.Phase.END && getCamera().active && event.player == mc.player)
+        {
+            ReflectionTool.set(MINECRAFT_RENDER_VIEW_ENTITY_FIELD, mc, mc.player);
+            two = true;
+        }
+    }
+
+    @SubscribeEvent
+    public static void controlFixPost(GetCollisionBoxesEvent event)
+    {
+        Minecraft mc = Minecraft.getMinecraft();
+        if ((one || two) && getCamera().active && event.getWorld().isRemote)
+        {
+            one = false;
+            two = false;
+            ReflectionTool.set(MINECRAFT_RENDER_VIEW_ENTITY_FIELD, mc, camera);
         }
     }
 }
