@@ -47,7 +47,7 @@ public class Tools
 
     public static long getLong(int upper, int lower)
     {
-        return (((long) upper) << 32) | lower;
+        return (((long) upper) << 32) | (lower & 0xffffffffL);
     }
 
 
