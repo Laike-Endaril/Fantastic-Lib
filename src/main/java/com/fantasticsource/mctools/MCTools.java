@@ -12,7 +12,6 @@ import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.resources.LanguageManager;
 import net.minecraft.client.resources.Locale;
-import net.minecraft.command.CommandResultStats;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.ai.attributes.IAttribute;
@@ -21,7 +20,6 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntitySnowball;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
@@ -428,36 +426,12 @@ public class MCTools
 
     public static void give(EntityPlayerMP player, ItemStack stack)
     {
-        int count = stack.getCount();
-        boolean flag = player.inventory.addItemStackToInventory(stack);
+        EntityItem entityitem = player.dropItem(stack, false);
 
-        if (flag)
+        if (entityitem != null)
         {
-            player.world.playSound(null, player.posX, player.posY, player.posZ, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((player.getRNG().nextFloat() - player.getRNG().nextFloat()) * 0.7F + 1.0F) * 2.0F);
-            player.inventoryContainer.detectAndSendChanges();
-        }
-
-        if (flag && stack.isEmpty())
-        {
-            stack.setCount(1);
-            player.setCommandStat(CommandResultStats.Type.AFFECTED_ITEMS, count);
-            EntityItem entityitem1 = player.dropItem(stack, false);
-
-            if (entityitem1 != null)
-            {
-                entityitem1.makeFakeItem();
-            }
-        }
-        else
-        {
-            player.setCommandStat(CommandResultStats.Type.AFFECTED_ITEMS, count - stack.getCount());
-            EntityItem entityitem = player.dropItem(stack, false);
-
-            if (entityitem != null)
-            {
-                entityitem.setNoPickupDelay();
-                entityitem.setOwner(player.getName());
-            }
+            entityitem.setNoPickupDelay();
+            entityitem.setOwner(player.getName());
         }
     }
 
