@@ -425,6 +425,16 @@ public class Tools
         return result;
     }
 
+    public static long min(long... values)
+    {
+        long result = Long.MAX_VALUE;
+        for (long value : values)
+        {
+            if (value < result) result = value;
+        }
+        return result;
+    }
+
     public static float min(float... values)
     {
         float result = Float.POSITIVE_INFINITY;
@@ -445,10 +455,21 @@ public class Tools
         return result;
     }
 
+
     public static int max(int... values)
     {
         int result = Integer.MIN_VALUE;
         for (int value : values)
+        {
+            if (value > result) result = value;
+        }
+        return result;
+    }
+
+    public static long max(long... values)
+    {
+        long result = Long.MIN_VALUE;
+        for (long value : values)
         {
             if (value > result) result = value;
         }
