@@ -1,4 +1,4 @@
-package com.fantasticsource.mctools.inventory;
+package com.fantasticsource.mctools.inventory.slot;
 
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
