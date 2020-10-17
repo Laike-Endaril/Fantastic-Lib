@@ -13,7 +13,6 @@ import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
@@ -25,8 +24,6 @@ import static org.lwjgl.opengl.GL11.GL_QUADS;
 @SideOnly(Side.CLIENT)
 public class BetterContainerGUI extends GuiContainer
 {
-    protected ResourceLocation texture;
-
     protected boolean buttonClicked;
     protected Slot hoveredSlot;
     protected ItemStack draggedStack = ItemStack.EMPTY;
@@ -47,13 +44,11 @@ public class BetterContainerGUI extends GuiContainer
     protected int dragSplittingButton;
     protected int dragSplittingLimit;
 
-    public BetterContainerGUI(Container container, ResourceLocation texture)
+    public BetterContainerGUI(Container container)
     {
         super(container);
         ignoreMouseUp = true;
         allowUserInput = true;
-
-        this.texture = texture;
 
         mc = Minecraft.getMinecraft();
         fontRenderer = mc.fontRenderer;
