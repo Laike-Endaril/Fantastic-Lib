@@ -561,7 +561,11 @@ public class BetterContainerGUI extends GuiContainer
     @Override
     protected void keyTyped(char typedChar, int keyCode)
     {
-        if (keyCode == 1) mc.player.closeScreen();
+        if (keyCode == 1)
+        {
+            mc.player.closeScreen();
+            return;
+        }
 
         checkHotbarKeys(keyCode);
 
