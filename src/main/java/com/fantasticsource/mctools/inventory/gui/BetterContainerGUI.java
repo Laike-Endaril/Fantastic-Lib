@@ -24,30 +24,30 @@ import static org.lwjgl.opengl.GL11.GL_QUADS;
 @SideOnly(Side.CLIENT)
 public class BetterContainerGUI extends GuiContainer
 {
-    protected boolean buttonClicked;
-    protected Slot hoveredSlot;
-    protected ItemStack draggedStack = ItemStack.EMPTY;
-    protected boolean isRightMouseClick;
-    protected int dragSplittingRemnant;
-    protected ItemStack returningStack = ItemStack.EMPTY;
-    protected long returningStackTime;
-    protected Slot returningStackDestSlot;
-    protected int touchUpX;
-    protected int touchUpY;
-    protected boolean doubleClick;
-    protected Slot lastClickSlot;
-    protected long lastClickTime;
-    protected int lastClickButton;
-    protected boolean ignoreMouseUp;
-    protected Slot clickedSlot;
-    protected ItemStack shiftClickedStack = ItemStack.EMPTY;
-    protected int dragSplittingButton;
-    protected int dragSplittingLimit;
+    protected boolean buttonClicked_;
+    protected Slot hoveredSlot_;
+    protected ItemStack draggedStack_ = ItemStack.EMPTY;
+    protected boolean isRightMouseClick_;
+    protected int dragSplittingRemnant_;
+    protected ItemStack returningStack_ = ItemStack.EMPTY;
+    protected long returningStackTime_;
+    protected Slot returningStackDestSlot_;
+    protected int touchUpX_;
+    protected int touchUpY_;
+    protected boolean doubleClick_;
+    protected Slot lastClickSlot_;
+    protected long lastClickTime_;
+    protected int lastClickButton_;
+    protected boolean ignoreMouseUp_;
+    protected Slot clickedSlot_;
+    protected ItemStack shiftClickedStack_ = ItemStack.EMPTY;
+    protected int dragSplittingButton_;
+    protected int dragSplittingLimit_;
 
     public BetterContainerGUI(Container container)
     {
         super(container);
-        ignoreMouseUp = true;
+        ignoreMouseUp_ = true;
         allowUserInput = true;
 
         mc = Minecraft.getMinecraft();
@@ -75,7 +75,7 @@ public class BetterContainerGUI extends GuiContainer
             GlStateManager.translate((float) guiLeft, (float) guiTop, 0);
             GlStateManager.color(1, 1, 1, 1);
             GlStateManager.enableRescaleNormal();
-            hoveredSlot = null;
+            hoveredSlot_ = null;
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240, 240);
             GlStateManager.color(1, 1, 1, 1);
 
@@ -90,7 +90,7 @@ public class BetterContainerGUI extends GuiContainer
 
                 if (isMouseOverSlot(slot, mouseX, mouseY) && slot.isEnabled())
                 {
-                    hoveredSlot = slot;
+                    hoveredSlot_ = slot;
                     GlStateManager.disableLighting();
                     GlStateManager.disableDepth();
                     GlStateManager.colorMask(true, true, true, false);
@@ -106,13 +106,13 @@ public class BetterContainerGUI extends GuiContainer
             RenderHelper.enableGUIStandardItemLighting();
             net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiContainerEvent.DrawForeground(this, mouseX, mouseY));
             InventoryPlayer inventoryplayer = mc.player.inventory;
-            ItemStack itemstack = draggedStack.isEmpty() ? inventoryplayer.getItemStack() : draggedStack;
+            ItemStack itemstack = draggedStack_.isEmpty() ? inventoryplayer.getItemStack() : draggedStack_;
 
             if (!itemstack.isEmpty())
             {
                 String s = null;
 
-                if (!draggedStack.isEmpty() && isRightMouseClick)
+                if (!draggedStack_.isEmpty() && isRightMouseClick_)
                 {
                     itemstack = itemstack.copy();
                     itemstack.setCount(MathHelper.ceil((float) itemstack.getCount() / 2));
@@ -120,7 +120,7 @@ public class BetterContainerGUI extends GuiContainer
                 else if (dragSplitting && dragSplittingSlots.size() > 1)
                 {
                     itemstack = itemstack.copy();
-                    itemstack.setCount(dragSplittingRemnant);
+                    itemstack.setCount(dragSplittingRemnant_);
 
                     if (itemstack.isEmpty())
                     {
@@ -128,24 +128,24 @@ public class BetterContainerGUI extends GuiContainer
                     }
                 }
 
-                drawItemStack(itemstack, mouseX - guiLeft - 8, mouseY - guiTop - (draggedStack.isEmpty() ? 8 : 16), s);
+                drawItemStack(itemstack, mouseX - guiLeft - 8, mouseY - guiTop - (draggedStack_.isEmpty() ? 8 : 16), s);
             }
 
-            if (!returningStack.isEmpty())
+            if (!returningStack_.isEmpty())
             {
-                float f = (float) (Minecraft.getSystemTime() - returningStackTime) / 100;
+                float f = (float) (Minecraft.getSystemTime() - returningStackTime_) / 100;
 
                 if (f >= 1)
                 {
                     f = 1;
-                    returningStack = ItemStack.EMPTY;
+                    returningStack_ = ItemStack.EMPTY;
                 }
 
-                int l2 = returningStackDestSlot.xPos - touchUpX;
-                int i3 = returningStackDestSlot.yPos - touchUpY;
-                int l1 = touchUpX + (int) ((float) l2 * f);
-                int i2 = touchUpY + (int) ((float) i3 * f);
-                drawItemStack(returningStack, l1, i2, null);
+                int l2 = returningStackDestSlot_.xPos - touchUpX_;
+                int i3 = returningStackDestSlot_.yPos - touchUpY_;
+                int l1 = touchUpX_ + (int) ((float) l2 * f);
+                int i2 = touchUpY_ + (int) ((float) i3 * f);
+                drawItemStack(returningStack_, l1, i2, null);
             }
 
             GlStateManager.popMatrix();
@@ -163,7 +163,7 @@ public class BetterContainerGUI extends GuiContainer
 
     protected void actionPerformed(GuiButton button)
     {
-        buttonClicked = true;
+        buttonClicked_ = true;
     }
 
     @Override
@@ -197,8 +197,8 @@ public class BetterContainerGUI extends GuiContainer
             boolean clickedOutside = hasClickedOutside(mouseX, mouseY);
             long i = Minecraft.getSystemTime();
             Slot slot = getSlotAtPosition(mouseX, mouseY);
-            doubleClick = lastClickSlot == slot && i - lastClickTime < 250 && lastClickButton == mouseButton;
-            ignoreMouseUp = false;
+            doubleClick_ = lastClickSlot_ == slot && i - lastClickTime_ < 250 && lastClickButton_ == mouseButton;
+            ignoreMouseUp_ = false;
 
             if (mouseButton == 0 || mouseButton == 1 || mc.gameSettings.keyBindPickBlock.isActiveAndMatches(mouseButton - 100))
             {
@@ -232,7 +232,7 @@ public class BetterContainerGUI extends GuiContainer
 
                                 if (flag2)
                                 {
-                                    shiftClickedStack = slot != null && slot.getHasStack() ? slot.getStack().copy() : ItemStack.EMPTY;
+                                    shiftClickedStack_ = slot != null && slot.getHasStack() ? slot.getStack().copy() : ItemStack.EMPTY;
                                     clicktype = ClickType.QUICK_MOVE;
                                 }
                                 else if (l == -999)
@@ -243,34 +243,34 @@ public class BetterContainerGUI extends GuiContainer
                                 handleMouseClick(slot, l, mouseButton, clicktype);
                             }
 
-                            ignoreMouseUp = true;
+                            ignoreMouseUp_ = true;
                         }
                         else
                         {
                             dragSplitting = true;
-                            dragSplittingButton = mouseButton;
+                            dragSplittingButton_ = mouseButton;
                             dragSplittingSlots.clear();
 
                             if (mouseButton == 0)
                             {
-                                dragSplittingLimit = 0;
+                                dragSplittingLimit_ = 0;
                             }
                             else if (mouseButton == 1)
                             {
-                                dragSplittingLimit = 1;
+                                dragSplittingLimit_ = 1;
                             }
                             else if (mc.gameSettings.keyBindPickBlock.isActiveAndMatches(mouseButton - 100))
                             {
-                                dragSplittingLimit = 2;
+                                dragSplittingLimit_ = 2;
                             }
                         }
                     }
                 }
             }
 
-            lastClickSlot = slot;
-            lastClickTime = i;
-            lastClickButton = mouseButton;
+            lastClickSlot_ = slot;
+            lastClickTime_ = i;
+            lastClickButton_ = mouseButton;
         }
     }
 
@@ -284,7 +284,7 @@ public class BetterContainerGUI extends GuiContainer
             ItemStack itemstack = mc.player.inventory.getItemStack();
 
 
-            if (dragSplitting && slot != null && !itemstack.isEmpty() && (itemstack.getCount() > dragSplittingSlots.size() || dragSplittingLimit == 2) && Container.canAddItemToSlot(slot, itemstack, true) && slot.isItemValid(itemstack) && inventorySlots.canDragIntoSlot(slot))
+            if (dragSplitting && slot != null && !itemstack.isEmpty() && (itemstack.getCount() > dragSplittingSlots.size() || dragSplittingLimit_ == 2) && Container.canAddItemToSlot(slot, itemstack, true) && slot.isItemValid(itemstack) && inventorySlots.canDragIntoSlot(slot))
             {
                 dragSplittingSlots.add(slot);
                 updateDragSplitting();
@@ -295,7 +295,7 @@ public class BetterContainerGUI extends GuiContainer
     @Override
     protected void mouseReleased(int mouseX, int mouseY, int state)
     {
-        if (buttonClicked) buttonClicked = false;
+        if (buttonClicked_) buttonClicked_ = false;
         else
         {
             if (selectedButton != null && state == 0)
@@ -319,15 +319,15 @@ public class BetterContainerGUI extends GuiContainer
                 k = -999;
             }
 
-            if (doubleClick && slot != null && state == 0 && inventorySlots.canMergeSlot(ItemStack.EMPTY, slot))
+            if (doubleClick_ && slot != null && state == 0 && inventorySlots.canMergeSlot(ItemStack.EMPTY, slot))
             {
                 if (isShiftKeyDown())
                 {
-                    if (!shiftClickedStack.isEmpty())
+                    if (!shiftClickedStack_.isEmpty())
                     {
                         for (Slot slot2 : inventorySlots.inventorySlots)
                         {
-                            if (slot2 != null && slot2.canTakeStack(mc.player) && slot2.getHasStack() && slot2.isSameInventory(slot) && Container.canAddItemToSlot(slot2, shiftClickedStack, true))
+                            if (slot2 != null && slot2.canTakeStack(mc.player) && slot2.getHasStack() && slot2.isSameInventory(slot) && Container.canAddItemToSlot(slot2, shiftClickedStack_, true))
                             {
                                 handleMouseClick(slot2, slot2.slotNumber, state, ClickType.QUICK_MOVE);
                             }
@@ -339,35 +339,35 @@ public class BetterContainerGUI extends GuiContainer
                     handleMouseClick(slot, k, state, ClickType.PICKUP_ALL);
                 }
 
-                doubleClick = false;
-                lastClickTime = 0L;
+                doubleClick_ = false;
+                lastClickTime_ = 0L;
             }
             else
             {
-                if (dragSplitting && dragSplittingButton != state)
+                if (dragSplitting && dragSplittingButton_ != state)
                 {
                     dragSplitting = false;
                     dragSplittingSlots.clear();
-                    ignoreMouseUp = true;
+                    ignoreMouseUp_ = true;
                     return;
                 }
 
-                if (ignoreMouseUp)
+                if (ignoreMouseUp_)
                 {
-                    ignoreMouseUp = false;
+                    ignoreMouseUp_ = false;
                     return;
                 }
 
                 if (dragSplitting && !dragSplittingSlots.isEmpty())
                 {
-                    handleMouseClick(null, -999, Container.getQuickcraftMask(0, dragSplittingLimit), ClickType.QUICK_CRAFT);
+                    handleMouseClick(null, -999, Container.getQuickcraftMask(0, dragSplittingLimit_), ClickType.QUICK_CRAFT);
 
                     for (Slot slot1 : dragSplittingSlots)
                     {
-                        handleMouseClick(slot1, slot1.slotNumber, Container.getQuickcraftMask(1, dragSplittingLimit), ClickType.QUICK_CRAFT);
+                        handleMouseClick(slot1, slot1.slotNumber, Container.getQuickcraftMask(1, dragSplittingLimit_), ClickType.QUICK_CRAFT);
                     }
 
-                    handleMouseClick(null, -999, Container.getQuickcraftMask(2, dragSplittingLimit), ClickType.QUICK_CRAFT);
+                    handleMouseClick(null, -999, Container.getQuickcraftMask(2, dragSplittingLimit_), ClickType.QUICK_CRAFT);
                 }
                 else if (!mc.player.inventory.getItemStack().isEmpty())
                 {
@@ -381,7 +381,7 @@ public class BetterContainerGUI extends GuiContainer
 
                         if (flag1)
                         {
-                            shiftClickedStack = slot != null && slot.getHasStack() ? slot.getStack().copy() : ItemStack.EMPTY;
+                            shiftClickedStack_ = slot != null && slot.getHasStack() ? slot.getStack().copy() : ItemStack.EMPTY;
                         }
 
                         handleMouseClick(slot, k, state, flag1 ? ClickType.QUICK_MOVE : ClickType.PICKUP);
@@ -391,7 +391,7 @@ public class BetterContainerGUI extends GuiContainer
 
             if (mc.player.inventory.getItemStack().isEmpty())
             {
-                lastClickTime = 0L;
+                lastClickTime_ = 0L;
             }
 
             dragSplitting = false;
@@ -406,9 +406,9 @@ public class BetterContainerGUI extends GuiContainer
     @Override
     protected void renderHoveredToolTip(int mouseX, int mouseY)
     {
-        if (mc.player.inventory.getItemStack().isEmpty() && hoveredSlot != null && hoveredSlot.getHasStack() && (!(hoveredSlot instanceof BetterSlot) || ((BetterSlot) hoveredSlot).enabled))
+        if (mc.player.inventory.getItemStack().isEmpty() && hoveredSlot_ != null && hoveredSlot_.getHasStack() && (!(hoveredSlot_ instanceof BetterSlot) || ((BetterSlot) hoveredSlot_).enabled))
         {
-            renderToolTip(hoveredSlot.getStack(), mouseX, mouseY);
+            renderToolTip(hoveredSlot_.getStack(), mouseX, mouseY);
         }
     }
 
@@ -422,7 +422,7 @@ public class BetterContainerGUI extends GuiContainer
     protected void drawGradientRect(int left, int top, int right, int bottom, int startColor, int endColor)
     {
         //In this case, this is used for item slot highlighting only
-        if (hoveredSlot == null || (hoveredSlot instanceof BetterSlot && !((BetterSlot) hoveredSlot).enabled)) return;
+        if (hoveredSlot_ == null || (hoveredSlot_ instanceof BetterSlot && !((BetterSlot) hoveredSlot_).enabled)) return;
 
         super.drawGradientRect(left, top, right, bottom, startColor, endColor);
     }
@@ -436,11 +436,11 @@ public class BetterContainerGUI extends GuiContainer
         int y = slot.yPos;
         ItemStack itemstack = slot.getStack();
         boolean flag = false;
-        boolean flag1 = slot == clickedSlot && !draggedStack.isEmpty() && !isRightMouseClick;
+        boolean flag1 = slot == clickedSlot_ && !draggedStack_.isEmpty() && !isRightMouseClick_;
         ItemStack itemstack1 = mc.player.inventory.getItemStack();
         String s = null;
 
-        if (slot == clickedSlot && !draggedStack.isEmpty() && isRightMouseClick && !itemstack.isEmpty())
+        if (slot == clickedSlot_ && !draggedStack_.isEmpty() && isRightMouseClick_ && !itemstack.isEmpty())
         {
             itemstack = itemstack.copy();
             itemstack.setCount(itemstack.getCount() >> 1);
@@ -456,7 +456,7 @@ public class BetterContainerGUI extends GuiContainer
             {
                 itemstack = itemstack1.copy();
                 flag = true;
-                Container.computeStackSize(dragSplittingSlots, dragSplittingLimit, itemstack, slot.getStack().isEmpty() ? 0 : slot.getStack().getCount());
+                Container.computeStackSize(dragSplittingSlots, dragSplittingLimit_, itemstack, slot.getStack().isEmpty() ? 0 : slot.getStack().getCount());
                 int k = Math.min(itemstack.getMaxStackSize(), slot.getItemStackLimit(itemstack));
 
                 if (itemstack.getCount() > k)
@@ -531,20 +531,20 @@ public class BetterContainerGUI extends GuiContainer
 
         if (!itemstack.isEmpty() && dragSplitting)
         {
-            if (dragSplittingLimit == 2)
+            if (dragSplittingLimit_ == 2)
             {
-                dragSplittingRemnant = itemstack.getMaxStackSize();
+                dragSplittingRemnant_ = itemstack.getMaxStackSize();
             }
             else
             {
-                dragSplittingRemnant = itemstack.getCount();
+                dragSplittingRemnant_ = itemstack.getCount();
 
                 for (Slot slot : dragSplittingSlots)
                 {
                     ItemStack itemstack1 = itemstack.copy();
                     ItemStack itemstack2 = slot.getStack();
                     int i = itemstack2.isEmpty() ? 0 : itemstack2.getCount();
-                    Container.computeStackSize(dragSplittingSlots, dragSplittingLimit, itemstack1, i);
+                    Container.computeStackSize(dragSplittingSlots, dragSplittingLimit_, itemstack1, i);
                     int j = Math.min(itemstack1.getMaxStackSize(), slot.getItemStackLimit(itemstack1));
 
                     if (itemstack1.getCount() > j)
@@ -552,7 +552,7 @@ public class BetterContainerGUI extends GuiContainer
                         itemstack1.setCount(j);
                     }
 
-                    dragSplittingRemnant -= itemstack1.getCount() - i;
+                    dragSplittingRemnant_ -= itemstack1.getCount() - i;
                 }
             }
         }
@@ -565,15 +565,15 @@ public class BetterContainerGUI extends GuiContainer
 
         checkHotbarKeys(keyCode);
 
-        if (hoveredSlot != null && hoveredSlot.getHasStack())
+        if (hoveredSlot_ != null && hoveredSlot_.getHasStack())
         {
             if (mc.gameSettings.keyBindPickBlock.isActiveAndMatches(keyCode))
             {
-                handleMouseClick(hoveredSlot, hoveredSlot.slotNumber, 0, ClickType.CLONE);
+                handleMouseClick(hoveredSlot_, hoveredSlot_.slotNumber, 0, ClickType.CLONE);
             }
             else if (mc.gameSettings.keyBindDrop.isActiveAndMatches(keyCode))
             {
-                handleMouseClick(hoveredSlot, hoveredSlot.slotNumber, isCtrlKeyDown() ? 1 : 0, ClickType.THROW);
+                handleMouseClick(hoveredSlot_, hoveredSlot_.slotNumber, isCtrlKeyDown() ? 1 : 0, ClickType.THROW);
             }
         }
     }
@@ -581,13 +581,13 @@ public class BetterContainerGUI extends GuiContainer
     @Override
     protected boolean checkHotbarKeys(int keyCode)
     {
-        if (mc.player.inventory.getItemStack().isEmpty() && hoveredSlot != null)
+        if (mc.player.inventory.getItemStack().isEmpty() && hoveredSlot_ != null)
         {
             for (int i = 0; i < 9; ++i)
             {
                 if (mc.gameSettings.keyBindsHotbar[i].isActiveAndMatches(keyCode))
                 {
-                    handleMouseClick(hoveredSlot, hoveredSlot.slotNumber, i, ClickType.SWAP);
+                    handleMouseClick(hoveredSlot_, hoveredSlot_.slotNumber, i, ClickType.SWAP);
                     return true;
                 }
             }
@@ -609,7 +609,7 @@ public class BetterContainerGUI extends GuiContainer
         net.minecraft.client.gui.FontRenderer font = stack.getItem().getFontRenderer(stack);
         if (font == null) font = fontRenderer;
         itemRender.renderItemAndEffectIntoGUI(stack, x, y);
-        itemRender.renderItemOverlayIntoGUI(font, stack, x, y - (draggedStack.isEmpty() ? 0 : 8), altText);
+        itemRender.renderItemOverlayIntoGUI(font, stack, x, y - (draggedStack_.isEmpty() ? 0 : 8), altText);
         zLevel = 0;
         itemRender.zLevel = 0;
     }
@@ -635,7 +635,7 @@ public class BetterContainerGUI extends GuiContainer
     @Override
     public Slot getSlotUnderMouse()
     {
-        return hoveredSlot;
+        return hoveredSlot_;
     }
 
     @Override
