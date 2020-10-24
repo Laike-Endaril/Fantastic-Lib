@@ -78,7 +78,7 @@ public class TransientAWSkinHandler
     }
 
 
-    //These three methods are the core part of adding/removing transient skin ItemStacks to/from the AW wardrobe
+    //The methods below are the core part of adding/removing transient skin ItemStacks to/from the AW wardrobe
     public static boolean tryApplyTransientSkinsFromStack(ItemStack stack, Entity target)
     {
         if (!stack.hasTagCompound()) return false;
