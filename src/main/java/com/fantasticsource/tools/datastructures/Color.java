@@ -27,19 +27,7 @@ public class Color
 
     public Color(int color)
     {
-        intValue = color;
-
-        r = (intValue >>> 24) & 0xff;
-        g = (intValue >>> 16) & 0xff;
-        b = (intValue >>> 8) & 0xff;
-        a = intValue & 0xff;
-
-        rf = (float) r / 255;
-        gf = (float) g / 255;
-        bf = (float) b / 255;
-        af = (float) a / 255;
-
-        hex = Integer.toHexString(intValue);
+        this(color, false);
     }
 
     public Color(int color, boolean noAlpha)
@@ -53,14 +41,19 @@ public class Color
         b = (intValue >>> 8) & 0xff;
         a = intValue & 0xff;
 
-        rf = (float) r / 255;
-        gf = (float) g / 255;
-        bf = (float) b / 255;
-        af = (float) a / 255;
+        rf = min(max((float) r / 255, 0), 1);
+        gf = min(max((float) g / 255, 0), 1);
+        bf = min(max((float) b / 255, 0), 1);
+        af = min(max((float) a / 255, 0), 1);
 
         hex = Integer.toHexString(intValue);
     }
 
+
+    public Color(int r, int g, int b)
+    {
+        this(r, g, b, 255);
+    }
 
     public Color(int r, int g, int b, int a)
     {
@@ -69,33 +62,21 @@ public class Color
         this.b = min(max(b, 0), 255);
         this.a = min(max(a, 0), 255);
 
-        rf = (float) r / 255;
-        gf = (float) g / 255;
-        bf = (float) b / 255;
-        af = (float) a / 255;
+        rf = min(max((float) r / 255, 0), 1);
+        gf = min(max((float) g / 255, 0), 1);
+        bf = min(max((float) b / 255, 0), 1);
+        af = min(max((float) a / 255, 0), 1);
 
         intValue = (r << 24) | (g << 16) | (b << 8) | a;
 
         hex = Integer.toHexString(intValue);
     }
 
-    public Color(int r, int g, int b)
+
+    public Color(float r, float g, float b)
     {
-        this.r = min(max(r, 0), 255);
-        this.g = min(max(g, 0), 255);
-        this.b = min(max(b, 0), 255);
-        this.a = 255;
-
-        rf = (float) r / 255;
-        gf = (float) g / 255;
-        bf = (float) b / 255;
-        af = 1;
-
-        intValue = (r << 24) | (g << 16) | (b << 8) | a;
-
-        hex = Integer.toHexString(intValue);
+        this(r, g, b, 1);
     }
-
 
     public Color(float r, float g, float b, float a)
     {
@@ -114,39 +95,10 @@ public class Color
         hex = Integer.toHexString(intValue);
     }
 
-    public Color(float r, float g, float b)
-    {
-        rf = min(max(r, 0), 1);
-        gf = min(max(g, 0), 1);
-        bf = min(max(b, 0), 1);
-        af = 1;
-
-        this.r = min(max((int) (rf * 255), 0), 255);
-        this.g = min(max((int) (gf * 255), 0), 255);
-        this.b = min(max((int) (bf * 255), 0), 255);
-        this.a = 255;
-
-        intValue = (this.r << 24) | (this.g << 16) | (this.b << 8) | this.a;
-
-        hex = Integer.toHexString(intValue);
-    }
-
 
     public Color(String hex)
     {
-        this.hex = hex;
-
-        intValue = Tools.parseHexInt(hex);
-
-        r = (intValue >>> 24) & 0xff;
-        g = (intValue >>> 16) & 0xff;
-        b = (intValue >>> 8) & 0xff;
-        a = intValue & 0xff;
-
-        rf = (float) r / 255;
-        gf = (float) g / 255;
-        bf = (float) b / 255;
-        af = (float) a / 255;
+        this(hex, false);
     }
 
     public Color(String hex, boolean noAlpha)
@@ -162,10 +114,10 @@ public class Color
         b = (intValue >>> 8) & 0xff;
         a = intValue & 0xff;
 
-        rf = (float) r / 255;
-        gf = (float) g / 255;
-        bf = (float) b / 255;
-        af = (float) a / 255;
+        rf = min(max((float) r / 255, 0), 1);
+        gf = min(max((float) g / 255, 0), 1);
+        bf = min(max((float) b / 255, 0), 1);
+        af = min(max((float) a / 255, 0), 1);
     }
 
 
@@ -177,8 +129,8 @@ public class Color
 
     public Color setR(int r)
     {
-        this.r = r;
-        rf = (float) r / 255;
+        this.r = min(max(r, 0), 255);
+        rf = min(max((float) r / 255, 0), 1);
 
         intValue = (r << 24) | (g << 16) | (b << 8) | a;
         hex = Integer.toHexString(intValue);
@@ -188,8 +140,8 @@ public class Color
 
     public Color setRF(float rf)
     {
-        this.rf = rf;
-        this.r = (int) (rf * 255);
+        this.rf = min(max(rf, 0), 1);
+        r = min(max((int) (rf * 255), 0), 255);
 
         intValue = (r << 24) | (g << 16) | (b << 8) | a;
         hex = Integer.toHexString(intValue);
@@ -199,8 +151,8 @@ public class Color
 
     public Color setG(int g)
     {
-        this.g = g;
-        gf = (float) g / 255;
+        this.g = min(max(g, 0), 255);
+        gf = min(max((float) g / 255, 0), 1);
 
         intValue = (r << 24) | (g << 16) | (b << 8) | a;
         hex = Integer.toHexString(intValue);
@@ -210,8 +162,8 @@ public class Color
 
     public Color setGF(float gf)
     {
-        this.gf = gf;
-        this.g = (int) (gf * 255);
+        this.gf = min(max(gf, 0), 1);
+        g = min(max((int) (gf * 255), 0), 255);
 
         intValue = (r << 24) | (g << 16) | (b << 8) | a;
         hex = Integer.toHexString(intValue);
@@ -221,8 +173,8 @@ public class Color
 
     public Color setB(int b)
     {
-        this.b = b;
-        bf = (float) b / 255;
+        this.b = min(max(b, 0), 255);
+        bf = min(max((float) b / 255, 0), 1);
 
         intValue = (r << 24) | (g << 16) | (b << 8) | a;
         hex = Integer.toHexString(intValue);
@@ -232,8 +184,8 @@ public class Color
 
     public Color setBF(float bf)
     {
-        this.bf = bf;
-        this.b = (int) (bf * 255);
+        this.bf = min(max(bf, 0), 1);
+        b = min(max((int) (bf * 255), 0), 255);
 
         intValue = (r << 24) | (g << 16) | (b << 8) | a;
         hex = Integer.toHexString(intValue);
@@ -243,8 +195,8 @@ public class Color
 
     public Color setA(int a)
     {
-        this.a = a;
-        af = (float) a / 255;
+        this.a = min(max(a, 0), 255);
+        af = min(max((float) a / 255, 0), 1);
 
         intValue = (r << 24) | (g << 16) | (b << 8) | a;
         hex = Integer.toHexString(intValue);
@@ -254,8 +206,8 @@ public class Color
 
     public Color setAF(float af)
     {
-        this.af = af;
-        this.a = (int) (af * 255);
+        this.af = min(max(af, 0), 1);
+        a = min(max((int) (af * 255), 0), 255);
 
         intValue = (r << 24) | (g << 16) | (b << 8) | a;
         hex = Integer.toHexString(intValue);
@@ -270,10 +222,10 @@ public class Color
         b = color & 0xff;
         a = 255;
 
-        rf = (float) r / 255;
-        gf = (float) g / 255;
-        bf = (float) b / 255;
-        af = (float) a / 255;
+        rf = min(max((float) r / 255, 0), 1);
+        gf = min(max((float) g / 255, 0), 1);
+        bf = min(max((float) b / 255, 0), 1);
+        af = 1;
 
         intValue = (r << 24) | (g << 16) | (b << 8) | a;
 
@@ -291,10 +243,10 @@ public class Color
         b = (intValue >>> 8) & 0xff;
         a = intValue & 0xff;
 
-        rf = (float) r / 255;
-        gf = (float) g / 255;
-        bf = (float) b / 255;
-        af = (float) a / 255;
+        rf = min(max((float) r / 255, 0), 1);
+        gf = min(max((float) g / 255, 0), 1);
+        bf = min(max((float) b / 255, 0), 1);
+        af = min(max((float) a / 255, 0), 1);
 
         hex = Integer.toHexString(intValue);
 
@@ -303,21 +255,7 @@ public class Color
 
     public Color setColor(int r, int g, int b)
     {
-        this.r = min(max(r, 0), 255);
-        this.g = min(max(g, 0), 255);
-        this.b = min(max(b, 0), 255);
-        this.a = 255;
-
-        rf = (float) r / 255;
-        gf = (float) g / 255;
-        bf = (float) b / 255;
-        af = 1;
-
-        intValue = (r << 24) | (g << 16) | (b << 8) | a;
-
-        hex = Integer.toHexString(intValue);
-
-        return this;
+        return setColor(r, g, b, 255);
     }
 
     public Color setColor(int r, int g, int b, int a)
@@ -327,16 +265,21 @@ public class Color
         this.b = min(max(b, 0), 255);
         this.a = min(max(a, 0), 255);
 
-        rf = (float) r / 255;
-        gf = (float) g / 255;
-        bf = (float) b / 255;
-        af = (float) a / 255;
+        rf = min(max((float) r / 255, 0), 1);
+        gf = min(max((float) g / 255, 0), 1);
+        bf = min(max((float) b / 255, 0), 1);
+        af = min(max((float) a / 255, 0), 1);
 
         intValue = (r << 24) | (g << 16) | (b << 8) | a;
 
         hex = Integer.toHexString(intValue);
 
         return this;
+    }
+
+    public Color setColor(float r, float g, float b)
+    {
+        return setColor(r, g, b, 1);
     }
 
     public Color setColor(float r, float g, float b, float a)
@@ -358,25 +301,6 @@ public class Color
         return this;
     }
 
-    public Color setColor(float r, float g, float b)
-    {
-        rf = min(max(r, 0), 1);
-        gf = min(max(g, 0), 1);
-        bf = min(max(b, 0), 1);
-        af = 1;
-
-        this.r = min(max((int) (rf * 255), 0), 255);
-        this.g = min(max((int) (gf * 255), 0), 255);
-        this.b = min(max((int) (bf * 255), 0), 255);
-        this.a = 255;
-
-        intValue = (this.r << 24) | (this.g << 16) | (this.b << 8) | this.a;
-
-        hex = Integer.toHexString(intValue);
-
-        return this;
-    }
-
     public Color setColor(String hex)
     {
         this.hex = hex;
@@ -388,10 +312,10 @@ public class Color
         b = (intValue >>> 8) & 0xff;
         a = intValue & 0xff;
 
-        rf = (float) r / 255;
-        gf = (float) g / 255;
-        bf = (float) b / 255;
-        af = (float) a / 255;
+        rf = min(max((float) r / 255, 0), 1);
+        gf = min(max((float) g / 255, 0), 1);
+        bf = min(max((float) b / 255, 0), 1);
+        af = min(max((float) a / 255, 0), 1);
 
         return this;
     }
@@ -406,12 +330,12 @@ public class Color
         r = (intValue >>> 24) & 0xff;
         g = (intValue >>> 16) & 0xff;
         b = (intValue >>> 8) & 0xff;
-        a = intValue & 0xff;
+        a = 255;
 
-        rf = (float) r / 255;
-        gf = (float) g / 255;
-        bf = (float) b / 255;
-        af = (float) a / 255;
+        rf = min(max((float) r / 255, 0), 1);
+        gf = min(max((float) g / 255, 0), 1);
+        bf = min(max((float) b / 255, 0), 1);
+        af = 1;
 
         return this;
     }
@@ -486,41 +410,48 @@ public class Color
 
     public int h()
     {
-        return (int) (255 * hf());
+        return min(max((int) (255 * hf()), 0), 255);
     }
 
     public float hf()
     {
         if (rf == gf && gf == bf) return 0;
 
-        float cmin = Tools.min(rf, gf, bf), vf = vf();
+        float minF = min(rf, gf, bf), maxF = vf();
 
-        if (vf == rf) return Tools.posMod((gf - bf) / (vf - cmin) / 6, 1);
-        if (vf == gf) return Tools.posMod((bf - rf) / (vf - cmin) / 6 + 1f / 3, 1);
-        return Tools.posMod((rf - gf) / (vf - cmin) / 6 + 1f * 2 / 3, 1);
+        float result;
+        if (maxF == rf) result = Tools.posMod((gf - bf) / (maxF - minF) / 6, 1);
+        else if (maxF == gf) result = Tools.posMod((bf - rf) / (maxF - minF) / 6 + 1f / 3, 1);
+        else result = Tools.posMod((rf - gf) / (maxF - minF) / 6 + 1f * 2 / 3, 1);
+
+        return min(max(result, 0), 1);
     }
 
     public int s()
     {
-        return (int) (sf() * 255);
+        return min(max((int) (sf() * 255), 0), 255);
     }
 
     public float sf()
     {
-        float vf = vf();
-        if (vf <= 0) return 0;
-        if (vf >= 1) return 1 - Tools.min(rf, gf, bf);
-        return Tools.min(Tools.max((vf - Tools.min(rf, gf, bf)) / vf, 0), 1);
+        float result = vf();
+        if (result <= 0) return 0;
+
+
+        if (result >= 1) result = 1 - min(rf, gf, bf);
+        else result = (result - min(rf, gf, bf)) / result;
+
+        return min(max(result, 0), 1);
     }
 
     public int v()
     {
-        return Tools.max(r, g, b);
+        return max(r, g, b);
     }
 
     public float vf()
     {
-        return Tools.max(rf, gf, bf);
+        return max(rf, gf, bf);
     }
 
     public Color setH(int h)
@@ -530,7 +461,7 @@ public class Color
 
     public Color setHF(float hf)
     {
-        return setColorHSV(hf, sf(), vf(), af);
+        return setColorHSV(min(max(hf, 0), 1), sf(), vf(), af);
     }
 
     public Color setS(int s)
@@ -540,7 +471,7 @@ public class Color
 
     public Color setSF(float sf)
     {
-        return setColorHSV(hf(), sf, vf(), af);
+        return setColorHSV(hf(), min(max(sf, 0), 1), vf(), af);
     }
 
     public Color setV(int v)
@@ -550,7 +481,7 @@ public class Color
 
     public Color setVF(float vf)
     {
-        return setColorHSV(hf(), sf(), vf, af);
+        return setColorHSV(hf(), sf(), min(max(vf, 0), 1), af);
     }
 
     public Color setColorHSV(int h, int s, int v)
@@ -570,22 +501,24 @@ public class Color
 
     public Color setColorHSV(float hf, float sf, float vf, float af)
     {
-        if (hf < 0 || hf > 1 || sf < 0 || sf > 1 || vf < 0 || vf > 1 || af < 0 || af > 1) throw new IllegalArgumentException("Out of bounds (0, 1): h=" + hf + ", s=" + sf + ", v=" + vf + ", a=" + af);
+        hf = min(max(hf, 0), 1);
+        sf = min(max(sf, 0), 1);
+        vf = min(max(vf, 0), 1);
+        af = min(max(af, 0), 1);
 
         if (vf == 0) return setColor(0, 0, 0, af);
         if (sf == 0) return setColor(vf, vf, vf, af);
 
-        if (hf == 1) hf = 0;
 
-        hf *= 6;
-        int hInt = (int) hf;
-        float hFrac = hf - hInt;
+        hf = Tools.posMod(hf * 6, 6);
+        int hSixth = (int) hf;
+        float hFrac = hf - hSixth;
 
         float p = vf * (1 - sf);
         float q = vf * (1 - (sf * hFrac));
         float t = vf * (1 - (sf * (1 - hFrac)));
 
-        switch (hInt)
+        switch (hSixth)
         {
             case 0:
                 return setColor(vf, t, p, af);
