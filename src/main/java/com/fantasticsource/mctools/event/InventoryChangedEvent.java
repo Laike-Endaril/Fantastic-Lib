@@ -1,6 +1,7 @@
 package com.fantasticsource.mctools.event;
 
 import com.fantasticsource.mctools.GlobalInventory;
+import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.items.ItemMatcher;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
@@ -15,6 +16,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class InventoryChangedEvent extends EntityEvent
 {
@@ -96,11 +98,10 @@ public class InventoryChangedEvent extends EntityEvent
             if (oldInventory == null || !oldInventory.equals(newInventory))
             {
                 MinecraftForge.EVENT_BUS.post(new InventoryChangedEvent(entity, oldInventory, newInventory));
-                previousContents.put(entity, newInventory);
+                previousContents.put(entity, newInventory.deepCopy());
             }
         }
     }
-
 
     public static class GlobalInventoryData
     {
@@ -117,6 +118,23 @@ public class InventoryChangedEvent extends EntityEvent
             this.allNonSkin = allNonSkin;
             this.tiamatInventory = tiamatInventory;
             this.allCategorized = allCategorized;
+        }
+
+        public GlobalInventoryData deepCopy()
+        {
+            ArrayList<ItemStack> newAllNonSkin = new ArrayList<>(), newTiamatInventory = new ArrayList<>();
+            LinkedHashMap<String, ArrayList<ItemStack>> newAllCategorized = new LinkedHashMap<>();
+
+            for (ItemStack stack : allNonSkin) newAllNonSkin.add(MCTools.cloneItemStack(stack));
+            for (ItemStack stack : tiamatInventory) newTiamatInventory.add(MCTools.cloneItemStack(stack));
+            for (Map.Entry<String, ArrayList<ItemStack>> entry : allCategorized.entrySet())
+            {
+                ArrayList<ItemStack> list = new ArrayList<>();
+                for (ItemStack stack : entry.getValue()) list.add(MCTools.cloneItemStack(stack));
+                newAllCategorized.put(entry.getKey(), list);
+            }
+
+            return new GlobalInventoryData(newAllNonSkin, newTiamatInventory, newAllCategorized);
         }
 
         @Override
