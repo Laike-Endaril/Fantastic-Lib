@@ -284,7 +284,7 @@ public class GlobalInventory
 
     public static ArrayList<ItemStack> getValidEquippedItems(EntityPlayer player)
     {
-        ArrayList<ItemStack> result = GlobalInventory.getAllEquippedNonSkinItems(player);
+        ArrayList<ItemStack> result = new ArrayList<>();
 
         //Vanilla slots
         for (int slot = 0; slot < player.inventory.getSizeInventory(); slot++)
@@ -328,9 +328,9 @@ public class GlobalInventory
         if (!stack.hasTagCompound()) return "None";
 
         NBTTagCompound compound = stack.getTagCompound();
-        if (!compound.hasKey("tiamatinventory")) return "None";
+        if (!compound.hasKey("tiamatrpg")) return "None";
 
-        compound = compound.getCompoundTag("tiamatinventory");
+        compound = compound.getCompoundTag("tiamatrpg");
         if (!compound.hasKey("slotting")) return "None";
 
         return compound.getString("slotting");
