@@ -60,13 +60,15 @@ public class BetterContainerGUI extends GuiContainer
         drawDefaultBackground();
 
         drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
+
+
         GlStateManager.disableRescaleNormal();
         RenderHelper.disableStandardItemLighting();
         GlStateManager.disableLighting();
         GlStateManager.disableDepth();
-
         for (GuiButton button : buttonList) button.drawButton(mc, mouseX, mouseY, partialTicks);
         for (GuiLabel label : labelList) label.drawLabel(mc, mouseX, mouseY);
+
 
         if (inventorySlots != null)
         {
@@ -100,11 +102,17 @@ public class BetterContainerGUI extends GuiContainer
                     GlStateManager.enableDepth();
                 }
             }
+        }
 
-            RenderHelper.disableStandardItemLighting();
-            drawGuiContainerForegroundLayer(mouseX, mouseY);
-            RenderHelper.enableGUIStandardItemLighting();
-            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiContainerEvent.DrawForeground(this, mouseX, mouseY));
+
+        RenderHelper.disableStandardItemLighting();
+        drawGuiContainerForegroundLayer(mouseX, mouseY);
+        RenderHelper.enableGUIStandardItemLighting();
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiContainerEvent.DrawForeground(this, mouseX, mouseY));
+
+
+        if (inventorySlots != null)
+        {
             InventoryPlayer inventoryplayer = mc.player.inventory;
             ItemStack itemstack = draggedStack_.isEmpty() ? inventoryplayer.getItemStack() : draggedStack_;
 
