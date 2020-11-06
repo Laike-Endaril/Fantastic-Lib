@@ -70,12 +70,13 @@ public class BetterContainerGUI extends GuiContainer
         for (GuiLabel label : labelList) label.drawLabel(mc, mouseX, mouseY);
 
 
+        GlStateManager.pushMatrix();
+        GlStateManager.translate((float) guiLeft, (float) guiTop, 0);
+        GlStateManager.color(1, 1, 1, 1);
+
         if (inventorySlots != null)
         {
             RenderHelper.enableGUIStandardItemLighting();
-            GlStateManager.pushMatrix();
-            GlStateManager.translate((float) guiLeft, (float) guiTop, 0);
-            GlStateManager.color(1, 1, 1, 1);
             GlStateManager.enableRescaleNormal();
             hoveredSlot_ = null;
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240, 240);
@@ -156,13 +157,15 @@ public class BetterContainerGUI extends GuiContainer
                 drawItemStack(returningStack_, l1, i2, null);
             }
 
-            GlStateManager.popMatrix();
             GlStateManager.enableLighting();
             GlStateManager.enableDepth();
             RenderHelper.enableStandardItemLighting();
 
             renderHoveredToolTip(mouseX, mouseY);
         }
+
+
+        GlStateManager.popMatrix();
     }
 
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
