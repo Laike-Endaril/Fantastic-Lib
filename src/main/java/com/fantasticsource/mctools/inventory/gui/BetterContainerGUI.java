@@ -112,6 +112,7 @@ public class BetterContainerGUI extends GuiContainer
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiContainerEvent.DrawForeground(this, mouseX, mouseY));
 
 
+        GlStateManager.popMatrix();
         if (inventorySlots != null)
         {
             InventoryPlayer inventoryplayer = mc.player.inventory;
@@ -137,7 +138,7 @@ public class BetterContainerGUI extends GuiContainer
                     }
                 }
 
-                drawItemStack(itemstack, mouseX - guiLeft - 8, mouseY - guiTop - (draggedStack_.isEmpty() ? 8 : 16), s);
+                drawItemStack(itemstack, mouseX - 8, mouseY - (draggedStack_.isEmpty() ? 8 : 16), s);
             }
 
             if (!returningStack_.isEmpty())
@@ -163,9 +164,6 @@ public class BetterContainerGUI extends GuiContainer
 
             renderHoveredToolTip(mouseX, mouseY);
         }
-
-
-        GlStateManager.popMatrix();
     }
 
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
