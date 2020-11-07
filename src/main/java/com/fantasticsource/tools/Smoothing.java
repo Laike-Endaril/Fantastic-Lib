@@ -1,5 +1,7 @@
 package com.fantasticsource.tools;
 
+import net.minecraft.util.text.TextFormatting;
+
 public class Smoothing
 {
     public static final int
@@ -19,7 +21,26 @@ public class Smoothing
         }
     }
 
-    public static void printTest(int type)
+    public static double balanceAlpha(int layers, double alpha)
+    {
+        return 1 - Math.pow(1 - alpha, 1d / layers);
+    }
+
+
+    public static void balanceAlphaTest()
+    {
+        for (double d : new double[]{.1, .2, .3, .4, .5, .6, .7, .8, .9, 1})
+        {
+            for (int i = 1; i < 11; i++)
+            {
+                double la = Smoothing.balanceAlpha(i, d);
+                double da = 1 - Math.pow(1 - la, i);
+                System.out.println(TextFormatting.AQUA + "" + i + ", " + d + ", " + la + ", " + da);
+            }
+        }
+    }
+
+    public static void interpolationTest(int type)
     {
         String result = "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
         for (double d = 0; d <= 1; d += 0.01)
