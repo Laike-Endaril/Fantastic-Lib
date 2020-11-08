@@ -3,11 +3,16 @@ package com.fantasticsource.mctools;
 import baubles.api.BaubleType;
 import com.fantasticsource.fantasticlib.Compat;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.LinkedHashMap;
 
 public class Slottings
 {
+    protected static final String DOMAIN = "tiamatrpg";
+
     public static final int
             BAUBLES_OFFSET = Integer.MIN_VALUE,
             TIAMAT_OFFSET = -500;
@@ -136,6 +141,12 @@ public class Slottings
         return result;
     }
 
+
+    public static boolean slotTypeValidForSlotting(String slotting, String slotType, EntityPlayer player)
+    {
+        return slotValidForSlotting(slotting, SLOTS.get(slotType)[0], player);
+    }
+
     public static boolean slotValidForSlotting(String slotting, int slot, EntityPlayer player)
     {
         if (!SLOTS.containsKey(slotting)) return false;
@@ -151,5 +162,70 @@ public class Slottings
         }
 
         return false;
+    }
+
+
+    public static boolean slotTypeValidForItemstack(ItemStack stack, String slotType, EntityPlayer player)
+    {
+        return slotValidForItemstack(stack, SLOTS.get(slotType)[0], player);
+    }
+
+    public static boolean slotValidForItemstack(ItemStack stack, int slot, EntityPlayer player)
+    {
+        return slotValidForSlotting(getItemSlotting(stack), slot, player);
+    }
+
+
+    public static void setItemSlotting(ItemStack stack, String slotting)
+    {
+        if (slotting == null || slotting.equals("") || slotting.equals("None"))
+        {
+            clearItemSlotting(stack);
+            return;
+        }
+
+        if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+        NBTTagCompound compound = stack.getTagCompound();
+
+        if (!compound.hasKey(DOMAIN)) compound.setTag(DOMAIN, new NBTTagCompound());
+        compound = compound.getCompoundTag(DOMAIN);
+
+        compound.setString("slotting", slotting);
+    }
+
+    public static String getItemSlotting(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return "None";
+
+        NBTTagCompound compound = stack.getTagCompound();
+        if (!compound.hasKey(DOMAIN)) return "None";
+
+        compound = compound.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("slotting")) return "None";
+
+        return compound.getString("slotting");
+    }
+
+    public static void clearItemSlotting(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return;
+
+        NBTTagCompound mainTag = stack.getTagCompound();
+        if (!mainTag.hasKey(DOMAIN)) return;
+
+        NBTTagCompound compound = mainTag.getCompoundTag(DOMAIN);
+        if (!compound.hasKey("slotting")) return;
+
+        compound.removeTag("slotting");
+        if (compound.hasNoTags())
+        {
+            mainTag.removeTag(DOMAIN);
+            if (mainTag.hasNoTags()) stack.setTagCompound(null);
+        }
+    }
+
+    public static boolean isTwoHanded(ItemStack stack)
+    {
+        return stack.getItem() == Items.BOW || getItemSlotting(stack).equals("Tiamat 2H");
     }
 }
