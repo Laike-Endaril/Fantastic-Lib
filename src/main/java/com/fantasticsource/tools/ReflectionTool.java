@@ -69,6 +69,7 @@ public class ReflectionTool
         return null;
     }
 
+
     //Never change this method's name to getClass(), as that would be overriding a standard java method
     public static Class getClassByName(String fullClassPathAndName)
     {
@@ -77,19 +78,6 @@ public class ReflectionTool
             return Class.forName(fullClassPathAndName);
         }
         catch (ClassNotFoundException e)
-        {
-            MCTools.crash(e, false);
-        }
-        return null;
-    }
-
-    public static Object getInstance(Class cls, int constructorIndex, Object... constructorArgs)
-    {
-        try
-        {
-            return cls.getConstructors()[constructorIndex].newInstance(constructorArgs);
-        }
-        catch (InstantiationException | IllegalAccessException | InvocationTargetException e)
         {
             MCTools.crash(e, false);
         }
@@ -108,6 +96,33 @@ public class ReflectionTool
                     return class1;
                 }
             }
+        }
+        return null;
+    }
+
+
+    public static Object getInstance(String fullClassPathAndName, int constructorIndex, Object... constructorArgs)
+    {
+        try
+        {
+            return getClassByName(fullClassPathAndName).getConstructors()[constructorIndex].newInstance(constructorArgs);
+        }
+        catch (InstantiationException | IllegalAccessException | InvocationTargetException e)
+        {
+            MCTools.crash(e, false);
+        }
+        return null;
+    }
+
+    public static Object getInstance(Class cls, int constructorIndex, Object... constructorArgs)
+    {
+        try
+        {
+            return cls.getConstructors()[constructorIndex].newInstance(constructorArgs);
+        }
+        catch (InstantiationException | IllegalAccessException | InvocationTargetException e)
+        {
+            MCTools.crash(e, false);
         }
         return null;
     }
