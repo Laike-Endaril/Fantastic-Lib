@@ -1,5 +1,6 @@
 package com.fantasticsource.mctools.inventory.slot;
 
+import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.util.ResourceLocation;
@@ -7,6 +8,7 @@ import net.minecraft.util.ResourceLocation;
 public class BetterSlot extends Slot
 {
     public final ResourceLocation texture;
+    public Color color = Color.WHITE.copy();
     public final int u, v, texWidth16x, texHeight16x;
     public final double uPixel, vPixel;
     public boolean enabled = true;
@@ -32,6 +34,12 @@ public class BetterSlot extends Slot
     public BetterSlot disable()
     {
         enabled = false;
+        return this;
+    }
+
+    public BetterSlot setColor(Color color)
+    {
+        this.color = color;
         return this;
     }
 

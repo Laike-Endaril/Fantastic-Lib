@@ -495,6 +495,8 @@ public class BetterContainerGUI extends GuiContainer
 
                 mc.getTextureManager().bindTexture(betterSlot.texture);
 
+                GlStateManager.color(betterSlot.color.rf(), betterSlot.color.gf(), betterSlot.color.bf(), betterSlot.color.af());
+
                 Tessellator tessellator = Tessellator.getInstance();
                 BufferBuilder bufferbuilder = tessellator.getBuffer();
                 bufferbuilder.begin(GL_QUADS, DefaultVertexFormats.POSITION_TEX);
@@ -503,6 +505,8 @@ public class BetterContainerGUI extends GuiContainer
                 bufferbuilder.pos(x + 16, y, zLevel).tex((u + 16) * betterSlot.uPixel, v * betterSlot.vPixel).endVertex();
                 bufferbuilder.pos(x, y, zLevel).tex(u * betterSlot.uPixel, v * betterSlot.vPixel).endVertex();
                 tessellator.draw();
+
+                GlStateManager.color(1, 1, 1, 1);
             }
             else
             {
