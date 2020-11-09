@@ -57,7 +57,7 @@ public class Render
         }
         catch (Exception e)
         {
-            crash(e, 701, false);
+            crash(e, false);
         }
     }
 

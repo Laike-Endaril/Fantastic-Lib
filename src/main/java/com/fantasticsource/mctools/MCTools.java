@@ -78,7 +78,7 @@ public class MCTools
         }
         catch (Exception e)
         {
-            crash(e, 700, false);
+            crash(e, false);
         }
     }
 
@@ -826,6 +826,11 @@ public class MCTools
     public static String getPlayerDataDir(MinecraftServer server)
     {
         return server.worlds[0].getSaveHandler().getWorldDirectory().toString() + File.separator + "playerdata" + File.separator;
+    }
+
+    public static void crash(Exception e, boolean hardExit)
+    {
+        crash(e, 700, hardExit);
     }
 
     public static void crash(Exception e, int code, boolean hardExit)

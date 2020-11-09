@@ -39,7 +39,7 @@ public class ReflectionTool
         }
         catch (IllegalAccessException | NoSuchFieldException e)
         {
-            MCTools.crash(e, 700, false);
+            MCTools.crash(e, false);
         }
 
         return null;
@@ -69,7 +69,7 @@ public class ReflectionTool
         return null;
     }
 
-    //Never change this method's name to getClass()
+    //Never change this method's name to getClass(), as that would be overriding a standard java method
     public static Class getClassByName(String fullClassPathAndName)
     {
         try
@@ -78,7 +78,20 @@ public class ReflectionTool
         }
         catch (ClassNotFoundException e)
         {
-            MCTools.crash(e, 701, false);
+            MCTools.crash(e, false);
+        }
+        return null;
+    }
+
+    public static Object getInstance(Class cls, int constructorIndex, Object... constructorArgs)
+    {
+        try
+        {
+            return cls.getConstructors()[constructorIndex].newInstance(constructorArgs);
+        }
+        catch (InstantiationException | IllegalAccessException | InvocationTargetException e)
+        {
+            MCTools.crash(e, false);
         }
         return null;
     }
@@ -119,7 +132,7 @@ public class ReflectionTool
         }
         catch (IllegalAccessException e)
         {
-            MCTools.crash(e, 704, false);
+            MCTools.crash(e, false);
         }
     }
 
@@ -143,7 +156,7 @@ public class ReflectionTool
         }
         catch (IllegalAccessException e)
         {
-            MCTools.crash(e, 705, false);
+            MCTools.crash(e, false);
             return null;
         }
     }
@@ -168,7 +181,7 @@ public class ReflectionTool
         }
         catch (IllegalAccessException | InvocationTargetException e)
         {
-            MCTools.crash(e, 706, false);
+            MCTools.crash(e, false);
             return null;
         }
     }

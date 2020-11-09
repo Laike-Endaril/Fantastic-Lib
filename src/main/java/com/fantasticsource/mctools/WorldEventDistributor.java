@@ -48,7 +48,7 @@ public class WorldEventDistributor implements IWorldEventListener
         }
         catch (IllegalAccessException e)
         {
-            MCTools.crash(e, 703, true);
+            MCTools.crash(e, true);
         }
     }
 

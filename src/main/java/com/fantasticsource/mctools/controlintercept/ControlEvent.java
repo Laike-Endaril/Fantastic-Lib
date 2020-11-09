@@ -36,7 +36,7 @@ public class ControlEvent extends Event
         }
         catch (IllegalAccessException e)
         {
-            MCTools.crash(e, 702, true);
+            MCTools.crash(e, true);
         }
     }
 
