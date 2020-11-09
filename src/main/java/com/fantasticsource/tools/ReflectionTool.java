@@ -101,6 +101,11 @@ public class ReflectionTool
     }
 
 
+    public static Object getInstance(String fullClassPathAndName, Object... constructorArgs)
+    {
+        return getInstance(fullClassPathAndName, 0, constructorArgs);
+    }
+
     public static Object getInstance(String fullClassPathAndName, int constructorIndex, Object... constructorArgs)
     {
         try
@@ -112,6 +117,11 @@ public class ReflectionTool
             MCTools.crash(e, false);
         }
         return null;
+    }
+
+    public static Object getInstance(Class cls, Object... constructorArgs)
+    {
+        return getInstance(cls, 0, constructorArgs);
     }
 
     public static Object getInstance(Class cls, int constructorIndex, Object... constructorArgs)
