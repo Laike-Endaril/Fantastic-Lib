@@ -4,6 +4,7 @@ import baubles.api.BaubleType;
 import com.fantasticsource.fantasticlib.Compat;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -167,6 +168,11 @@ public class Slottings
 
     public static boolean slotTypeValidForItemstack(ItemStack stack, String slotType, EntityPlayer player)
     {
+        if (slotType.equals("Head") && stack.getItem().isValidArmor(stack, EntityEquipmentSlot.HEAD, player)) return true;
+        if (slotType.equals("Chest") && stack.getItem().isValidArmor(stack, EntityEquipmentSlot.CHEST, player)) return true;
+        if (slotType.equals("Legs") && stack.getItem().isValidArmor(stack, EntityEquipmentSlot.LEGS, player)) return true;
+        if (slotType.equals("Feet") && stack.getItem().isValidArmor(stack, EntityEquipmentSlot.FEET, player)) return true;
+
         return slotValidForItemstack(stack, SLOTS.get(slotType)[0], player);
     }
 
