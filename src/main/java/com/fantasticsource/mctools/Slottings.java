@@ -176,7 +176,7 @@ public class Slottings
         return slotValidForItemstack(stack, SLOTS.get(slotType)[0], player);
     }
 
-    public static boolean slotValidForItemstack(ItemStack stack, int slot, EntityPlayer player)
+    protected static boolean slotValidForItemstack(ItemStack stack, int slot, EntityPlayer player)
     {
         return slotValidForSlotting(getItemSlotting(stack), slot, player);
     }
