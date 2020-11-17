@@ -1001,8 +1001,8 @@ public class MCTools
         {
             priority = queue.peekPriority();
             ai = queue.poll();
-            str = ai.getClass().getSimpleName();
-            if (str.equals("")) str = ai.getClass().getName();
+            str = ai.getClass().getName();
+            if (str.equals("")) str = ai.getClass().getSimpleName();
             if (str.equals("")) str = ai.getClass().getPackage().getName() + ".???????";
             result.add(priority + "\t" + str);
         }
@@ -1023,8 +1023,8 @@ public class MCTools
                 ai = ((NPEAttackTargetTaskHolder) ai).getBadAI();
             }
 
-            str = ai.getClass().getSimpleName();
-            if (str.equals("")) str = ai.getClass().getName();
+            str = ai.getClass().getName();
+            if (str.equals("")) str = ai.getClass().getSimpleName();
             if (str.equals("")) str = ai.getClass().getPackage().getName() + ".???????";
 
             result.add(priority + "\t" + (isNPE ? "NpeAttackTargetTaskHolder (" + str + ")" : str));
