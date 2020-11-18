@@ -7,7 +7,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.NotImplementedException;
-import org.lwjgl.util.vector.Quaternion;
+import com.fantasticsource.lwjgl.Quaternion;
 
 import java.util.ArrayList;
 import java.util.Collections;

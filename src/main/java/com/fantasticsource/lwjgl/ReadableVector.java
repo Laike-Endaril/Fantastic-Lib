@@ -29,33 +29,26 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.lwjgl.util.vector;
+package com.fantasticsource.lwjgl;
+
+import java.nio.FloatBuffer;
 
 /**
- * Writable interface to Vector2fs
- * @author $author$
- * @version $revision$
- * $Id$
+ * @author foo
  */
-public interface WritableVector2f {
-
+public interface ReadableVector {
 	/**
-	 * Set the X value
-	 * @param x
+	 * @return the length of the vector
 	 */
-	void setX(float x);
-
+	float length();
 	/**
-	 * Set the Y value
-	 * @param y
+	 * @return the length squared of the vector
 	 */
-	void setY(float y);
-
+	float lengthSquared();
 	/**
-	 * Set the X,Y values
-	 * @param x
-   * @param y
+	 * Store this vector in a FloatBuffer
+	 * @param buf The buffer to store it in, at the current position
+	 * @return this
 	 */
-	void set(float x, float y);
-
+	Vector store(FloatBuffer buf);
 }

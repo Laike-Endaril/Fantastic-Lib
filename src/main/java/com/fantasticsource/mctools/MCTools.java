@@ -49,7 +49,7 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.NotImplementedException;
-import org.lwjgl.util.vector.Quaternion;
+import com.fantasticsource.lwjgl.Quaternion;
 
 import java.io.*;
 import java.lang.reflect.Field;

@@ -29,106 +29,84 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.lwjgl.util.vector;
+package com.fantasticsource.lwjgl;
 
 import java.io.Serializable;
 import java.nio.FloatBuffer;
 
 /**
  *
- * Base class for matrices. When a matrix is constructed it will be the identity
- * matrix unless otherwise stated.
+ * Base class for vectors.
  *
  * @author cix_foo <cix_foo@users.sourceforge.net>
  * @version $Revision$
  * $Id$
  */
-public abstract class Matrix implements Serializable {
+public abstract class Vector implements Serializable, ReadableVector {
 
 	/**
-	 * Constructor for Matrix.
+	 * Constructor for Vector.
 	 */
-	protected Matrix() {
+	protected Vector() {
 		super();
 	}
 
 	/**
-	 * Set this matrix to be the identity matrix.
-	 * @return this
+	 * @return the length of the vector
 	 */
-	public abstract Matrix setIdentity();
+	public final float length() {
+		return (float) Math.sqrt(lengthSquared());
+	}
 
 
 	/**
-	 * Invert this matrix
+	 * @return the length squared of the vector
+	 */
+	public abstract float lengthSquared();
+
+	/**
+	 * Load this vector from a FloatBuffer
+	 * @param buf The buffer to load it from, at the current position
 	 * @return this
 	 */
-	public abstract Matrix invert();
+	public abstract Vector load(FloatBuffer buf);
+
+	/**
+	 * Negate a vector
+	 * @return this
+	 */
+	public abstract Vector negate();
 
 
 	/**
-	 * Load from a float buffer. The buffer stores the matrix in column major
-	 * (OpenGL) order.
-	 *
-	 * @param buf A float buffer to read from
+	 * Normalise this vector
 	 * @return this
 	 */
-	public abstract Matrix load(FloatBuffer buf);
+	public final Vector normalise() {
+		float len = length();
+		if (len != 0.0f) {
+			float l = 1.0f / len;
+			return scale(l);
+		} else
+			throw new IllegalStateException("Zero length vector");
+	}
 
 
 	/**
-	 * Load from a float buffer. The buffer stores the matrix in row major
-	 * (mathematical) order.
-	 *
-	 * @param buf A float buffer to read from
+	 * Store this vector in a FloatBuffer
+	 * @param buf The buffer to store it in, at the current position
 	 * @return this
 	 */
-	public abstract Matrix loadTranspose(FloatBuffer buf);
+	public abstract Vector store(FloatBuffer buf);
 
 
 	/**
-	 * Negate this matrix
+	 * Scale this vector
+	 * @param scale The scale factor
 	 * @return this
 	 */
-	public abstract Matrix negate();
+	public abstract Vector scale(float scale);
 
-
-	/**
-	 * Store this matrix in a float buffer. The matrix is stored in column
-	 * major (openGL) order.
-	 * @param buf The buffer to store this matrix in
-	 * @return this
-	 */
-	public abstract Matrix store(FloatBuffer buf);
-
-
-	/**
-	 * Store this matrix in a float buffer. The matrix is stored in row
-	 * major (maths) order.
-	 * @param buf The buffer to store this matrix in
-	 * @return this
-	 */
-	public abstract Matrix storeTranspose(FloatBuffer buf);
-
-
-	/**
-	 * Transpose this matrix
-	 * @return this
-	 */
-	public abstract Matrix transpose();
-
-
-	/**
-	 * Set this matrix to 0.
-	 * @return this
-	 */
-	public abstract Matrix setZero();
-
-
-	/**
-	 * @return the determinant of the matrix
-	 */
-	public abstract float determinant();
 
 
 }
