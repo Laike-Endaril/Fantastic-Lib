@@ -6,6 +6,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.oredict.OreDictionary;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -92,6 +93,10 @@ public class DataFiles
 
             writer = new BufferedWriter(new FileWriter(new File(referenceDir + "villager_professions.txt")));
             for (ResourceLocation resourceLocation : ForgeRegistries.VILLAGER_PROFESSIONS.getKeys()) writer.write(resourceLocation.toString() + "\r\n");
+            writer.close();
+
+            writer = new BufferedWriter(new FileWriter(new File(referenceDir + "oredict.txt")));
+            for (String string : OreDictionary.getOreNames()) writer.write(string + "\r\n");
             writer.close();
         }
         catch (IOException e)
