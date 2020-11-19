@@ -1,6 +1,7 @@
 package com.fantasticsource.fantasticlib;
 
 import com.fantasticsource.mctools.PlayerData;
+import com.fantasticsource.mctools.ServerTickTimer;
 import com.fantasticsource.mctools.aw.RenderModes;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
@@ -24,6 +25,7 @@ public class Commands extends CommandBase
     static
     {
         subcommands.put("rendermodes", 2);
+        subcommands.put("uptime", 2);
     }
 
 
@@ -31,6 +33,12 @@ public class Commands extends CommandBase
     public String getName()
     {
         return MODID;
+    }
+
+    @Override
+    public List<String> getAliases()
+    {
+        return Arrays.asList("flib");
     }
 
     @Override
@@ -48,9 +56,14 @@ public class Commands extends CommandBase
     public String getUsage(ICommandSender sender)
     {
         String result = "";
+
         if (sender.canUseCommand(subcommands.get("rendermodes"), getName()))
         {
             result += AQUA + "/" + getName() + " rendermodes <playername> [renderchannel] [null|mode]";
+        }
+        if (sender.canUseCommand(subcommands.get("uptime"), getName()))
+        {
+            result += "\n" + AQUA + "/" + getName() + " uptime";
         }
 
         return !result.equals("") ? result : I18n.translateToLocalFormatted("commands.generic.permission");
@@ -136,6 +149,23 @@ public class Commands extends CommandBase
                             notifyCommandListener(sender, this, MODID + ".cmd.rendermodes.get.comment", TextFormatting.GOLD + entry.getKey() + TextFormatting.RESET, TextFormatting.GOLD + entry.getValue() + TextFormatting.RESET, TextFormatting.GOLD + player.getName() + TextFormatting.RESET);
                         }
                     }
+                }
+                break;
+
+
+            case "uptime":
+                if (FantasticLib.serverStartTime == -1)
+                {
+                    notifyCommandListener(sender, this, MODID + ".cmd.uptime.noserver");
+                }
+                else
+                {
+                    long n = System.nanoTime() - FantasticLib.serverStartTime;
+                    int s = (int) ((n / 1000_000_000L) % 60);
+                    int m = (int) ((n / 1000_000_000L / 60L) % 60);
+                    int h = (int) ((n / 1000_000_000L / 60L / 60L) % 24);
+                    int d = (int) (n / 1000_000_000L / 60L / 60L / 24L);
+                    notifyCommandListener(sender, this, MODID + ".cmd.uptime", d, h, m, s);
                 }
                 break;
 

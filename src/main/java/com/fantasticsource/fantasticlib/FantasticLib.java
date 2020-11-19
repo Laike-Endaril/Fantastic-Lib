@@ -36,6 +36,7 @@ public class FantasticLib
     public static final String VERSION = "1.12.2.040b";
 
 
+    public static long serverStartTime = -1;
     public static boolean isClient = false;
     public static final boolean DEV_ENV = ReflectionTool.getField(ItemStack.class, "stackSize") != null;
 
@@ -108,13 +109,13 @@ public class FantasticLib
 
 
     @EventHandler
-    public static void serverPreInit(FMLServerAboutToStartEvent event)
+    public static void serverAboutToStart(FMLServerAboutToStartEvent event)
     {
         MCTools.serverStart(event);
     }
 
     @EventHandler
-    public static void serverInit(FMLServerStartingEvent event)
+    public static void serverStarting(FMLServerStartingEvent event)
     {
         CWorldDataHandler.load(event);
 
@@ -122,8 +123,15 @@ public class FantasticLib
     }
 
     @EventHandler
-    public static void serverStop(FMLServerStoppedEvent event)
+    public static void serverStarted(FMLServerStartedEvent event)
     {
+        serverStartTime = System.nanoTime();
+    }
+
+    @EventHandler
+    public static void serverStopped(FMLServerStoppedEvent event)
+    {
+        serverStartTime = -1;
         MCTools.serverStop(event);
         CWorldDataHandler.clear(event);
     }

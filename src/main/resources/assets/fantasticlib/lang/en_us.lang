@@ -40,3 +40,6 @@ fantasticlib.config.zoomRate.tooltip=FILLSCREEN How fast zoomable views zoom\n \
 fantasticlib.cmd.rendermodes.get.comment=%s is set to %s for %s
 fantasticlib.cmd.rendermodes.notSet.comment=%s is not yet set for %s
 fantasticlib.cmd.rendermodes.noneSet.comment=No render modes set for %s
+
+fantasticlib.cmd.uptime=%s Days, %s Hours, %s Minutes, %s Seconds
+fantasticlib.cmd.uptime.noserver=§cNo running server detected
