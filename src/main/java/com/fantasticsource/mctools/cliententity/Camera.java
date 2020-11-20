@@ -9,6 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -52,6 +53,7 @@ public class Camera extends ClientEntity
     public static int playerRenderMode = PLAYER_RENDER_IF_THIRD_PERSON;
     public static boolean allowControl = true;
     public static double followOffsetLR = 0;
+    protected static float renderOffsetYaw = 0, renderOffsetYawPrev = 0, renderOffsetPitch = 0, renderOffsetPitchPrev = 0;
 
 
     protected boolean active = false;
@@ -176,19 +178,31 @@ public class Camera extends ClientEntity
         Entity entity = camera.toFollow;
 
 
+        float normalYaw = entity.getRotationYawHead();
+        float normalPitch = entity.rotationPitch;
+        float normalYawPrev = entity instanceof EntityLivingBase ? ((EntityLivingBase) entity).prevRotationYawHead : entity.prevRotationYaw;
+        float normalPitchPrev = entity.prevRotationPitch;
+
         if (Minecraft.getMinecraft().gameSettings.thirdPersonView == 0)
         {
-            camera.rotationYaw = entity.getRotationYawHead();
-            camera.rotationPitch = entity.rotationPitch;
-            camera.prevRotationYaw = entity instanceof EntityLivingBase ? ((EntityLivingBase) entity).prevRotationYawHead : entity.prevRotationYaw;
-            camera.prevRotationPitch = entity.prevRotationPitch;
+            //First person; uninterpolated values from the followed entity
+            camera.rotationYaw = normalYaw;
+            camera.rotationPitch = normalPitch;
+            camera.prevRotationYaw = normalYawPrev;
+            camera.prevRotationPitch = normalPitchPrev;
         }
         else
         {
+            //Third person; manually interpolated current values, and previous equal to current (since current is interpolated and not target)
             camera.rotationYaw = (float) Smoothing.interpolate(entity instanceof EntityLivingBase ? ((EntityLivingBase) entity).prevRotationYawHead : entity.prevRotationYaw, entity.getRotationYawHead(), partialTick, Smoothing.LINEAR);
             camera.rotationPitch = (float) Smoothing.interpolate(entity.prevRotationPitch, entity.rotationPitch, partialTick, Smoothing.LINEAR);
             camera.prevRotationYaw = camera.rotationYaw;
             camera.prevRotationPitch = camera.rotationPitch;
+
+            renderOffsetYaw = camera.rotationYaw - normalYaw;
+            renderOffsetYawPrev = camera.prevRotationYaw - normalYawPrev;
+            renderOffsetPitch = camera.rotationPitch - normalPitch;
+            renderOffsetPitchPrev = camera.prevRotationPitch - normalPitchPrev;
         }
 
 
@@ -267,9 +281,14 @@ public class Camera extends ClientEntity
                 if (mc.gameSettings.thirdPersonView == 0) return;
         }
 
-        if (getCamera().active && event.getEntityPlayer() == mc.player)
+        EntityPlayer player = event.getEntityPlayer();
+        if (getCamera().active && player == mc.player)
         {
-            mc.getRenderManager().renderViewEntity = mc.player;
+            mc.getRenderManager().renderViewEntity = player;
+            player.rotationYawHead += renderOffsetYaw;
+            player.prevRotationYawHead += renderOffsetYawPrev;
+            player.rotationPitch += renderOffsetPitch;
+            player.prevRotationPitch += renderOffsetPitchPrev;
         }
     }
 
@@ -277,9 +296,14 @@ public class Camera extends ClientEntity
     public static void renderPlayerPost(RenderPlayerEvent.Post event)
     {
         Minecraft mc = Minecraft.getMinecraft();
-        if (getCamera().active && event.getEntityPlayer() == mc.player)
+        EntityPlayer player = event.getEntityPlayer();
+        if (getCamera().active && player == mc.player)
         {
             mc.getRenderManager().renderViewEntity = camera;
+            player.rotationYawHead -= renderOffsetYaw;
+            player.prevRotationYawHead -= renderOffsetYawPrev;
+            player.rotationPitch -= renderOffsetPitch;
+            player.prevRotationPitch -= renderOffsetPitchPrev;
         }
     }
 
