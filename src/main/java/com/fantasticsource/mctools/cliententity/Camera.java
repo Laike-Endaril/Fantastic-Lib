@@ -2,6 +2,7 @@ package com.fantasticsource.mctools.cliententity;
 
 import com.fantasticsource.mctools.ImprovedRayTracing;
 import com.fantasticsource.tools.ReflectionTool;
+import com.fantasticsource.tools.Smoothing;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.TrigLookupTable;
 import net.minecraft.client.Minecraft;
@@ -56,6 +57,7 @@ public class Camera extends ClientEntity
     protected boolean active = false;
     protected int mode, originalMode; //0 is first person, 1 is third person, 2 is third person flipped (in front), -1 allows client control via the view mode keybind
     protected Entity toFollow = null;
+    protected float targetFollowYaw, targetFollowPitch;
 
 
     protected Camera(World worldIn)
@@ -73,6 +75,9 @@ public class Camera extends ClientEntity
     public void activate(Entity toFollow, int mode)
     {
         activate(toFollow, toFollow.world, toFollow.posX, toFollow.posY + toFollow.getEyeHeight(), toFollow.posZ, toFollow.getRotationYawHead(), toFollow.rotationPitch, mode);
+
+        targetFollowYaw = toFollow.getRotationYawHead();
+        targetFollowPitch = toFollow.rotationPitch;
         followEntity();
     }
 
@@ -164,6 +169,21 @@ public class Camera extends ClientEntity
         if (active && toFollow != null) followEntity();
     }
 
+    @SubscribeEvent
+    public static void trackFollowed(TickEvent.RenderTickEvent event)
+    {
+        if (!getCamera().active || event.phase != TickEvent.Phase.START) return;
+
+        Entity entity = camera.toFollow;
+        if (entity != null)
+        {
+            camera.prevRotationYaw = camera.rotationYaw;
+            camera.prevRotationPitch = camera.rotationPitch;
+            camera.rotationYaw = (float) Smoothing.interpolate(entity instanceof EntityLivingBase ? ((EntityLivingBase) entity).prevRotationYawHead : entity.prevRotationYaw, entity.getRotationYawHead(), event.renderTickTime, Smoothing.LINEAR);
+            camera.rotationPitch = (float) Smoothing.interpolate(entity.prevRotationPitch, entity.rotationPitch, event.renderTickTime, Smoothing.LINEAR);
+        }
+    }
+
     protected static void followEntity()
     {
         Entity entity = camera.toFollow;
@@ -171,12 +191,7 @@ public class Camera extends ClientEntity
         camera.prevPosX = camera.posX;
         camera.prevPosY = camera.posY;
         camera.prevPosZ = camera.posZ;
-        camera.prevRotationYaw = camera.rotationYaw;
-        camera.prevRotationPitch = camera.rotationPitch;
 
-
-        camera.rotationYaw = entity instanceof EntityLivingBase ? ((EntityLivingBase) entity).rotationYawHead : entity.rotationYaw;
-        camera.rotationPitch = entity.rotationPitch;
 
         if (followOffsetLR != 0)
         {
