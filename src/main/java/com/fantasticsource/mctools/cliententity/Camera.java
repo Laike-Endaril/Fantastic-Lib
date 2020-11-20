@@ -26,7 +26,7 @@ import java.lang.reflect.Field;
 @SideOnly(Side.CLIENT)
 public class Camera extends ClientEntity
 {
-    protected static final double OFFSET_COLLISION_BUFFER_DIRECT = 0.1, OFFSET_COLLISION_BUFFER_FORWARD = 0.1;
+    protected static final double OFFSET_COLLISION_BUFFER_DIRECT = 0.2, OFFSET_COLLISION_BUFFER_FORWARD = 0.2;
     protected static final Field MINECRAFT_RENDER_VIEW_ENTITY_FIELD = ReflectionTool.getField(Minecraft.class, "field_175622_Z", "renderViewEntity");
 
     static
