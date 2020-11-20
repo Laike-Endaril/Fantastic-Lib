@@ -1,6 +1,8 @@
 package com.fantasticsource.mctools;
 
 import com.fantasticsource.fantasticlib.Compat;
+import com.fantasticsource.fantasticlib.config.FantasticConfig;
+import com.fantasticsource.tools.ReflectionTool;
 import com.fantasticsource.tools.Tools;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
@@ -8,19 +10,313 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class ImprovedRayTracing
 {
-    private static final int ITERATION_WARNING_THRESHOLD = 200;
-    private static long lastWarning = -1;
-    private static int errorCount = 0;
+    protected static HashSet<IBlockState> transparentBlockstates = new HashSet<>(), nonTransparentBlockstates = new HashSet<>();
+    protected static HashSet<Block> transparentBlocks = new HashSet<>(), nonTransparentBlocks = new HashSet<>();
+    protected static HashSet<Class<? extends Block>> transparentBlockSuperclasses = new HashSet<>(), nonTransparentBlockSuperclasses = new HashSet<>(),
+            transparentBlockClasses = new HashSet<>(), nonTransparentBlockClasses = new HashSet<>(), ignoredBlockClasses = new HashSet<>();
+    protected static HashSet<Material> transparentMaterials = new HashSet<>(), nonTransparentMaterials = new HashSet<>();
+
+    protected static final int ITERATION_WARNING_THRESHOLD = 200;
+    protected static long lastWarning = -1;
+    protected static int errorCount = 0;
+
+
+    public static void reloadConfigs()
+    {
+        transparentBlockstates.clear();
+        nonTransparentBlockstates.clear();
+
+        transparentBlocks.clear();
+        nonTransparentBlocks.clear();
+
+        transparentBlockSuperclasses.clear();
+        nonTransparentBlockSuperclasses.clear();
+        transparentBlockClasses.clear();
+        nonTransparentBlockClasses.clear();
+        ignoredBlockClasses.clear();
+
+        transparentMaterials.clear();
+        nonTransparentMaterials.clear();
+
+        for (String s : FantasticConfig.raytraceSettings.rayBlockstateFilter)
+        {
+            if (s.trim().equals("")) continue;
+
+            String[] tokens = Tools.fixedSplit(s, ",");
+            if (tokens.length != 2)
+            {
+                System.err.println(TextFormatting.RED + "Invalid raytrace blockstate filter: " + s);
+                continue;
+            }
+
+            String[] tokens2 = Tools.fixedSplit(tokens[0].trim(), ":");
+            if (tokens2.length != 3)
+            {
+                System.err.println(TextFormatting.RED + "Invalid raytrace blockstate filter: " + s);
+                continue;
+            }
+
+            Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(tokens2[0].trim(), tokens2[1].trim()));
+            if (block == null)
+            {
+                System.err.println(TextFormatting.RED + "Invalid raytrace blockstate filter; block not found: " + s);
+                continue;
+            }
+
+            int meta;
+            try
+            {
+                meta = Integer.parseInt(tokens2[2].trim());
+            }
+            catch (NumberFormatException e)
+            {
+                System.err.println(TextFormatting.RED + "Invalid raytrace blockstate filter: " + s);
+                continue;
+            }
+
+            IBlockState blockState = block.getStateFromMeta(meta);
+            if (block.getMetaFromState(blockState) != meta)
+            {
+                System.err.println(TextFormatting.RED + "Invalid raytrace blockstate filter; state not found for meta: " + s);
+                continue;
+            }
+
+            if (Boolean.parseBoolean(tokens[1].trim())) transparentBlockstates.add(blockState);
+            else nonTransparentBlockstates.add(blockState);
+        }
+
+        for (String s : FantasticConfig.raytraceSettings.rayBlockFilter)
+        {
+            if (s.trim().equals("")) continue;
+
+            String[] tokens = Tools.fixedSplit(s, ",");
+            if (tokens.length != 2)
+            {
+                System.err.println(TextFormatting.RED + "Invalid raytrace block filter: " + s);
+                continue;
+            }
+
+            String[] tokens2 = Tools.fixedSplit(tokens[0].trim(), ":");
+            if (tokens2.length != 2)
+            {
+                System.err.println(TextFormatting.RED + "Invalid raytrace block filter: " + s);
+                continue;
+            }
+
+            Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(tokens2[0].trim(), tokens2[1].trim()));
+            if (block == null)
+            {
+                System.err.println(TextFormatting.RED + "Invalid raytrace block filter; block not found: " + s);
+                continue;
+            }
+
+            if (Boolean.parseBoolean(tokens[1].trim())) transparentBlocks.add(block);
+            else nonTransparentBlocks.add(block);
+        }
+
+        for (String s : FantasticConfig.raytraceSettings.rayBlockSuperclassFilter)
+        {
+            if (s.trim().equals("")) continue;
+
+            String[] tokens = Tools.fixedSplit(s, ",");
+            if (tokens.length != 2)
+            {
+                System.err.println(TextFormatting.RED + "Invalid raytrace block superclass filter: " + s);
+                continue;
+            }
+
+            Class<? extends Block> cls = ReflectionTool.getClassByName(tokens[0].trim());
+            if (cls == null)
+            {
+                System.err.println(TextFormatting.RED + "Invalid raytrace block superclass filter; class not found: " + s);
+                continue;
+            }
+
+            if (Boolean.parseBoolean(tokens[1].trim())) transparentBlockSuperclasses.add(cls);
+            else nonTransparentBlockSuperclasses.add(cls);
+        }
+
+        for (String s : FantasticConfig.raytraceSettings.rayMaterialFilter)
+        {
+            if (s.trim().equals("")) continue;
+
+            String[] tokens = Tools.fixedSplit(s, ",");
+            if (tokens.length != 2)
+            {
+                System.err.println(TextFormatting.RED + "Invalid raytrace material filter: " + s);
+                continue;
+            }
+
+            Material material;
+            switch (tokens[0].trim().toLowerCase())
+            {
+                case "air":
+                    material = Material.AIR;
+                    break;
+
+                case "grass":
+                    material = Material.GRASS;
+                    break;
+
+                case "ground":
+                    material = Material.GROUND;
+                    break;
+
+                case "wood":
+                    material = Material.WOOD;
+                    break;
+
+                case "rock":
+                    material = Material.ROCK;
+                    break;
+
+                case "iron":
+                    material = Material.IRON;
+                    break;
+
+                case "anvil":
+                    material = Material.ANVIL;
+                    break;
+
+                case "water":
+                    material = Material.WATER;
+                    break;
+
+                case "lava":
+                    material = Material.LAVA;
+                    break;
+
+                case "leaves":
+                    material = Material.LEAVES;
+                    break;
+
+                case "plants":
+                    material = Material.PLANTS;
+                    break;
+
+                case "vine":
+                    material = Material.VINE;
+                    break;
+
+                case "sponge":
+                    material = Material.SPONGE;
+                    break;
+
+                case "cloth":
+                    material = Material.CLOTH;
+                    break;
+
+                case "fire":
+                    material = Material.FIRE;
+                    break;
+
+                case "sand":
+                    material = Material.SAND;
+                    break;
+
+                case "circuits":
+                    material = Material.CIRCUITS;
+                    break;
+
+                case "carpet":
+                    material = Material.CARPET;
+                    break;
+
+                case "glass":
+                    material = Material.GLASS;
+                    break;
+
+                case "redstone_light":
+                    material = Material.REDSTONE_LIGHT;
+                    break;
+
+                case "tnt":
+                    material = Material.TNT;
+                    break;
+
+                case "coral":
+                    material = Material.CORAL;
+                    break;
+
+                case "ice":
+                    material = Material.ICE;
+                    break;
+
+                case "packed_ice":
+                    material = Material.PACKED_ICE;
+                    break;
+
+                case "snow":
+                    material = Material.SNOW;
+                    break;
+
+                case "crafted_snow":
+                    material = Material.CRAFTED_SNOW;
+                    break;
+
+                case "cactus":
+                    material = Material.CACTUS;
+                    break;
+
+                case "clay":
+                    material = Material.CLAY;
+                    break;
+
+                case "gourd":
+                    material = Material.GOURD;
+                    break;
+
+                case "dragon_egg":
+                    material = Material.DRAGON_EGG;
+                    break;
+
+                case "portal":
+                    material = Material.PORTAL;
+                    break;
+
+                case "cake":
+                    material = Material.CAKE;
+                    break;
+
+                case "web":
+                    material = Material.WEB;
+                    break;
+
+                case "piston":
+                    material = Material.PISTON;
+                    break;
+
+                case "barrier":
+                    material = Material.BARRIER;
+                    break;
+
+                case "structure_void":
+                    material = Material.STRUCTURE_VOID;
+                    break;
+
+                default:
+                    System.err.println(TextFormatting.RED + "Invalid raytrace material filter; material not found: " + s);
+                    continue;
+            }
+
+            if (Boolean.parseBoolean(tokens[1].trim())) transparentMaterials.add(material);
+            else nonTransparentMaterials.add(material);
+        }
+    }
 
 
     /**
@@ -471,7 +767,47 @@ public class ImprovedRayTracing
 
     public static boolean canSeeThrough(IBlockState blockState)
     {
+        //Config filters
+
+        if (transparentBlockstates.contains(blockState)) return true;
+        if (nonTransparentBlockstates.contains(blockState)) return false;
+
+        Block block = blockState.getBlock();
+        if (transparentBlocks.contains(block)) return true;
+        if (nonTransparentBlocks.contains(block)) return false;
+
+        Class cls = block.getClass();
+        if (transparentBlockClasses.contains(cls)) return true;
+        if (nonTransparentBlockClasses.contains(cls)) return false;
+        if (!ignoredBlockClasses.contains(cls))
+        {
+            for (Class<? extends Block> superClass : transparentBlockSuperclasses)
+            {
+                if (superClass.isAssignableFrom(cls))
+                {
+                    transparentBlockClasses.add(cls);
+                    return true;
+                }
+            }
+
+            for (Class<? extends Block> superClass : nonTransparentBlockSuperclasses)
+            {
+                if (superClass.isAssignableFrom(cls))
+                {
+                    nonTransparentBlockClasses.add(cls);
+                    return false;
+                }
+            }
+
+            ignoredBlockClasses.add(cls);
+        }
+
         Material material = blockState.getMaterial();
+        if (transparentMaterials.contains(material)) return true;
+        if (nonTransparentMaterials.contains(material)) return false;
+
+
+        //Default filters
 
         if (material == Material.LEAVES) return true;
         if (material == Material.GLASS) return true;
@@ -488,8 +824,6 @@ public class ImprovedRayTracing
         if (material == Material.VINE) return true;
 
 
-        Block block = blockState.getBlock();
-
         //Special blocks types that don't follow the rules
         if (block instanceof BlockSlime) return true;
         if (block instanceof BlockTrapDoor) return true;
@@ -504,7 +838,7 @@ public class ImprovedRayTracing
         //Honeybadger blocks :/
         if (block == Blocks.OAK_DOOR || block == Blocks.IRON_DOOR)
         {
-            if ((block.getMetaFromState(blockState) & 8) != 0) return true;
+            return (block.getMetaFromState(blockState) & 8) != 0;
         }
 
         return false;

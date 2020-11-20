@@ -72,6 +72,12 @@ public class FantasticLib
         if (event.getModID().equals(MODID)) ConfigManager.sync(MODID, Config.Type.INSTANCE);
     }
 
+    @SubscribeEvent
+    public static void syncConfig(ConfigChangedEvent.PostConfigChangedEvent event)
+    {
+        if (event.getModID().equals(MODID)) ImprovedRayTracing.reloadConfigs();
+    }
+
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
@@ -97,6 +103,7 @@ public class FantasticLib
         Compat.smoothfont = (Loader.isModLoaded("smoothfont"));
         Compat.baubles = (Loader.isModLoaded("baubles"));
         Compat.tiamatinventory = (Loader.isModLoaded("tiamatinventory"));
+        ImprovedRayTracing.reloadConfigs();
 
         if (Loader.isModLoaded("armourers_workshop"))
         {

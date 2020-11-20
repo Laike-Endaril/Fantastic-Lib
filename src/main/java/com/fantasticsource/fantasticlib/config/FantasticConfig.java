@@ -20,4 +20,8 @@ public class FantasticConfig
     @Config.Name("GUI Settings")
     @Config.LangKey(MODID + ".config.guiSettings")
     public static GUIConfig guiSettings = new GUIConfig();
+
+    @Config.Name("Raytrace Settings")
+    @Config.LangKey(MODID + ".config.raytraceSettings")
+    public static RaytraceConfig raytraceSettings = new RaytraceConfig();
 }
