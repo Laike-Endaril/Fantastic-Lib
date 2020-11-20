@@ -176,10 +176,20 @@ public class Camera extends ClientEntity
         Entity entity = camera.toFollow;
 
 
-        camera.rotationYaw = (float) Smoothing.interpolate(entity instanceof EntityLivingBase ? ((EntityLivingBase) entity).prevRotationYawHead : entity.prevRotationYaw, entity.getRotationYawHead(), partialTick, Smoothing.LINEAR);
-        camera.rotationPitch = (float) Smoothing.interpolate(entity.prevRotationPitch, entity.rotationPitch, partialTick, Smoothing.LINEAR);
-        camera.prevRotationYaw = camera.rotationYaw;
-        camera.prevRotationPitch = camera.rotationPitch;
+        if (Minecraft.getMinecraft().gameSettings.thirdPersonView == 0)
+        {
+            camera.rotationYaw = entity.getRotationYawHead();
+            camera.rotationPitch = entity.rotationPitch;
+            camera.prevRotationYaw = entity instanceof EntityLivingBase ? ((EntityLivingBase) entity).prevRotationYawHead : entity.prevRotationYaw;
+            camera.prevRotationPitch = entity.prevRotationPitch;
+        }
+        else
+        {
+            camera.rotationYaw = (float) Smoothing.interpolate(entity instanceof EntityLivingBase ? ((EntityLivingBase) entity).prevRotationYawHead : entity.prevRotationYaw, entity.getRotationYawHead(), partialTick, Smoothing.LINEAR);
+            camera.rotationPitch = (float) Smoothing.interpolate(entity.prevRotationPitch, entity.rotationPitch, partialTick, Smoothing.LINEAR);
+            camera.prevRotationYaw = camera.rotationYaw;
+            camera.prevRotationPitch = camera.rotationPitch;
+        }
 
 
         if (followOffsetLR != 0)
