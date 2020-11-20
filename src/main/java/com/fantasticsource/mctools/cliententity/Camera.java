@@ -161,25 +161,22 @@ public class Camera extends ClientEntity
     @Override
     public void onEntityUpdate()
     {
-    }
-
-    @SubscribeEvent
-    public static void trackFollowed(TickEvent.RenderTickEvent event)
-    {
-        if (!getCamera().active || event.phase != TickEvent.Phase.START) return;
-
-        if (camera.toFollow != null) followEntity();
+        if (active && toFollow != null) followEntity();
     }
 
     protected static void followEntity()
     {
         Entity entity = camera.toFollow;
 
+        camera.prevPosX = camera.posX;
+        camera.prevPosY = camera.posY;
+        camera.prevPosZ = camera.posZ;
+        camera.prevRotationYaw = camera.rotationYaw;
+        camera.prevRotationPitch = camera.rotationPitch;
+
 
         camera.rotationYaw = entity instanceof EntityLivingBase ? ((EntityLivingBase) entity).rotationYawHead : entity.rotationYaw;
         camera.rotationPitch = entity.rotationPitch;
-        camera.prevRotationYaw = entity instanceof EntityLivingBase ? ((EntityLivingBase) entity).prevRotationYawHead : entity.prevRotationYaw;
-        camera.prevRotationPitch = entity.prevRotationPitch;
 
         if (followOffsetLR != 0)
         {
@@ -207,10 +204,6 @@ public class Camera extends ClientEntity
                 }
             }
         }
-
-        camera.prevPosX = entity.prevPosX;
-        camera.prevPosY = entity.prevPosY + entity.getEyeHeight();
-        camera.prevPosZ = entity.prevPosZ;
     }
 
 
