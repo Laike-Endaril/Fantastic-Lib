@@ -68,8 +68,7 @@ public class TextSelectionGUI extends GUIScreen
         //Add options
         for (String option : options)
         {
-            list.addLine();
-            GUIText text = (GUIText) list.get(list.lineCount() - 1).getLineElement(0);
+            GUIText text = (GUIText) list.addLine().getLineElement(0);
             text.setText(option);
             if (option.equals(clickedElement.getText())) text.setColor(getIdleColor(Color.PURPLE), getHoverColor(Color.PURPLE), Color.PURPLE);
             else text.setColor(getIdleColor(Color.WHITE), getHoverColor(Color.WHITE), Color.WHITE);
