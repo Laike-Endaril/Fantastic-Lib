@@ -2,6 +2,8 @@ package com.fantasticsource.mctools;
 
 import baubles.api.BaubleType;
 import com.fantasticsource.fantasticlib.Compat;
+import com.fantasticsource.tiamatitems.api.IPartSlot;
+import com.fantasticsource.tiamatitems.api.TiamatItemsAPI;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -179,7 +181,14 @@ public class Slottings
 
     protected static boolean slotValidForItemstack(ItemStack stack, int slot, EntityPlayer player)
     {
-        return slotValidForSlotting(getItemSlotting(stack), slot, player);
+        if (!slotValidForSlotting(getItemSlotting(stack), slot, player)) return false;
+
+        for (IPartSlot partSlot : TiamatItemsAPI.getPartSlots(stack))
+        {
+            if (partSlot.getRequired() && partSlot.getPart().isEmpty()) return false;
+        }
+
+        return true;
     }
 
 
