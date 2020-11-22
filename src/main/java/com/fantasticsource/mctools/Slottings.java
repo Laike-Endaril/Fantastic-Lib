@@ -173,7 +173,8 @@ public class Slottings
         if (slotType.equals("Legs") && stack.getItem().isValidArmor(stack, EntityEquipmentSlot.LEGS, player)) return true;
         if (slotType.equals("Feet") && stack.getItem().isValidArmor(stack, EntityEquipmentSlot.FEET, player)) return true;
 
-        return slotValidForItemstack(stack, SLOTS.get(slotType)[0], player);
+        int[] slots = SLOTS.get(slotType);
+        return slots != null && slots.length > 0 && slotValidForItemstack(stack, SLOTS.get(slotType)[0], player);
     }
 
     protected static boolean slotValidForItemstack(ItemStack stack, int slot, EntityPlayer player)
