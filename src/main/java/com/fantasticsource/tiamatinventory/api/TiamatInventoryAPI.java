@@ -2,6 +2,7 @@ package com.fantasticsource.tiamatinventory.api;
 
 import com.fantasticsource.tools.ReflectionTool;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.fml.common.Loader;
 
 import java.lang.reflect.Field;
 import java.util.LinkedHashMap;
@@ -30,7 +31,7 @@ public class TiamatInventoryAPI
         }
         catch (ClassNotFoundException | IllegalAccessException e)
         {
-            e.printStackTrace();
+            if (Loader.isModLoaded("tiamatinventory")) e.printStackTrace();
         }
     }
 
