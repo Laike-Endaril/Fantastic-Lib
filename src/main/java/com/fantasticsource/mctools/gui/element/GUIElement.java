@@ -616,44 +616,49 @@ public class GUIElement
         return -1;
     }
 
-    public void linkMouseActivity(GUIElement element)
+    public GUIElement linkMouseActivity(GUIElement element)
     {
         linkedMouseActivity.add(element);
         element.linkedMouseActivityReverse.add(this);
+        return this;
     }
 
-    public void unlinkMouseActivity(GUIElement element)
+    public GUIElement unlinkMouseActivity(GUIElement element)
     {
         linkedMouseActivity.remove(element);
         element.linkedMouseActivityReverse.remove(this);
+        return this;
     }
 
-    public void setExternalDeactivation(boolean external, boolean recursive)
+    public GUIElement setExternalDeactivation(boolean external, boolean recursive)
     {
         externalDeactivation = external;
         if (recursive)
         {
             for (GUIElement child : children) child.setExternalDeactivation(external, true);
         }
+        return this;
     }
 
-    public void setActive(boolean active)
+    public GUIElement setActive(boolean active)
     {
-        setActive(active, false);
+        return setActive(active, false);
     }
 
-    public void setActive(boolean active, boolean external)
+    public GUIElement setActive(boolean active, boolean external)
     {
-        if (!active && externalDeactivation && !external) return;
+        if (!active && externalDeactivation && !external) return this;
 
         this.active = active;
         for (GUIElement element : linkedMouseActivity) element.active = active;
+        return this;
     }
 
-    public void setActiveRecursive(boolean active)
+    public GUIElement setActiveRecursive(boolean active)
     {
         setActive(active, true);
         for (GUIElement child : children) child.setActiveRecursive(active);
+        return this;
     }
 
     public boolean isActive()
