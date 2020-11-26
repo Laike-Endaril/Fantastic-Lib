@@ -50,7 +50,7 @@ public class CPath extends Component
 
     /**
      * This method is meant to be overridden in subclasses to produce different path shapes/patterns
-     * eg. vector = new VectorN(tick, tick, tick).multiply(multiplier.vector);
+     * See CPathLinear for an example override
      */
     protected void tickInternal()
     {
