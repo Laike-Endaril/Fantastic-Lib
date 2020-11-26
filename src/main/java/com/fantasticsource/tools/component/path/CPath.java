@@ -20,6 +20,12 @@ public class CPath extends Component
     public ArrayList<CPath> combinedPaths = new ArrayList<>();
 
 
+    public CPath()
+    {
+        //Set default multiplier to 1x, 1y, 1z
+        multiplier.vector = new VectorN(1, 1, 1);
+    }
+
     /**
      * Generally leave this unedited and call it once "per tick", whatever and whenever your tick is
      * After calling this, apply it to something by reading the values stored in "vector"
