@@ -36,16 +36,17 @@ public class CPath extends Component
 
     /**
      * Generally leave this unedited and call it once "per tick", whatever and whenever your tick is
-     * After calling this, apply it to something by reading the values stored in "vector"
+     * After calling this, apply it to something by reading the values stored in public fields vector, vectorPrev, and vectorDelta
      * Left this non-final in case there is a good reason to override it at some point
      */
     public void tick()
     {
-        multiplier.tick();
-        tick++;
         vectorPrev = vector.copy();
-
+        tick++;
         tickInternal();
+
+        multiplier.tick();
+        vector.multiply(multiplier.vector);
 
         for (CPath combinedPath : combinedPaths)
         {
@@ -58,6 +59,8 @@ public class CPath extends Component
 
     /**
      * This method is meant to be overridden in subclasses to produce different path shapes/patterns
+     * As a result of this method, the "vector" field should be updated to represent an absolute position based on the current value of "tick"
+     * The "multiplier" field is automatically applied to this afterward in the "tick()" method above
      * See CPathLinear for an example override
      */
     protected void tickInternal()
