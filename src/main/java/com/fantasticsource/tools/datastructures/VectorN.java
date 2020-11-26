@@ -11,6 +11,11 @@ public class VectorN
     }
 
 
+    public VectorN copy()
+    {
+        return new VectorN(values);
+    }
+
     public double getMagnitude()
     {
         return Math.sqrt(getMagnitudeSquared());
@@ -24,23 +29,34 @@ public class VectorN
     }
 
 
-    public void scale(double scalar)
+    public VectorN scale(double scalar)
     {
         for (int i = 0; i < values.length; i++)
         {
             values[i] = values[i] * scalar;
         }
+        return this;
     }
 
 
-    public void setMagnitude(double magnitude)
+    public VectorN setMagnitude(double magnitude)
     {
         double ratio = magnitude / getMagnitude();
         for (int i = 0; i < values.length; i++) values[i] = values[i] * ratio;
+        return this;
     }
 
 
-    public void add(VectorN... vectors)
+    public VectorN add(double... values)
+    {
+        for (int i = 0; i < this.values.length; i++)
+        {
+            this.values[i] += values[i];
+        }
+        return this;
+    }
+
+    public VectorN add(VectorN... vectors)
     {
         for (VectorN vector : vectors)
         {
@@ -49,9 +65,20 @@ public class VectorN
                 values[i] += vector.values[i];
             }
         }
+        return this;
     }
 
-    public void subtract(VectorN... vectors)
+
+    public VectorN subtract(double... values)
+    {
+        for (int i = 0; i < this.values.length; i++)
+        {
+            this.values[i] -= values[i];
+        }
+        return this;
+    }
+
+    public VectorN subtract(VectorN... vectors)
     {
         for (VectorN vector : vectors)
         {
@@ -60,5 +87,50 @@ public class VectorN
                 values[i] -= vector.values[i];
             }
         }
+        return this;
+    }
+
+
+    public VectorN multiply(double... values)
+    {
+        for (int i = 0; i < this.values.length; i++)
+        {
+            this.values[i] *= values[i];
+        }
+        return this;
+    }
+
+    public VectorN multiply(VectorN... vectors)
+    {
+        for (VectorN vector : vectors)
+        {
+            for (int i = 0; i < values.length; i++)
+            {
+                values[i] *= vector.values[i];
+            }
+        }
+        return this;
+    }
+
+
+    public VectorN divide(double... values)
+    {
+        for (int i = 0; i < this.values.length; i++)
+        {
+            this.values[i] /= values[i];
+        }
+        return this;
+    }
+
+    public VectorN divide(VectorN... vectors)
+    {
+        for (VectorN vector : vectors)
+        {
+            for (int i = 0; i < values.length; i++)
+            {
+                values[i] /= vector.values[i];
+            }
+        }
+        return this;
     }
 }
