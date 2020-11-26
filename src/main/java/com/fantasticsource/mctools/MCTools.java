@@ -1,11 +1,13 @@
 package com.fantasticsource.mctools;
 
 import com.fantasticsource.fantasticlib.FantasticLib;
+import com.fantasticsource.lwjgl.Quaternion;
 import com.fantasticsource.tools.PNG;
 import com.fantasticsource.tools.ReflectionTool;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.TrigLookupTable;
 import com.fantasticsource.tools.datastructures.ExplicitPriorityQueue;
+import com.fantasticsource.tools.datastructures.VectorN;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -49,7 +51,6 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.NotImplementedException;
-import com.fantasticsource.lwjgl.Quaternion;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -80,6 +81,17 @@ public class MCTools
         {
             crash(e, false);
         }
+    }
+
+
+    public static VectorN getVectorN(Vec3d vec3d)
+    {
+        return new VectorN(vec3d.x, vec3d.y, vec3d.z);
+    }
+
+    public static Vec3d getVec3d(VectorN vectorN)
+    {
+        return new Vec3d(vectorN.values[0], vectorN.values[1], vectorN.values[2]);
     }
 
 

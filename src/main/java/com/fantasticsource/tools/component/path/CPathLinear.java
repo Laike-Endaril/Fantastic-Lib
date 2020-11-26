@@ -7,6 +7,9 @@ import io.netty.buffer.ByteBuf;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+/**
+ * multiplier is used a literal x, y, z speed multiplier (and for dimensions beyond z if you feel like)
+ */
 public class CPathLinear extends CPath
 {
     public VectorN direction;

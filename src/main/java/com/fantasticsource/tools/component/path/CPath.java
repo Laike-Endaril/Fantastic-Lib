@@ -15,13 +15,21 @@ import java.util.Collections;
 public class CPath extends Component
 {
     public long tick = 0;
-    public VectorN vector = new VectorN(0, 0, 0), vectorPrev = new VectorN(0, 0, 0), vectorDelta = new VectorN(0, 0, 0);
+    public VectorN vector, vectorPrev, vectorDelta = new VectorN(0, 0, 0);
     public CPath multiplier = new CPath();
     public ArrayList<CPath> combinedPaths = new ArrayList<>();
 
 
     public CPath()
     {
+        this(new VectorN(0, 0, 0));
+    }
+
+    public CPath(VectorN origin)
+    {
+        vector = origin;
+        vectorPrev = vector;
+
         //Set default multiplier to 1x, 1y, 1z
         multiplier.vector = new VectorN(1, 1, 1);
     }
