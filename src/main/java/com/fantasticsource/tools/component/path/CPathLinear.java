@@ -19,7 +19,7 @@ public class CPathLinear extends CPath
     @Override
     protected void tickInternal()
     {
-        vector.add(direction).multiply(multiplier.vector);
+        vector.add(direction.copy().multiply(multiplier.vector));
     }
 
 
