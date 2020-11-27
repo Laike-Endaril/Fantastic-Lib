@@ -8,6 +8,7 @@ import com.fantasticsource.mctools.aw.RenderModes;
 import com.fantasticsource.mctools.aw.TransientAWSkinHandler;
 import com.fantasticsource.mctools.data.CModpackDataHandler;
 import com.fantasticsource.mctools.data.CWorldDataHandler;
+import com.fantasticsource.mctools.event.GametypeChangedEvent;
 import com.fantasticsource.mctools.gui.screen.TestGUI;
 import com.fantasticsource.mctools.nbtcap.NBTCap;
 import com.fantasticsource.mctools.nbtcap.NBTCapStorage;
@@ -141,5 +142,6 @@ public class FantasticLib
         serverStartTime = -1;
         MCTools.serverStop(event);
         CWorldDataHandler.clear(event);
+        GametypeChangedEvent.PLAYER_GAMETYPES.clear();
     }
 }

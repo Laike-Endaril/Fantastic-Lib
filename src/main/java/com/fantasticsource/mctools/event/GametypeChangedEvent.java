@@ -15,7 +15,7 @@ import java.util.UUID;
 
 public class GametypeChangedEvent extends Event
 {
-    protected static final HashMap<UUID, GameType> PLAYER_GAMETYPES = new HashMap<>();
+    public static final HashMap<UUID, GameType> PLAYER_GAMETYPES = new HashMap<>();
 
     static
     {
@@ -38,7 +38,6 @@ public class GametypeChangedEvent extends Event
         PLAYER_GAMETYPES.remove(event.player.getPersistentID());
     }
 
-    @SubscribeEvent
     public static void serverStopped(FMLServerStoppedEvent event)
     {
         PLAYER_GAMETYPES.clear();
