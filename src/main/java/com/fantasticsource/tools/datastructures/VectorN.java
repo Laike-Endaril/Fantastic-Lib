@@ -133,4 +133,19 @@ public class VectorN
         }
         return this;
     }
+
+    /**
+     * Only doing 3D cross product for now...I don't see myself using the alternatives
+     */
+    public VectorN crossProduct(VectorN other)
+    {
+        double[] values = new double[this.values.length];
+        System.arraycopy(this.values, 0, values, 0, values.length);
+
+        this.values[0] = values[1] * other.values[2] - values[2] * other.values[1];
+        this.values[1] = values[2] * other.values[0] - values[0] * other.values[2];
+        this.values[2] = values[0] * other.values[1] - values[1] * other.values[0];
+
+        return this;
+    }
 }
