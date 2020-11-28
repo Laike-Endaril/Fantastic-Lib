@@ -356,7 +356,15 @@ public class GlobalInventory
         ArrayList<ItemStack> result = new ArrayList<>();
 
         ItemStack mainhand = getVanillaMainhandItem(entity);
-        for (ItemStack stack : entity.getHeldEquipment())
+        if (mainhand == ItemStack.EMPTY)
+        {
+            int emptiesFound = 0;
+            for (ItemStack stack : entity.getHeldEquipment())
+            {
+                if (stack == ItemStack.EMPTY && ++emptiesFound > 1) result.add(stack);
+            }
+        }
+        else for (ItemStack stack : entity.getHeldEquipment())
         {
             if (stack != mainhand && !result.contains(stack)) result.add(stack);
         }
