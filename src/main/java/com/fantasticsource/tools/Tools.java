@@ -19,6 +19,21 @@ public class Tools
     protected static PrintStream out = null, err = null;
 
 
+    public static void copyFile(File source, File destination) throws IOException
+    {
+        BufferedReader reader = new BufferedReader(new FileReader(source));
+        BufferedWriter writer = new BufferedWriter(new FileWriter(destination));
+        String line = reader.readLine();
+        while (line != null)
+        {
+            writer.write(line + "\r\n");
+            line = reader.readLine();
+        }
+        writer.close();
+        reader.close();
+    }
+
+
     public static String caselessRegex(String regex)
     {
         StringBuilder result = new StringBuilder();
