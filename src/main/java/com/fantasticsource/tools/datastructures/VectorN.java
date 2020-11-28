@@ -7,7 +7,8 @@ public class VectorN
     public VectorN(double... values)
     {
         if (values == null) throw new NullPointerException();
-        this.values = values;
+        this.values = new double[values.length];
+        System.arraycopy(values, 0, this.values, 0, values.length);
     }
 
 
@@ -147,5 +148,16 @@ public class VectorN
         this.values[2] = values[0] * other.values[1] - values[1] * other.values[0];
 
         return this;
+    }
+
+
+    @Override
+    public String toString()
+    {
+        if (values.length == 0) return "()";
+
+        StringBuilder result = new StringBuilder("(" + values[0]);
+        for (int i = 1; i < values.length; i++) result.append(", ").append(values[i]);
+        return result + ")";
     }
 }

@@ -34,7 +34,7 @@ public class FantasticLib
     public static final String MODID = "fantasticlib";
     public static final String DOMAIN = "flib";
     public static final String NAME = "Fantastic Lib";
-    public static final String VERSION = "1.12.2.041e";
+    public static final String VERSION = "1.12.2.041f";
 
 
     public static long serverStartTime = -1;
@@ -144,4 +144,27 @@ public class FantasticLib
         CWorldDataHandler.clear(event);
         GametypeChangedEvent.PLAYER_GAMETYPES.clear();
     }
+//
+//    private static CPathLinear path = new CPathLinear(new VectorN(.05, 0, 0));
+//
+//    @SubscribeEvent
+//    public static void test(EntityJoinWorldEvent event)
+//    {
+//        Entity entity = event.getEntity();
+//        if (entity instanceof EntityItem && entity.world.isRemote)
+//        {
+//            Particle particle = new ParticleFirework.Spark(entity.world, entity.posX, entity.posY, entity.posZ, 0, 0, 0, Minecraft.getMinecraft().effectRenderer);
+//            Minecraft.getMinecraft().effectRenderer.addEffect(particle);
+//            path.affectedParticles.add(particle);
+////            path.affectedEntities.add(entity);
+//        }
+//    }
+//
+//    @SubscribeEvent
+//    public static void test2(TickEvent.ClientTickEvent event)
+//    {
+//        if (event.phase != TickEvent.Phase.START) return;
+//
+//        path.tick();
+//    }
 }

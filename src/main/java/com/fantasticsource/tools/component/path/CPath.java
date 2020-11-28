@@ -1,23 +1,31 @@
 package com.fantasticsource.tools.component.path;
 
-import com.fantasticsource.tools.component.CInt;
-import com.fantasticsource.tools.component.CLong;
-import com.fantasticsource.tools.component.CVectorN;
-import com.fantasticsource.tools.component.Component;
+import com.fantasticsource.tools.ReflectionTool;
+import com.fantasticsource.tools.component.*;
 import com.fantasticsource.tools.datastructures.VectorN;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.particle.Particle;
+import net.minecraft.entity.Entity;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class CPath extends Component
 {
-    public long tick = 0;
+    public static final Field
+            PARTICLE_MOTION_X_FIELD = ReflectionTool.getField(Particle.class, "field_187129_i", "motionX"),
+            PARTICLE_MOTION_Y_FIELD = ReflectionTool.getField(Particle.class, "field_187130_j", "motionY"),
+            PARTICLE_MOTION_Z_FIELD = ReflectionTool.getField(Particle.class, "field_187131_k", "motionZ");
+
+    public long currentTick = 0;
     public VectorN vector, vectorPrev, vectorDelta = new VectorN(0, 0, 0);
-    public CPath multiplier = new CPath();
+    public CPath multiplier = null;
     public ArrayList<CPath> combinedPaths = new ArrayList<>();
+    public ArrayList<Entity> affectedEntities = new ArrayList<>();
+    public ArrayList<Particle> affectedParticles = new ArrayList<>();
 
 
     public CPath()
@@ -29,9 +37,6 @@ public class CPath extends Component
     {
         vector = origin;
         vectorPrev = vector;
-
-        //Set default multiplier to 1x, 1y, 1z
-        multiplier.vector = new VectorN(1, 1, 1);
     }
 
     /**
@@ -42,11 +47,14 @@ public class CPath extends Component
     public void tick()
     {
         vectorPrev = vector.copy();
-        tick++;
+        currentTick++;
         tickInternal();
 
-        multiplier.tick();
-        vector.multiply(multiplier.vector);
+        if (multiplier != null)
+        {
+            multiplier.tick();
+            vector.multiply(multiplier.vector);
+        }
 
         for (CPath combinedPath : combinedPaths)
         {
@@ -55,6 +63,36 @@ public class CPath extends Component
         }
 
         vectorDelta = vector.copy().subtract(vectorPrev);
+
+        affectedEntities.removeIf(entity ->
+        {
+            if (entity.world.loadedEntityList.contains(entity))
+            {
+                //TODO haven't found a way of producing nice motion for entities yet
+                entity.motionX += vectorDelta.values[0];
+                entity.motionY += vectorDelta.values[1];
+                entity.motionZ += vectorDelta.values[2];
+//                entity.setPosition(entity.posX + vectorDelta.values[0], entity.posY + vectorDelta.values[1], entity.posZ + vectorDelta.values[2]);
+                return false;
+            }
+            else return true;
+        });
+
+        affectedParticles.removeIf(particle ->
+        {
+            if (particle.isAlive())
+            {
+                //TODO this shouldn't be choppy when running on the client tick...but it is.  Need to figure out why
+                particle.move(vectorDelta.values[0], vectorDelta.values[1], vectorDelta.values[2]);
+
+                //This works fine for accelerative
+//                ReflectionTool.set(PARTICLE_MOTION_X_FIELD, particle, (double) ReflectionTool.get(PARTICLE_MOTION_X_FIELD, particle) + vectorDelta.values[0]);
+//                ReflectionTool.set(PARTICLE_MOTION_Y_FIELD, particle, (double) ReflectionTool.get(PARTICLE_MOTION_Y_FIELD, particle) + vectorDelta.values[1]);
+//                ReflectionTool.set(PARTICLE_MOTION_Z_FIELD, particle, (double) ReflectionTool.get(PARTICLE_MOTION_Z_FIELD, particle) + vectorDelta.values[2]);
+                return false;
+            }
+            else return true;
+        });
     }
 
     /**
@@ -81,11 +119,12 @@ public class CPath extends Component
     @Override
     public CPath write(ByteBuf buf)
     {
-        buf.writeLong(tick);
+        buf.writeLong(currentTick);
 
         new CVectorN().set(vector).write(buf).set(vectorPrev).write(buf).set(vectorDelta).write(buf);
 
-        writeMarked(buf, multiplier);
+        buf.writeBoolean(multiplier != null);
+        if (multiplier != null) writeMarked(buf, multiplier);
 
         buf.writeInt(combinedPaths.size());
         for (CPath combinedPath : combinedPaths) writeMarked(buf, combinedPath);
@@ -96,14 +135,14 @@ public class CPath extends Component
     @Override
     public CPath read(ByteBuf buf)
     {
-        tick = buf.readLong();
+        currentTick = buf.readLong();
 
         CVectorN cvec = new CVectorN();
         vector = cvec.read(buf).value;
         vectorPrev = cvec.read(buf).value;
         vectorDelta = cvec.read(buf).value;
 
-        multiplier = (CPath) readMarked(buf);
+        multiplier = buf.readBoolean() ? (CPath) readMarked(buf) : null;
 
         combinedPaths.clear();
         for (int i = buf.readInt(); i > 0; i--) combinedPaths.add((CPath) readMarked(buf));
@@ -114,11 +153,12 @@ public class CPath extends Component
     @Override
     public CPath save(OutputStream stream)
     {
-        new CLong().set(tick).save(stream);
+        new CLong().set(currentTick).save(stream);
 
         new CVectorN().set(vector).save(stream).set(vectorPrev).save(stream).set(vectorDelta).save(stream);
 
-        saveMarked(stream, multiplier);
+        new CBoolean().set(multiplier != null).save(stream);
+        if (multiplier != null) saveMarked(stream, multiplier);
 
         new CInt().set(combinedPaths.size()).save(stream);
         for (CPath combinedPath : combinedPaths) saveMarked(stream, combinedPath);
@@ -129,14 +169,14 @@ public class CPath extends Component
     @Override
     public CPath load(InputStream stream)
     {
-        tick = new CLong().load(stream).value;
+        currentTick = new CLong().load(stream).value;
 
         CVectorN cvec = new CVectorN();
         vector = cvec.load(stream).value;
         vectorPrev = cvec.load(stream).value;
         vectorDelta = cvec.load(stream).value;
 
-        multiplier = (CPath) loadMarked(stream);
+        multiplier = new CBoolean().load(stream).value ? (CPath) loadMarked(stream) : null;
 
         combinedPaths.clear();
         for (int i = new CInt().load(stream).value; i > 0; i--) combinedPaths.add((CPath) loadMarked(stream));

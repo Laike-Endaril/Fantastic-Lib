@@ -19,7 +19,7 @@ public class CPathLinear extends CPath
     @Override
     protected void tickInternal()
     {
-        vector = direction.scale(tick);
+        vector = direction.copy().scale(currentTick);
     }
 
 
