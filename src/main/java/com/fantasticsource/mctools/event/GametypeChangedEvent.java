@@ -35,7 +35,8 @@ public class GametypeChangedEvent extends Event
     @SubscribeEvent
     public static void playerLogoff(PlayerEvent.PlayerLoggedOutEvent event)
     {
-        PLAYER_GAMETYPES.remove(event.player.getPersistentID());
+        GameType oldGameType = PLAYER_GAMETYPES.remove(event.player.getPersistentID());
+        if (oldGameType != null) MinecraftForge.EVENT_BUS.post(new GametypeChangedEvent(event.player, oldGameType, null));
     }
 
     public static void serverStopped(FMLServerStoppedEvent event)
