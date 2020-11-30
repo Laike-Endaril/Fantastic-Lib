@@ -1,6 +1,7 @@
 package com.fantasticsource.mctools.component;
 
 import com.fantasticsource.mctools.items.ItemFilter;
+import com.fantasticsource.tools.component.CBoolean;
 import com.fantasticsource.tools.component.CInt;
 import com.fantasticsource.tools.component.CStringUTF8;
 import com.fantasticsource.tools.component.Component;
@@ -24,7 +25,8 @@ public class CItemFilter extends Component
     @Override
     public CItemFilter write(ByteBuf buf)
     {
-        new CItemStack(value.itemStack).write(buf);
+        buf.writeBoolean(value.itemStack != null);
+        if (value.itemStack != null) new CItemStack(value.itemStack).write(buf);
 
         buf.writeInt(value.tagsRequired.size());
         for (Map.Entry<String, String> entry : value.tagsRequired.entrySet())
@@ -48,7 +50,7 @@ public class CItemFilter extends Component
     {
         value = new ItemFilter();
 
-        value.itemStack = new CItemStack().read(buf).value;
+        if (buf.readBoolean()) value.itemStack = new CItemStack().read(buf).value;
 
         for (int i = buf.readInt(); i > 0; i--)
         {
@@ -69,7 +71,8 @@ public class CItemFilter extends Component
         CInt ci = new CInt();
         CStringUTF8 cs = new CStringUTF8();
 
-        new CItemStack().set(value.itemStack).save(stream);
+        new CBoolean().set(value.itemStack != null).save(stream);
+        if (value.itemStack != null) new CItemStack().set(value.itemStack).save(stream);
 
         ci.set(value.tagsRequired.size()).save(stream);
         for (Map.Entry<String, String> entry : value.tagsRequired.entrySet())
@@ -94,7 +97,7 @@ public class CItemFilter extends Component
 
         value = new ItemFilter();
 
-        value.itemStack = new CItemStack().load(stream).value;
+        if (new CBoolean().load(stream).value) value.itemStack = new CItemStack().load(stream).value;
 
         for (int i = ci.load(stream).value; i > 0; i--)
         {
