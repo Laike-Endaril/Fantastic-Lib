@@ -20,13 +20,20 @@ import java.util.regex.Pattern;
 
 public class ItemFilter
 {
-    private ItemStack itemStack = null;
-    private LinkedHashMap<String, String> tagsRequired = new LinkedHashMap<>();
-    private LinkedHashMap<String, String> tagsDisallowed = new LinkedHashMap<>();
+    public ItemStack itemStack = null;
+    public LinkedHashMap<String, String> tagsRequired = new LinkedHashMap<>();
+    public LinkedHashMap<String, String> tagsDisallowed = new LinkedHashMap<>();
 
 
-    private ItemFilter()
+    public ItemFilter()
     {
+    }
+
+    public ItemFilter(ItemStack itemStack, LinkedHashMap<String, String> tagsRequired, LinkedHashMap<String, String> tagsDisallowed)
+    {
+        this.itemStack = itemStack;
+        this.tagsRequired = tagsRequired;
+        this.tagsDisallowed = tagsDisallowed;
     }
 
 
