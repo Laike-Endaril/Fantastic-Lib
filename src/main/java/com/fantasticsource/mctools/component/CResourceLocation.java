@@ -31,8 +31,7 @@ public class CResourceLocation extends Component
     @Override
     public CResourceLocation write(ByteBuf buf)
     {
-        new CStringUTF8().set(value.getResourceDomain()).write(buf);
-        new CStringUTF8().set(value.getResourcePath()).write(buf);
+        new CStringUTF8().set(value.getResourceDomain()).write(buf).set(value.getResourcePath()).write(buf);
 
         return this;
     }
@@ -46,8 +45,7 @@ public class CResourceLocation extends Component
     @Override
     public CResourceLocation save(OutputStream stream)
     {
-        new CStringUTF8().set(value.getResourceDomain()).save(stream);
-        new CStringUTF8().set(value.getResourcePath()).save(stream);
+        new CStringUTF8().set(value.getResourceDomain()).save(stream).set(value.getResourcePath()).save(stream);
 
         return this;
     }
