@@ -37,4 +37,10 @@ public class FantasticPotionEffect extends PotionEffect
         this.interval = interval;
         return this;
     }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        return super.equals(obj) && interval == ((FantasticPotionEffect) obj).interval;
+    }
 }
