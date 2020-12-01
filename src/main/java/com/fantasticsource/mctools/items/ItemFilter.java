@@ -288,4 +288,31 @@ public class ItemFilter
 
         return true;
     }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj) return true;
+        if (!(obj instanceof ItemFilter)) return false;
+        if (obj.getClass() != getClass()) return obj.equals(this);
+
+        ItemFilter other = (ItemFilter) obj;
+        if (itemStack == null)
+        {
+            if (other.itemStack != null) return false;
+        }
+        else
+        {
+            if (itemStack.getItem() != other.itemStack.getItem()) return false;
+            if (itemStack.getMetadata() != other.itemStack.getMetadata()) return false;
+        }
+
+        if (tagsRequired.size() != other.tagsRequired.size()) return false;
+        if (tagsDisallowed.size() != other.tagsDisallowed.size()) return false;
+
+        for (Map.Entry<String, String> entry : tagsRequired.entrySet()) if (!entry.getValue().equals(other.tagsRequired.get(entry.getKey()))) return false;
+        for (Map.Entry<String, String> entry : tagsDisallowed.entrySet()) if (!entry.getValue().equals(other.tagsDisallowed.get(entry.getKey()))) return false;
+
+        return true;
+    }
 }
