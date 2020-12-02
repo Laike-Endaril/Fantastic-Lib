@@ -41,4 +41,13 @@ public class GUIConfig
             })
     @Config.RangeDouble(min = 1.1, max = 4)
     public double zoomRate = 1.2;
+
+    @Config.Name("Per-GUI Scaling")
+    @Config.LangKey(MODID + ".config.perGUIScaling")
+    @Config.Comment(
+            {
+                    "The scaling for each applicable GUI.",
+                    "Applicable GUIs should show up here automatically if they've been accessed at least once.",
+            })
+    public String[] perGUIScaling = new String[0];
 }

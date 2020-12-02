@@ -35,6 +35,8 @@ fantasticlib.config.panButton=Pan (Mouse Button)
 fantasticlib.config.panButton.tooltip=FILLSCREEN Which mouse button pans the view in a pannable GUI view (hold and drag)\n \n
 fantasticlib.config.zoomRate=Zoom Rate
 fantasticlib.config.zoomRate.tooltip=FILLSCREEN How fast zoomable views zoom\n \n
+fantasticlib.config.perGUIScaling=Per-GUI Scaling
+fantasticlib.config.perGUIScaling.tooltip=FILLSCREEN The scaling for each applicable GUI\nApplicable GUIs should show up here automatically if they've been accessed at least once\n \n
 
 fantasticlib.config.rayBlockstateFilter=Blockstate Filter
 fantasticlib.config.rayBlockstateFilter.tooltip=FILLSCREEN Syntax is...\ndomain:name:meta, transparent\n\nEg...\nminecraft:stone:0, false\n \n

@@ -63,7 +63,7 @@ import static com.fantasticsource.tools.Tools.radtodeg;
 public class MCTools
 {
     public static final TrigLookupTable TRIG_TABLE = new TrigLookupTable(1024);
-    private static Field configManagerCONFIGSField, languageManagerCurrentLocaleField, localePropertiesField;
+    private static Field configManagerCONFIGSField, configurationChangedField, languageManagerCurrentLocaleField, localePropertiesField;
     private static boolean host = false;
 
     static
@@ -71,6 +71,8 @@ public class MCTools
         try
         {
             configManagerCONFIGSField = ReflectionTool.getField(ConfigManager.class, "CONFIGS");
+            configurationChangedField = ReflectionTool.getField(Configuration.class, "changed");
+
             if (FantasticLib.isClient)
             {
                 languageManagerCurrentLocaleField = ReflectionTool.getField(LanguageManager.class, "field_135049_a", "CURRENT_LOCALE");
@@ -809,6 +811,14 @@ public class MCTools
     public static Configuration getConfig(String modid) throws IllegalAccessException
     {
         return ((Map<String, Configuration>) configManagerCONFIGSField.get(null)).get(getConfigDir() + modid + ".cfg");
+    }
+
+    public static void saveConfig(String modid) throws IllegalAccessException
+    {
+        Configuration config = getConfig(modid);
+        ReflectionTool.set(configurationChangedField, config, true);
+        ConfigManager.sync(modid, Config.Type.INSTANCE);
+        config.save();
     }
 
     public static void reloadConfig(String modid) throws IllegalAccessException
