@@ -45,7 +45,6 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
@@ -602,7 +601,17 @@ public class MCTools
 
     public static void playSimpleSoundAtPosition(ResourceLocation rl, int dimension, double x, double y, double z, double maxDistance, int attenuationType, float volume, float pitch, SoundCategory soundCategory)
     {
-        Network.WRAPPER.sendToAllAround(new Network.PlaySimpleSoundPacket(rl, (float) x, (float) y, (float) z, attenuationType, volume, pitch, soundCategory), new NetworkRegistry.TargetPoint(dimension, x, y, z, maxDistance));
+        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+        double maxDistSquared = maxDistance * maxDistance;
+        Vec3d pos = new Vec3d(x, y, z);
+
+        for (EntityPlayerMP playerMP : server.getPlayerList().getPlayers())
+        {
+            if (playerMP.dimension == dimension && playerMP.getPositionVector().squareDistanceTo(pos) < maxDistSquared)
+            {
+                Network.WRAPPER.sendTo(new Network.PlaySimpleSoundPacket(rl, (float) x, (float) y, (float) z, attenuationType, volume, pitch, soundCategory), playerMP);
+            }
+        }
     }
 
 
