@@ -560,62 +560,147 @@ public class MCTools
     }
 
 
-    public static void playSimpleSoundForSpecificClient(EntityPlayerMP player, ResourceLocation rl)
+    public static void playSimpleSoundForAll(ResourceLocation rl)
     {
-        Network.WRAPPER.sendTo(new Network.PlaySimpleSoundPacket(rl), player);
+        playSimpleSoundForSpecific(rl, FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers().toArray(new EntityPlayerMP[0]));
     }
 
-    public static void playSimpleSound(ResourceLocation rl)
+    public static void playSimpleSoundForAll(ResourceLocation rl, Entity entity)
     {
-        playSimpleSoundAtEntityPosition(rl, null);
+        playSimpleSoundForSpecific(rl, entity, FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers().toArray(new EntityPlayerMP[0]));
     }
 
-    public static void playSimpleSoundAtEntityPosition(ResourceLocation rl, Entity entity)
+    public static void playSimpleSoundForAll(ResourceLocation rl, Entity entity, double maxDistance)
     {
-        playSimpleSoundAtEntityPosition(rl, entity, 16);
+        playSimpleSoundForSpecific(rl, entity, maxDistance, FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers().toArray(new EntityPlayerMP[0]));
     }
 
-    public static void playSimpleSoundAtEntityPosition(ResourceLocation rl, Entity entity, double maxDistance)
+    public static void playSimpleSoundForAll(ResourceLocation rl, Entity entity, double maxDistance, int attenuationType, float volume, float pitch)
     {
-        playSimpleSoundAtEntityPosition(rl, entity, maxDistance, 2, 1, 1);
+        playSimpleSoundForSpecific(rl, entity, maxDistance, attenuationType, volume, pitch, FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers().toArray(new EntityPlayerMP[0]));
     }
 
-    public static void playSimpleSoundAtEntityPosition(ResourceLocation rl, Entity entity, double maxDistance, int attenuationType, float volume, float pitch)
+    public static void playSimpleSoundForAll(ResourceLocation rl, Entity entity, double maxDistance, int attenuationType, float volume, float pitch, SoundCategory soundCategory)
     {
-        playSimpleSoundAtEntityPosition(rl, entity, maxDistance, attenuationType, volume, pitch, SoundCategory.MASTER);
+        playSimpleSoundForSpecific(rl, entity, maxDistance, attenuationType, volume, pitch, soundCategory, FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers().toArray(new EntityPlayerMP[0]));
     }
 
-    public static void playSimpleSoundAtEntityPosition(ResourceLocation rl, Entity entity, double maxDistance, int attenuationType, float volume, float pitch, SoundCategory soundCategory)
+    public static void playSimpleSoundForAll(ResourceLocation rl, int dimension, double x, double y, double z)
     {
-        playSimpleSoundAtPosition(rl, entity.dimension, entity.posX, entity.posY, entity.posZ, maxDistance, attenuationType, volume, pitch, soundCategory);
+        playSimpleSoundForSpecific(rl, dimension, x, y, z, FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers().toArray(new EntityPlayerMP[0]));
     }
 
-    public static void playSimpleSoundAtPosition(ResourceLocation rl, int dimension, double x, double y, double z)
+    public static void playSimpleSoundForAll(ResourceLocation rl, int dimension, double x, double y, double z, double maxDistance)
     {
-        playSimpleSoundAtPosition(rl, dimension, x, y, z, 16);
+        playSimpleSoundForSpecific(rl, dimension, x, y, z, maxDistance, FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers().toArray(new EntityPlayerMP[0]));
     }
 
-    public static void playSimpleSoundAtPosition(ResourceLocation rl, int dimension, double x, double y, double z, double maxDistance)
+    public static void playSimpleSoundForAll(ResourceLocation rl, int dimension, double x, double y, double z, double maxDistance, int attenuationType, float volume, float pitch)
     {
-        playSimpleSoundAtPosition(rl, dimension, x, y, z, maxDistance, 2, 1, 1);
+        playSimpleSoundForSpecific(rl, dimension, x, y, z, maxDistance, attenuationType, volume, pitch, FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers().toArray(new EntityPlayerMP[0]));
     }
 
-    public static void playSimpleSoundAtPosition(ResourceLocation rl, int dimension, double x, double y, double z, double maxDistance, int attenuationType, float volume, float pitch)
+    public static void playSimpleSoundForAll(ResourceLocation rl, int dimension, double x, double y, double z, double maxDistance, int attenuationType, float volume, float pitch, SoundCategory soundCategory)
     {
-        playSimpleSoundAtPosition(rl, dimension, x, y, z, maxDistance, attenuationType, volume, pitch, SoundCategory.MASTER);
+        playSimpleSoundForSpecific(rl, dimension, x, y, z, maxDistance, attenuationType, volume, pitch, soundCategory, FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers().toArray(new EntityPlayerMP[0]));
     }
 
-    public static void playSimpleSoundAtPosition(ResourceLocation rl, int dimension, double x, double y, double z, double maxDistance, int attenuationType, float volume, float pitch, SoundCategory soundCategory)
+
+    public static void playSimpleSoundForSpecific(ResourceLocation rl, EntityPlayerMP... players)
     {
-        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+        for (EntityPlayerMP player : players) Network.WRAPPER.sendTo(new Network.PlaySimpleSoundPacket(rl), player);
+    }
+
+    public static void playSimpleSoundForSpecific(ResourceLocation rl, Entity following, EntityPlayerMP... players)
+    {
+        playSimpleSoundForSpecific(rl, following, 16, players);
+    }
+
+    public static void playSimpleSoundForSpecific(ResourceLocation rl, Entity following, double maxDistance, EntityPlayerMP... players)
+    {
+        double maxDistSquared = maxDistance * maxDistance;
+        Vec3d pos = following == null ? null : new Vec3d(following.posX, following.posY, following.posZ);
+
+        for (EntityPlayerMP player : players)
+        {
+            if (following == null || (player.dimension == following.dimension && player.getPositionVector().squareDistanceTo(pos) < maxDistSquared))
+            {
+                Network.WRAPPER.sendTo(new Network.PlaySimpleSoundPacket(rl, following), player);
+            }
+        }
+    }
+
+    public static void playSimpleSoundForSpecific(ResourceLocation rl, Entity following, double maxDistance, int attenuationType, float volume, float pitch, EntityPlayerMP... players)
+    {
+        double maxDistSquared = maxDistance * maxDistance;
+        Vec3d pos = new Vec3d(following.posX, following.posY, following.posZ);
+
+        for (EntityPlayerMP player : players)
+        {
+            if (player.dimension == following.dimension && player.getPositionVector().squareDistanceTo(pos) < maxDistSquared)
+            {
+                Network.WRAPPER.sendTo(new Network.PlaySimpleSoundPacket(rl, following, attenuationType, volume, pitch), player);
+            }
+        }
+    }
+
+    public static void playSimpleSoundForSpecific(ResourceLocation rl, Entity following, double maxDistance, int attenuationType, float volume, float pitch, SoundCategory soundCategory, EntityPlayerMP... players)
+    {
+        double maxDistSquared = maxDistance * maxDistance;
+        Vec3d pos = new Vec3d(following.posX, following.posY, following.posZ);
+
+        for (EntityPlayerMP player : players)
+        {
+            if (player.dimension == following.dimension && player.getPositionVector().squareDistanceTo(pos) < maxDistSquared)
+            {
+                Network.WRAPPER.sendTo(new Network.PlaySimpleSoundPacket(rl, following, attenuationType, volume, pitch, soundCategory), player);
+            }
+        }
+    }
+
+    public static void playSimpleSoundForSpecific(ResourceLocation rl, int dimension, double x, double y, double z, EntityPlayerMP... players)
+    {
+        playSimpleSoundForSpecific(rl, dimension, x, y, z, 16, players);
+    }
+
+    public static void playSimpleSoundForSpecific(ResourceLocation rl, int dimension, double x, double y, double z, double maxDistance, EntityPlayerMP... players)
+    {
         double maxDistSquared = maxDistance * maxDistance;
         Vec3d pos = new Vec3d(x, y, z);
 
-        for (EntityPlayerMP playerMP : server.getPlayerList().getPlayers())
+        for (EntityPlayerMP player : players)
         {
-            if (playerMP.dimension == dimension && playerMP.getPositionVector().squareDistanceTo(pos) < maxDistSquared)
+            if (player.dimension == dimension && player.getPositionVector().squareDistanceTo(pos) < maxDistSquared)
             {
-                Network.WRAPPER.sendTo(new Network.PlaySimpleSoundPacket(rl, (float) x, (float) y, (float) z, attenuationType, volume, pitch, soundCategory), playerMP);
+                Network.WRAPPER.sendTo(new Network.PlaySimpleSoundPacket(rl, (float) x, (float) y, (float) z), player);
+            }
+        }
+    }
+
+    public static void playSimpleSoundForSpecific(ResourceLocation rl, int dimension, double x, double y, double z, double maxDistance, int attenuationType, float volume, float pitch, EntityPlayerMP... players)
+    {
+        double maxDistSquared = maxDistance * maxDistance;
+        Vec3d pos = new Vec3d(x, y, z);
+
+        for (EntityPlayerMP player : players)
+        {
+            if (player.dimension == dimension && player.getPositionVector().squareDistanceTo(pos) < maxDistSquared)
+            {
+                Network.WRAPPER.sendTo(new Network.PlaySimpleSoundPacket(rl, (float) x, (float) y, (float) z, attenuationType, volume, pitch), player);
+            }
+        }
+    }
+
+    public static void playSimpleSoundForSpecific(ResourceLocation rl, int dimension, double x, double y, double z, double maxDistance, int attenuationType, float volume, float pitch, SoundCategory soundCategory, EntityPlayerMP... players)
+    {
+        double maxDistSquared = maxDistance * maxDistance;
+        Vec3d pos = new Vec3d(x, y, z);
+
+        for (EntityPlayerMP player : players)
+        {
+            if (player.dimension == dimension && player.getPositionVector().squareDistanceTo(pos) < maxDistSquared)
+            {
+                Network.WRAPPER.sendTo(new Network.PlaySimpleSoundPacket(rl, (float) x, (float) y, (float) z, attenuationType, volume, pitch, soundCategory), player);
             }
         }
     }
