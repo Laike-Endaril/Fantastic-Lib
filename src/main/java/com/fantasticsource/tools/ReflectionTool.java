@@ -79,9 +79,8 @@ public class ReflectionTool
         }
         catch (ClassNotFoundException e)
         {
-            MCTools.crash(e, false);
+            return null;
         }
-        return null;
     }
 
     public static Class getInternalClass(Class classType, String... possibleInternalClassNames)
