@@ -172,35 +172,35 @@ public class Render
         FloatBuffer projection = getStoredProjectionMatrix();
         IntBuffer viewport = getStoredViewportMatrix();
 
-        float[] in = new float[4];
-        float[] out = new float[4];
+        float[] v4f = new float[4];
+        float[] tempV4f = new float[4];
 
-        in[0] = (float) (x - px);
-        in[1] = (float) (y - py);
-        in[2] = (float) (z - pz);
-        in[3] = 1.0f;
+        v4f[0] = (float) (x - px);
+        v4f[1] = (float) (y - py);
+        v4f[2] = (float) (z - pz);
+        v4f[3] = 1.0f;
 
-        multMatrix(modelView, in, out);
-        multMatrix(projection, out, in);
+        multMatrix(modelView, v4f, tempV4f);
+        multMatrix(projection, tempV4f, v4f);
 
         //Added this note after I forgot this stuff, but I think this means the point is *ON* the near plane
-        if (in[3] == 0.0) return null; //TODO handle this without returning null if possible
+        if (v4f[3] == 0.0) return null; //TODO handle this without returning null if possible
 
-        in[3] = (1.0f / in[3]) * 0.5f;
+        v4f[3] = (1.0f / v4f[3]) * 0.5f;
 
-        boolean behind = in[3] < 0;
+        boolean behind = v4f[3] < 0;
         if (behind)
         {
             //Offscreen, hehind znear plane
-            in[0] = -in[0];
-            in[1] = -in[1];
+            v4f[0] = -v4f[0];
+            v4f[1] = -v4f[1];
         }
 
         //x and y are between -0.5 and 0.5 if on window
-        in[0] = in[0] * in[3];
-        in[1] = in[1] * in[3];
+        v4f[0] = v4f[0] * v4f[3];
+        v4f[1] = v4f[1] * v4f[3];
 
-        float scaleFactor = behind ? Math.abs(in[0] * 2) : Tools.max(Math.abs(in[0] * 2), Math.abs(in[1] * 2));
+        float scaleFactor = behind ? Math.abs(v4f[0] * 2) : Tools.max(Math.abs(v4f[0] * 2), Math.abs(v4f[1] * 2));
         //The line above this comment is for games that have pitch rotation limited to +/-(90*) or close to it (it's usually technically less than 90 to prevent some mathematical issues)
         //The line below this comment is what you would use in games that do not have said limitation; eg. many flying games, especially space-themed ones
 //        float scaleFactor = Tools.max(Math.abs(in[0] * 2), Math.abs(in[1] * 2));
@@ -208,13 +208,13 @@ public class Render
         if (behind || scaleFactor > 1)
         {
             //If offscreen, scale both x and y so that the maximum of the 2 is on the edge of the window
-            in[0] /= scaleFactor;
-            in[1] /= scaleFactor;
+            v4f[0] /= scaleFactor;
+            v4f[1] /= scaleFactor;
         }
 
         //Map x,y to viewport
-        float xx = (0.5f + in[0]) * viewport.get(2) + viewport.get(0);
-        float yy = (0.5f - in[1]) * viewport.get(3) + viewport.get(1);
+        float xx = (0.5f + v4f[0]) * viewport.get(2) + viewport.get(0);
+        float yy = (0.5f - v4f[1]) * viewport.get(3) + viewport.get(1);
 
         return new Pair<>(xx, yy);
     }
