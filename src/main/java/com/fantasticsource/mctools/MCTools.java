@@ -564,6 +564,11 @@ public class MCTools
         Network.WRAPPER.sendTo(new Network.PlaySimpleSoundPacket(rl), player);
     }
 
+    public static void playSimpleSound(ResourceLocation rl)
+    {
+        playSimpleSoundAtEntityPosition(rl, null);
+    }
+
     public static void playSimpleSoundAtEntityPosition(ResourceLocation rl, Entity entity)
     {
         playSimpleSoundAtEntityPosition(rl, entity, 16);
@@ -581,6 +586,7 @@ public class MCTools
 
     public static void playSimpleSoundAtEntityPosition(ResourceLocation rl, Entity entity, double maxDistance, int attenuationType, float volume, float pitch, SoundCategory soundCategory)
     {
+        if (entity == null) entity = Minecraft.getMinecraft().player;
         playSimpleSoundAtPosition(rl, entity.dimension, entity.posX, entity.posY, entity.posZ, maxDistance, attenuationType, volume, pitch, soundCategory);
     }
 
