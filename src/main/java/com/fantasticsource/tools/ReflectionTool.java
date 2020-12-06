@@ -53,6 +53,16 @@ public class ReflectionTool
 
     public static Method getMethod(boolean printFound, Class classType, String... possibleMethodNames)
     {
+        return getMethod(printFound, classType, null, possibleMethodNames);
+    }
+
+    public static Method getMethod(Class classType, Class[] parameterTypes, String... possibleMethodNames)
+    {
+        return getMethod(false, classType, parameterTypes, possibleMethodNames);
+    }
+
+    public static Method getMethod(boolean printFound, Class classType, Class[] parameterTypes, String... possibleMethodNames)
+    {
         Method[] methods = classType.getDeclaredMethods();
         for (Method method : methods)
         {
@@ -60,9 +70,25 @@ public class ReflectionTool
             {
                 if (method.getName().equals(name))
                 {
-                    method.setAccessible(true);
-                    if (printFound) System.out.println(name);
-                    return method;
+                    if (parameterTypes == null)
+                    {
+                        method.setAccessible(true);
+                        if (printFound) System.out.println(name);
+                        return method;
+                    }
+
+                    if (parameterTypes.length != method.getParameters().length) continue;
+                    boolean found = true;
+                    Class[] methodParamTypes = method.getParameterTypes();
+                    for (int i = 0; i < parameterTypes.length; i++)
+                    {
+                        if (!parameterTypes[i].equals(methodParamTypes[i]))
+                        {
+                            found = false;
+                            break;
+                        }
+                    }
+                    if (found) return method;
                 }
             }
         }
