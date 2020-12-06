@@ -560,61 +560,51 @@ public class MCTools
     }
 
 
-    public static void playSimpleSoundOnClient(EntityPlayerMP player, ResourceLocation rl)
+    public static void playSimpleSoundForSpecificClient(EntityPlayerMP player, ResourceLocation rl)
     {
         Network.WRAPPER.sendTo(new Network.PlaySimpleSoundPacket(rl), player);
     }
 
-    @SideOnly(Side.CLIENT)
     public static void playSimpleSound(ResourceLocation rl)
     {
         playSimpleSoundAtEntityPosition(rl, null);
     }
 
-    @SideOnly(Side.CLIENT)
     public static void playSimpleSoundAtEntityPosition(ResourceLocation rl, Entity entity)
     {
         playSimpleSoundAtEntityPosition(rl, entity, 16);
     }
 
-    @SideOnly(Side.CLIENT)
     public static void playSimpleSoundAtEntityPosition(ResourceLocation rl, Entity entity, double maxDistance)
     {
         playSimpleSoundAtEntityPosition(rl, entity, maxDistance, 2, 1, 1);
     }
 
-    @SideOnly(Side.CLIENT)
     public static void playSimpleSoundAtEntityPosition(ResourceLocation rl, Entity entity, double maxDistance, int attenuationType, float volume, float pitch)
     {
         playSimpleSoundAtEntityPosition(rl, entity, maxDistance, attenuationType, volume, pitch, SoundCategory.MASTER);
     }
 
-    @SideOnly(Side.CLIENT)
     public static void playSimpleSoundAtEntityPosition(ResourceLocation rl, Entity entity, double maxDistance, int attenuationType, float volume, float pitch, SoundCategory soundCategory)
     {
-        if (entity == null) entity = Minecraft.getMinecraft().player;
         playSimpleSoundAtPosition(rl, entity.dimension, entity.posX, entity.posY, entity.posZ, maxDistance, attenuationType, volume, pitch, soundCategory);
     }
 
-    @SideOnly(Side.CLIENT)
     public static void playSimpleSoundAtPosition(ResourceLocation rl, int dimension, double x, double y, double z)
     {
         playSimpleSoundAtPosition(rl, dimension, x, y, z, 16);
     }
 
-    @SideOnly(Side.CLIENT)
     public static void playSimpleSoundAtPosition(ResourceLocation rl, int dimension, double x, double y, double z, double maxDistance)
     {
         playSimpleSoundAtPosition(rl, dimension, x, y, z, maxDistance, 2, 1, 1);
     }
 
-    @SideOnly(Side.CLIENT)
     public static void playSimpleSoundAtPosition(ResourceLocation rl, int dimension, double x, double y, double z, double maxDistance, int attenuationType, float volume, float pitch)
     {
         playSimpleSoundAtPosition(rl, dimension, x, y, z, maxDistance, attenuationType, volume, pitch, SoundCategory.MASTER);
     }
 
-    @SideOnly(Side.CLIENT)
     public static void playSimpleSoundAtPosition(ResourceLocation rl, int dimension, double x, double y, double z, double maxDistance, int attenuationType, float volume, float pitch, SoundCategory soundCategory)
     {
         MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
