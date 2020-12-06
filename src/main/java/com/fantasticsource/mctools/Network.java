@@ -72,7 +72,7 @@ public class Network
             z = null;
 
             this.rl.set(rl);
-            this.followingID = following.getEntityId();
+            this.followingID = following == null ? null : following.getEntityId();
             this.attenuationType = attenuationType;
             this.volume = volume;
             this.pitch = pitch;
