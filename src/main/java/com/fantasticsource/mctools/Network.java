@@ -12,7 +12,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -159,15 +158,8 @@ public class Network
 
                 if (packet.followingID != null)
                 {
-                    for (WorldServer world : FMLCommonHandler.instance().getMinecraftServerInstance().worlds)
-                    {
-                        Entity following = world.getEntityByID(packet.followingID);
-                        if (following != null)
-                        {
-                            simpleSound = new SimpleSound(packet.rl.value, packet.soundCategory, following);
-                            break;
-                        }
-                    }
+                    Entity following = Minecraft.getMinecraft().world.getEntityByID(packet.followingID);
+                    if (following != null) simpleSound = new SimpleSound(packet.rl.value, packet.soundCategory, following);
                 }
                 else if (packet.x != null) simpleSound = new SimpleSound(packet.rl.value, packet.soundCategory, packet.x, packet.y, packet.z);
                 else simpleSound = new SimpleSound(packet.rl.value, packet.soundCategory);
