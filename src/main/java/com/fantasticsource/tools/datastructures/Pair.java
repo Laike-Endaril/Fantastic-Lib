@@ -50,4 +50,13 @@ public class Pair<K, V>
     {
         return obj1 == null ? obj2 == null : obj1.equals(obj2);
     }
+
+    @Override
+    public int hashCode()
+    {
+        if (key == null && value == null) return 0;
+        if (value == null) return key.hashCode();
+        if (key == null) return -value.hashCode();
+        return key.hashCode() - value.hashCode();
+    }
 }
