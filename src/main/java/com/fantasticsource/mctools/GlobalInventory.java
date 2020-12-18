@@ -361,7 +361,7 @@ public class GlobalInventory
             int emptiesFound = 0;
             for (ItemStack stack : entity.getHeldEquipment())
             {
-                if (stack == ItemStack.EMPTY && ++emptiesFound > 1) result.add(stack);
+                if (stack != ItemStack.EMPTY || ++emptiesFound > 1) result.add(stack);
             }
         }
         else for (ItemStack stack : entity.getHeldEquipment())
