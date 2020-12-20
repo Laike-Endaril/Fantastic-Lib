@@ -314,7 +314,7 @@ public class GlobalInventory
             int slot = 0;
             for (ItemStack stack : GlobalInventory.getAllTiamatItems(player))
             {
-                if (!Slottings.slotValidForSlotting(getItemSlotting(stack), slot + Slottings.TIAMAT_OFFSET, player)) continue;
+                if (!Slottings.slotValidForSlotting(getItemSlotting(stack), slot++ + Slottings.TIAMAT_OFFSET, player)) continue;
 
                 result.add(stack);
             }
