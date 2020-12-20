@@ -2,6 +2,7 @@ package com.fantasticsource.mctools.event;
 
 import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.tools.datastructures.Pair;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.GameType;
@@ -11,6 +12,9 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -35,7 +39,7 @@ public class GametypeChangedEvent extends Event
     }
 
     @SubscribeEvent
-    public static void playerLogoff(PlayerEvent.PlayerLoggedOutEvent event)
+    public static void playerLogoffServer(PlayerEvent.PlayerLoggedOutEvent event)
     {
         GameType oldGameType = PLAYER_GAMETYPES.remove(new Pair<>(event.player.getPersistentID(), event.player instanceof EntityPlayerMP));
         if (oldGameType != null) MinecraftForge.EVENT_BUS.post(new GametypeChangedEvent(event.player, oldGameType, null));
@@ -59,5 +63,14 @@ public class GametypeChangedEvent extends Event
             PLAYER_GAMETYPES.put(pair, newGameType);
             MinecraftForge.EVENT_BUS.post(new GametypeChangedEvent(player, oldGameType, newGameType));
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent
+    public static void playerLogoffClient(FMLNetworkEvent.ClientDisconnectionFromServerEvent event)
+    {
+        EntityPlayer player = Minecraft.getMinecraft().player;
+        GameType oldGameType = PLAYER_GAMETYPES.remove(new Pair<>(player.getPersistentID(), false));
+        if (oldGameType != null) MinecraftForge.EVENT_BUS.post(new GametypeChangedEvent(player, oldGameType, null));
     }
 }
