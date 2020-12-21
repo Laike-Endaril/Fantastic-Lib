@@ -3,6 +3,7 @@ package com.fantasticsource.mctools.gui.element.view;
 import com.fantasticsource.fantasticlib.config.FantasticConfig;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
+import com.fantasticsource.tools.Tools;
 import net.minecraft.client.renderer.GlStateManager;
 
 public class GUIPanZoomView extends GUIView
@@ -23,6 +24,7 @@ public class GUIPanZoomView extends GUIView
         }
 
         recalc(0);
+        focus(null);
     }
 
     public GUIPanZoomView(GUIScreen screen, double x, double y, double width, double height, GUIElement... subElements)
@@ -70,6 +72,33 @@ public class GUIPanZoomView extends GUIView
 
     public void focus(GUIElement child)
     {
+        if (child == null)
+        {
+            double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE, maxX = -Double.MAX_VALUE, maxY = -Double.MAX_VALUE;
+            for (GUIElement child2 : children)
+            {
+                if (child2.x < minX) minX = child2.x;
+                if (child2.y < minY) minY = child2.y;
+                if (child2.x + child2.width > maxX) maxX = child2.x + child2.width;
+                if (child2.y + child2.height > maxY) maxY = child2.y + child2.height;
+            }
+
+            if (minX == Double.MAX_VALUE || minX == maxX)
+            {
+                viewX = 0;
+                viewY = 0;
+                zoom = 1;
+            }
+            else
+            {
+                viewX = minX;
+                viewY = minY;
+                zoom = 1 / Tools.max(maxX - minX, maxY - minY);
+            }
+
+            return;
+        }
+
         while (!children.contains(child) && child.parent != this && child.parent != null)
         {
             child = child.parent;
