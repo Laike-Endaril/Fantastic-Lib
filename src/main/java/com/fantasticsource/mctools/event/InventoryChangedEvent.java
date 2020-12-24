@@ -70,6 +70,7 @@ public class InventoryChangedEvent extends EntityEvent
         if (event.side == Side.CLIENT || event.phase == TickEvent.Phase.END) return;
 
 
+        event.world.profiler.startSection("Fantastic Lib: InventoryChangedEvent overhead");
         previousContents.entrySet().removeIf(entry ->
         {
             Entity entity = entry.getKey();
@@ -97,10 +98,14 @@ public class InventoryChangedEvent extends EntityEvent
             oldInventory = previousContents.get(entity);
             if (oldInventory == null || !oldInventory.equals(newInventory))
             {
-                MinecraftForge.EVENT_BUS.post(new InventoryChangedEvent(entity, oldInventory, newInventory));
+                InventoryChangedEvent event1 = new InventoryChangedEvent(entity, oldInventory, newInventory);
+                event.world.profiler.endStartSection("Fantastic Lib: InventoryChangedEvent listeners");
+                MinecraftForge.EVENT_BUS.post(event1);
+                event.world.profiler.endStartSection("Fantastic Lib: InventoryChangedEvent overhead");
                 previousContents.put(entity, newInventory.deepCopy());
             }
         }
+        event.world.profiler.endSection();
     }
 
     public static class GlobalInventoryData
