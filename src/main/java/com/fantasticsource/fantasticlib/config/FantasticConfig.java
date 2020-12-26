@@ -17,6 +17,14 @@ public class FantasticConfig
     @Config.RequiresMcRestart
     public static boolean entityRenderFixer = false;
 
+    @Config.Name("Use Inventory Desync Fixer")
+    @Config.LangKey(MODID + ".config.inventoryDesyncFixer")
+    @Config.Comment(
+            {
+                    "If enabled, runs some code to synchronize inventory to client when it changes server-side"
+            })
+    public static boolean inventoryDesyncFixer = false;
+
     @Config.Name("GUI Settings")
     @Config.LangKey(MODID + ".config.guiSettings")
     public static GUIConfig guiSettings = new GUIConfig();

@@ -9,11 +9,13 @@ import com.fantasticsource.mctools.aw.TransientAWSkinHandler;
 import com.fantasticsource.mctools.data.CModpackDataHandler;
 import com.fantasticsource.mctools.data.CWorldDataHandler;
 import com.fantasticsource.mctools.event.GametypeChangedEvent;
+import com.fantasticsource.mctools.event.InventoryChangedEvent;
 import com.fantasticsource.mctools.gui.screen.TestGUI;
 import com.fantasticsource.mctools.nbtcap.NBTCap;
 import com.fantasticsource.mctools.nbtcap.NBTCapStorage;
 import com.fantasticsource.tools.ReflectionTool;
 import com.fantasticsource.tools.datastructures.ColorImmutable;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -144,6 +146,24 @@ public class FantasticLib
         CWorldDataHandler.clear(event);
         GametypeChangedEvent.PLAYER_GAMETYPES.clear();
     }
+
+    @SubscribeEvent
+    public static void inventorySyncFix(InventoryChangedEvent event)
+    {
+        if (event.getEntity() instanceof EntityPlayerMP)
+        {
+            EntityPlayerMP player = (EntityPlayerMP) event.getEntity();
+            player.sendAllContents(player.inventoryContainer, player.inventoryContainer.getInventory());
+            player.inventoryContainer.detectAndSendChanges();
+
+            if (player.openContainer != null && player.openContainer != player.inventoryContainer)
+            {
+                player.sendAllContents(player.openContainer, player.openContainer.getInventory());
+                player.openContainer.detectAndSendChanges();
+            }
+        }
+    }
+
 //
 //    private static CPathLinear path = new CPathLinear(new VectorN(.05, 0, 0));
 //
