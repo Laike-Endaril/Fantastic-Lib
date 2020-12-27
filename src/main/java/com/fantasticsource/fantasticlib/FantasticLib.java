@@ -150,16 +150,19 @@ public class FantasticLib
     @SubscribeEvent
     public static void inventorySyncFix(InventoryChangedEvent event)
     {
-        if (event.getEntity() instanceof EntityPlayerMP)
+        if (FantasticConfig.inventoryDesyncFixer && event.getEntity() instanceof EntityPlayerMP)
         {
             EntityPlayerMP player = (EntityPlayerMP) event.getEntity();
-            player.sendAllContents(player.inventoryContainer, player.inventoryContainer.getInventory());
-            player.inventoryContainer.detectAndSendChanges();
-
-            if (player.openContainer != null && player.openContainer != player.inventoryContainer)
+            if (!player.isCreative())
             {
-                player.sendAllContents(player.openContainer, player.openContainer.getInventory());
-                player.openContainer.detectAndSendChanges();
+                player.sendAllContents(player.inventoryContainer, player.inventoryContainer.getInventory());
+                player.inventoryContainer.detectAndSendChanges();
+
+                if (player.openContainer != null && player.openContainer != player.inventoryContainer)
+                {
+                    player.sendAllContents(player.openContainer, player.openContainer.getInventory());
+                    player.openContainer.detectAndSendChanges();
+                }
             }
         }
     }
