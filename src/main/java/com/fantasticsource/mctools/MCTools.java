@@ -426,15 +426,7 @@ public class MCTools
 
     public static ItemStack cloneItemStack(ItemStack stack)
     {
-        try
-        {
-            return new ItemStack(JsonToNBT.getTagFromJson(stack.serializeNBT().toString()));
-        }
-        catch (NBTException e)
-        {
-            e.printStackTrace();
-            return ItemStack.EMPTY;
-        }
+        return new ItemStack(stack.serializeNBT());
     }
 
 
