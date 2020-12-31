@@ -30,7 +30,7 @@ public class Slottings
         SLOTS_VANILLA.add("Armor");
 
         SLOTS_VANILLA.add("Hotbar");
-        SLOTS_VANILLA.add("Inventory");
+        SLOTS_VANILLA.add("Cargo");
         SLOTS_VANILLA.add("Any");
 
 

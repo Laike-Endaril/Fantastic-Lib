@@ -121,10 +121,10 @@ public class GlobalInventory
             list = new ArrayList<>();
         }
 
-        list.addAll(getVanillaOtherInventoryItems(entity));
+        list.addAll(getVanillaCargoItems(entity));
         if (list.size() > 0)
         {
-            result.put("Vanilla Other Inventory", list);
+            result.put("Vanilla Cargo", list);
             list = new ArrayList<>();
         }
 
@@ -390,10 +390,10 @@ public class GlobalInventory
             if (slotting.equals("Feet") || slotting.equals("Armor") || slotting.equals("Any")) result.add(stack2);
         }
 
-        for (ItemStack stack : getVanillaOtherInventoryItems(entity))
+        for (ItemStack stack : getVanillaCargoItems(entity))
         {
             String slotting = Slottings.getItemSlotting(stack);
-            if (slotting.equals("Inventory") || slotting.equals("Any")) result.add(stack);
+            if (slotting.equals("Cargo") || slotting.equals("Any")) result.add(stack);
         }
 
 
@@ -547,7 +547,7 @@ public class GlobalInventory
         result.addAll(getVanillaOffhandItems(entity));
         result.addAll(getVanillaHotbarItems(entity, false, true));
         result.addAll(getVanillaArmorItems(entity));
-        result.addAll(getVanillaOtherInventoryItems(entity));
+        result.addAll(getVanillaCargoItems(entity));
 
         return result;
     }
@@ -683,7 +683,7 @@ public class GlobalInventory
         entity.setItemStackToSlot(EntityEquipmentSlot.FEET, stack);
     }
 
-    public static ArrayList<ItemStack> getVanillaOtherInventoryItems(Entity entity)
+    public static ArrayList<ItemStack> getVanillaCargoItems(Entity entity)
     {
         ArrayList<ItemStack> result = new ArrayList<>();
         if (!(entity instanceof EntityPlayer)) return result;
