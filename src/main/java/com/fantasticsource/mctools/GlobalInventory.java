@@ -42,11 +42,7 @@ public class GlobalInventory
         ArrayList<ItemStack> result = new ArrayList<>();
 
         //Vanilla
-        ItemStack stack = getVanillaMainhandItem(entity);
-        if (stack != null) result.add(stack);
-        result.addAll(getVanillaOffhandItems(entity));
-        result.addAll(getVanillaArmorItems(entity));
-        result.addAll(getVanillaOtherInventoryItems(entity));
+        result.addAll(getVanillaItems(entity));
 
         //Baubles
         result.addAll(getBaubles(entity));
@@ -72,9 +68,6 @@ public class GlobalInventory
     {
         ArrayList<ItemStack> result = new ArrayList<>();
 
-        //Sheathed status
-        ITiamatPlayerInventory tiamatInventory = getTiamatInventory(entity);
-
         //Vanilla
         ItemStack stack = getVanillaMainhandItem(entity);
         if (stack != null) result.add(stack);
@@ -85,7 +78,7 @@ public class GlobalInventory
         result.addAll(getBaubles(entity));
 
         //Tiamat Inventory
-        tiamatInventory = getTiamatInventory(entity);
+        ITiamatPlayerInventory tiamatInventory = getTiamatInventory(entity);
         if (tiamatInventory != null) result.addAll(tiamatInventory.getAllEquippedItems());
 
         return result;
@@ -338,6 +331,19 @@ public class GlobalInventory
 
 
     //Vanilla
+
+    public static ArrayList<ItemStack> getVanillaItems(Entity entity)
+    {
+        ArrayList<ItemStack> result = new ArrayList<>();
+
+        ItemStack stack = getVanillaMainhandItem(entity);
+        if (stack != null) result.add(stack);
+        result.addAll(getVanillaOffhandItems(entity));
+        result.addAll(getVanillaArmorItems(entity));
+        result.addAll(getVanillaOtherInventoryItems(entity));
+
+        return result;
+    }
 
     public static ItemStack getVanillaMainhandItem(Entity entity)
     {
