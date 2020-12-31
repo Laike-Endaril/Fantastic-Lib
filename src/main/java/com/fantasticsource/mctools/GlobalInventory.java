@@ -1,5 +1,6 @@
 package com.fantasticsource.mctools;
 
+import baubles.api.BaubleType;
 import baubles.api.BaublesApi;
 import baubles.api.cap.IBaublesItemHandler;
 import com.fantasticsource.fantasticlib.Compat;
@@ -17,7 +18,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -91,10 +91,10 @@ public class GlobalInventory
 
 
         //Vanilla
-        ItemStack stack = getVanillaMainhandItem(entity);
-        if (stack != null)
+        ItemStack mainhand = getVanillaMainhandItem(entity);
+        if (mainhand != null)
         {
-            list.add(stack);
+            list.add(mainhand);
             result.put("Vanilla Mainhand", list);
             list = new ArrayList<>();
         }
@@ -103,6 +103,14 @@ public class GlobalInventory
         if (list.size() > 0)
         {
             result.put("Vanilla Offhands", list);
+            list = new ArrayList<>();
+        }
+
+        list.addAll(getVanillaHotbarItems(entity, false, true));
+        if (mainhand != null) list.remove(mainhand);
+        if (list.size() > 0)
+        {
+            result.put("Vanilla Hotbar (Minus Mainhand)", list);
             list = new ArrayList<>();
         }
 
@@ -122,10 +130,45 @@ public class GlobalInventory
 
 
         //Baubles
-        list.addAll(getBaubles(entity));
+        list.addAll(getBaublesAmulets(entity));
         if (list.size() > 0)
         {
-            result.put("Baubles Inventory", list);
+            result.put("Baubles Amulets", list);
+            list = new ArrayList<>();
+        }
+
+        list.addAll(getBaublesRings(entity));
+        if (list.size() > 0)
+        {
+            result.put("Baubles Rings", list);
+            list = new ArrayList<>();
+        }
+
+        list.addAll(getBaublesBelts(entity));
+        if (list.size() > 0)
+        {
+            result.put("Baubles Belts", list);
+            list = new ArrayList<>();
+        }
+
+        list.addAll(getBaublesHeadItems(entity));
+        if (list.size() > 0)
+        {
+            result.put("Baubles Head Items", list);
+            list = new ArrayList<>();
+        }
+
+        list.addAll(getBaublesBodyItems(entity));
+        if (list.size() > 0)
+        {
+            result.put("Baubles Body Items", list);
+            list = new ArrayList<>();
+        }
+
+        list.addAll(getBaublesCharms(entity));
+        if (list.size() > 0)
+        {
+            result.put("Baubles Charms", list);
             list = new ArrayList<>();
         }
 
@@ -134,6 +177,8 @@ public class GlobalInventory
         ITiamatPlayerInventory inventory = getTiamatInventory(entity);
         if (inventory != null)
         {
+            ItemStack stack;
+
             stack = getTiamatSheathedMainhand1(inventory);
             if (stack != null)
             {
@@ -275,58 +320,219 @@ public class GlobalInventory
         return result;
     }
 
-    public static ArrayList<ItemStack> getValidEquippedItems(EntityPlayer player)
+    public static ArrayList<ItemStack> getValidEquippedItems(Entity entity)
     {
         ArrayList<ItemStack> result = new ArrayList<>();
 
         //Vanilla slots
-        for (int slot = 0; slot < player.inventory.getSizeInventory(); slot++)
-        {
-            ItemStack stack = player.inventory.getStackInSlot(slot);
-            if (!Slottings.slotValidForSlotting(getItemSlotting(stack), slot, player)) continue;
+        ArrayList<ItemStack> offhands = getVanillaOffhandItems(entity);
+        int emptyHandsAvailable = 0;
+        for (ItemStack stack : offhands) if (stack.isEmpty()) emptyHandsAvailable++;
 
-            result.add(stack);
+        ItemStack mainhand = getVanillaMainhandItem(entity);
+        if (mainhand != null)
+        {
+            if (mainhand.isEmpty()) emptyHandsAvailable++;
+            else
+            {
+                String slotting = Slottings.getItemSlotting(mainhand);
+                if (slotting.equals("Mainhand") || slotting.equals("Hand") || slotting.equals("Hotbar") || slotting.equals("Any")) result.add(mainhand);
+                else if (slotting.equals("Tiamat 2H") && (emptyHandsAvailable > 0 || !Compat.tiamatinventory))
+                {
+                    result.add(mainhand);
+                    emptyHandsAvailable--;
+                }
+            }
         }
+
+        for (ItemStack stack : offhands)
+        {
+            String slotting = Slottings.getItemSlotting(stack);
+            if (slotting.equals("Offhand") || slotting.equals("Hand") || slotting.equals("Any")) result.add(stack);
+            else if (slotting.equals("Tiamat 2H") && (emptyHandsAvailable > 0 || !Compat.tiamatinventory))
+            {
+                result.add(stack);
+                emptyHandsAvailable--;
+            }
+        }
+
+        for (ItemStack stack : getVanillaHotbarItems(entity, false, true))
+        {
+            String slotting = Slottings.getItemSlotting(stack);
+            if (slotting.equals("Hotbar") || slotting.equals("Any")) result.add(stack);
+        }
+
+        ItemStack stack2 = getVanillaHeadItem(entity);
+        if (stack2 != null)
+        {
+            String slotting = Slottings.getItemSlotting(stack2);
+            if (slotting.equals("Head") || slotting.equals("Armor") || slotting.equals("Any")) result.add(stack2);
+        }
+
+        stack2 = getVanillaChestItem(entity);
+        if (stack2 != null)
+        {
+            String slotting = Slottings.getItemSlotting(stack2);
+            if (slotting.equals("Chest") || slotting.equals("Armor") || slotting.equals("Any")) result.add(stack2);
+        }
+
+        stack2 = getVanillaLegItem(entity);
+        if (stack2 != null)
+        {
+            String slotting = Slottings.getItemSlotting(stack2);
+            if (slotting.equals("Legs") || slotting.equals("Armor") || slotting.equals("Any")) result.add(stack2);
+        }
+
+        stack2 = getVanillaFootItem(entity);
+        if (stack2 != null)
+        {
+            String slotting = Slottings.getItemSlotting(stack2);
+            if (slotting.equals("Feet") || slotting.equals("Armor") || slotting.equals("Any")) result.add(stack2);
+        }
+
+        for (ItemStack stack : getVanillaOtherInventoryItems(entity))
+        {
+            String slotting = Slottings.getItemSlotting(stack);
+            if (slotting.equals("Inventory") || slotting.equals("Any")) result.add(stack);
+        }
+
 
         //Baubles slots
         if (Compat.baubles)
         {
-            IBaublesItemHandler inventory = BaublesApi.getBaublesHandler(player);
-            for (int slot = 0; slot < inventory.getSlots(); slot++)
+            for (ItemStack stack : getBaublesAmulets(entity))
             {
-                ItemStack stack = inventory.getStackInSlot(slot);
-                if (!Slottings.slotValidForSlotting(getItemSlotting(stack), slot + Slottings.BAUBLES_OFFSET, player)) continue;
+                String slotting = Slottings.getItemSlotting(stack);
+                if (slotting.equals("Baubles Amulet") || slotting.equals("Baubles Trinket") || slotting.equals("Any")) result.add(stack);
+            }
 
-                result.add(stack);
+            for (ItemStack stack : getBaublesRings(entity))
+            {
+                String slotting = Slottings.getItemSlotting(stack);
+                if (slotting.equals("Baubles Ring") || slotting.equals("Baubles Trinket") || slotting.equals("Any")) result.add(stack);
+            }
+
+            for (ItemStack stack : getBaublesBelts(entity))
+            {
+                String slotting = Slottings.getItemSlotting(stack);
+                if (slotting.equals("Baubles Belt") || slotting.equals("Baubles Trinket") || slotting.equals("Any")) result.add(stack);
+            }
+
+            for (ItemStack stack : getBaublesHeadItems(entity))
+            {
+                String slotting = Slottings.getItemSlotting(stack);
+                if (slotting.equals("Baubles Head") || slotting.equals("Baubles Trinket") || slotting.equals("Any")) result.add(stack);
+            }
+
+            for (ItemStack stack : getBaublesBodyItems(entity))
+            {
+                String slotting = Slottings.getItemSlotting(stack);
+                if (slotting.equals("Baubles Body") || slotting.equals("Baubles Trinket") || slotting.equals("Any")) result.add(stack);
+            }
+
+            for (ItemStack stack : getBaublesCharms(entity))
+            {
+                String slotting = Slottings.getItemSlotting(stack);
+                if (slotting.equals("Baubles Charm") || slotting.equals("Baubles Trinket") || slotting.equals("Any")) result.add(stack);
             }
         }
+
 
         //Tiamat slots
         if (Compat.tiamatinventory)
         {
-            int slot = 0;
-            for (ItemStack stack : GlobalInventory.getAllTiamatItems(player))
+            stack2 = getTiamatShoulderItem(entity);
+            if (stack2 != null)
             {
-                if (!Slottings.slotValidForSlotting(getItemSlotting(stack), slot++ + Slottings.TIAMAT_OFFSET, player)) continue;
+                String slotting = Slottings.getItemSlotting(stack2);
+                if (slotting.equals("Tiamat Shoulders") || slotting.equals("Armor") || slotting.equals("Any")) result.add(stack2);
+            }
 
-                result.add(stack);
+            stack2 = getTiamatCapeItem(entity);
+            if (stack2 != null)
+            {
+                String slotting = Slottings.getItemSlotting(stack2);
+                if (slotting.equals("Tiamat Cape") || slotting.equals("Armor") || slotting.equals("Any")) result.add(stack2);
+            }
+
+            for (ItemStack stack : getTiamatQuickslots(entity))
+            {
+                String slotting = Slottings.getItemSlotting(stack);
+                if (slotting.equals("Tiamat Quickslot") || slotting.equals("Any")) result.add(stack);
+            }
+
+            stack2 = getTiamatBackpack(entity);
+            if (stack2 != null)
+            {
+                String slotting = Slottings.getItemSlotting(stack2);
+                if (slotting.equals("Tiamat Backpack") || slotting.equals("Any")) result.add(stack2);
+            }
+
+            stack2 = getTiamatPet(entity);
+            if (stack2 != null)
+            {
+                String slotting = Slottings.getItemSlotting(stack2);
+                if (slotting.equals("Tiamat Pet") || slotting.equals("Any")) result.add(stack2);
+            }
+
+            stack2 = getTiamatDeck(entity);
+            if (stack2 != null)
+            {
+                String slotting = Slottings.getItemSlotting(stack2);
+                if (slotting.equals("Tiamat Deck") || slotting.equals("Any")) result.add(stack2);
+            }
+
+            for (ItemStack stack : getTiamatClasses(entity))
+            {
+                String slotting = Slottings.getItemSlotting(stack);
+                if (slotting.equals("Tiamat Class") || slotting.equals("Any")) result.add(stack);
+            }
+
+            for (ItemStack stack : getTiamatOffensiveSkills(entity))
+            {
+                String slotting = Slottings.getItemSlotting(stack);
+                if (slotting.equals("Tiamat Offensive Skill") || slotting.equals("Tiamat Skill") || slotting.equals("Any")) result.add(stack);
+            }
+
+            for (ItemStack stack : getTiamatUtilitySkills(entity))
+            {
+                String slotting = Slottings.getItemSlotting(stack);
+                if (slotting.equals("Tiamat Utility Skill") || slotting.equals("Tiamat Skill") || slotting.equals("Any")) result.add(stack);
+            }
+
+            stack2 = getTiamatUltimateSkill(entity);
+            if (stack2 != null)
+            {
+                String slotting = Slottings.getItemSlotting(stack2);
+                if (slotting.equals("Tiamat Ultimate Skill") || slotting.equals("Tiamat Skill") || slotting.equals("Any")) result.add(stack2);
+            }
+
+            for (ItemStack stack : getTiamatPassiveSkills(entity))
+            {
+                String slotting = Slottings.getItemSlotting(stack);
+                if (slotting.equals("Tiamat Passive Skill") || slotting.equals("Tiamat Skill") || slotting.equals("Any")) result.add(stack);
+            }
+
+            for (ItemStack stack : getTiamatGatheringProfessions(entity))
+            {
+                String slotting = Slottings.getItemSlotting(stack);
+                if (slotting.equals("Tiamat Gathering Profession") || slotting.equals("Tiamat Profession") || slotting.equals("Any")) result.add(stack);
+            }
+
+            for (ItemStack stack : getTiamatCraftingProfessions(entity))
+            {
+                String slotting = Slottings.getItemSlotting(stack);
+                if (slotting.equals("Tiamat Crafting Profession") || slotting.equals("Tiamat Profession") || slotting.equals("Any")) result.add(stack);
+            }
+
+            for (ItemStack stack : getTiamatRecipes(entity))
+            {
+                String slotting = Slottings.getItemSlotting(stack);
+                if (slotting.equals("Tiamat Recipe") || slotting.equals("Any")) result.add(stack);
             }
         }
 
         return result;
-    }
-
-    public static String getItemSlotting(ItemStack stack)
-    {
-        if (!stack.hasTagCompound()) return "None";
-
-        NBTTagCompound compound = stack.getTagCompound();
-        if (!compound.hasKey("tiamatrpg")) return "None";
-
-        compound = compound.getCompoundTag("tiamatrpg");
-        if (!compound.hasKey("slotting")) return "None";
-
-        return compound.getString("slotting");
     }
 
 
@@ -339,6 +545,7 @@ public class GlobalInventory
         ItemStack stack = getVanillaMainhandItem(entity);
         if (stack != null) result.add(stack);
         result.addAll(getVanillaOffhandItems(entity));
+        result.addAll(getVanillaHotbarItems(entity, false, true));
         result.addAll(getVanillaArmorItems(entity));
         result.addAll(getVanillaOtherInventoryItems(entity));
 
@@ -362,17 +569,10 @@ public class GlobalInventory
         ArrayList<ItemStack> result = new ArrayList<>();
 
         ItemStack mainhand = getVanillaMainhandItem(entity);
-        if (mainhand == ItemStack.EMPTY)
+        for (ItemStack stack : entity.getHeldEquipment())
         {
-            int emptiesFound = 0;
-            for (ItemStack stack : entity.getHeldEquipment())
-            {
-                if (stack != ItemStack.EMPTY || ++emptiesFound > 1) result.add(stack);
-            }
-        }
-        else for (ItemStack stack : entity.getHeldEquipment())
-        {
-            if (stack != mainhand && !result.contains(stack)) result.add(stack);
+            if (stack.equals(mainhand)) mainhand = null;
+            else result.add(stack);
         }
 
         return result;
@@ -384,13 +584,48 @@ public class GlobalInventory
         entity.setItemStackToSlot(EntityEquipmentSlot.OFFHAND, stack);
     }
 
+
+    public static ArrayList<ItemStack> getVanillaHotbarItems(Entity entity, boolean includeMainhand, boolean orderFromMainhand)
+    {
+        ArrayList<ItemStack> result = new ArrayList<>();
+
+        if (entity instanceof EntityPlayer)
+        {
+            InventoryPlayer inv = ((EntityPlayer) entity).inventory;
+            if (orderFromMainhand)
+            {
+                for (int i = includeMainhand ? 0 : 1; i < 9; i++)
+                {
+                    result.add(inv.getStackInSlot((inv.currentItem + i) % 9));
+                }
+            }
+            else
+            {
+                for (int i = 0; i < 9; i++)
+                {
+                    if (includeMainhand || i != inv.currentItem) result.add(inv.getStackInSlot(i));
+                }
+            }
+        }
+        else
+        {
+            if (includeMainhand)
+            {
+                ItemStack stack = getVanillaMainhandItem(entity);
+                if (stack != null) result.add(stack);
+            }
+        }
+
+        return result;
+    }
+
     public static ArrayList<ItemStack> getVanillaArmorItems(Entity entity)
     {
         ArrayList<ItemStack> result = new ArrayList<>();
 
         for (ItemStack stack : entity.getArmorInventoryList())
         {
-            if (!result.contains(stack)) result.add(stack);
+            result.add(stack);
         }
 
         return result;
@@ -453,20 +688,18 @@ public class GlobalInventory
         ArrayList<ItemStack> result = new ArrayList<>();
         if (!(entity instanceof EntityPlayer)) return result;
 
+
         //Construct list of items to ignore
         ArrayList<ItemStack> ignore = new ArrayList<>();
-        ItemStack stack = getVanillaMainhandItem(entity);
-        if (stack != null) ignore.add(stack);
+        ignore.addAll(getVanillaHotbarItems(entity, true, false));
         ignore.addAll(getVanillaOffhandItems(entity));
         ignore.addAll(getVanillaArmorItems(entity));
 
         InventoryPlayer inventory = ((EntityPlayer) entity).inventory;
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
-            stack = inventory.getStackInSlot(i);
-            if (result.contains(stack) || ignore.contains(stack)) continue;
-
-            result.add(stack);
+            ItemStack stack = inventory.getStackInSlot(i);
+            if (!ignore.remove(stack)) result.add(stack);
         }
 
         return result;
@@ -474,7 +707,6 @@ public class GlobalInventory
 
 
     //Baubles
-
     public static ArrayList<ItemStack> getBaubles(Entity entity)
     {
         ArrayList<ItemStack> result = new ArrayList<>();
@@ -482,6 +714,104 @@ public class GlobalInventory
 
         IBaublesItemHandler inventory = BaublesApi.getBaublesHandler((EntityPlayer) entity);
         for (int i = 0; i < inventory.getSlots(); i++)
+        {
+            result.add(inventory.getStackInSlot(i));
+        }
+
+        return result;
+    }
+
+    public static ArrayList<ItemStack> getBaublesAmulets(Entity entity)
+    {
+        ArrayList<ItemStack> result = new ArrayList<>();
+        if (!(Compat.baubles && entity instanceof EntityPlayer)) return result;
+
+        IBaublesItemHandler inventory = BaublesApi.getBaublesHandler((EntityPlayer) entity);
+        for (int i : BaubleType.AMULET.getValidSlots())
+        {
+            result.add(inventory.getStackInSlot(i));
+        }
+
+        return result;
+    }
+
+    public static ArrayList<ItemStack> getBaublesRings(Entity entity)
+    {
+        ArrayList<ItemStack> result = new ArrayList<>();
+        if (!(Compat.baubles && entity instanceof EntityPlayer)) return result;
+
+        IBaublesItemHandler inventory = BaublesApi.getBaublesHandler((EntityPlayer) entity);
+        for (int i : BaubleType.RING.getValidSlots())
+        {
+            result.add(inventory.getStackInSlot(i));
+        }
+
+        return result;
+    }
+
+    public static ArrayList<ItemStack> getBaublesBelts(Entity entity)
+    {
+        ArrayList<ItemStack> result = new ArrayList<>();
+        if (!(Compat.baubles && entity instanceof EntityPlayer)) return result;
+
+        IBaublesItemHandler inventory = BaublesApi.getBaublesHandler((EntityPlayer) entity);
+        for (int i : BaubleType.BELT.getValidSlots())
+        {
+            result.add(inventory.getStackInSlot(i));
+        }
+
+        return result;
+    }
+
+    public static ArrayList<ItemStack> getBaublesHeadItems(Entity entity)
+    {
+        ArrayList<ItemStack> result = new ArrayList<>();
+        if (!(Compat.baubles && entity instanceof EntityPlayer)) return result;
+
+        IBaublesItemHandler inventory = BaublesApi.getBaublesHandler((EntityPlayer) entity);
+        for (int i : BaubleType.HEAD.getValidSlots())
+        {
+            result.add(inventory.getStackInSlot(i));
+        }
+
+        return result;
+    }
+
+    public static ArrayList<ItemStack> getBaublesBodyItems(Entity entity)
+    {
+        ArrayList<ItemStack> result = new ArrayList<>();
+        if (!(Compat.baubles && entity instanceof EntityPlayer)) return result;
+
+        IBaublesItemHandler inventory = BaublesApi.getBaublesHandler((EntityPlayer) entity);
+        for (int i : BaubleType.BODY.getValidSlots())
+        {
+            result.add(inventory.getStackInSlot(i));
+        }
+
+        return result;
+    }
+
+    public static ArrayList<ItemStack> getBaublesCharms(Entity entity)
+    {
+        ArrayList<ItemStack> result = new ArrayList<>();
+        if (!(Compat.baubles && entity instanceof EntityPlayer)) return result;
+
+        IBaublesItemHandler inventory = BaublesApi.getBaublesHandler((EntityPlayer) entity);
+        for (int i : BaubleType.CHARM.getValidSlots())
+        {
+            result.add(inventory.getStackInSlot(i));
+        }
+
+        return result;
+    }
+
+    public static ArrayList<ItemStack> getBaublesTrinkets(Entity entity)
+    {
+        ArrayList<ItemStack> result = new ArrayList<>();
+        if (!(Compat.baubles && entity instanceof EntityPlayer)) return result;
+
+        IBaublesItemHandler inventory = BaublesApi.getBaublesHandler((EntityPlayer) entity);
+        for (int i : BaubleType.TRINKET.getValidSlots())
         {
             result.add(inventory.getStackInSlot(i));
         }

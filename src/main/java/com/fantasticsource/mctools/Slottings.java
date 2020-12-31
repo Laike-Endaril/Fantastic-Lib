@@ -1,204 +1,82 @@
 package com.fantasticsource.mctools;
 
-import baubles.api.BaubleType;
 import com.fantasticsource.fantasticlib.Compat;
-import com.fantasticsource.tiamatitems.api.IPartSlot;
-import com.fantasticsource.tiamatitems.api.TiamatItemsAPI;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
-import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
 
 public class Slottings
 {
     protected static final String DOMAIN = "tiamatrpg";
 
-    public static final int
-            BAUBLES_OFFSET = Integer.MIN_VALUE,
-            TIAMAT_OFFSET = -500;
-
-    public static final LinkedHashMap<String, int[]> SLOTS_VANILLA = new LinkedHashMap<>();
-    public static final LinkedHashMap<String, int[]> SLOTS_BAUBLES = new LinkedHashMap<>();
-    public static final LinkedHashMap<String, int[]> SLOTS_TIAMAT_INVENTORY = new LinkedHashMap<>();
-
-    public static final LinkedHashMap<String, int[]> SLOTS = new LinkedHashMap<>();
+    public static final ArrayList<String> SLOTS_VANILLA = new ArrayList<>();
+    public static final ArrayList<String> SLOTS_BAUBLES = new ArrayList<>();
+    public static final ArrayList<String> SLOTS_TIAMAT_INVENTORY = new ArrayList<>();
 
     static
     {
-        SLOTS_VANILLA.put("None", new int[0]);
+        SLOTS_VANILLA.add("None");
 
-        SLOTS_VANILLA.put("Mainhand", new int[]{-1});
-        SLOTS_VANILLA.put("Offhand", new int[]{40});
-        SLOTS_VANILLA.put("Hand", new int[]{-1, 40});
+        SLOTS_VANILLA.add("Mainhand");
+        SLOTS_VANILLA.add("Offhand");
+        SLOTS_VANILLA.add("Hand");
 
-        SLOTS_VANILLA.put("Head", new int[]{39});
-        SLOTS_VANILLA.put("Chest", new int[]{38});
-        SLOTS_VANILLA.put("Legs", new int[]{37});
-        SLOTS_VANILLA.put("Feet", new int[]{36});
+        SLOTS_VANILLA.add("Head");
+        SLOTS_VANILLA.add("Chest");
+        SLOTS_VANILLA.add("Legs");
+        SLOTS_VANILLA.add("Feet");
+        SLOTS_VANILLA.add("Armor");
 
-        SLOTS_VANILLA.put("Hotbar", new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8});
-        SLOTS_VANILLA.put("Inventory", new int[]{9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35});
-        SLOTS_VANILLA.put("Any", new int[]{-2});
-
-        SLOTS.putAll(SLOTS_VANILLA);
-
-
-        int[] temp = BaubleType.AMULET.getValidSlots();
-        int[] slots = new int[temp.length];
-        for (int i = 0; i < slots.length; i++) slots[i] = BAUBLES_OFFSET + temp[i];
-        SLOTS_BAUBLES.put("Baubles Amulet", slots);
-
-        temp = BaubleType.RING.getValidSlots();
-        slots = new int[temp.length];
-        for (int i = 0; i < slots.length; i++) slots[i] = BAUBLES_OFFSET + temp[i];
-        SLOTS_BAUBLES.put("Baubles Ring", slots);
-
-        temp = BaubleType.BELT.getValidSlots();
-        slots = new int[temp.length];
-        for (int i = 0; i < slots.length; i++) slots[i] = BAUBLES_OFFSET + temp[i];
-        SLOTS_BAUBLES.put("Baubles Belt", slots);
-
-        temp = BaubleType.HEAD.getValidSlots();
-        slots = new int[temp.length];
-        for (int i = 0; i < slots.length; i++) slots[i] = BAUBLES_OFFSET + temp[i];
-        SLOTS_BAUBLES.put("Baubles Head", slots);
-
-        temp = BaubleType.BODY.getValidSlots();
-        slots = new int[temp.length];
-        for (int i = 0; i < slots.length; i++) slots[i] = BAUBLES_OFFSET + temp[i];
-        SLOTS_BAUBLES.put("Baubles Body", slots);
-
-        temp = BaubleType.CHARM.getValidSlots();
-        slots = new int[temp.length];
-        for (int i = 0; i < slots.length; i++) slots[i] = BAUBLES_OFFSET + temp[i];
-        SLOTS_BAUBLES.put("Baubles Charm", slots);
-
-        temp = BaubleType.TRINKET.getValidSlots();
-        slots = new int[temp.length];
-        for (int i = 0; i < slots.length; i++) slots[i] = BAUBLES_OFFSET + temp[i];
-        SLOTS_BAUBLES.put("Baubles Trinket", slots);
-
-        SLOTS.putAll(SLOTS_BAUBLES);
+        SLOTS_VANILLA.add("Hotbar");
+        SLOTS_VANILLA.add("Inventory");
+        SLOTS_VANILLA.add("Any");
 
 
-        SLOTS_TIAMAT_INVENTORY.put("Tiamat 2H", new int[]{-1, 40});
-
-        SLOTS_TIAMAT_INVENTORY.put("Tiamat Shoulders", new int[]{TIAMAT_OFFSET + 4});
-        SLOTS_TIAMAT_INVENTORY.put("Tiamat Cape", new int[]{TIAMAT_OFFSET + 5});
-
-        SLOTS_TIAMAT_INVENTORY.put("Tiamat Quickslot", new int[]{TIAMAT_OFFSET + 6, TIAMAT_OFFSET + 7, TIAMAT_OFFSET + 8});
-
-        SLOTS_TIAMAT_INVENTORY.put("Tiamat Backpack", new int[]{TIAMAT_OFFSET + 9});
-
-        SLOTS_TIAMAT_INVENTORY.put("Tiamat Pet", new int[]{TIAMAT_OFFSET + 10});
-
-        SLOTS_TIAMAT_INVENTORY.put("Tiamat Deck", new int[]{TIAMAT_OFFSET + 11});
-
-        SLOTS_TIAMAT_INVENTORY.put("Tiamat Class", new int[]{TIAMAT_OFFSET + 12, TIAMAT_OFFSET + 13});
-
-        SLOTS_TIAMAT_INVENTORY.put("Tiamat Offensive Skill", new int[]{TIAMAT_OFFSET + 14, TIAMAT_OFFSET + 15});
-        SLOTS_TIAMAT_INVENTORY.put("Tiamat Utility Skill", new int[]{TIAMAT_OFFSET + 16, TIAMAT_OFFSET + 17});
-        SLOTS_TIAMAT_INVENTORY.put("Tiamat Ultimate Skill", new int[]{TIAMAT_OFFSET + 18});
-        SLOTS_TIAMAT_INVENTORY.put("Tiamat Passive Skill", new int[]{TIAMAT_OFFSET + 19, TIAMAT_OFFSET + 20});
-
-        SLOTS_TIAMAT_INVENTORY.put("Tiamat Gathering Profession", new int[]{TIAMAT_OFFSET + 21, TIAMAT_OFFSET + 22});
-        SLOTS_TIAMAT_INVENTORY.put("Tiamat Crafting Profession", new int[]{TIAMAT_OFFSET + 23, TIAMAT_OFFSET + 24});
-
-        SLOTS_TIAMAT_INVENTORY.put("Tiamat Recipe", new int[]{TIAMAT_OFFSET + 25, TIAMAT_OFFSET + 26, TIAMAT_OFFSET + 27, TIAMAT_OFFSET + 28, TIAMAT_OFFSET + 29, TIAMAT_OFFSET + 30, TIAMAT_OFFSET + 31, TIAMAT_OFFSET + 32, TIAMAT_OFFSET + 33, TIAMAT_OFFSET + 34, TIAMAT_OFFSET + 35, TIAMAT_OFFSET + 36, TIAMAT_OFFSET + 37, TIAMAT_OFFSET + 38, TIAMAT_OFFSET + 39});
-
-        SLOTS.putAll(SLOTS_TIAMAT_INVENTORY);
+        SLOTS_BAUBLES.add("Baubles Amulet");
+        SLOTS_BAUBLES.add("Baubles Ring");
+        SLOTS_BAUBLES.add("Baubles Belt");
+        SLOTS_BAUBLES.add("Baubles Head");
+        SLOTS_BAUBLES.add("Baubles Body");
+        SLOTS_BAUBLES.add("Baubles Charm");
+        SLOTS_BAUBLES.add("Baubles Trinket");
 
 
-        SLOTS.put("Armor", new int[]{36, 37, 38, 39, TIAMAT_OFFSET + 4, TIAMAT_OFFSET + 5});
+        SLOTS_TIAMAT_INVENTORY.add("Tiamat 2H");
+
+        SLOTS_TIAMAT_INVENTORY.add("Tiamat Shoulders");
+        SLOTS_TIAMAT_INVENTORY.add("Tiamat Cape");
+
+        SLOTS_TIAMAT_INVENTORY.add("Tiamat Quickslot");
+
+        SLOTS_TIAMAT_INVENTORY.add("Tiamat Backpack");
+
+        SLOTS_TIAMAT_INVENTORY.add("Tiamat Pet");
+
+        SLOTS_TIAMAT_INVENTORY.add("Tiamat Deck");
+
+        SLOTS_TIAMAT_INVENTORY.add("Tiamat Class");
+
+        SLOTS_TIAMAT_INVENTORY.add("Tiamat Offensive Skill");
+        SLOTS_TIAMAT_INVENTORY.add("Tiamat Utility Skill");
+        SLOTS_TIAMAT_INVENTORY.add("Tiamat Ultimate Skill");
+        SLOTS_TIAMAT_INVENTORY.add("Tiamat Passive Skill");
+        SLOTS_TIAMAT_INVENTORY.add("Tiamat Skill");
+
+        SLOTS_TIAMAT_INVENTORY.add("Tiamat Gathering Profession");
+        SLOTS_TIAMAT_INVENTORY.add("Tiamat Crafting Profession");
+        SLOTS_TIAMAT_INVENTORY.add("Tiamat Profession");
+
+        SLOTS_TIAMAT_INVENTORY.add("Tiamat Recipe");
     }
 
-    public static String[] availableSlottings()
+    public static ArrayList<String> availableSlottings()
     {
-        int size = SLOTS_VANILLA.size();
-        if (Compat.baubles) size += SLOTS_BAUBLES.size();
-        if (Compat.tiamatinventory) size += SLOTS_TIAMAT_INVENTORY.size();
-
-        String[] result = new String[size];
-        int i = 0;
-
-        String[] temp = SLOTS_VANILLA.keySet().toArray(new String[0]);
-        System.arraycopy(temp, 0, result, i, temp.length);
-        i += temp.length;
-
-        if (Compat.baubles)
-        {
-            temp = SLOTS_BAUBLES.keySet().toArray(new String[0]);
-            System.arraycopy(temp, 0, result, i, temp.length);
-            i += temp.length;
-        }
-        if (Compat.tiamatinventory)
-        {
-            temp = SLOTS_TIAMAT_INVENTORY.keySet().toArray(new String[0]);
-            System.arraycopy(temp, 0, result, i, temp.length);
-            i += temp.length;
-        }
-
+        ArrayList<String> result = new ArrayList<>(SLOTS_VANILLA);
+        if (Compat.baubles) result.addAll(SLOTS_BAUBLES);
+        if (Compat.tiamatinventory) result.addAll(SLOTS_TIAMAT_INVENTORY);
         return result;
-    }
-
-
-    public static boolean slotTypeValidForSlotting(String slotting, String slotType, EntityLivingBase livingBase)
-    {
-        return slotValidForSlotting(slotting, SLOTS.get(slotType)[0], livingBase);
-    }
-
-    public static boolean slotValidForSlotting(String slotting, int slot, EntityLivingBase livingBase)
-    {
-        if (!SLOTS.containsKey(slotting)) return false;
-
-        for (int i : SLOTS.get(slotting))
-        {
-            if (i == -2)
-            {
-                //-2 means "any slot" for validity
-                return true;
-            }
-            if (i == -1)
-            {
-                //-1 means mainhand
-                boolean slotIsMainhand = livingBase instanceof EntityPlayer ? slot == ((EntityPlayer) livingBase).inventory.currentItem : slot == 0;
-                if (slotIsMainhand) return true;
-            }
-            else
-            {
-                if (i == slot) return true;
-            }
-        }
-
-        return false;
-    }
-
-
-    public static boolean slotTypeValidForItemstack(ItemStack stack, String slotType, EntityLivingBase livingBase)
-    {
-        if (slotType.equals("Head") && stack.getItem().isValidArmor(stack, EntityEquipmentSlot.HEAD, livingBase)) return true;
-        if (slotType.equals("Chest") && stack.getItem().isValidArmor(stack, EntityEquipmentSlot.CHEST, livingBase)) return true;
-        if (slotType.equals("Legs") && stack.getItem().isValidArmor(stack, EntityEquipmentSlot.LEGS, livingBase)) return true;
-        if (slotType.equals("Feet") && stack.getItem().isValidArmor(stack, EntityEquipmentSlot.FEET, livingBase)) return true;
-
-        int[] slots = SLOTS.get(slotType);
-        return slots != null && slots.length > 0 && slotValidForItemstack(stack, SLOTS.get(slotType)[0], livingBase);
-    }
-
-    protected static boolean slotValidForItemstack(ItemStack stack, int slot, EntityLivingBase livingBase)
-    {
-        if (!slotValidForSlotting(getItemSlotting(stack), slot, livingBase)) return false;
-
-        for (IPartSlot partSlot : TiamatItemsAPI.getPartSlots(stack))
-        {
-            if (partSlot.getRequired() && partSlot.getPart().isEmpty()) return false;
-        }
-
-        return true;
     }
 
 
