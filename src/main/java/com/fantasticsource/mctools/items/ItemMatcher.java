@@ -9,6 +9,7 @@ public class ItemMatcher
     {
         if (stack1 == stack2) return true;
 
+        if (stack1.getCount() != stack2.getCount()) return false;
         Item item1 = stack1.getItem();
         if (!item1.equals(stack2.getItem())) return false;
         if (!item1.isDamageable() && stack1.getMetadata() != stack2.getMetadata()) return false;
