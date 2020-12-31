@@ -151,4 +151,9 @@ public class Slottings
     {
         return SLOTS_AVAILABLE.containsKey(itemSlotting) && Tools.contains(SLOTS_AVAILABLE.get(itemSlotting), slotType);
     }
+
+    public static boolean itemIsValidForSlot(ItemStack stack, String slotType)
+    {
+        return slottingIsValidForSlot(getItemSlotting(stack), slotType);
+    }
 }
