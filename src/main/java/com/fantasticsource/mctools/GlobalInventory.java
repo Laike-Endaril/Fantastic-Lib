@@ -221,7 +221,7 @@ public class GlobalInventory
             list.addAll(getTiamatQuickslots(inventory));
             if (list.size() > 0)
             {
-                result.put("Tiamat Quickslots", list);
+                result.put("Tiamat Quick Items", list);
                 list = new ArrayList<>();
             }
 
@@ -458,7 +458,7 @@ public class GlobalInventory
             for (ItemStack stack : getTiamatQuickslots(entity))
             {
                 String slotting = Slottings.getItemSlotting(stack);
-                if (slotting.equals("Tiamat Quickslot") || slotting.equals("Any")) result.add(stack);
+                if (slotting.equals("Tiamat Quick Item") || slotting.equals("Any")) result.add(stack);
             }
 
             stack2 = getTiamatBackpack(entity);

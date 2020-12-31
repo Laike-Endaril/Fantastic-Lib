@@ -36,7 +36,7 @@ public class Slottings
 
         SLOTS_VANILLA.put("Hotbar", new String[]{"Hotbar", "Mainhand"});
         SLOTS_VANILLA.put("Cargo", new String[]{"Cargo"});
-        SLOTS_VANILLA.put("Any", new String[]{"Mainhand", "Offhand", "Head", "Chest", "Legs", "Feet", "Hotbar", "Cargo", "Baubles Amulet", "Baubles Ring", "Baubles Belt", "Baubles Head", "Baubles Body", "Baubles Charm", "Tiamat Shoulders", "Tiamat Cape", "Tiamat Quickslot", "Tiamat Backpack", "Tiamat Pet", "Tiamat Deck", "Tiamat Class", "Tiamat Offensive Skill", "Tiamat Utility Skill", "Tiamat Ultimate Skill", "Tiamat Passive Skill", "Tiamat Gathering Profession", "Tiamat Crafting Profession", "Tiamat Recipe"});
+        SLOTS_VANILLA.put("Any", new String[]{"Mainhand", "Offhand", "Head", "Chest", "Legs", "Feet", "Hotbar", "Cargo", "Baubles Amulet", "Baubles Ring", "Baubles Belt", "Baubles Head", "Baubles Body", "Baubles Charm", "Tiamat Shoulders", "Tiamat Cape", "Tiamat Quick Item", "Tiamat Backpack", "Tiamat Pet", "Tiamat Deck", "Tiamat Class", "Tiamat Offensive Skill", "Tiamat Utility Skill", "Tiamat Ultimate Skill", "Tiamat Passive Skill", "Tiamat Gathering Profession", "Tiamat Crafting Profession", "Tiamat Recipe"});
 
 
         SLOTS_BAUBLES.put("Baubles Amulet", new String[]{"Baubles Amulet"});
@@ -53,7 +53,7 @@ public class Slottings
         SLOTS_TIAMAT_INVENTORY.put("Tiamat Shoulders", new String[]{"Tiamat Shoulders"});
         SLOTS_TIAMAT_INVENTORY.put("Tiamat Cape", new String[]{"Tiamat Cape"});
 
-        SLOTS_TIAMAT_INVENTORY.put("Tiamat Quickslot", new String[]{"Tiamat Quickslot"});
+        SLOTS_TIAMAT_INVENTORY.put("Tiamat Quick Item", new String[]{"Tiamat Quick Item"});
 
         SLOTS_TIAMAT_INVENTORY.put("Tiamat Backpack", new String[]{"Tiamat Backpack"});
 
