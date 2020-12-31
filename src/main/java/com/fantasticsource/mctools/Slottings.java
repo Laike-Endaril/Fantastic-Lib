@@ -4,6 +4,7 @@ import baubles.api.BaubleType;
 import com.fantasticsource.fantasticlib.Compat;
 import com.fantasticsource.tiamatitems.api.IPartSlot;
 import com.fantasticsource.tiamatitems.api.TiamatItemsAPI;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -145,43 +146,52 @@ public class Slottings
     }
 
 
-    public static boolean slotTypeValidForSlotting(String slotting, String slotType, EntityPlayer player)
+    public static boolean slotTypeValidForSlotting(String slotting, String slotType, EntityLivingBase livingBase)
     {
-        return slotValidForSlotting(slotting, SLOTS.get(slotType)[0], player);
+        return slotValidForSlotting(slotting, SLOTS.get(slotType)[0], livingBase);
     }
 
-    public static boolean slotValidForSlotting(String slotting, int slot, EntityPlayer player)
+    public static boolean slotValidForSlotting(String slotting, int slot, EntityLivingBase livingBase)
     {
         if (!SLOTS.containsKey(slotting)) return false;
 
         for (int i : SLOTS.get(slotting))
         {
-            if (i == -2) return true;
+            if (i == -2)
+            {
+                //-2 means "any slot" for validity
+                return true;
+            }
             if (i == -1)
             {
-                if (slot == player.inventory.currentItem && (!Compat.tiamatinventory || slot == 0 || player.isCreative())) return true;
+                //-1 means mainhand
+                boolean slotIsMainhand = livingBase instanceof EntityPlayer ? slot == ((EntityPlayer) livingBase).inventory.currentItem : slot == 0;
+                if (slotIsMainhand) return true;
             }
-            else if (i == slot && (i != 40 || !Compat.tiamatinventory || player.inventory.currentItem == 0 || player.isCreative())) return true;
+            else
+            {
+                if (i == slot) return true;
+            }
         }
 
         return false;
     }
 
 
-    public static boolean slotTypeValidForItemstack(ItemStack stack, String slotType, EntityPlayer player)
+    public static boolean slotTypeValidForItemstack(ItemStack stack, String slotType, EntityLivingBase livingBase)
     {
-        if (slotType.equals("Head") && stack.getItem().isValidArmor(stack, EntityEquipmentSlot.HEAD, player)) return true;
-        if (slotType.equals("Chest") && stack.getItem().isValidArmor(stack, EntityEquipmentSlot.CHEST, player)) return true;
-        if (slotType.equals("Legs") && stack.getItem().isValidArmor(stack, EntityEquipmentSlot.LEGS, player)) return true;
-        if (slotType.equals("Feet") && stack.getItem().isValidArmor(stack, EntityEquipmentSlot.FEET, player)) return true;
+        if (slotType.equals("Head") && stack.getItem().isValidArmor(stack, EntityEquipmentSlot.HEAD, livingBase)) return true;
+        if (slotType.equals("Chest") && stack.getItem().isValidArmor(stack, EntityEquipmentSlot.CHEST, livingBase)) return true;
+        if (slotType.equals("Legs") && stack.getItem().isValidArmor(stack, EntityEquipmentSlot.LEGS, livingBase)) return true;
+        if (slotType.equals("Feet") && stack.getItem().isValidArmor(stack, EntityEquipmentSlot.FEET, livingBase)) return true;
 
         int[] slots = SLOTS.get(slotType);
-        return slots != null && slots.length > 0 && slotValidForItemstack(stack, SLOTS.get(slotType)[0], player);
+        return slots != null && slots.length > 0 && slotValidForItemstack(stack, SLOTS.get(slotType)[0], livingBase);
     }
 
-    protected static boolean slotValidForItemstack(ItemStack stack, int slot, EntityPlayer player)
+    protected static boolean slotValidForItemstack(ItemStack stack, int slot, EntityLivingBase livingBase)
     {
-        if (!slotValidForSlotting(getItemSlotting(stack), slot, player)) return false;
+        if (!slotValidForSlotting(getItemSlotting(stack), slot, livingBase)) return false;
 
         for (IPartSlot partSlot : TiamatItemsAPI.getPartSlots(stack))
         {
