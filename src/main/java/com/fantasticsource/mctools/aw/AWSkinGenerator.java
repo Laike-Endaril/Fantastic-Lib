@@ -30,6 +30,10 @@ public class AWSkinGenerator
     {
         if (libraryFile == null || libraryFile.toLowerCase().equals("null")) return ItemStack.EMPTY;
 
+
+        libraryFile = Tools.fixFileSeparators(libraryFile);
+
+
         ArrayList<String> otherFileNames = new ArrayList<>();
         File file = new File(LIB_DIR + libraryFile);
         if (file.isDirectory())
