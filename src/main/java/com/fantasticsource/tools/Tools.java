@@ -19,6 +19,17 @@ public class Tools
     protected static PrintStream out = null, err = null;
 
 
+    public static BufferedReader getJarResourceReader(Class classInJar, String resourcePathAndName)
+    {
+        return new BufferedReader(new InputStreamReader(getJarResourceStream(classInJar, resourcePathAndName)));
+    }
+
+    public static InputStream getJarResourceStream(Class classInJar, String resourcePathAndName)
+    {
+        return classInJar.getClassLoader().getResourceAsStream(resourcePathAndName);
+    }
+
+
     public static void copyFile(File source, File destination) throws IOException
     {
         BufferedReader reader = new BufferedReader(new FileReader(source));

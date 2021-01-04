@@ -51,7 +51,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.NotImplementedException;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -134,12 +137,12 @@ public class MCTools
 
     public static BufferedReader getJarResourceReader(Class classInJar, String resourcePathAndName)
     {
-        return new BufferedReader(new InputStreamReader(getJarResourceStream(classInJar, resourcePathAndName)));
+        return Tools.getJarResourceReader(classInJar, resourcePathAndName);
     }
 
     public static InputStream getJarResourceStream(Class classInJar, String resourcePathAndName)
     {
-        return classInJar.getClassLoader().getResourceAsStream(resourcePathAndName);
+        return Tools.getJarResourceStream(classInJar, resourcePathAndName);
     }
 
 
