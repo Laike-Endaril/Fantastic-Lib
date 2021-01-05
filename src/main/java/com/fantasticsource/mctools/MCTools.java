@@ -8,6 +8,7 @@ import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.TrigLookupTable;
 import com.fantasticsource.tools.datastructures.ExplicitPriorityQueue;
 import com.fantasticsource.tools.datastructures.VectorN;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -31,10 +32,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.DimensionType;
-import net.minecraft.world.GameType;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldProvider;
+import net.minecraft.world.*;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
@@ -65,6 +64,8 @@ import static com.fantasticsource.tools.Tools.radtodeg;
 public class MCTools
 {
     public static final TrigLookupTable TRIG_TABLE = new TrigLookupTable(1024);
+
+    public static final Int2ObjectMap<WorldServer> DIMENSION_MANAGER_WORLDS = (Int2ObjectMap<WorldServer>) ReflectionTool.get(DimensionManager.class, "worlds", null);
     protected static Field configManagerCONFIGSField, configurationChangedField, languageManagerCurrentLocaleField, localePropertiesField;
     protected static boolean host = false;
 
@@ -86,6 +87,18 @@ public class MCTools
         {
             crash(e, false);
         }
+    }
+
+
+    public static boolean entityIsLoaded(Entity entity)
+    {
+        if (entity.world == null || !worldIsLoaded((WorldServer) entity.world)) return false;
+        return entity.world.loadedEntityList.contains(entity);
+    }
+
+    public static boolean worldIsLoaded(WorldServer world)
+    {
+        return DIMENSION_MANAGER_WORLDS.containsValue(world);
     }
 
 
@@ -429,15 +442,7 @@ public class MCTools
 
     public static ItemStack cloneItemStack(ItemStack stack)
     {
-        try
-        {
-            return new ItemStack(JsonToNBT.getTagFromJson(stack.serializeNBT().toString()));
-        }
-        catch (NBTException e)
-        {
-            e.printStackTrace();
-            return ItemStack.EMPTY;
-        }
+        return new ItemStack(stack.serializeNBT());
     }
 
 

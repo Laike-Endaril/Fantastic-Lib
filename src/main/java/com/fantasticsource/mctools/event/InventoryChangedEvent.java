@@ -5,7 +5,9 @@ import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.items.ItemMatcher;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
+import net.minecraft.profiler.Profiler;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -16,11 +18,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class InventoryChangedEvent extends EntityEvent
 {
-    public static LinkedHashMap<Entity, GlobalInventoryData> previousContents = new LinkedHashMap<>();
+    public static HashMap<Entity, GlobalInventoryData> previousContents = new LinkedHashMap<>();
 
     static
     {
@@ -29,7 +30,6 @@ public class InventoryChangedEvent extends EntityEvent
 
 
     public final GlobalInventoryData oldInventory, newInventory;
-    public final HashMap<Integer, ItemStack> newTiamatItems = new HashMap<>();
 
 
     public InventoryChangedEvent(Entity entity, GlobalInventoryData oldInventory, GlobalInventoryData newInventory)
@@ -37,109 +37,70 @@ public class InventoryChangedEvent extends EntityEvent
         super(entity);
         this.oldInventory = oldInventory;
         this.newInventory = newInventory;
-
-        if (newInventory.tiamatInventory != null)
-        {
-            ArrayList<ItemStack> n = newInventory.tiamatInventory;
-            if (oldInventory == null)
-            {
-                int i = 0;
-                for (ItemStack stack : newInventory.tiamatInventory)
-                {
-                    newTiamatItems.put(i++, stack);
-                }
-            }
-            else
-            {
-                ItemStack stack;
-                ArrayList<ItemStack> o = oldInventory.tiamatInventory;
-                int size = newInventory.tiamatInventory.size();
-                for (int i = 0; i < size; i++)
-                {
-                    stack = n.get(i);
-                    if (!ItemMatcher.stacksMatch(stack, o.get(i))) newTiamatItems.put(i, stack);
-                }
-            }
-        }
     }
 
 
     @SubscribeEvent
-    public static void worldTick(TickEvent.WorldTickEvent event)
+    public static void serverTick(TickEvent.ServerTickEvent event)
     {
         if (event.side == Side.CLIENT || event.phase == TickEvent.Phase.END) return;
 
 
-        event.world.profiler.startSection("Fantastic Lib: InventoryChangedEvent overhead");
-        previousContents.entrySet().removeIf(entry ->
-        {
-            Entity entity = entry.getKey();
-            if (!entity.isAddedToWorld()) return true;
+        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+        Profiler profiler = server.profiler;
+        profiler.startSection("Fantastic Lib: InventoryChangedEvent");
 
-            for (World world : FMLCommonHandler.instance().getMinecraftServerInstance().worlds)
-            {
-                if (world == event.world) return false;
-            }
 
-            return true;
-        });
+        HashMap<Entity, GlobalInventoryData> newContents = new LinkedHashMap<>();
+
+        ArrayList<InventoryChangedEvent> events = new ArrayList<>();
 
         GlobalInventoryData oldInventory, newInventory;
-        for (Entity entity : event.world.loadedEntityList.toArray(new Entity[0]))
+        for (WorldServer world : MCTools.DIMENSION_MANAGER_WORLDS.values())
         {
-            if (!entity.isAddedToWorld())
+            for (Entity entity : world.loadedEntityList)
             {
-                previousContents.remove(entity);
-                continue;
-            }
+                oldInventory = previousContents.get(entity);
+                newInventory = new GlobalInventoryData(entity);
 
-
-            newInventory = new GlobalInventoryData(entity);
-            oldInventory = previousContents.get(entity);
-            if (oldInventory == null || !oldInventory.equals(newInventory))
-            {
-                InventoryChangedEvent event1 = new InventoryChangedEvent(entity, oldInventory, newInventory);
-                event.world.profiler.endStartSection("Fantastic Lib: InventoryChangedEvent listeners");
-                MinecraftForge.EVENT_BUS.post(event1);
-                event.world.profiler.endStartSection("Fantastic Lib: InventoryChangedEvent overhead");
-                previousContents.put(entity, newInventory.deepCopy());
+                if (oldInventory != null && oldInventory.equals(newInventory)) newContents.put(entity, oldInventory);
+                else events.add(new InventoryChangedEvent(entity, oldInventory, newInventory));
             }
         }
-        event.world.profiler.endSection();
+
+
+        profiler.endStartSection("Fantastic Lib: InventoryChangedEvent listeners");
+        for (InventoryChangedEvent event1 : events) MinecraftForge.EVENT_BUS.post(event1);
+
+        previousContents = newContents;
+        profiler.endSection();
     }
+
 
     public static class GlobalInventoryData
     {
-        public final ArrayList<ItemStack> allNonSkin, tiamatInventory;
-        public final LinkedHashMap<String, ArrayList<ItemStack>> allCategorized;
+        public final ItemStack[] allNonSkin, tiamatInventory;
 
         public GlobalInventoryData(Entity entity)
         {
-            this(GlobalInventory.getAllNonSkinItems(entity), GlobalInventory.getAllTiamatItems(entity), GlobalInventory.getAllItemsCategorized(entity));
+            this(GlobalInventory.getAllNonSkinItems(entity).toArray(new ItemStack[0]), GlobalInventory.getAllTiamatItems(entity).toArray(new ItemStack[0]));
         }
 
-        public GlobalInventoryData(ArrayList<ItemStack> allNonSkin, ArrayList<ItemStack> tiamatInventory, LinkedHashMap<String, ArrayList<ItemStack>> allCategorized)
+        public GlobalInventoryData(ItemStack[] allNonSkin, ItemStack[] tiamatInventory)
         {
             this.allNonSkin = allNonSkin;
             this.tiamatInventory = tiamatInventory;
-            this.allCategorized = allCategorized;
         }
 
         public GlobalInventoryData deepCopy()
         {
-            ArrayList<ItemStack> newAllNonSkin = new ArrayList<>(), newTiamatInventory = new ArrayList<>();
-            LinkedHashMap<String, ArrayList<ItemStack>> newAllCategorized = new LinkedHashMap<>();
+            int size1 = allNonSkin.length, size2 = tiamatInventory.length;
+            ItemStack[] newAllNonSkin = new ItemStack[size1], newTiamatInventory = new ItemStack[size2];
 
-            for (ItemStack stack : allNonSkin) newAllNonSkin.add(MCTools.cloneItemStack(stack));
-            for (ItemStack stack : tiamatInventory) newTiamatInventory.add(MCTools.cloneItemStack(stack));
-            for (Map.Entry<String, ArrayList<ItemStack>> entry : allCategorized.entrySet())
-            {
-                ArrayList<ItemStack> list = new ArrayList<>();
-                for (ItemStack stack : entry.getValue()) list.add(MCTools.cloneItemStack(stack));
-                newAllCategorized.put(entry.getKey(), list);
-            }
+            System.arraycopy(allNonSkin, 0, newAllNonSkin, 0, size1);
+            System.arraycopy(tiamatInventory, 0, newTiamatInventory, 0, size2);
 
-            return new GlobalInventoryData(newAllNonSkin, newTiamatInventory, newAllCategorized);
+            return new GlobalInventoryData(newAllNonSkin, newTiamatInventory);
         }
 
         @Override
@@ -148,15 +109,9 @@ public class InventoryChangedEvent extends EntityEvent
             if (!(obj instanceof GlobalInventoryData)) return false;
 
             GlobalInventoryData other = (GlobalInventoryData) obj;
-            int size = allNonSkin.size();
-            if (size != other.allNonSkin.size()) return false;
+            if (allNonSkin.length != other.allNonSkin.length) return false;
 
-            for (int i = 0; i < size; i++)
-            {
-                if (!ItemMatcher.stacksMatch(allNonSkin.get(i), other.allNonSkin.get(i))) return false;
-            }
-
-            return true;
+            return ItemMatcher.stacksMatch(allNonSkin, other.allNonSkin);
         }
     }
 }
