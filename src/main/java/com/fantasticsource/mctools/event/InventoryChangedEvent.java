@@ -64,7 +64,11 @@ public class InventoryChangedEvent extends EntityEvent
                 newInventory = new GlobalInventoryData(entity);
 
                 if (oldInventory != null && oldInventory.equals(newInventory)) newContents.put(entity, oldInventory);
-                else events.add(new InventoryChangedEvent(entity, oldInventory, newInventory));
+                else
+                {
+                    events.add(new InventoryChangedEvent(entity, oldInventory, newInventory));
+                    newContents.put(entity, newInventory);
+                }
             }
         }
 
