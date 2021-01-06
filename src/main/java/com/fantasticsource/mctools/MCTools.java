@@ -35,6 +35,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.*;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.common.config.Configuration;
@@ -66,26 +67,22 @@ public class MCTools
     public static final TrigLookupTable TRIG_TABLE = new TrigLookupTable(1024);
 
     public static final Int2ObjectMap<WorldServer> DIMENSION_MANAGER_WORLDS = (Int2ObjectMap<WorldServer>) ReflectionTool.get(DimensionManager.class, "worlds", null);
-    protected static Field configManagerCONFIGSField, configurationChangedField, languageManagerCurrentLocaleField, localePropertiesField;
+
+    protected static final Field
+            CONFIG_MANAGER_CONFIGS_FIELD = ReflectionTool.getField(ConfigManager.class, "CONFIGS"),
+            CONFIGURATION_CHANGED_FIELD = ReflectionTool.getField(Configuration.class, "changed"),
+            ITEMSTACK_CAPABILITIES_FIELD = ReflectionTool.getField(ItemStack.class, "capabilities");
+
+    protected static Field languageManagerCurrentLocaleField, localePropertiesField;
     protected static boolean host = false;
 
 
     static
     {
-        try
+        if (FantasticLib.isClient)
         {
-            configManagerCONFIGSField = ReflectionTool.getField(ConfigManager.class, "CONFIGS");
-            configurationChangedField = ReflectionTool.getField(Configuration.class, "changed");
-
-            if (FantasticLib.isClient)
-            {
-                languageManagerCurrentLocaleField = ReflectionTool.getField(LanguageManager.class, "field_135049_a", "CURRENT_LOCALE");
-                localePropertiesField = ReflectionTool.getField(Locale.class, "field_135032_a", "properties");
-            }
-        }
-        catch (Exception e)
-        {
-            crash(e, false);
+            languageManagerCurrentLocaleField = ReflectionTool.getField(LanguageManager.class, "field_135049_a", "CURRENT_LOCALE");
+            localePropertiesField = ReflectionTool.getField(Locale.class, "field_135032_a", "properties");
         }
     }
 
@@ -442,7 +439,27 @@ public class MCTools
 
     public static ItemStack cloneItemStack(ItemStack stack)
     {
-        return new ItemStack(stack.serializeNBT());
+        NBTTagCompound result = new NBTTagCompound();
+
+        ResourceLocation resourcelocation = Item.REGISTRY.getNameForObject(stack.getItem());
+        result.setString("id", resourcelocation == null ? "minecraft:air" : resourcelocation.toString());
+        result.setByte("Count", (byte) stack.getCount());
+        result.setShort("Damage", (short) stack.getItemDamage());
+
+        NBTTagCompound compound = stack.getTagCompound();
+        if (compound != null)
+        {
+            result.setTag("tag", compound.copy()); //Curse you vanilla
+        }
+
+        CapabilityDispatcher capabilities = (CapabilityDispatcher) ReflectionTool.get(ITEMSTACK_CAPABILITIES_FIELD, stack);
+        if (capabilities != null)
+        {
+            NBTTagCompound cnbt = capabilities.serializeNBT();
+            if (!cnbt.hasNoTags()) result.setTag("ForgeCaps", cnbt);
+        }
+
+        return new ItemStack(result);
     }
 
 
@@ -918,13 +935,13 @@ public class MCTools
 
     public static Configuration getConfig(String modid) throws IllegalAccessException
     {
-        return ((Map<String, Configuration>) configManagerCONFIGSField.get(null)).get(getConfigDir() + modid + ".cfg");
+        return ((Map<String, Configuration>) CONFIG_MANAGER_CONFIGS_FIELD.get(null)).get(getConfigDir() + modid + ".cfg");
     }
 
     public static void saveConfig(String modid) throws IllegalAccessException
     {
         Configuration config = getConfig(modid);
-        ReflectionTool.set(configurationChangedField, config, true);
+        ReflectionTool.set(CONFIGURATION_CHANGED_FIELD, config, true);
         ConfigManager.sync(modid, Config.Type.INSTANCE);
         config.save();
     }
@@ -938,7 +955,7 @@ public class MCTools
     public static void reloadConfig(String configFilename, String modid) throws IllegalAccessException
     {
         //TODO This wipes config tooltips and doesn't fully load configs
-        ((Map<String, Configuration>) configManagerCONFIGSField.get(null)).remove(configFilename);
+        ((Map<String, Configuration>) CONFIG_MANAGER_CONFIGS_FIELD.get(null)).remove(configFilename);
         ConfigManager.sync(modid, Config.Type.INSTANCE);
     }
 
