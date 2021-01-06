@@ -17,12 +17,14 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 
 import static com.fantasticsource.fantasticlib.FantasticLib.NAME;
 
 public class InventoryChangedEvent extends EntityEvent
 {
+    public static HashSet<Class<? extends Entity>> watchedClasses = new HashSet<>();
     public static HashMap<Entity, GlobalInventoryData> previousContents = new LinkedHashMap<>();
 
     static
@@ -45,7 +47,7 @@ public class InventoryChangedEvent extends EntityEvent
     @SubscribeEvent
     public static void serverTick(TickEvent.ServerTickEvent event)
     {
-        if (event.side == Side.CLIENT || event.phase == TickEvent.Phase.END) return;
+        if (event.side == Side.CLIENT || event.phase == TickEvent.Phase.END || watchedClasses.size() == 0) return;
 
 
         MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
@@ -56,10 +58,23 @@ public class InventoryChangedEvent extends EntityEvent
 
         ArrayList<InventoryChangedEvent> events = new ArrayList<>();
         GlobalInventoryData oldInventory, newInventory;
+        boolean found;
         for (WorldServer world : MCTools.DIMENSION_MANAGER_WORLDS.values())
         {
             for (Entity entity : world.loadedEntityList)
             {
+                found = false;
+                for (Class<? extends Entity> cls : watchedClasses)
+                {
+                    if (cls.isAssignableFrom(entity.getClass()))
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) continue;
+
+
                 oldInventory = previousContents.get(entity);
                 newInventory = new GlobalInventoryData(entity);
 
