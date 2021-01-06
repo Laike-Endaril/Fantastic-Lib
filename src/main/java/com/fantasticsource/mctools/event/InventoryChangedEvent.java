@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
+import static com.fantasticsource.fantasticlib.FantasticLib.NAME;
+
 public class InventoryChangedEvent extends EntityEvent
 {
     public static HashMap<Entity, GlobalInventoryData> previousContents = new LinkedHashMap<>();
@@ -48,13 +50,11 @@ public class InventoryChangedEvent extends EntityEvent
 
         MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
         Profiler profiler = server.profiler;
-        profiler.startSection("Fantastic Lib: InventoryChangedEvent");
 
-
+        profiler.startSection(NAME + ": InventoryChangedEvent");
         HashMap<Entity, GlobalInventoryData> newContents = new LinkedHashMap<>();
 
         ArrayList<InventoryChangedEvent> events = new ArrayList<>();
-
         GlobalInventoryData oldInventory, newInventory;
         for (WorldServer world : MCTools.DIMENSION_MANAGER_WORLDS.values())
         {
@@ -72,11 +72,12 @@ public class InventoryChangedEvent extends EntityEvent
             }
         }
 
-
         profiler.endStartSection("Fantastic Lib: InventoryChangedEvent listeners");
         for (InventoryChangedEvent event1 : events) MinecraftForge.EVENT_BUS.post(event1);
 
+        profiler.endStartSection(NAME + ": InventoryChangedEvent map replacement");
         previousContents = newContents;
+
         profiler.endSection();
     }
 
