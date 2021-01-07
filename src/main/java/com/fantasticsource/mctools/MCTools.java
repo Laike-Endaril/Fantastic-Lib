@@ -87,13 +87,13 @@ public class MCTools
     }
 
 
-    public static boolean entityIsLoaded(Entity entity)
+    public static boolean entityIsValid(Entity entity)
     {
-        if (entity.world == null || !worldIsLoaded((WorldServer) entity.world)) return false;
+        if (entity.isDead || entity.world == null || !worldIsValid((WorldServer) entity.world)) return false;
         return entity.world.loadedEntityList.contains(entity);
     }
 
-    public static boolean worldIsLoaded(WorldServer world)
+    public static boolean worldIsValid(WorldServer world)
     {
         return DIMENSION_MANAGER_WORLDS.containsValue(world);
     }

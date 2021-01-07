@@ -47,7 +47,7 @@ public class InventoryChangedEvent extends EntityEvent
     @SubscribeEvent
     public static void serverTick(TickEvent.ServerTickEvent event)
     {
-        if (event.side == Side.CLIENT || event.phase == TickEvent.Phase.END || watchedClasses.size() == 0) return;
+        if (event.side == Side.CLIENT || event.phase == TickEvent.Phase.START || watchedClasses.size() == 0) return;
 
 
         MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
@@ -63,6 +63,8 @@ public class InventoryChangedEvent extends EntityEvent
         {
             for (Entity entity : world.loadedEntityList)
             {
+                if (entity.isDead) continue;
+
                 found = false;
                 for (Class<? extends Entity> cls : watchedClasses)
                 {
