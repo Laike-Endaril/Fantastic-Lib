@@ -419,24 +419,39 @@ public class GUIElement
     {
         element.parent = this;
         children.add(index, element);
-        recalc(index);
+        switch (subElementAutoplaceMethod)
+        {
+            case AP_CENTER:
+                recalc(0);
+                break;
+
+            default:
+                recalc(index);
+        }
         return element;
     }
 
     public void recalcAndRepositionSubElements(int startIndex)
     {
+        double yy = 0;
         switch (subElementAutoplaceMethod)
         {
             case AP_CENTER:
-                for (int i = startIndex; i < size(); i++)
+                for (GUIElement element : children)
                 {
-                    GUIElement element = get(i);
                     element.recalc(0);
                     if (element.autoplace)
                     {
-                        element.x = 0.5 - element.width / 2;
-                        element.y = 0.5 - element.height / 2;
+                        element.x = 0.5 - element.width * 0.5;
+                        element.y = yy;
+                        yy = Tools.max(yy, element.y + element.height);
                     }
+                }
+
+                yy *= 0.5;
+                for (GUIElement element : children)
+                {
+                    if (element.autoplace) element.y += 0.5 - yy;
                 }
                 break;
 
