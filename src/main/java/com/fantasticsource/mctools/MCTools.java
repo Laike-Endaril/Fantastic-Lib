@@ -39,6 +39,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.*;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
@@ -497,6 +499,7 @@ public class MCTools
                             GameProfile gameProfile = player.getGameProfile();
                             MailMessage mailMessage = new MailMessage(-1, mailSystem, null, null, Calendar.getInstance().getTime(), "/give", "", attachments, false);
                             mailSystemManager.onSendMailMessages(null, new GameProfile[]{gameProfile}, mailMessage);
+                            player.sendMessage(new TextComponentString(TextFormatting.LIGHT_PURPLE + "No inventory space! " + stack1.getDisplayName() + " was sent to your mailbox!"));
 
 
                             entityitem.setDead();
