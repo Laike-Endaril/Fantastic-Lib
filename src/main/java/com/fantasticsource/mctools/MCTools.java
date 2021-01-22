@@ -8,13 +8,7 @@ import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.TrigLookupTable;
 import com.fantasticsource.tools.datastructures.ExplicitPriorityQueue;
 import com.fantasticsource.tools.datastructures.VectorN;
-import com.mojang.authlib.GameProfile;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import moe.plushie.rpg_framework.api.RpgEconomyAPI;
-import moe.plushie.rpg_framework.api.mail.IMailSystem;
-import moe.plushie.rpg_framework.api.mail.IMailSystemManager;
-import moe.plushie.rpg_framework.core.RPGFramework;
-import moe.plushie.rpg_framework.mail.common.MailMessage;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -34,13 +28,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.*;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
@@ -484,28 +475,7 @@ public class MCTools
 
             if (!entityitem.isDead && Loader.isModLoaded("rpg_economy"))
             {
-                ItemStack stack1 = entityitem.getItem();
-                if (!stack1.isEmpty())
-                {
-                    IMailSystemManager mailSystemManager = RpgEconomyAPI.getMailSystemManager();
-                    if (mailSystemManager != null)
-                    {
-                        IMailSystem[] mailSystems = mailSystemManager.getMailSystems();
-                        if (mailSystems != null && mailSystems.length > 0)
-                        {
-                            IMailSystem mailSystem = mailSystems[0];
-                            NonNullList<ItemStack> attachments = NonNullList.create();
-                            attachments.add(stack1);
-                            GameProfile gameProfile = player.getGameProfile();
-                            MailMessage mailMessage = new MailMessage(-1, mailSystem, null, null, Calendar.getInstance().getTime(), "/give", "", attachments, false);
-                            mailSystemManager.onSendMailMessages(null, new GameProfile[]{gameProfile}, mailMessage);
-                            player.sendMessage(new TextComponentString(TextFormatting.LIGHT_PURPLE + "No inventory space! " + stack1.getDisplayName() + " was sent to your mailbox!"));
-
-
-                            entityitem.setDead();
-                        }
-                    }
-                }
+                //TODO send via mail
             }
         }
     }
