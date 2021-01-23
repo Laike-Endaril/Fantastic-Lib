@@ -231,7 +231,7 @@ public class ReflectionTool
 
     public static Object invoke(Class classType, String[] possibleMethodNames, Object object, Object... args)
     {
-        Method method = getMethod(classType, possibleMethodNames);
+        Method method = getMethod(classType, args.length, possibleMethodNames);
         return method == null ? null : invoke(method, object, args);
     }
 
