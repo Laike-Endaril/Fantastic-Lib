@@ -56,6 +56,18 @@ public class ReflectionTool
         return getMethod(printFound, classType, null, possibleMethodNames);
     }
 
+    public static Method getMethod(Class classType, int parameterCount, String... possibleMethodNames)
+    {
+        return getMethod(false, classType, parameterCount, possibleMethodNames);
+    }
+
+    public static Method getMethod(boolean printFound, Class classType, int parameterCount, String... possibleMethodNames)
+    {
+        Class[] paramTypes = new Class[parameterCount];
+        for (int i = 0; i < parameterCount; i++) paramTypes[i] = null;
+        return getMethod(printFound, classType, paramTypes, possibleMethodNames);
+    }
+
     public static Method getMethod(Class classType, Class[] parameterTypes, String... possibleMethodNames)
     {
         return getMethod(false, classType, parameterTypes, possibleMethodNames);
@@ -82,7 +94,7 @@ public class ReflectionTool
                     Class[] methodParamTypes = method.getParameterTypes();
                     for (int i = 0; i < parameterTypes.length; i++)
                     {
-                        if (!parameterTypes[i].equals(methodParamTypes[i]))
+                        if (parameterTypes[i] != null && !parameterTypes[i].equals(methodParamTypes[i]))
                         {
                             found = false;
                             break;
