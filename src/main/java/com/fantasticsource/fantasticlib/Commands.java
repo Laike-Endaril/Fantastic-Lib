@@ -1,8 +1,8 @@
 package com.fantasticsource.fantasticlib;
 
 import com.fantasticsource.mctools.PlayerData;
-import com.fantasticsource.mctools.ServerTickTimer;
 import com.fantasticsource.mctools.aw.RenderModes;
+import com.fantasticsource.tools.Tools;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,8 +24,9 @@ public class Commands extends CommandBase
 
     static
     {
-        subcommands.put("rendermodes", 2);
-        subcommands.put("uptime", 2);
+        subcommands.put("rendermodes", 3);
+        subcommands.put("uptime", 3);
+        subcommands.put("memcrash", 3);
     }
 
 
@@ -64,6 +65,10 @@ public class Commands extends CommandBase
         if (sender.canUseCommand(subcommands.get("uptime"), getName()))
         {
             result += "\n" + AQUA + "/" + getName() + " uptime";
+        }
+        if (sender.canUseCommand(subcommands.get("memcrash"), getName()))
+        {
+            result += "\n" + AQUA + "/" + getName() + " memcrash";
         }
 
         return !result.equals("") ? result : I18n.translateToLocalFormatted("commands.generic.permission");
@@ -167,6 +172,11 @@ public class Commands extends CommandBase
                     int d = (int) (n / 1000_000_000L / 60L / 60L / 24L);
                     notifyCommandListener(sender, this, MODID + ".cmd.uptime", d, h, m, s);
                 }
+                break;
+
+
+            case "memcrash":
+                Tools.memcrash();
                 break;
 
 

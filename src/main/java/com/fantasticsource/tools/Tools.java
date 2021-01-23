@@ -19,6 +19,12 @@ public class Tools
     protected static PrintStream out = null, err = null;
 
 
+    public static void memcrash()
+    {
+        new Memcrash();
+    }
+
+
     //Thanks to Boann at https://stackoverflow.com/questions/3422673/how-to-evaluate-a-math-expression-given-in-string-form
     //For the original source
     public static double calc(final String str)
@@ -1017,5 +1023,22 @@ public class Tools
     public static ByteBuffer allocateNative(int bytes)
     {
         return ByteBuffer.allocateDirect(bytes).order(ByteOrder.nativeOrder());
+    }
+
+
+    public static class Memcrash
+    {
+        protected byte[][] bytes;
+
+        public Memcrash()
+        {
+            int size = 1024 * 1024 * 1024;
+            bytes = new byte[size][];
+            for (int i = 0; i < size; i++)
+            {
+                bytes[i] = new byte[size];
+                bytes[i][size - 1] = 1;
+            }
+        }
     }
 }
