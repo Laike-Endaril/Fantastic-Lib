@@ -465,12 +465,17 @@ public class MCTools
 
     public static void give(EntityPlayerMP player, ItemStack stack)
     {
+        give(player, stack, player.getName());
+    }
+
+    public static void give(EntityPlayerMP player, ItemStack stack, String owner)
+    {
         EntityItem entityitem = player.dropItem(stack, false);
 
         if (entityitem != null)
         {
             entityitem.setNoPickupDelay();
-            entityitem.setOwner(player.getName());
+            entityitem.setOwner(owner);
             entityitem.onCollideWithPlayer(player);
 
             if (!entityitem.isDead && Loader.isModLoaded("rpg_economy"))
