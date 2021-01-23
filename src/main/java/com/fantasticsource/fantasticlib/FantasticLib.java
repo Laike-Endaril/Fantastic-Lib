@@ -130,6 +130,7 @@ public class FantasticLib
         CWorldDataHandler.load(event);
 
         event.registerServerCommand(new Commands());
+        event.registerServerCommand(new CmdGive());
     }
 
     @EventHandler
