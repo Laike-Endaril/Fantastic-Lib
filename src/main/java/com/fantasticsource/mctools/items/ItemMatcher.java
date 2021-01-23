@@ -11,9 +11,14 @@ public class ItemMatcher
 {
     public static boolean stacksMatch(ItemStack stack1, ItemStack stack2)
     {
+        return stacksMatch(stack1, stack2, true);
+    }
+
+    public static boolean stacksMatch(ItemStack stack1, ItemStack stack2, boolean testCount)
+    {
         if (stack1 == stack2) return true;
 
-        if (stack1.getCount() != stack2.getCount()) return false;
+        if (testCount && stack1.getCount() != stack2.getCount()) return false;
 
         Item item = stack1.getItem();
         if (item != stack2.getItem()) return false;
@@ -26,6 +31,11 @@ public class ItemMatcher
 
     public static boolean stacksMatch(Collection<ItemStack> stacks1, Collection<ItemStack> stacks2)
     {
+        return stacksMatch(stacks1, stacks2, true);
+    }
+
+    public static boolean stacksMatch(Collection<ItemStack> stacks1, Collection<ItemStack> stacks2, boolean testCount)
+    {
         ItemStack stack1;
         Iterator iterator1 = stacks1.iterator();
         for (ItemStack stack2 : stacks2)
@@ -35,7 +45,7 @@ public class ItemMatcher
 
             if (stack1 == stack2) continue;
 
-            if (stack1.getCount() != stack2.getCount()) return false;
+            if (testCount && stack1.getCount() != stack2.getCount()) return false;
 
             Item item = stack1.getItem();
             if (item != stack2.getItem()) return false;
@@ -58,6 +68,11 @@ public class ItemMatcher
 
     public static boolean stacksMatch(ItemStack[] stacks1, ItemStack[] stacks2)
     {
+        return stacksMatch(stacks1, stacks2, true);
+    }
+
+    public static boolean stacksMatch(ItemStack[] stacks1, ItemStack[] stacks2, boolean testCount)
+    {
         ItemStack stack1, stack2;
         int size = stacks1.length;
 
@@ -69,7 +84,7 @@ public class ItemMatcher
 
             if (stack1 == stack2) continue;
 
-            if (stack1.getCount() != stack2.getCount()) return false;
+            if (testCount && stack1.getCount() != stack2.getCount()) return false;
 
             Item item = stack1.getItem();
             if (item != stack2.getItem()) return false;
