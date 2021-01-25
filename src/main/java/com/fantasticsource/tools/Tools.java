@@ -19,9 +19,9 @@ public class Tools
     protected static PrintStream out = null, err = null;
 
 
-    public static void memcrash()
+    public static void heapdump()
     {
-        new Memcrash();
+        new Heapdump();
     }
 
 
@@ -1026,11 +1026,11 @@ public class Tools
     }
 
 
-    public static class Memcrash
+    public static class Heapdump
     {
         protected byte[][] bytes;
 
-        public Memcrash()
+        public Heapdump()
         {
             int size = 1024 * 1024 * 1024;
             bytes = new byte[size][];

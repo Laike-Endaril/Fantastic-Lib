@@ -26,7 +26,7 @@ public class Commands extends CommandBase
     {
         subcommands.put("rendermodes", 3);
         subcommands.put("uptime", 3);
-        subcommands.put("memcrash", 3);
+        subcommands.put("heapdump", 3);
     }
 
 
@@ -66,9 +66,9 @@ public class Commands extends CommandBase
         {
             result += "\n" + AQUA + "/" + getName() + " uptime";
         }
-        if (sender.canUseCommand(subcommands.get("memcrash"), getName()))
+        if (sender.canUseCommand(subcommands.get("heapdump"), getName()))
         {
-            result += "\n" + AQUA + "/" + getName() + " memcrash";
+            result += "\n" + AQUA + "/" + getName() + " heapdump";
         }
 
         return !result.equals("") ? result : I18n.translateToLocalFormatted("commands.generic.permission");
@@ -175,8 +175,8 @@ public class Commands extends CommandBase
                 break;
 
 
-            case "memcrash":
-                Tools.memcrash();
+            case "heapdump":
+                Tools.heapdump();
                 break;
 
 
