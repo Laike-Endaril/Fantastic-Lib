@@ -111,7 +111,7 @@ public class GUIItemStack extends GUIElement
         ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
 
         GlStateManager.pushMatrix();
-        GlStateManager.translate(absolutePxX() / sr.getScaleFactor(), absolutePxY() / sr.getScaleFactor(), 0);
+        GlStateManager.translate((double) absolutePxX() / sr.getScaleFactor(), (double) absolutePxY() / sr.getScaleFactor(), 0);
         if (parent instanceof GUIPanZoomView) GlStateManager.scale(((GUIPanZoomView) parent).getZoom(), ((GUIPanZoomView) parent).getZoom(), 1);
         Minecraft.getMinecraft().getRenderItem().renderItemIntoGUI(stack, 0, 0);
         GlStateManager.popMatrix();
