@@ -10,6 +10,7 @@ import com.fantasticsource.mctools.gui.element.view.GUITooltipView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 
@@ -106,6 +107,7 @@ public class GUIItemStack extends GUIElement
         Render.setModelViewMatrix(GUIScreen.mcModelView);
 
         GlStateManager.enableTexture2D();
+        RenderHelper.enableGUIStandardItemLighting();
         ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
 
         GlStateManager.pushMatrix();
@@ -118,6 +120,7 @@ public class GUIItemStack extends GUIElement
         Render.setModelViewMatrix(modelView);
 
 
+        RenderHelper.disableStandardItemLighting();
         drawChildren();
     }
 }
