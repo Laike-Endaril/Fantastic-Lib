@@ -225,8 +225,10 @@ public abstract class GUIScreen extends GuiScreen
 
         //Draw and clear tooltips
         currentScissor = new int[]{0, 0, pxWidth, pxHeight};
+        GlStateManager.disableDepth();
         tooltips.draw();
         tooltips.clear();
+        GlStateManager.enableDepth();
 
 
         //Undo scissor

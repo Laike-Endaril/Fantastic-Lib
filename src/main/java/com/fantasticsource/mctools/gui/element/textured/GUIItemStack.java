@@ -99,8 +99,6 @@ public class GUIItemStack extends GUIElement
     @Override
     public void draw()
     {
-        //TODO Later-drawn GUIItemStacks render on top of tooltips
-
         FloatBuffer projection = Render.getCurrentProjectionMatrix();
         FloatBuffer modelView = Render.getCurrentModelViewMatrix();
 
