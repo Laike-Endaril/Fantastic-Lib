@@ -108,6 +108,7 @@ public class GUIAutocroppedView extends GUIView
             {
                 element.x += (0.5 - element.x) * 2 * xPad;
                 element.y += (0.5 - element.y) * 2 * yPad;
+                element.recalc(0);
             }
         }
 
