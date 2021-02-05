@@ -28,18 +28,10 @@ public class GUIItemStack extends GUIElement
         this.unscaledWidth = unscaledWidth;
         this.unscaledHeight = unscaledHeight;
 
-        this.stack = stack;
-
         tooltip = new GUITooltipView(screen);
         tooltip.setSubElementAutoplaceMethod(AP_X_0_TOP_TO_BOTTOM);
-        Minecraft mc = Minecraft.getMinecraft();
 
-        for (String line : stack.getTooltip(mc.player, ITooltipFlag.TooltipFlags.ADVANCED))
-        {
-            GUIAutocroppedView view = new GUIAutocroppedView(screen, 0.3);
-            view.add(new GUIText(screen, line));
-            tooltip.add(view);
-        }
+        setItemStack(stack);
     }
 
 
@@ -66,12 +58,21 @@ public class GUIItemStack extends GUIElement
 
     public ItemStack getItemStack()
     {
-        return stack.copy();
+        return stack;
     }
 
     public void setItemStack(ItemStack stack)
     {
-        this.stack = stack.copy();
+        this.stack = stack;
+
+        tooltip.clear();
+        Minecraft mc = Minecraft.getMinecraft();
+        for (String line : stack.getTooltip(mc.player, ITooltipFlag.TooltipFlags.ADVANCED))
+        {
+            GUIAutocroppedView view = new GUIAutocroppedView(screen, 0.3);
+            view.add(new GUIText(screen, line));
+            tooltip.add(view);
+        }
     }
 
     @Override
@@ -119,8 +120,9 @@ public class GUIItemStack extends GUIElement
         Render.setProjectionMatrix(projection);
         Render.setModelViewMatrix(modelView);
 
-
         RenderHelper.disableStandardItemLighting();
+        GlStateManager.shadeModel(7425);
+
         drawChildren();
     }
 }
