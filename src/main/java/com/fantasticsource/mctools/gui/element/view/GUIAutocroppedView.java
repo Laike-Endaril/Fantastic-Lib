@@ -83,13 +83,62 @@ public class GUIAutocroppedView extends GUIView
 
         width = 0;
         height = 0;
-        for (GUIElement element : children)
+        switch (subElementAutoplaceMethod)
         {
-            if (element != background)
-            {
-                width = Tools.max(width, element.x + element.width);
-                height = Tools.max(height, element.y + element.height);
-            }
+            case AP_CENTER:
+                double minY = Double.MAX_VALUE;
+                for (GUIElement element : children)
+                {
+                    if (element != background)
+                    {
+                        minY = Tools.min(minY, element.y);
+                        width = Tools.max(width, element.width);
+                        height = Tools.max(height, element.height);
+                    }
+                }
+                height -= minY;
+                break;
+
+
+            case AP_LEFT_TO_RIGHT_TOP_TO_BOTTOM:
+                for (GUIElement element : children)
+                {
+                    if (element != background)
+                    {
+                        width = Tools.max(width, element.x + element.width);
+                        height = Tools.max(height, element.y + element.height);
+                    }
+                }
+                break;
+
+
+            case AP_CENTERED_H_TOP_TO_BOTTOM:
+                for (GUIElement element : children)
+                {
+                    if (element != background)
+                    {
+                        width = Tools.max(width, element.width);
+                        height = Tools.max(height, element.y + element.height);
+                    }
+                }
+                break;
+
+
+            case AP_X_0_TOP_TO_BOTTOM:
+                for (GUIElement element : children)
+                {
+                    if (element != background)
+                    {
+                        width = Tools.max(width, element.width);
+                        height = Tools.max(height, element.y + element.height);
+                    }
+                }
+                break;
+
+            //TODO add other AP types
+
+            default:
+                throw new IllegalArgumentException("Unimplemented autoplace type: " + subElementAutoplaceMethod);
         }
 
         recalcAndRepositionSubElements(0);
