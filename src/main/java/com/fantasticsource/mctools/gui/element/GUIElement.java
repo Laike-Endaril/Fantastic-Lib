@@ -111,6 +111,10 @@ public class GUIElement
 
     private int[] preDraw()
     {
+        //Reset state
+        GlStateManager.color(1, 1, 1, 1);
+        GlStateManager.disableDepth();
+
         //Matrix
         GlStateManager.pushMatrix();
         GlStateManager.translate(x, y, 0);
