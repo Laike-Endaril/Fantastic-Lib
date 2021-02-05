@@ -3,6 +3,7 @@ package com.fantasticsource.mctools.gui.element.textured;
 import com.fantasticsource.mctools.Render;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
+import com.fantasticsource.mctools.gui.element.other.GUIDarkenedBackground;
 import com.fantasticsource.mctools.gui.element.text.GUIText;
 import com.fantasticsource.mctools.gui.element.view.GUIAutocroppedView;
 import com.fantasticsource.mctools.gui.element.view.GUIPanZoomView;
@@ -42,18 +43,10 @@ public class GUIItemStack extends GUIElement
         this.unscaledWidth = unscaledWidth;
         this.unscaledHeight = unscaledHeight;
 
-        this.stack = stack;
-
         tooltip = new GUITooltipView(screen);
         tooltip.setSubElementAutoplaceMethod(AP_X_0_TOP_TO_BOTTOM);
-        Minecraft mc = Minecraft.getMinecraft();
 
-        for (String line : stack.getTooltip(mc.player, ITooltipFlag.TooltipFlags.ADVANCED))
-        {
-            GUIAutocroppedView view = new GUIAutocroppedView(screen, 0.3);
-            view.add(new GUIText(screen, line));
-            tooltip.add(view);
-        }
+        setItemStack(stack);
     }
 
     public ItemStack getItemStack()
@@ -66,6 +59,8 @@ public class GUIItemStack extends GUIElement
         this.stack = stack;
 
         tooltip.clear();
+        tooltip.background = new GUIDarkenedBackground(screen);
+        tooltip.add(tooltip.background);
         Minecraft mc = Minecraft.getMinecraft();
         for (String line : stack.getTooltip(mc.player, ITooltipFlag.TooltipFlags.ADVANCED))
         {
