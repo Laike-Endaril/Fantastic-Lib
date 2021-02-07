@@ -135,6 +135,18 @@ public class GUIAutocroppedView extends GUIView
                 }
                 break;
 
+
+            case AP_Y_0_LEFT_TO_RIGHT:
+                for (GUIElement element : children)
+                {
+                    if (element != background)
+                    {
+                        width = Tools.max(width, element.x + element.width);
+                        height = Tools.max(height, element.height);
+                    }
+                }
+                break;
+
             //TODO add other AP types
 
             default:

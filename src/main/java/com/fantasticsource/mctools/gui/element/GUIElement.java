@@ -31,7 +31,8 @@ public class GUIElement
 //            AP_BOTTOM_TO_TOP_RIGHT_TO_LEFT = 7,
     AP_CENTERED_H_TOP_TO_BOTTOM = 8,
     //            AP_CENTERED_V_LEFT_TO_RIGHT = 9,
-    AP_X_0_TOP_TO_BOTTOM = 10;
+    AP_X_0_TOP_TO_BOTTOM = 10,
+            AP_Y_0_LEFT_TO_RIGHT = 11;
 
     public final ArrayList<Runnable>
             onClickActions = new ArrayList<>(),
@@ -570,6 +571,39 @@ public class GUIElement
 
                         autoY = element.y;
                         furthestY = Tools.max(furthestY, autoY + element.height);
+                    }
+                }
+                break;
+
+
+            case AP_Y_0_LEFT_TO_RIGHT:
+                if (size() <= 1 || startIndex != size() - 1)
+                {
+                    autoX = 0;
+                    furthestX = 0;
+
+                    for (int i = 0; i < startIndex; i++)
+                    {
+                        GUIElement element = get(i);
+                        if (element.autoplace)
+                        {
+                            autoX = element.x;
+                            furthestX = Tools.max(furthestX, autoX + element.width);
+                        }
+                    }
+                }
+
+                for (int i = startIndex; i < size(); i++)
+                {
+                    GUIElement element = get(i);
+                    element.recalc(0);
+                    if (element.autoplace)
+                    {
+                        element.x = furthestX;
+                        element.y = 0;
+
+                        autoX = element.x;
+                        furthestX = Tools.max(furthestX, autoX + element.width);
                     }
                 }
                 break;
