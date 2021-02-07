@@ -395,6 +395,12 @@ public class MCTools
     }
 
 
+    public static void destroyItemStack(ItemStack stack)
+    {
+        stack.deserializeNBT(new NBTTagCompound());
+        stack.setCount(0);
+    }
+
     public static ItemStack getItemStack(String itemID)
     {
         String domain = "minecraft", name;
