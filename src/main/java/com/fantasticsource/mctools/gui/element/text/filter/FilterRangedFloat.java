@@ -27,26 +27,15 @@ public class FilterRangedFloat extends TextFilter<Float>
     @Override
     public boolean acceptable(String input)
     {
-        String transformed = transformInput(input);
-        if (transformed.equals("") || transformed.indexOf('.') != transformed.lastIndexOf('.')) return false;
-
-        boolean first = true, digits = false;
-        for (char c : transformed.toCharArray())
+        try
         {
-            if (c == '-' && first)
-            {
-                first = false;
-                continue;
-            }
-            first = false;
-            if (c == '.') continue;
-            if (c < '0' || c > '9') return false;
-            else digits = true;
+            float f = Float.parseFloat(transformInput(input));
+            return f >= min && f <= max;
         }
-        if (!digits) return false;
-
-        float f = Float.parseFloat(transformed);
-        return f >= min && f <= max;
+        catch (NumberFormatException e)
+        {
+            return false;
+        }
     }
 
     @Override

@@ -17,18 +17,15 @@ public class FilterInt extends TextFilter<Integer>
     @Override
     public boolean acceptable(String input)
     {
-        if (input.equals("")) return false;
-
-        boolean first = true;
-        for (char c : transformInput(input).toCharArray())
+        try
         {
-            if ((c < '0' || c > '9') && (!first || c != '-')) return false;
-            first = false;
+            Integer.parseInt(transformInput(input));
+            return true;
         }
-
-        if (input.charAt(0) == '-' && input.length() == 1) return false;
-
-        return true;
+        catch (NumberFormatException e)
+        {
+            return false;
+        }
     }
 
     @Override

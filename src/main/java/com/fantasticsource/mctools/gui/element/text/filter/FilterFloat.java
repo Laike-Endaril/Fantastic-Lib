@@ -17,25 +17,15 @@ public class FilterFloat extends TextFilter<Float>
     @Override
     public boolean acceptable(String input)
     {
-        input = transformInput(input);
-
-        if (input.equals("")) return false;
-
-        if (input.indexOf('.') != input.lastIndexOf('.')) return false;
-
-        boolean first = true;
-        for (char c : input.toCharArray())
+        try
         {
-            if ((c < '0' || c > '9') && c != '.' && (!first || c != '-')) return false;
-            first = false;
+            Float.parseFloat(transformInput(input));
+            return true;
         }
-
-        int ignored = 0;
-        if (input.contains("-")) ignored++;
-        if (input.contains(".")) ignored++;
-        if (input.length() <= ignored) return false;
-
-        return true;
+        catch (NumberFormatException e)
+        {
+            return false;
+        }
     }
 
     @Override

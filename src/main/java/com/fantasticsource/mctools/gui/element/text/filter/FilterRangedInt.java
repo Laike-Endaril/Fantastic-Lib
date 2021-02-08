@@ -27,25 +27,15 @@ public class FilterRangedInt extends TextFilter<Integer>
     @Override
     public boolean acceptable(String input)
     {
-        String transformed = transformInput(input);
-        if (transformed.equals("")) return false;
-
-        boolean first = true, digits = false;
-        for (char c : transformed.toCharArray())
+        try
         {
-            if (c == '-' && first)
-            {
-                first = false;
-                continue;
-            }
-            first = false;
-            if (c < '0' || c > '9') return false;
-            else digits = true;
+            int i = Integer.parseInt(transformInput(input));
+            return i >= min && i <= max;
         }
-        if (!digits) return false;
-
-        int i = Integer.parseInt(transformed);
-        return i >= min && i <= max;
+        catch (NumberFormatException e)
+        {
+            return false;
+        }
     }
 
     @Override
