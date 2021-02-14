@@ -2,14 +2,17 @@ package com.fantasticsource.mctools.aw;
 
 import com.fantasticsource.fantasticlib.api.FLibAPI;
 import com.fantasticsource.mctools.GlobalInventory;
+import com.fantasticsource.mctools.Network;
 import com.fantasticsource.mctools.event.InventoryChangedEvent;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 import com.fantasticsource.tools.datastructures.Pair;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -24,7 +27,11 @@ public class RenderModes
 {
     public static void init()
     {
-        FLibAPI.attachNBTCapToEntityIf(MODID, entity -> true);
+        FLibAPI.attachNBTCapToEntityIf(MODID, entity ->
+        {
+            if (entity instanceof EntityPlayerMP) FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(() -> Network.WRAPPER.sendTo(new Network.RenderModesPacket(entity), (EntityPlayerMP) entity));
+            return true;
+        });
 
         MinecraftForge.EVENT_BUS.register(RenderModes.class);
     }
