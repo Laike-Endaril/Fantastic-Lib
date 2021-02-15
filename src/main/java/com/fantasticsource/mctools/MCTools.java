@@ -87,6 +87,12 @@ public class MCTools
     }
 
 
+    public static boolean isClient()
+    {
+        return FantasticLib.isClient;
+    }
+
+
     public static boolean entityIsValid(Entity entity)
     {
         if (entity.isDead || entity.world == null || !worldIsValid((WorldServer) entity.world)) return false;

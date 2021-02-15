@@ -4,17 +4,22 @@ import com.fantasticsource.mctools.GlobalInventory;
 import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.event.InventoryChangedEvent;
 import com.fantasticsource.tools.ReflectionTool;
-import moe.plushie.armourers_workshop.api.ArmourersWorkshopApi;
+import com.google.common.cache.Cache;
 import moe.plushie.armourers_workshop.api.common.skin.data.ISkinDescriptor;
-import moe.plushie.armourers_workshop.api.common.skin.data.ISkinPart;
-import moe.plushie.armourers_workshop.api.common.skin.data.ISkinProperties;
+import moe.plushie.armourers_workshop.api.common.skin.data.ISkinIdentifier;
 import moe.plushie.armourers_workshop.api.common.skin.data.ISkinProperty;
 import moe.plushie.armourers_workshop.api.common.skin.type.ISkinPartType;
 import moe.plushie.armourers_workshop.api.common.skin.type.ISkinPartTypeTextured;
+import moe.plushie.armourers_workshop.client.skin.cache.ClientSkinCache;
+import moe.plushie.armourers_workshop.common.painting.PaintTypeRegistry;
+import moe.plushie.armourers_workshop.common.painting.PaintingHelper;
+import moe.plushie.armourers_workshop.common.skin.data.*;
+import moe.plushie.armourers_workshop.common.skin.type.SkinTypeRegistry;
+import moe.plushie.armourers_workshop.utils.SkinNBTHelper;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -23,10 +28,10 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.awt.*;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
@@ -34,10 +39,11 @@ import static com.fantasticsource.fantasticlib.FantasticLib.DOMAIN;
 
 public class TransientAWSkinHandler
 {
-    @GameRegistry.ObjectHolder("armourers_workshop:item.skin")
-    public static Item awSkinItem;
+    protected static Field
+            ITEM_TOOLTIP_EVENT_ITEMSTACK_FIELD = MCTools.isClient() ? ReflectionTool.getField(ItemTooltipEvent.class, "itemStack") : null,
+            CLIENT_SKIN_CACHE_SKIN_CACHE_FIELD = MCTools.isClient() ? ReflectionTool.getField(ClientSkinCache.class, "skinCache") : null;
 
-    protected static Field ITEM_TOOLTIP_EVENT_ITEMSTACK_FIELD = ReflectionTool.getField(ItemTooltipEvent.class, "itemStack");
+    protected static Cache<ISkinIdentifier, Skin> skinCache = CLIENT_SKIN_CACHE_SKIN_CACHE_FIELD == null ? null : (Cache<ISkinIdentifier, Skin>) ReflectionTool.get(CLIENT_SKIN_CACHE_SKIN_CACHE_FIELD, ClientSkinCache.INSTANCE);
     protected static ItemStack oldTooltipStack;
 
 
@@ -205,12 +211,12 @@ public class TransientAWSkinHandler
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void preTooltip(ItemTooltipEvent event)
     {
-        ItemStack newTooltipStack = getTransientSkinsOutfitWithRenderModes(event.getItemStack());
+        ItemStack newTooltipStack = getTransientSkinsOutfitWithRenderModes(event.getItemStack(), Minecraft.getMinecraft().player);
         if (newTooltipStack.isEmpty()) oldTooltipStack = null;
         else
         {
             oldTooltipStack = MCTools.cloneItemStack(event.getItemStack());
-            ReflectionTool.set(ITEM_TOOLTIP_EVENT_ITEMSTACK_FIELD, event, ItemStack.EMPTY);
+            ReflectionTool.set(ITEM_TOOLTIP_EVENT_ITEMSTACK_FIELD, event, newTooltipStack);
         }
     }
 
@@ -234,89 +240,105 @@ public class TransientAWSkinHandler
             return (!skin.getTagCompound().hasKey("armourersWorkshop"));
         });
 
-        //TODO combine remaining skins into (cached? client-side-only?) outfit (see ContainerOutfitMaker.saveOutfit in AW)
-
-        return outfit;
+        return makeClientOutfit(player, transientSkins);
     }
 
-    private void saveOutfit(EntityPlayer player)
+    @SideOnly(Side.CLIENT)
+    protected static ItemStack makeClientOutfit(EntityPlayer player, ArrayList<ItemStack> skinStacks)
     {
-        ArrayList<ISkinPart> skinParts = new ArrayList<>();
-        ISkinProperties skinProperties = new SkinProperties();
-        String partIndexs = "";
+        ArrayList<SkinPart> skinParts = new ArrayList<>();
+        SkinProperties skinProperties = new SkinProperties();
+        StringBuilder partIndices = new StringBuilder();
         int[] paintData = null;
         int skinIndex = 0;
-        for (int i = 2; i < tileEntity.getSizeInventory(); i++)
+        for (ItemStack stack : skinStacks)
         {
-            ItemStack stack = tileEntity.getStackInSlot(i);
             ISkinDescriptor descriptor = SkinNBTHelper.getSkinDescriptorFromStack(stack);
-            if (descriptor != null)
+            if (descriptor == null) continue;
+
+            Skin skin = ClientSkinCache.INSTANCE.getSkin(descriptor, true);
+            if (skin == null) continue;
+
+            for (int partIndex = 0; partIndex < skin.getPartCount(); partIndex++)
             {
-                Skin skin = CommonSkinCache.INSTANCE.getSkin(descriptor);
-                if (skin != null)
+                SkinPart part = skin.getParts().get(partIndex);
+                skinParts.add(part);
+            }
+
+            if (skin.hasPaintData())
+            {
+                if (paintData == null) paintData = new int[64 * 32];
+                for (int partIndex = 0; partIndex < skin.getSkinType().getSkinParts().size(); partIndex++)
                 {
-                    for (int partIndex = 0; partIndex < skin.getPartCount(); partIndex++)
+                    ISkinPartType part = skin.getSkinType().getSkinParts().get(partIndex);
+                    if (part instanceof ISkinPartTypeTextured)
                     {
-                        SkinPart part = skin.getParts().get(partIndex);
-                        skinParts.add(part);
+                        ISkinPartTypeTextured texType = ((ISkinPartTypeTextured) part);
+                        paintData = paintPart(texType, paintData, skin.getPaintData());
                     }
+                }
+            }
 
-                    if (skin.hasPaintData())
-                    {
-                        if (paintData == null)
-                        {
-                            paintData = new int[64 * 32];
-                        }
-                        for (int partIndex = 0; partIndex < skin.getSkinType().getSkinParts().size(); partIndex++)
-                        {
-                            ISkinPartType part = skin.getSkinType().getSkinParts().get(partIndex);
-                            if (part instanceof ISkinPartTypeTextured)
-                            {
-                                ISkinPartTypeTextured texType = ((ISkinPartTypeTextured) part);
-                                paintData = paintPart(texType, paintData, skin.getPaintData());
-                            }
-                        }
-                    }
+            if (partIndices.length() == 0)
+            {
+                partIndices = new StringBuilder(String.valueOf(skinParts.size()));
+            }
+            else
+            {
+                partIndices.append(":").append(String.valueOf(skinParts.size()));
+            }
 
-                    if (partIndexs.isEmpty())
-                    {
-                        partIndexs = String.valueOf(skinParts.size());
-                    }
-                    else
-                    {
-                        partIndexs += ":" + String.valueOf(skinParts.size());
-                    }
+            for (ISkinProperty prop : skin.getSkinType().getProperties())
+            {
+                SkinProperty p = (SkinProperty) prop;
+                if (p.getKey().startsWith("wings")) p.setValue(skinProperties, p.getValue(skin.getProperties()), skinIndex);
+                else p.setValue(skinProperties, p.getValue(skin.getProperties()));
+            }
+            skinIndex++;
+        }
+        if (skinParts.size() == 0) return ItemStack.EMPTY;
 
-                    for (ISkinProperty prop : skin.getSkinType().getProperties())
-                    {
-                        SkinProperty p = (SkinProperty) prop;
-                        if (p.getKey().startsWith("wings"))
-                        {
-                            p.setValue(skinProperties, p.getValue(skin.getProperties()), skinIndex);
-                        }
-                        else
-                        {
-                            p.setValue(skinProperties, p.getValue(skin.getProperties()));
-                        }
-                    }
-                    skinIndex++;
+
+        SkinProperties.PROP_OUTFIT_PART_INDEXS.setValue(skinProperties, partIndices.toString());
+        SkinProperties.PROP_ALL_AUTHOR_NAME.setValue(skinProperties, player.getName());
+        if (player.getGameProfile() != null && player.getGameProfile().getId() != null)
+        {
+            SkinProperties.PROP_ALL_AUTHOR_UUID.setValue(skinProperties, player.getGameProfile().getId().toString());
+        }
+        SkinProperties.PROP_ALL_CUSTOM_NAME.setValue(skinProperties, "");
+        SkinProperties.PROP_ALL_FLAVOUR_TEXT.setValue(skinProperties, "");
+        Skin skin = new Skin(skinProperties, SkinTypeRegistry.skinOutfit, paintData, skinParts);
+        try
+        {
+            skinCache.put(new SkinIdentifier(skin), skin);
+            return SkinNBTHelper.makeEquipmentSkinStack(new SkinDescriptor(skin));
+        }
+        catch (NullPointerException e)
+        {
+            return ItemStack.EMPTY;
+        }
+    }
+
+    protected static int[] paintPart(ISkinPartTypeTextured texType, int[] desPaint, int[] srcPaint)
+    {
+        Point pos = texType.getTextureSkinPos();
+        int width = (texType.getTextureModelSize().getX() * 2) + (texType.getTextureModelSize().getZ() * 2);
+        int height = texType.getTextureModelSize().getY() + texType.getTextureModelSize().getZ();
+
+        for (int ix = 0; ix < width; ix++)
+        {
+            for (int iy = 0; iy < height; iy++)
+            {
+                int x = pos.x + ix;
+                int y = pos.y + iy;
+                byte[] rgbt = PaintingHelper.intToBytes(srcPaint[x + (y * 64)]);
+                if ((rgbt[3] & 0xFF) != PaintTypeRegistry.PAINT_TYPE_NONE.getId())
+                {
+                    desPaint[x + (y * 64)] = srcPaint[x + (y * 64)];
                 }
             }
         }
-        if (!skinParts.isEmpty())
-        {
-            SkinProperties.PROP_OUTFIT_PART_INDEXS.setValue(skinProperties, partIndexs);
-            SkinProperties.PROP_ALL_AUTHOR_NAME.setValue(skinProperties, player.getName());
-            if (player.getGameProfile() != null && player.getGameProfile().getId() != null)
-            {
-                SkinProperties.PROP_ALL_AUTHOR_UUID.setValue(skinProperties, player.getGameProfile().getId().toString());
-            }
-            SkinProperties.PROP_ALL_CUSTOM_NAME.setValue(skinProperties, tileEntity.PROP_OUTFIT_NAME.get());
-            SkinProperties.PROP_ALL_FLAVOUR_TEXT.setValue(skinProperties, tileEntity.PROP_OUTFIT_FLAVOUR.get());
-            Skin skin = new Skin(skinProperties, SkinTypeRegistry.skinOutfit, paintData, skinParts);
-            CommonSkinCache.INSTANCE.addEquipmentDataToCache(skin, (LibraryFile) null);
-            ItemStack skinStack = SkinNBTHelper.makeEquipmentSkinStack(new SkinDescriptor(skin));
-            tileEntity.setInventorySlotContents(1, skinStack);
-        }
+
+        return desPaint;
     }
 }

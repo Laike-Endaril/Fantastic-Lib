@@ -39,7 +39,7 @@ public class ReflectionTool
         }
         catch (IllegalAccessException | NoSuchFieldException e)
         {
-            MCTools.crash(e, false);
+            return null;
         }
 
         return null;
@@ -151,9 +151,8 @@ public class ReflectionTool
         }
         catch (InstantiationException | IllegalAccessException | InvocationTargetException e)
         {
-            MCTools.crash(e, false);
+            return null;
         }
-        return null;
     }
 
     public static Object getInstance(Class cls, Object... constructorArgs)
@@ -169,9 +168,8 @@ public class ReflectionTool
         }
         catch (InstantiationException | IllegalAccessException | InvocationTargetException e)
         {
-            MCTools.crash(e, false);
+            return null;
         }
-        return null;
     }
 
 
