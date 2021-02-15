@@ -14,13 +14,18 @@ import com.fantasticsource.mctools.gui.screen.TestGUI;
 import com.fantasticsource.mctools.nbtcap.NBTCap;
 import com.fantasticsource.mctools.nbtcap.NBTCapStorage;
 import com.fantasticsource.tools.ReflectionTool;
+import com.fantasticsource.tools.component.path.CPathLinear;
 import com.fantasticsource.tools.datastructures.ColorImmutable;
+import com.fantasticsource.tools.datastructures.VectorN;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
@@ -168,27 +173,16 @@ public class FantasticLib
         }
     }
 
-//
-//    private static CPathLinear path = new CPathLinear(new VectorN(.05, 0, 0));
-//
-//    @SubscribeEvent
-//    public static void test(EntityJoinWorldEvent event)
-//    {
-//        Entity entity = event.getEntity();
-//        if (entity instanceof EntityItem && entity.world.isRemote)
-//        {
-//            Particle particle = new ParticleFirework.Spark(entity.world, entity.posX, entity.posY, entity.posZ, 0, 0, 0, Minecraft.getMinecraft().effectRenderer);
-//            Minecraft.getMinecraft().effectRenderer.addEffect(particle);
-//            path.affectedParticles.add(particle);
-////            path.affectedEntities.add(entity);
-//        }
-//    }
-//
-//    @SubscribeEvent
-//    public static void test2(TickEvent.ClientTickEvent event)
-//    {
-//        if (event.phase != TickEvent.Phase.START) return;
-//
-//        path.tick();
-//    }
+
+    private static CPathLinear path = new CPathLinear(new VectorN(1, 0, 0));
+
+    @SubscribeEvent
+    public static void test(EntityJoinWorldEvent event)
+    {
+        Entity entity = event.getEntity();
+        if (entity instanceof EntityItem && entity.world.isRemote)
+        {
+            new PathedParticle(entity.world, entity.posX, entity.posY, entity.posZ, path);
+        }
+    }
 }
