@@ -12,9 +12,9 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -27,12 +27,7 @@ public class RenderModes
 {
     public static void init()
     {
-        FLibAPI.attachNBTCapToEntityIf(MODID, entity ->
-        {
-            if (entity instanceof EntityPlayerMP) FMLCommonHandler.instance().getMinecraftServerInstance().addScheduledTask(() -> Network.WRAPPER.sendTo(new Network.RenderModesPacket(entity), (EntityPlayerMP) entity));
-            return true;
-        });
-
+        FLibAPI.attachNBTCapToEntityIf(MODID, entity -> true);
         MinecraftForge.EVENT_BUS.register(RenderModes.class);
     }
 
@@ -54,6 +49,8 @@ public class RenderModes
         compound.setString(renderModeChannel, renderMode);
 
         refresh(entity);
+
+        if (entity instanceof EntityPlayerMP) Network.WRAPPER.sendTo(new Network.RenderModesPacket(entity), (EntityPlayerMP) entity);
     }
 
     public static String getRenderMode(Entity entity, String renderModeChannel)
@@ -283,5 +280,13 @@ public class RenderModes
         compound.setTag("dyeData", newCompound);
 
         return changed;
+    }
+
+
+    @SubscribeEvent
+    public static void playerLogin(PlayerEvent.PlayerLoggedInEvent event)
+    {
+        EntityPlayerMP player = (EntityPlayerMP) event.player;
+        Network.WRAPPER.sendTo(new Network.RenderModesPacket(player), player);
     }
 }
