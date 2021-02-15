@@ -172,17 +172,17 @@ public class FantasticLib
             }
         }
     }
-
-
-    private static CPathLinear path = new CPathLinear(new VectorN(1, 0, 0));
-
-    @SubscribeEvent
-    public static void test(EntityJoinWorldEvent event)
-    {
-        Entity entity = event.getEntity();
-        if (entity instanceof EntityItem && entity.world.isRemote)
-        {
-            new PathedParticle(entity.world, entity.posX, entity.posY, entity.posZ, path);
-        }
-    }
+//
+//
+//    private static CPathLinear path = new CPathLinear(new VectorN(1, 0, 0));
+//
+//    @SubscribeEvent
+//    public static void test(EntityJoinWorldEvent event)
+//    {
+//        Entity entity = event.getEntity();
+//        if (entity instanceof EntityItem && entity.world.isRemote)
+//        {
+//            new PathedParticle(entity.world, entity.posX, entity.posY, entity.posZ, path);
+//        }
+//    }
 }
