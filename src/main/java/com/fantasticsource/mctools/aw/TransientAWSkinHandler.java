@@ -260,7 +260,10 @@ public class TransientAWSkinHandler
             Skin skin = ClientSkinCache.INSTANCE.getSkin(descriptor, true);
             if (skin == null) continue;
 
+
+            //Apply dyes
             if (dyeCompound == null) dyeCompound = MCTools.getSubCompoundIfExists(stack.getTagCompound(), "armourersWorkshop", "dyeData");
+
 
             for (int partIndex = 0; partIndex < skin.getPartCount(); partIndex++)
             {
