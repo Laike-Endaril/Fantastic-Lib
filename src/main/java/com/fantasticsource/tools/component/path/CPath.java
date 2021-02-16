@@ -28,11 +28,18 @@ public abstract class CPath extends Component
     }
 
 
+    /**
+     * @param time spent on this path
+     * @return position at that time, relative to an unknown origin point, or null if invalid (will destroy particles using this path if null)
+     */
     public abstract VectorN getRelativePosition(long time);
 
     public final VectorN getPosition(long timeMillis, VectorN origin)
     {
-        return origin.copy().add(getRelativePosition(timeMillis));
+        VectorN relative = getRelativePosition(timeMillis);
+        if (relative == null) return null;
+
+        return origin.copy().add(relative);
     }
 
 

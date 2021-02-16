@@ -37,10 +37,7 @@ public class PathedParticle extends Particle
     @Override
     public void onUpdate()
     {
-        if (this.particleAge++ >= this.particleMaxAge)
-        {
-            this.setExpired();
-        }
+        if (particleAge++ >= particleMaxAge) setExpired();
 
         prevPosX = posX;
         prevPosY = posY;
@@ -49,11 +46,15 @@ public class PathedParticle extends Particle
         VectorN pos = new VectorN(0, 0, 0);
         for (CPath.PathData data : appliedPaths)
         {
-            pos.add(data.getPosition());
+            VectorN pathPos = data.getPosition();
+            if (pathPos == null)
+            {
+                setExpired();
+                return;
+            }
+            pos.add(pathPos);
         }
 
-        posX = pos.values[0];
-        posY = pos.values[1];
-        posZ = pos.values[2];
+        setPosition(pos.values[0], pos.values[1], pos.values[2]);
     }
 }

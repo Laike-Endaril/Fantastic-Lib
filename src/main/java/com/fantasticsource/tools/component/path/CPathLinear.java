@@ -63,5 +63,4 @@ public class CPathLinear extends CPath
 
         return this;
     }
-
 }

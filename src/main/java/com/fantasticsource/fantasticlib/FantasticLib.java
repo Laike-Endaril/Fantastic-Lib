@@ -6,6 +6,7 @@ import com.fantasticsource.mctools.*;
 import com.fantasticsource.mctools.aw.ForcedAWSkinOverrides;
 import com.fantasticsource.mctools.aw.RenderModes;
 import com.fantasticsource.mctools.aw.TransientAWSkinHandler;
+import com.fantasticsource.mctools.component.path.CPathFollowEntity;
 import com.fantasticsource.mctools.data.CModpackDataHandler;
 import com.fantasticsource.mctools.data.CWorldDataHandler;
 import com.fantasticsource.mctools.event.GametypeChangedEvent;
@@ -14,18 +15,19 @@ import com.fantasticsource.mctools.gui.screen.TestGUI;
 import com.fantasticsource.mctools.nbtcap.NBTCap;
 import com.fantasticsource.mctools.nbtcap.NBTCapStorage;
 import com.fantasticsource.tools.ReflectionTool;
+import com.fantasticsource.tools.component.path.CPath;
 import com.fantasticsource.tools.component.path.CPathLinear;
 import com.fantasticsource.tools.datastructures.ColorImmutable;
 import com.fantasticsource.tools.datastructures.VectorN;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
@@ -172,17 +174,20 @@ public class FantasticLib
             }
         }
     }
-//
-//
-//    private static CPathLinear path = new CPathLinear(new VectorN(1, 0, 0));
-//
-//    @SubscribeEvent
-//    public static void test(EntityJoinWorldEvent event)
-//    {
-//        Entity entity = event.getEntity();
-//        if (entity instanceof EntityItem && entity.world.isRemote)
-//        {
-//            new PathedParticle(entity.world, entity.posX, entity.posY, entity.posZ, path);
-//        }
-//    }
+
+
+    @SubscribeEvent
+    public static void test(PlayerInteractEvent.RightClickItem event)
+    {
+        EntityPlayer player = event.getEntityPlayer();
+        Vec3d lookVec = player.getLookVec();
+        CPath path = new CPathLinear(new VectorN(lookVec.x, lookVec.y, lookVec.z).scale(3));
+        CPath path2 = new CPathFollowEntity(player);
+
+        if (player.world.isRemote)
+        {
+            new PathedParticle(player.world, player.posX, player.posY + player.eyeHeight, player.posZ, path);
+            new PathedParticle(player.world, 1, player.eyeHeight, 0, path2);
+        }
+    }
 }

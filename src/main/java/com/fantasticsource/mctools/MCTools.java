@@ -93,6 +93,24 @@ public class MCTools
     }
 
 
+    public static Entity getValidEntityByID(int id)
+    {
+        for (Entity entity : validEntities()) if (entity.getEntityId() == id) return entity;
+        return null;
+    }
+
+    public static ArrayList<Entity> validEntities()
+    {
+        ArrayList<Entity> result = new ArrayList<>();
+        for (World world : validWorlds()) result.addAll(world.loadedEntityList);
+        return result;
+    }
+
+    public static ArrayList<World> validWorlds()
+    {
+        return new ArrayList<>(DIMENSION_MANAGER_WORLDS.values());
+    }
+
     public static boolean entityIsValid(Entity entity)
     {
         if (entity.isDead || entity.world == null || !worldIsValid((WorldServer) entity.world)) return false;
