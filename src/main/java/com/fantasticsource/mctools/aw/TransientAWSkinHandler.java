@@ -251,6 +251,7 @@ public class TransientAWSkinHandler
         StringBuilder partIndices = new StringBuilder();
         int[] paintData = null;
         int skinIndex = 0;
+        NBTTagCompound dyeCompound = null;
         for (ItemStack stack : skinStacks)
         {
             ISkinDescriptor descriptor = SkinNBTHelper.getSkinDescriptorFromStack(stack);
@@ -258,6 +259,8 @@ public class TransientAWSkinHandler
 
             Skin skin = ClientSkinCache.INSTANCE.getSkin(descriptor, true);
             if (skin == null) continue;
+
+            if (dyeCompound == null) dyeCompound = MCTools.getSubCompoundIfExists(stack.getTagCompound(), "armourersWorkshop", "dyeData");
 
             for (int partIndex = 0; partIndex < skin.getPartCount(); partIndex++)
             {
@@ -270,27 +273,20 @@ public class TransientAWSkinHandler
                 if (paintData == null) paintData = new int[64 * 32];
                 for (int partIndex = 0; partIndex < skin.getSkinType().getSkinParts().size(); partIndex++)
                 {
-                    ISkinPartType part = skin.getSkinType().getSkinParts().get(partIndex);
-                    if (part instanceof ISkinPartTypeTextured)
+                    ISkinPartType partType = skin.getSkinType().getSkinParts().get(partIndex);
+                    if (partType instanceof ISkinPartTypeTextured)
                     {
-                        ISkinPartTypeTextured texType = ((ISkinPartTypeTextured) part);
-                        paintData = paintPart(texType, paintData, skin.getPaintData());
+                        paintPart(((ISkinPartTypeTextured) partType), paintData, skin.getPaintData());
                     }
                 }
             }
 
-            if (partIndices.length() == 0)
-            {
-                partIndices = new StringBuilder(String.valueOf(skinParts.size()));
-            }
-            else
-            {
-                partIndices.append(":").append(String.valueOf(skinParts.size()));
-            }
+            if (partIndices.length() == 0) partIndices.append(skinParts.size());
+            else partIndices.append(":").append(skinParts.size());
 
             for (ISkinProperty prop : skin.getSkinType().getProperties())
             {
-                SkinProperty p = (SkinProperty) prop;
+                SkinProperty<SkinProperty> p = (SkinProperty) prop;
                 if (p.getKey().startsWith("wings")) p.setValue(skinProperties, p.getValue(skin.getProperties()), skinIndex);
                 else p.setValue(skinProperties, p.getValue(skin.getProperties()));
             }
@@ -301,17 +297,16 @@ public class TransientAWSkinHandler
 
         SkinProperties.PROP_OUTFIT_PART_INDEXS.setValue(skinProperties, partIndices.toString());
         SkinProperties.PROP_ALL_AUTHOR_NAME.setValue(skinProperties, player.getName());
-        if (player.getGameProfile() != null && player.getGameProfile().getId() != null)
-        {
-            SkinProperties.PROP_ALL_AUTHOR_UUID.setValue(skinProperties, player.getGameProfile().getId().toString());
-        }
+        if (player.getGameProfile() != null && player.getGameProfile().getId() != null) SkinProperties.PROP_ALL_AUTHOR_UUID.setValue(skinProperties, player.getGameProfile().getId().toString());
         SkinProperties.PROP_ALL_CUSTOM_NAME.setValue(skinProperties, "");
         SkinProperties.PROP_ALL_FLAVOUR_TEXT.setValue(skinProperties, "");
         Skin skin = new Skin(skinProperties, SkinTypeRegistry.skinOutfit, paintData, skinParts);
         try
         {
             skinCache.put(new SkinIdentifier(skin), skin);
-            return SkinNBTHelper.makeEquipmentSkinStack(new SkinDescriptor(skin));
+            ItemStack outfit = SkinNBTHelper.makeEquipmentSkinStack(new SkinDescriptor(skin));
+            if (dyeCompound != null) MCTools.getOrGenerateSubCompound(outfit.getTagCompound(), "armourersWorkshop").setTag("dyeData", dyeCompound);
+            return outfit;
         }
         catch (NullPointerException e)
         {
