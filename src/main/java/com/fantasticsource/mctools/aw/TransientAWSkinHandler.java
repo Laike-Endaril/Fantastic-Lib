@@ -208,7 +208,7 @@ public class TransientAWSkinHandler
 
 
     @SideOnly(Side.CLIENT)
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    @SubscribeEvent(priority = EventPriority.LOW)
     public static void preTooltip(ItemTooltipEvent event)
     {
         ItemStack newTooltipStack = getTransientSkinsOutfitWithRenderModes(event.getItemStack(), Minecraft.getMinecraft().player);
