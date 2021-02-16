@@ -279,6 +279,7 @@ public class Network
         public RenderModesPacket(Entity entity)
         {
             renderModes = RenderModes.getRenderModes(entity);
+            if (renderModes == null) renderModes = new LinkedHashMap<>();
         }
 
         @Override
