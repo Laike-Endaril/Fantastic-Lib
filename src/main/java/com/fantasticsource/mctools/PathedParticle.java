@@ -4,14 +4,13 @@ import com.fantasticsource.tools.component.path.CPath;
 import com.fantasticsource.tools.datastructures.VectorN;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
 
 public class PathedParticle extends Particle
 {
-    protected Vec3d origin;
+    protected VectorN origin;
     protected ArrayList<CPath.PathData> appliedPaths = new ArrayList<>();
 
     public PathedParticle(World worldIn, double posXIn, double posYIn, double posZIn, CPath... pathsToApply)
@@ -20,7 +19,7 @@ public class PathedParticle extends Particle
 
         setParticleTextureIndex(160);
         particleMaxAge = 60;
-        origin = new Vec3d(posXIn, posYIn, posZIn);
+        origin = new VectorN(posXIn, posYIn, posZIn);
 
         Minecraft.getMinecraft().effectRenderer.addEffect(this);
 
@@ -43,15 +42,16 @@ public class PathedParticle extends Particle
         prevPosY = posY;
         prevPosZ = posZ;
 
-        VectorN pos = new VectorN(0, 0, 0);
+        VectorN pos = origin.copy(), pathPos;
         for (CPath.PathData data : appliedPaths)
         {
-            VectorN pathPos = data.getPosition();
+            pathPos = data.getRelativePosition();
             if (pathPos == null)
             {
                 setExpired();
                 return;
             }
+
             pos.add(pathPos);
         }
 

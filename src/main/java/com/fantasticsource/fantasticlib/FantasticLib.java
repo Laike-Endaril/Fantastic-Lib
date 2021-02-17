@@ -17,6 +17,7 @@ import com.fantasticsource.mctools.nbtcap.NBTCapStorage;
 import com.fantasticsource.tools.ReflectionTool;
 import com.fantasticsource.tools.component.path.CPath;
 import com.fantasticsource.tools.component.path.CPathLinear;
+import com.fantasticsource.tools.component.path.CPathSinuous;
 import com.fantasticsource.tools.datastructures.ColorImmutable;
 import com.fantasticsource.tools.datastructures.VectorN;
 import net.minecraft.entity.player.EntityPlayer;
@@ -183,11 +184,17 @@ public class FantasticLib
         Vec3d lookVec = player.getLookVec();
         CPath path = new CPathLinear(new VectorN(lookVec.x, lookVec.y, lookVec.z).scale(3));
         CPath path2 = new CPathFollowEntity(player);
+        CPath path3 = new CPathSinuous(new VectorN(0, 0, 0), new VectorN(1, 0, 0), 0.5);
+        CPath path4 = new CPathSinuous(new VectorN(0, 0, 0), new VectorN(0, 0, 1), 0.5, 0.25);
+        CPath path5 = new CPathLinear(new VectorN(0, 3, 0));
 
         if (player.world.isRemote)
         {
-            new PathedParticle(player.world, player.posX, player.posY + player.eyeHeight, player.posZ, path);
-            new PathedParticle(player.world, 1, player.eyeHeight, 0, path2);
+//            new PathedParticle(player.world, player.posX, player.posY + player.eyeHeight, player.posZ, path);
+//            new PathedParticle(player.world, 1, player.eyeHeight, 0, path2);
+//            new PathedParticle(player.world, player.posX, player.posY + player.height / 2, player.posZ, path3);
+//            new PathedParticle(player.world, player.posX, player.posY + player.height / 2, player.posZ, path4);
+            new PathedParticle(player.world, 0, player.height / 2, 0, path2, path3, path4, path5);
         }
     }
 }

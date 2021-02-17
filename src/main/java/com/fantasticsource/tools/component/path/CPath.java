@@ -93,24 +93,22 @@ public abstract class CPath extends Component
     public static class PathData
     {
         public CPath path;
-        public VectorN origin;
-        public long originMillis;
+        public long startMillis;
 
         public PathData(CPath path, VectorN origin)
         {
             this(path, origin, System.currentTimeMillis());
         }
 
-        public PathData(CPath path, VectorN origin, long originMillis)
+        public PathData(CPath path, VectorN origin, long startMillis)
         {
             this.path = path;
-            this.origin = origin;
-            this.originMillis = originMillis;
+            this.startMillis = startMillis;
         }
 
-        public VectorN getPosition()
+        public VectorN getRelativePosition()
         {
-            return path.getPosition(System.currentTimeMillis() - originMillis, origin);
+            return path.getRelativePosition(System.currentTimeMillis() - startMillis);
         }
     }
 }
