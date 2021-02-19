@@ -177,24 +177,24 @@ public class FantasticLib
     }
 
 
-    @SubscribeEvent
-    public static void test(PlayerInteractEvent.RightClickItem event)
-    {
-        EntityPlayer player = event.getEntityPlayer();
-        Vec3d lookVec = player.getLookVec();
-        CPath path = new CPathLinear(new VectorN(lookVec.x, lookVec.y, lookVec.z).scale(3));
-        CPath path2 = new CPathFollowEntity(player);
-        CPath path3 = new CPathSinuous(new VectorN(0, 0, 0), new VectorN(1, 0, 0), 0.5);
-        CPath path4 = new CPathSinuous(new VectorN(0, 0, 0), new VectorN(0, 0, 1), 0.5, 0.25);
-        CPath path5 = new CPathLinear(new VectorN(0, 3, 0));
-
-        if (player.world.isRemote)
-        {
-//            new PathedParticle(player.world, player.posX, player.posY + player.eyeHeight, player.posZ, path);
-//            new PathedParticle(player.world, 1, player.eyeHeight, 0, path2);
-//            new PathedParticle(player.world, player.posX, player.posY + player.height / 2, player.posZ, path3);
-//            new PathedParticle(player.world, player.posX, player.posY + player.height / 2, player.posZ, path4);
-            new PathedParticle(player.world, 0, player.height / 2, 0, path2, path3, path4, path5);
-        }
-    }
+//    @SubscribeEvent
+//    public static void test(PlayerInteractEvent.RightClickItem event)
+//    {
+//        EntityPlayer player = event.getEntityPlayer();
+//        Vec3d lookVec = player.getLookVec();
+//        CPath path = new CPathLinear(new VectorN(lookVec.x, lookVec.y, lookVec.z).scale(3));
+//        CPath path2 = new CPathFollowEntity(player);
+//        CPath path3 = new CPathSinuous(new VectorN(0, 0, 0), new VectorN(1, 0, 0), 0.5);
+//        CPath path4 = new CPathSinuous(new VectorN(0, 0, 0), new VectorN(0, 0, 1), 0.5, 0.25);
+//        CPath path5 = new CPathLinear(new VectorN(0, 3, 0));
+//
+//        if (player.world.isRemote)
+//        {
+////            new PathedParticle(player.world, player.posX, player.posY + player.eyeHeight, player.posZ, path);
+////            new PathedParticle(player.world, 1, player.eyeHeight, 0, path2);
+////            new PathedParticle(player.world, player.posX, player.posY + player.height / 2, player.posZ, path3);
+////            new PathedParticle(player.world, player.posX, player.posY + player.height / 2, player.posZ, path4);
+//            new PathedParticle(player.world, 0, player.height / 2, 0, path2, path3, path4, path5);
+//        }
+//    }
 }
