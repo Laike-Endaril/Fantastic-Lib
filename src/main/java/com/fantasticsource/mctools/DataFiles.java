@@ -98,6 +98,10 @@ public class DataFiles
             writer = new BufferedWriter(new FileWriter(new File(referenceDir + "oredict.txt")));
             for (String string : OreDictionary.getOreNames()) writer.write(string + "\r\n");
             writer.close();
+
+            writer = new BufferedWriter(new FileWriter(new File(referenceDir + "slottings.txt")));
+            for (String string : Slottings.availableSlottings()) writer.write(string + "\r\n");
+            writer.close();
         }
         catch (IOException e)
         {

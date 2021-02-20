@@ -17,6 +17,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -176,6 +177,11 @@ public class RenderModes
 
     protected static boolean tryTransformRenderMode(ItemStack stack, Entity target)
     {
+        return tryTransformRenderMode(stack, target, new HashMap<>());
+    }
+
+    protected static boolean tryTransformRenderMode(ItemStack stack, Entity target, HashMap<String, String> overrides)
+    {
         if (!stack.hasTagCompound()) return false;
 
         NBTTagCompound compound = stack.getTagCompound();
@@ -205,7 +211,9 @@ public class RenderModes
             for (String pair : requirementArray)
             {
                 String[] tokens = Tools.fixedSplit(pair, ":");
-                if (!tokens[1].equals(getRenderMode(target, tokens[0])))
+                String foundMode = overrides.get(tokens[0]);
+                if (foundMode == null) foundMode = getRenderMode(target, tokens[0]);
+                if (!tokens[1].equals(foundMode))
                 {
                     failed = true;
                     break;

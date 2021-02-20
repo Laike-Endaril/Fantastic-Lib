@@ -25,6 +25,20 @@ public class FantasticConfig
             })
     public static boolean inventoryDesyncFixer = false;
 
+    @Config.Name("Preview Render Mode Overrides")
+    @Config.LangKey(MODID + ".config.previewRenderModeOverrides")
+    @Config.Comment(
+            {
+                    "Overrides for render modes when previewing AW skins on items",
+                    "Syntax is...",
+                    "Slotting, Channel@Mode, Channel@Mode, etc",
+                    "Valid entries for 'Slotting' can be found in config/fantasticlib/reference/slottings.txt",
+                    "Valid channels and modes depend on the AW skins on the server (ask server admin)",
+                    "Eg. if Tiamat Inventory is installed and a server has valid shoulder skins for it...",
+                    "Tiamat Shoulders, ShoulderL@On, ShoulderR@On, ShoulderLControl@On, ShoulderRControl@On"
+            })
+    public static String[] previewRenderModeOverrides = new String[0];
+
     @Config.Name("GUI Settings")
     @Config.LangKey(MODID + ".config.guiSettings")
     public static GUIConfig guiSettings = new GUIConfig();

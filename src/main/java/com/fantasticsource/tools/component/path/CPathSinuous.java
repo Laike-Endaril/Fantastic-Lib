@@ -2,7 +2,6 @@ package com.fantasticsource.tools.component.path;
 
 import com.fantasticsource.tools.TrigLookupTable;
 import com.fantasticsource.tools.component.CDouble;
-import com.fantasticsource.tools.component.CVectorN;
 import com.fantasticsource.tools.datastructures.VectorN;
 import io.netty.buffer.ByteBuf;
 
@@ -11,18 +10,29 @@ import java.io.OutputStream;
 
 public class CPathSinuous extends CPath
 {
-    public VectorN center, highPoint;
+    public CPath centerPath, highPointOffsetPath;
     public double normalizedProgressPerSec, normalizedProgressOffset;
 
-    public CPathSinuous(VectorN center, VectorN highPoint, double normalizedProgressPerSec)
+
+    public CPathSinuous(CPath highPointOffsetPath, double normalizedProgressPerSec)
     {
-        this(center, highPoint, normalizedProgressPerSec, 0);
+        this(new CPathConstant(highPointOffsetPath.getRelativePosition(0).scale(0)), highPointOffsetPath, normalizedProgressPerSec, 0);
     }
 
-    public CPathSinuous(VectorN center, VectorN highPoint, double normalizedProgressPerSec, double normalizedProgressOffset)
+    public CPathSinuous(CPath highPointOffsetPath, double normalizedProgressPerSec, double normalizedProgressOffset)
     {
-        this.center = center;
-        this.highPoint = highPoint;
+        this(new CPathConstant(highPointOffsetPath.getRelativePosition(0).scale(0)), highPointOffsetPath, normalizedProgressPerSec, normalizedProgressOffset);
+    }
+
+    public CPathSinuous(CPath centerPath, CPath highPointOffsetPath, double normalizedProgressPerSec)
+    {
+        this(centerPath, highPointOffsetPath, normalizedProgressPerSec, 0);
+    }
+
+    public CPathSinuous(CPath centerPath, CPath highPointOffsetPath, double normalizedProgressPerSec, double normalizedProgressOffset)
+    {
+        this.centerPath = centerPath;
+        this.highPointOffsetPath = highPointOffsetPath;
         this.normalizedProgressPerSec = normalizedProgressPerSec;
         this.normalizedProgressOffset = normalizedProgressOffset;
     }
@@ -32,7 +42,7 @@ public class CPathSinuous extends CPath
     public VectorN getRelativePosition(long time)
     {
         double normalizedScalar = TrigLookupTable.TRIG_TABLE_1024.sin(Math.PI * 2 * (normalizedProgressOffset + normalizedProgressPerSec * time / 1000));
-        return highPoint.copy().scale(normalizedScalar).add(center);
+        return highPointOffsetPath.getRelativePosition(time).scale(normalizedScalar).add(centerPath.getRelativePosition(time));
     }
 
 
@@ -41,7 +51,8 @@ public class CPathSinuous extends CPath
     {
         super.write(buf);
 
-        new CVectorN().set(center).write(buf).set(highPoint).write(buf);
+        writeMarked(buf, centerPath);
+        writeMarked(buf, highPointOffsetPath);
         buf.writeDouble(normalizedProgressPerSec);
         buf.writeDouble(normalizedProgressOffset);
 
@@ -53,10 +64,8 @@ public class CPathSinuous extends CPath
     {
         super.read(buf);
 
-        CVectorN cVec = new CVectorN();
-
-        center = cVec.read(buf).value;
-        highPoint = cVec.read(buf).value;
+        centerPath = (CPath) readMarked(buf);
+        highPointOffsetPath = (CPath) readMarked(buf);
         normalizedProgressPerSec = buf.readDouble();
         normalizedProgressOffset = buf.readDouble();
 
@@ -68,7 +77,8 @@ public class CPathSinuous extends CPath
     {
         super.save(stream);
 
-        new CVectorN().set(center).save(stream).set(highPoint).save(stream);
+        saveMarked(stream, centerPath);
+        saveMarked(stream, highPointOffsetPath);
         new CDouble().set(normalizedProgressPerSec).save(stream).set(normalizedProgressOffset).save(stream);
 
         return this;
@@ -79,11 +89,10 @@ public class CPathSinuous extends CPath
     {
         super.load(stream);
 
-        CVectorN cVec = new CVectorN();
         CDouble cd = new CDouble();
 
-        center = cVec.load(stream).value;
-        highPoint = cVec.load(stream).value;
+        centerPath = (CPath) loadMarked(stream);
+        highPointOffsetPath = (CPath) loadMarked(stream);
         normalizedProgressPerSec = cd.load(stream).value;
         normalizedProgressOffset = cd.load(stream).value;
 

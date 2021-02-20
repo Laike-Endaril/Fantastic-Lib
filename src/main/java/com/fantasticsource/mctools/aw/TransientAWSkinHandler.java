@@ -1,9 +1,12 @@
 package com.fantasticsource.mctools.aw;
 
+import com.fantasticsource.fantasticlib.config.FantasticConfig;
 import com.fantasticsource.mctools.GlobalInventory;
 import com.fantasticsource.mctools.MCTools;
+import com.fantasticsource.mctools.Slottings;
 import com.fantasticsource.mctools.event.InventoryChangedEvent;
 import com.fantasticsource.tools.ReflectionTool;
+import com.fantasticsource.tools.Tools;
 import com.google.common.cache.Cache;
 import moe.plushie.armourers_workshop.api.common.skin.data.ISkinDescriptor;
 import moe.plushie.armourers_workshop.api.common.skin.data.ISkinIdentifier;
@@ -34,6 +37,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.awt.*;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static com.fantasticsource.fantasticlib.FantasticLib.DOMAIN;
 
@@ -234,9 +238,24 @@ public class TransientAWSkinHandler
         if (transientSkins.size() == 0) return ItemStack.EMPTY;
 
         //Do render mode transforms and remove skins that end up empty
+        HashMap<String, String> overrides = new HashMap<>();
+        String slotting = Slottings.getItemSlotting(stack);
+        for (String fullOverrideString : FantasticConfig.previewRenderModeOverrides)
+        {
+            String[] tokens = Tools.fixedSplit(fullOverrideString, ",");
+            if (slotting.equals(tokens[0].trim()))
+            {
+                for (int i = 1; i < tokens.length; i++)
+                {
+                    String[] tokens2 = Tools.fixedSplit(tokens[i].trim(), "@");
+                    overrides.put(tokens2[0], tokens2[1]);
+                }
+                break;
+            }
+        }
         transientSkins.removeIf(skin ->
         {
-            RenderModes.tryTransformRenderMode(skin, player);
+            RenderModes.tryTransformRenderMode(skin, player, overrides);
             return (!skin.getTagCompound().hasKey("armourersWorkshop"));
         });
 
