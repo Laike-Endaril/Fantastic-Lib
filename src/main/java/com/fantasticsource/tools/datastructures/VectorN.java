@@ -1,5 +1,8 @@
 package com.fantasticsource.tools.datastructures;
 
+import com.fantasticsource.lwjgl.Quaternion;
+import com.fantasticsource.mctools.MCTools;
+
 public class VectorN
 {
     public final double[] values;
@@ -135,6 +138,7 @@ public class VectorN
         return this;
     }
 
+
     /**
      * Only doing 3D cross product for now...I don't see myself using the alternatives
      */
@@ -147,6 +151,19 @@ public class VectorN
         this.values[1] = values[2] * other.values[0] - values[0] * other.values[2];
         this.values[2] = values[0] * other.values[1] - values[1] * other.values[0];
 
+        return this;
+    }
+
+
+    /**
+     * Only doing 3D rotations for now
+     */
+    public VectorN rotate(VectorN axis, double theta)
+    {
+        Quaternion quaternion = MCTools.rotatedQuaternion(new Quaternion((float) values[0], (float) values[1], (float) values[2], 0), new Quaternion((float) axis.values[0], (float) axis.values[1], (float) axis.values[2], 0), theta);
+        values[0] = quaternion.x;
+        values[1] = quaternion.y;
+        values[2] = quaternion.z;
         return this;
     }
 

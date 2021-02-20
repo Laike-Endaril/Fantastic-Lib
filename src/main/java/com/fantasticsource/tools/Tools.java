@@ -1,5 +1,6 @@
 package com.fantasticsource.tools;
 
+import com.fantasticsource.lwjgl.Quaternion;
 import sun.misc.Cleaner;
 
 import java.io.*;
@@ -17,6 +18,16 @@ import java.util.regex.Matcher;
 public class Tools
 {
     protected static PrintStream out = null, err = null;
+
+
+    public static Quaternion rotatedQuaternion(Quaternion v, Quaternion axis, double theta)
+    {
+        double sinThetaDiv2 = TrigLookupTable.TRIG_TABLE_1024.sin(theta * 0.5);
+        double cosThetaDiv2 = TrigLookupTable.TRIG_TABLE_1024.cos(theta * 0.5);
+        Quaternion q = new Quaternion((float) (sinThetaDiv2 * axis.x), (float) (sinThetaDiv2 * axis.y), (float) (sinThetaDiv2 * axis.z), (float) cosThetaDiv2);
+        Quaternion qConjugate = new Quaternion((float) -(sinThetaDiv2 * axis.x), (float) -(sinThetaDiv2 * axis.y), (float) -(sinThetaDiv2 * axis.z), (float) cosThetaDiv2);
+        return Quaternion.mul(Quaternion.mul(q, v, null), qConjugate, null);
+    }
 
 
     public static void heapdump()

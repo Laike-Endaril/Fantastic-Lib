@@ -14,6 +14,10 @@ public class CPathSinuous extends CPath
     public double normalizedProgressPerSec, normalizedProgressOffset;
 
 
+    public CPathSinuous()
+    {
+    }
+
     public CPathSinuous(CPath highPointOffsetPath, double normalizedProgressPerSec)
     {
         this(new CPathConstant(highPointOffsetPath.getRelativePositionInternal(0).scale(0)), highPointOffsetPath, normalizedProgressPerSec, 0);

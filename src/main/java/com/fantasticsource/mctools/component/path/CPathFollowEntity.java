@@ -14,6 +14,11 @@ public class CPathFollowEntity extends CPath
 {
     public Entity entityToFollow;
 
+
+    public CPathFollowEntity()
+    {
+    }
+
     public CPathFollowEntity(Entity entityToFollow)
     {
         this.entityToFollow = entityToFollow;

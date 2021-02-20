@@ -11,6 +11,11 @@ public class CPathConstant extends CPath
 {
     public VectorN position;
 
+
+    public CPathConstant()
+    {
+    }
+
     public CPathConstant(VectorN position)
     {
         this.position = position;

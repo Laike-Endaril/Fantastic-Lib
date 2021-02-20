@@ -582,11 +582,7 @@ public class MCTools
 
     public static Quaternion rotatedQuaternion(Quaternion v, Quaternion axis, double theta)
     {
-        double sinThetaDiv2 = TRIG_TABLE.sin(theta * 0.5);
-        double cosThetaDiv2 = TRIG_TABLE.cos(theta * 0.5);
-        Quaternion q = new Quaternion((float) (sinThetaDiv2 * axis.x), (float) (sinThetaDiv2 * axis.y), (float) (sinThetaDiv2 * axis.z), (float) cosThetaDiv2);
-        Quaternion qConjugate = new Quaternion((float) -(sinThetaDiv2 * axis.x), (float) -(sinThetaDiv2 * axis.y), (float) -(sinThetaDiv2 * axis.z), (float) cosThetaDiv2);
-        return Quaternion.mul(Quaternion.mul(q, v, null), qConjugate, null);
+        return Tools.rotatedQuaternion(v, axis, theta);
     }
 
 

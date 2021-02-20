@@ -12,6 +12,10 @@ public class CPathLinear extends CPath
     public VectorN offset, motionPerSecond;
 
 
+    public CPathLinear()
+    {
+    }
+
     public CPathLinear(VectorN motionPerSecond)
     {
         this(motionPerSecond.copy().scale(0), motionPerSecond);
