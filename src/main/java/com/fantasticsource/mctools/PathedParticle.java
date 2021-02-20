@@ -29,7 +29,7 @@ public class PathedParticle extends Particle
 
     public void applyPath(CPath path)
     {
-        appliedPaths.add(new CPath.PathData(path, new VectorN(posX, posY, posZ)));
+        appliedPaths.add(new CPath.PathData(path));
     }
 
 

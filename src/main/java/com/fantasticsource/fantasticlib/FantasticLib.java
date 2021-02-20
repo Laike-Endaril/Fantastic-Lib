@@ -178,48 +178,47 @@ public class FantasticLib
     }
 
 
-//    @SubscribeEvent
-//    public static void test(PlayerInteractEvent.RightClickItem event)
-//    {
-//        EntityPlayer player = event.getEntityPlayer();
-//
-//        Vec3d lookVec = player.getLookVec();
-//
-//        VectorN
-//                x1 = new VectorN(1, 0, 0),
-//                z1 = new VectorN(0, 0, 1),
-//                y3 = new VectorN(0, 3, 0),
-//                xNeg3 = x1.copy().scale(-3),
-//                zNeg3 = z1.copy().scale(-3);
-//
-//        CPath fromEyes = new CPathLinear(new VectorN(lookVec.x, lookVec.y, lookVec.z).scale(3));
-//        CPath follow = new CPathFollowEntity(player);
-//        CPath up = new CPathLinear(y3);
-//
-//        CPath x1P = new CPathConstant(x1);
-//        CPath z1P = new CPathConstant(z1);
-//        CPath hCirclePart1 = new CPathSinuous(x1P, 0.5);
-//        CPath hCirclePart2 = new CPathSinuous(z1P, 0.5, 0.25);
-//
-//        CPath x1PerSec = new CPathLinear(x1);
-//        CPath z1PerSec = new CPathLinear(z1);
-//        CPath hSpiralOutPart1 = new CPathSinuous(x1PerSec, 0.5);
-//        CPath hSpiralOutPart2 = new CPathSinuous(z1PerSec, 0.5, 0.25);
-//
-//        CPath xNeg1PerSec = new CPathLinear(xNeg3, x1);
-//        CPath zNeg1PerSec = new CPathLinear(zNeg3, z1);
-//        CPath hSpiralInPart1 = new CPathSinuous(xNeg1PerSec, 0.5);
-//        CPath hSpiralInPart2 = new CPathSinuous(zNeg1PerSec, 0.5, 0.25);
-//
-//        if (player.world.isRemote)
-//        {
-////            new PathedParticle(player.world, player.posX, player.posY + player.eyeHeight, player.posZ, fromEyes);
-////            new PathedParticle(player.world, 1, player.eyeHeight, 0, follow);
-////            new PathedParticle(player.world, player.posX, player.posY + player.height / 2, player.posZ, hCirclePart1);
-////            new PathedParticle(player.world, player.posX, player.posY + player.height / 2, player.posZ, hCirclePart2);
-////            new PathedParticle(player.world, 0, player.height / 2, 0, follow, hCirclePart1, hCirclePart2, up);
-////            new PathedParticle(player.world, 0, player.height / 2, 0, follow, hSpiralOutPart1, hSpiralOutPart2);
-//            new PathedParticle(player.world, 0, player.height / 2, 0, follow, hSpiralInPart1, hSpiralInPart2);
-//        }
-//    }
+    @SubscribeEvent
+    public static void test(PlayerInteractEvent.RightClickItem event)
+    {
+        EntityPlayer player = event.getEntityPlayer();
+
+        Vec3d lookVec = player.getLookVec();
+
+        VectorN
+                x1 = new VectorN(1, 0, 0),
+                z1 = new VectorN(0, 0, 1),
+                y3 = new VectorN(0, 3, 0),
+                xNeg3 = x1.copy().scale(-3),
+                zNeg3 = z1.copy().scale(-3);
+
+        CPath fromEyes = new CPathLinear(new VectorN(lookVec.x, lookVec.y, lookVec.z).scale(3));
+        CPath follow = new CPathFollowEntity(player);
+        CPath up = new CPathLinear(y3);
+
+        CPath x1P = new CPathConstant(x1);
+        CPath z1P = new CPathConstant(z1);
+        CPath hCirclePart1 = new CPathSinuous(x1P, 0.5);
+        CPath hCirclePart2 = new CPathSinuous(z1P, 0.5, 0.25);
+
+        CPath x1PerSec = new CPathLinear(x1);
+        CPath z1PerSec = new CPathLinear(z1);
+        CPath hSpiralOutPart1 = new CPathSinuous(x1PerSec, 0.5);
+        CPath hSpiralOutPart2 = new CPathSinuous(z1PerSec, 0.5, 0.25);
+
+        CPath xNeg1PerSec = new CPathLinear(xNeg3, x1);
+        CPath zNeg1PerSec = new CPathLinear(zNeg3, z1);
+        CPath hSpiralIn = new CPathSinuous(xNeg1PerSec, 0.5).combine(new CPathSinuous(zNeg1PerSec, 0.5, 0.25), false);
+
+        if (player.world.isRemote)
+        {
+//            new PathedParticle(player.world, player.posX, player.posY + player.eyeHeight, player.posZ, fromEyes);
+//            new PathedParticle(player.world, 1, player.eyeHeight, 0, follow);
+//            new PathedParticle(player.world, player.posX, player.posY + player.height / 2, player.posZ, hCirclePart1);
+//            new PathedParticle(player.world, player.posX, player.posY + player.height / 2, player.posZ, hCirclePart2);
+//            new PathedParticle(player.world, 0, player.height / 2, 0, follow, hCirclePart1, hCirclePart2, up);
+//            new PathedParticle(player.world, 0, player.height / 2, 0, follow, hSpiralOutPart1, hSpiralOutPart2);
+            new PathedParticle(player.world, 0, player.height / 2, 0, follow, hSpiralIn.combine(new CPathConstant(new VectorN(3, 3, 3)), true));
+        }
+    }
 }

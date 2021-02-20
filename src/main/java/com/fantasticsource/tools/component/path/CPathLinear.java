@@ -25,7 +25,7 @@ public class CPathLinear extends CPath
 
 
     @Override
-    public VectorN getRelativePosition(long time)
+    public VectorN getRelativePositionInternal(long time)
     {
         return motionPerSecond.copy().scale((double) time / 1000).add(offset);
     }

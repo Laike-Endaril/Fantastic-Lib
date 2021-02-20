@@ -18,7 +18,7 @@ public class CPathConstant extends CPath
 
 
     @Override
-    public VectorN getRelativePosition(long time)
+    public VectorN getRelativePositionInternal(long time)
     {
         return position.copy();
     }

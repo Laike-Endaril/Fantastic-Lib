@@ -16,12 +16,12 @@ public class CPathSinuous extends CPath
 
     public CPathSinuous(CPath highPointOffsetPath, double normalizedProgressPerSec)
     {
-        this(new CPathConstant(highPointOffsetPath.getRelativePosition(0).scale(0)), highPointOffsetPath, normalizedProgressPerSec, 0);
+        this(new CPathConstant(highPointOffsetPath.getRelativePositionInternal(0).scale(0)), highPointOffsetPath, normalizedProgressPerSec, 0);
     }
 
     public CPathSinuous(CPath highPointOffsetPath, double normalizedProgressPerSec, double normalizedProgressOffset)
     {
-        this(new CPathConstant(highPointOffsetPath.getRelativePosition(0).scale(0)), highPointOffsetPath, normalizedProgressPerSec, normalizedProgressOffset);
+        this(new CPathConstant(highPointOffsetPath.getRelativePositionInternal(0).scale(0)), highPointOffsetPath, normalizedProgressPerSec, normalizedProgressOffset);
     }
 
     public CPathSinuous(CPath centerPath, CPath highPointOffsetPath, double normalizedProgressPerSec)
@@ -39,10 +39,10 @@ public class CPathSinuous extends CPath
 
 
     @Override
-    public VectorN getRelativePosition(long time)
+    public VectorN getRelativePositionInternal(long time)
     {
         double normalizedScalar = TrigLookupTable.TRIG_TABLE_1024.sin(Math.PI * 2 * (normalizedProgressOffset + normalizedProgressPerSec * time / 1000));
-        return highPointOffsetPath.getRelativePosition(time).scale(normalizedScalar).add(centerPath.getRelativePosition(time));
+        return highPointOffsetPath.getRelativePositionInternal(time).scale(normalizedScalar).add(centerPath.getRelativePositionInternal(time));
     }
 
 

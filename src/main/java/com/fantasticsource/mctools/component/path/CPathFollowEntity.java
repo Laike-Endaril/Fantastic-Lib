@@ -21,7 +21,7 @@ public class CPathFollowEntity extends CPath
 
 
     @Override
-    public VectorN getRelativePosition(long time)
+    public VectorN getRelativePositionInternal(long time)
     {
         if (entityToFollow == null) return null;
 
