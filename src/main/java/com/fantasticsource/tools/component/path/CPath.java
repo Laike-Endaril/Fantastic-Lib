@@ -32,6 +32,12 @@ public abstract class CPath extends Component
         return this;
     }
 
+    public CPath crossProduct(CPath other)
+    {
+        transforms.add(new CPathTransform(CPathTransform.TYPE_CROSS_PRODUCT, other));
+        return this;
+    }
+
 
     /**
      * @param time spent on this path
@@ -120,7 +126,8 @@ public abstract class CPath extends Component
         public static final int
                 TYPE_ADD = 0,
                 TYPE_MULT = 1,
-                TYPE_ROTATE = 2;
+                TYPE_ROTATE = 2,
+                TYPE_CROSS_PRODUCT = 3;
 
         protected int type;
         protected CPath[] paths;
@@ -150,6 +157,10 @@ public abstract class CPath extends Component
 
                 case TYPE_ROTATE:
                     vectorN.rotate(paths[0].getRelativePosition(time), paths[1].getRelativePosition(time).values[0]);
+                    break;
+
+                case TYPE_CROSS_PRODUCT:
+                    vectorN.crossProduct(paths[0].getRelativePosition(time));
                     break;
             }
         }

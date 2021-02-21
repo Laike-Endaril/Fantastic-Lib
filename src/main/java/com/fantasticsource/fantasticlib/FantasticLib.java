@@ -6,6 +6,9 @@ import com.fantasticsource.mctools.*;
 import com.fantasticsource.mctools.aw.ForcedAWSkinOverrides;
 import com.fantasticsource.mctools.aw.RenderModes;
 import com.fantasticsource.mctools.aw.TransientAWSkinHandler;
+import com.fantasticsource.mctools.component.path.CPathEntityLookVec;
+import com.fantasticsource.mctools.component.path.CPathEntityPitch;
+import com.fantasticsource.mctools.component.path.CPathEntityYaw;
 import com.fantasticsource.mctools.component.path.CPathFollowEntity;
 import com.fantasticsource.mctools.data.CModpackDataHandler;
 import com.fantasticsource.mctools.data.CWorldDataHandler;
@@ -24,7 +27,6 @@ import com.fantasticsource.tools.datastructures.VectorN;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.config.Config;
@@ -181,15 +183,15 @@ public class FantasticLib
     private static VectorN
             x1 = new VectorN(1, 0, 0),
             y1 = new VectorN(0, 1, 0),
-            z1 = new VectorN(0, 0, 1),
             xNeg3 = x1.copy().scale(-3),
-            zNeg3 = z1.copy().scale(-3);
+            yNeg3 = y1.copy().scale(-3);
 
     private static CPath
-            pY1 = new CPathConstant(y1),
+            pX1 = new CPathConstant(x1),
+            pYNeg1 = new CPathConstant(y1.copy().scale(-1)),
             xNeg1PerSec = new CPathLinear(xNeg3, x1),
-            zNeg1PerSec = new CPathLinear(zNeg3, z1),
-            hSpiralIn = new CPathSinuous(xNeg1PerSec, 0.5).add(new CPathSinuous(zNeg1PerSec, 0.5, 0.25)).mult(new CPathConstant(new VectorN(3, 3, 3)));
+            yNeg1PerSec = new CPathLinear(yNeg3, y1),
+            vSpiralIn = new CPathSinuous(xNeg1PerSec, 0.5).add(new CPathSinuous(yNeg1PerSec, 0.5, 0.25));
 
 
     @SubscribeEvent
@@ -197,16 +199,16 @@ public class FantasticLib
     {
         EntityPlayer player = event.getEntityPlayer();
 
-        Vec3d lookVec = player.getLookVec();
-
-        CPath fromEyes = new CPathLinear(new VectorN(lookVec.x, lookVec.y, lookVec.z).scale(3));
         CPath follow = new CPathFollowEntity(player).add(new CPathConstant(new VectorN(0, player.height * 0.5, 0)));
+
+        CPath lookVec = new CPathEntityLookVec(player), yaw = new CPathEntityYaw(player), pitch = new CPathEntityPitch(player);
+        CPath directionalSpiral = ((CPath) vSpiralIn.copy()).rotate(pX1, pitch).rotate(pYNeg1, yaw);
 
         if (player.world.isRemote)
         {
             for (int i = 0; i < 10; i++)
             {
-                new PathedParticle(player.world, follow, ((CPath) hSpiralIn.copy()).rotate(pY1, new CPathConstant(new VectorN(Math.random() * Math.PI * 2))));
+                new PathedParticle(player.world, follow, ((CPath) directionalSpiral.copy()).rotate(lookVec, new CPathConstant(new VectorN(Math.random() * Math.PI * 2))));
             }
         }
     }
