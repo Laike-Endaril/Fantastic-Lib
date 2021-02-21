@@ -121,7 +121,7 @@ public abstract class CPath extends Component
     }
 
 
-    protected static class CPathTransform extends Component
+    public static class CPathTransform extends Component
     {
         public static final int
                 TYPE_ADD = 0,
@@ -129,8 +129,8 @@ public abstract class CPath extends Component
                 TYPE_ROTATE = 2,
                 TYPE_CROSS_PRODUCT = 3;
 
-        protected int type;
-        protected CPath[] paths;
+        public int type;
+        public CPath[] paths;
 
         public CPathTransform()
         {

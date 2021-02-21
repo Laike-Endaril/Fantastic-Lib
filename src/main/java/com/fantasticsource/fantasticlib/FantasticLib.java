@@ -6,7 +6,6 @@ import com.fantasticsource.mctools.*;
 import com.fantasticsource.mctools.aw.ForcedAWSkinOverrides;
 import com.fantasticsource.mctools.aw.RenderModes;
 import com.fantasticsource.mctools.aw.TransientAWSkinHandler;
-import com.fantasticsource.mctools.component.path.CPathEntityLookVec;
 import com.fantasticsource.mctools.component.path.CPathEntityPitch;
 import com.fantasticsource.mctools.component.path.CPathEntityYaw;
 import com.fantasticsource.mctools.component.path.CPathFollowEntity;
@@ -201,14 +200,18 @@ public class FantasticLib
 
         CPath follow = new CPathFollowEntity(player).add(new CPathConstant(new VectorN(0, player.height * 0.5, 0)));
 
-        CPath lookVec = new CPathEntityLookVec(player), yaw = new CPathEntityYaw(player), pitch = new CPathEntityPitch(player);
+        CPath yaw = new CPathEntityYaw(player), pitch = new CPathEntityPitch(player);
         CPath directionalSpiral = ((CPath) vSpiralIn.copy()).rotate(pX1, pitch).rotate(pYNeg1, yaw);
 
         if (player.world.isRemote)
         {
             for (int i = 0; i < 10; i++)
             {
-                new PathedParticle(player.world, follow, ((CPath) directionalSpiral.copy()).rotate(lookVec, new CPathConstant(new VectorN(Math.random() * Math.PI * 2))));
+                double offset = Math.PI * 2 * Math.random();
+                CPathSinuous path = (CPathSinuous) directionalSpiral.copy();
+                path.normalizedProgressOffset = offset;
+                ((CPathSinuous) path.transforms.get(0).paths[0]).normalizedProgressOffset += offset;
+                new PathedParticle(player.world, follow, path);
             }
         }
     }
