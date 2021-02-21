@@ -139,6 +139,28 @@ public class VectorN
     }
 
 
+    public VectorN power(double... values)
+    {
+        for (int i = 0; i < this.values.length; i++)
+        {
+            this.values[i] = Math.pow(this.values[i], values[i]);
+        }
+        return this;
+    }
+
+    public VectorN power(VectorN... vectors)
+    {
+        for (VectorN vector : vectors)
+        {
+            for (int i = 0; i < values.length; i++)
+            {
+                values[i] = Math.pow(values[i], vector.values[i]);
+            }
+        }
+        return this;
+    }
+
+
     /**
      * Only doing 3D cross product for now...I don't see myself using the alternatives
      */

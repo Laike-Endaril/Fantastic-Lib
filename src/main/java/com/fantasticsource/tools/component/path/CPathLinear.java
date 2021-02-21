@@ -9,7 +9,7 @@ import java.io.OutputStream;
 
 public class CPathLinear extends CPath
 {
-    public VectorN offset, motionPerSecond;
+    public VectorN motionPerSecond;
 
 
     public CPathLinear()
@@ -18,12 +18,6 @@ public class CPathLinear extends CPath
 
     public CPathLinear(VectorN motionPerSecond)
     {
-        this(motionPerSecond.copy().scale(0), motionPerSecond);
-    }
-
-    public CPathLinear(VectorN offset, VectorN motionPerSecond)
-    {
-        this.offset = offset;
         this.motionPerSecond = motionPerSecond;
     }
 
@@ -31,7 +25,7 @@ public class CPathLinear extends CPath
     @Override
     public VectorN getRelativePositionInternal(long time)
     {
-        return motionPerSecond.copy().scale((double) time / 1000).add(offset);
+        return motionPerSecond.copy().scale((double) time / 1000);
     }
 
 
@@ -40,7 +34,7 @@ public class CPathLinear extends CPath
     {
         super.write(buf);
 
-        new CVectorN().set(offset).write(buf).set(motionPerSecond).write(buf);
+        new CVectorN().set(motionPerSecond).write(buf);
 
         return this;
     }
@@ -50,9 +44,7 @@ public class CPathLinear extends CPath
     {
         super.read(buf);
 
-        CVectorN cVec = new CVectorN();
-        offset = cVec.read(buf).value;
-        motionPerSecond = cVec.read(buf).value;
+        motionPerSecond = new CVectorN().read(buf).value;
 
         return this;
     }
@@ -62,7 +54,7 @@ public class CPathLinear extends CPath
     {
         super.save(stream);
 
-        new CVectorN().set(offset).save(stream).set(motionPerSecond).save(stream);
+        new CVectorN().set(motionPerSecond).save(stream);
 
         return this;
     }
@@ -72,9 +64,7 @@ public class CPathLinear extends CPath
     {
         super.load(stream);
 
-        CVectorN cVec = new CVectorN();
-        offset = cVec.load(stream).value;
-        motionPerSecond = cVec.load(stream).value;
+        motionPerSecond = new CVectorN().load(stream).value;
 
         return this;
     }

@@ -180,18 +180,20 @@ public class FantasticLib
 
 
     private static VectorN
-            x1 = new VectorN(1, 0, 0),
-            y1 = new VectorN(0, 1, 0),
-            xNeg3 = x1.copy().scale(-3),
-            yNeg3 = y1.copy().scale(-3);
+            v1 = new VectorN(1, 1, 1),
+            vX1 = new VectorN(1, 0, 0),
+            vY1 = new VectorN(0, 1, 0);
 
     private static CPath
-            pX1 = new CPathConstant(x1),
-            pYNeg1 = new CPathConstant(y1.copy().scale(-1)),
-            xNeg1PerSec = new CPathLinear(xNeg3, x1),
-            yNeg1PerSec = new CPathLinear(yNeg3, y1),
-            vSpiralIn = new CPathSinuous(xNeg1PerSec, 0.5).add(new CPathSinuous(yNeg1PerSec, 0.5, 0.25));
-
+            p1 = new CPathConstant(v1),
+            p3 = new CPathConstant(v1.copy().scale(3)),
+            pNeg1 = new CPathConstant(v1.copy().scale(-1)),
+            pX1 = new CPathConstant(vX1),
+            pY1 = new CPathConstant(vY1),
+            pYNeg1 = new CPathConstant(vY1.copy().scale(-1)),
+            pOneToInfintesimal = new CPathLinear(v1.copy().scale(5)).add(p1).power(pNeg1),
+            pVSpiralIn = new CPathSinuous(pX1, 0.5).add(new CPathSinuous(pY1, 0.5, 0.25)).mult(pOneToInfintesimal).mult(p3);
+//    vSpiralIn = new CPathSinuous(x1PerSec.copy().add(pXNeg3), 0.5).add(new CPathSinuous(y1PerSec.copy().add(pYNeg3), 0.5, 0.25));
 
     @SubscribeEvent
     public static void test(PlayerInteractEvent.RightClickItem event)
@@ -201,7 +203,7 @@ public class FantasticLib
         CPath follow = new CPathFollowEntity(player).add(new CPathConstant(new VectorN(0, player.height * 0.5, 0)));
 
         CPath yaw = new CPathEntityYaw(player), pitch = new CPathEntityPitch(player);
-        CPath directionalSpiral = ((CPath) vSpiralIn.copy()).rotate(pX1, pitch).rotate(pYNeg1, yaw);
+        CPath directionalSpiral = pVSpiralIn.copy().rotate(pX1, pitch).rotate(pYNeg1, yaw);
 
         if (player.world.isRemote)
         {
@@ -209,8 +211,8 @@ public class FantasticLib
             {
                 double offset = Math.PI * 2 * Math.random();
                 CPathSinuous path = (CPathSinuous) directionalSpiral.copy();
-                path.normalizedProgressOffset = offset;
-                ((CPathSinuous) path.transforms.get(0).paths[0]).normalizedProgressOffset += offset;
+                path.thetaOffset = offset;
+                ((CPathSinuous) path.transforms.get(0).paths[0]).thetaOffset += offset;
                 new PathedParticle(player.world, follow, path);
             }
         }

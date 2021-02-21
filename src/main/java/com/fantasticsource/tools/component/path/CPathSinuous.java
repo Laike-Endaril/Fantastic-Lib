@@ -10,43 +10,32 @@ import java.io.OutputStream;
 
 public class CPathSinuous extends CPath
 {
-    public CPath centerPath, highPointOffsetPath;
-    public double normalizedProgressPerSec, normalizedProgressOffset;
+    public CPath highPointOffsetPath;
+    public double thetaPerSec, thetaOffset;
 
 
     public CPathSinuous()
     {
     }
 
-    public CPathSinuous(CPath highPointOffsetPath, double normalizedProgressPerSec)
+    public CPathSinuous(CPath highPointOffsetPath, double thetaPerSec)
     {
-        this(new CPathConstant(highPointOffsetPath.getRelativePositionInternal(0).scale(0)), highPointOffsetPath, normalizedProgressPerSec, 0);
+        this(highPointOffsetPath, thetaPerSec, 0);
     }
 
-    public CPathSinuous(CPath highPointOffsetPath, double normalizedProgressPerSec, double normalizedProgressOffset)
+    public CPathSinuous(CPath highPointOffsetPath, double thetaPerSec, double thetaOffset)
     {
-        this(new CPathConstant(highPointOffsetPath.getRelativePositionInternal(0).scale(0)), highPointOffsetPath, normalizedProgressPerSec, normalizedProgressOffset);
-    }
-
-    public CPathSinuous(CPath centerPath, CPath highPointOffsetPath, double normalizedProgressPerSec)
-    {
-        this(centerPath, highPointOffsetPath, normalizedProgressPerSec, 0);
-    }
-
-    public CPathSinuous(CPath centerPath, CPath highPointOffsetPath, double normalizedProgressPerSec, double normalizedProgressOffset)
-    {
-        this.centerPath = centerPath;
         this.highPointOffsetPath = highPointOffsetPath;
-        this.normalizedProgressPerSec = normalizedProgressPerSec;
-        this.normalizedProgressOffset = normalizedProgressOffset;
+        this.thetaPerSec = thetaPerSec;
+        this.thetaOffset = thetaOffset;
     }
 
 
     @Override
     public VectorN getRelativePositionInternal(long time)
     {
-        double normalizedScalar = TrigLookupTable.TRIG_TABLE_1024.sin(Math.PI * 2 * (normalizedProgressOffset + normalizedProgressPerSec * time / 1000));
-        return highPointOffsetPath.getRelativePositionInternal(time).scale(normalizedScalar).add(centerPath.getRelativePositionInternal(time));
+        double normalizedScalar = TrigLookupTable.TRIG_TABLE_1024.sin(Math.PI * 2 * (thetaOffset + thetaPerSec * time / 1000));
+        return highPointOffsetPath.getRelativePosition(time).scale(normalizedScalar);
     }
 
 
@@ -55,10 +44,9 @@ public class CPathSinuous extends CPath
     {
         super.write(buf);
 
-        writeMarked(buf, centerPath);
         writeMarked(buf, highPointOffsetPath);
-        buf.writeDouble(normalizedProgressPerSec);
-        buf.writeDouble(normalizedProgressOffset);
+        buf.writeDouble(thetaPerSec);
+        buf.writeDouble(thetaOffset);
 
         return this;
     }
@@ -68,10 +56,9 @@ public class CPathSinuous extends CPath
     {
         super.read(buf);
 
-        centerPath = (CPath) readMarked(buf);
         highPointOffsetPath = (CPath) readMarked(buf);
-        normalizedProgressPerSec = buf.readDouble();
-        normalizedProgressOffset = buf.readDouble();
+        thetaPerSec = buf.readDouble();
+        thetaOffset = buf.readDouble();
 
         return this;
     }
@@ -81,9 +68,8 @@ public class CPathSinuous extends CPath
     {
         super.save(stream);
 
-        saveMarked(stream, centerPath);
         saveMarked(stream, highPointOffsetPath);
-        new CDouble().set(normalizedProgressPerSec).save(stream).set(normalizedProgressOffset).save(stream);
+        new CDouble().set(thetaPerSec).save(stream).set(thetaOffset).save(stream);
 
         return this;
     }
@@ -95,10 +81,9 @@ public class CPathSinuous extends CPath
 
         CDouble cd = new CDouble();
 
-        centerPath = (CPath) loadMarked(stream);
         highPointOffsetPath = (CPath) loadMarked(stream);
-        normalizedProgressPerSec = cd.load(stream).value;
-        normalizedProgressOffset = cd.load(stream).value;
+        thetaPerSec = cd.load(stream).value;
+        thetaOffset = cd.load(stream).value;
 
         return this;
     }

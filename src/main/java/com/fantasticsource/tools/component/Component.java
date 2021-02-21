@@ -94,7 +94,7 @@ public abstract class Component
     }
 
 
-    public final Component copy()
+    public Component copy()
     {
         ByteArrayOutputStream os = new ByteArrayOutputStream(10240);
         saveMarked(os, this);

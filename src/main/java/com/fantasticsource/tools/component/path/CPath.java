@@ -38,6 +38,12 @@ public abstract class CPath extends Component
         return this;
     }
 
+    public CPath power(CPath other)
+    {
+        transforms.add(new CPathTransform(CPathTransform.TYPE_POWER, other));
+        return this;
+    }
+
 
     /**
      * @param time spent on this path
@@ -98,6 +104,12 @@ public abstract class CPath extends Component
     }
 
 
+    @Override
+    public CPath copy()
+    {
+        return (CPath) super.copy();
+    }
+
     public static class PathData
     {
         public CPath path;
@@ -127,7 +139,8 @@ public abstract class CPath extends Component
                 TYPE_ADD = 0,
                 TYPE_MULT = 1,
                 TYPE_ROTATE = 2,
-                TYPE_CROSS_PRODUCT = 3;
+                TYPE_CROSS_PRODUCT = 3,
+                TYPE_POWER = 4;
 
         public int type;
         public CPath[] paths;
@@ -161,6 +174,10 @@ public abstract class CPath extends Component
 
                 case TYPE_CROSS_PRODUCT:
                     vectorN.crossProduct(paths[0].getRelativePosition(time));
+                    break;
+
+                case TYPE_POWER:
+                    vectorN.power(paths[0].getRelativePosition(time));
                     break;
             }
         }
