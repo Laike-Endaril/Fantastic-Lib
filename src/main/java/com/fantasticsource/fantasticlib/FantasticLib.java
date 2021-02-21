@@ -200,11 +200,14 @@ public class FantasticLib
         Vec3d lookVec = player.getLookVec();
 
         CPath fromEyes = new CPathLinear(new VectorN(lookVec.x, lookVec.y, lookVec.z).scale(3));
-        CPath follow = new CPathFollowEntity(player);
+        CPath follow = new CPathFollowEntity(player).add(new CPathConstant(new VectorN(0, player.height * 0.5, 0)));
 
         if (player.world.isRemote)
         {
-            new PathedParticle(player.world, 0, player.height / 2, 0, follow, ((CPath) hSpiralIn.copy()).rotate(pY1, new CPathConstant(new VectorN(Math.random() * Math.PI * 2))));
+            for (int i = 0; i < 10; i++)
+            {
+                new PathedParticle(player.world, follow, ((CPath) hSpiralIn.copy()).rotate(pY1, new CPathConstant(new VectorN(Math.random() * Math.PI * 2))));
+            }
         }
     }
 }

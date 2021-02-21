@@ -10,26 +10,31 @@ import java.util.ArrayList;
 
 public class PathedParticle extends Particle
 {
-    protected VectorN origin;
-    protected ArrayList<CPath.PathData> appliedPaths = new ArrayList<>();
+    protected CPath.PathData basePath;
+    protected ArrayList<CPath.PathData> morePaths = new ArrayList<>();
 
-    public PathedParticle(World worldIn, double posXIn, double posYIn, double posZIn, CPath... pathsToApply)
+    public PathedParticle(World worldIn, CPath basePath, CPath... morePaths)
     {
-        super(worldIn, posXIn, posYIn, posZIn);
+        super(worldIn, Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
+
+        this.basePath = new CPath.PathData(basePath);
+        for (CPath path : morePaths) applyPath(path);
+        VectorN pos = currentPos();
+        setPosition(pos.values[0], pos.values[1], pos.values[2]);
+        prevPosX = posX;
+        prevPosY = posY;
+        prevPosZ = posZ;
 
         setParticleTextureIndex(160);
         particleMaxAge = 60;
-        origin = new VectorN(posXIn, posYIn, posZIn);
 
         Minecraft.getMinecraft().effectRenderer.addEffect(this);
-
-        for (CPath path : pathsToApply) applyPath(path);
     }
 
 
     public void applyPath(CPath path)
     {
-        appliedPaths.add(new CPath.PathData(path));
+        morePaths.add(new CPath.PathData(path));
     }
 
 
@@ -42,19 +47,26 @@ public class PathedParticle extends Particle
         prevPosY = posY;
         prevPosZ = posZ;
 
-        VectorN pos = origin.copy(), pathPos;
-        for (CPath.PathData data : appliedPaths)
+        VectorN pos = currentPos();
+        if (pos == null)
         {
-            pathPos = data.getRelativePosition();
-            if (pathPos == null)
-            {
-                setExpired();
-                return;
-            }
-
-            pos.add(pathPos);
+            setExpired();
+            return;
         }
 
         setPosition(pos.values[0], pos.values[1], pos.values[2]);
+    }
+
+    public VectorN currentPos()
+    {
+        VectorN pos = basePath.getRelativePosition(), pathPos;
+        for (CPath.PathData data : morePaths)
+        {
+            pathPos = data.getRelativePosition();
+            if (pathPos == null) return null;
+
+            pos.add(pathPos);
+        }
+        return pos;
     }
 }
