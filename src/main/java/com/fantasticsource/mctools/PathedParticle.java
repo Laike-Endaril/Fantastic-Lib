@@ -10,12 +10,16 @@ import java.util.ArrayList;
 
 public class PathedParticle extends Particle
 {
+    public boolean useBlockLight = false;
+
     protected CPath.PathData basePath;
     protected ArrayList<CPath.PathData> morePaths = new ArrayList<>();
 
     public PathedParticle(World worldIn, CPath basePath, CPath... morePaths)
     {
         super(worldIn, Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
+
+        particleAlpha = 0;
 
         this.basePath = new CPath.PathData(basePath);
         for (CPath path : morePaths) applyPath(path);
@@ -32,9 +36,16 @@ public class PathedParticle extends Particle
     }
 
 
-    public void applyPath(CPath path)
+    public PathedParticle applyPath(CPath path)
     {
         morePaths.add(new CPath.PathData(path));
+        return this;
+    }
+
+    public PathedParticle useBlockLight(boolean useBlockLight)
+    {
+        this.useBlockLight = useBlockLight;
+        return this;
     }
 
 
@@ -55,6 +66,8 @@ public class PathedParticle extends Particle
         }
 
         setPosition(pos.values[0], pos.values[1], pos.values[2]);
+
+        particleAlpha = 1;
     }
 
     public VectorN currentPos()
@@ -68,5 +81,12 @@ public class PathedParticle extends Particle
             pos.add(pathPos);
         }
         return pos;
+    }
+
+    @Override
+    public int getBrightnessForRender(float p_189214_1_)
+    {
+        if (useBlockLight) return super.getBrightnessForRender(p_189214_1_);
+        return 15728880;
     }
 }

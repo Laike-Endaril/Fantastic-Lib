@@ -10,16 +10,16 @@ import net.minecraft.entity.Entity;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class CPathEntityLookVec extends CPath
+public class CPathEntityLook extends CPath
 {
     public Entity entity;
 
 
-    public CPathEntityLookVec()
+    public CPathEntityLook()
     {
     }
 
-    public CPathEntityLookVec(Entity entity)
+    public CPathEntityLook(Entity entity)
     {
         this.entity = entity;
     }
@@ -35,7 +35,7 @@ public class CPathEntityLookVec extends CPath
 
 
     @Override
-    public CPathEntityLookVec write(ByteBuf buf)
+    public CPathEntityLook write(ByteBuf buf)
     {
         super.write(buf);
 
@@ -45,7 +45,7 @@ public class CPathEntityLookVec extends CPath
     }
 
     @Override
-    public CPathEntityLookVec read(ByteBuf buf)
+    public CPathEntityLook read(ByteBuf buf)
     {
         super.read(buf);
 
@@ -55,7 +55,7 @@ public class CPathEntityLookVec extends CPath
     }
 
     @Override
-    public CPathEntityLookVec save(OutputStream stream)
+    public CPathEntityLook save(OutputStream stream)
     {
         super.save(stream);
 
@@ -65,7 +65,7 @@ public class CPathEntityLookVec extends CPath
     }
 
     @Override
-    public CPathEntityLookVec load(InputStream stream)
+    public CPathEntityLook load(InputStream stream)
     {
         super.load(stream);
 
