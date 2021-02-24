@@ -1,15 +1,18 @@
 package com.fantasticsource.tools.component.path;
 
+import com.fantasticsource.mctools.component.NBTSerializableComponent;
 import com.fantasticsource.tools.component.CInt;
-import com.fantasticsource.tools.component.Component;
 import com.fantasticsource.tools.datastructures.VectorN;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
-public abstract class CPath extends Component
+public class CPath extends NBTSerializableComponent
 {
     public ArrayList<CPathTransform> transforms = new ArrayList<>();
 
@@ -49,7 +52,10 @@ public abstract class CPath extends Component
      * @param time spent on this path
      * @return position at that time, relative to an unknown origin point, or null if invalid (will destroy particles using this path if null)
      */
-    protected abstract VectorN getRelativePositionInternal(long time);
+    protected VectorN getRelativePositionInternal(long time)
+    {
+        return new VectorN(0, 0, 0);
+    }
 
     public final VectorN getRelativePosition(long time)
     {
@@ -110,6 +116,40 @@ public abstract class CPath extends Component
         return (CPath) super.copy();
     }
 
+
+    @Override
+    public NBTTagCompound serializeNBT()
+    {
+        NBTTagCompound compound = new NBTTagCompound();
+
+        if (transforms.size() > 0)
+        {
+            NBTTagList list = new NBTTagList();
+            for (CPathTransform transform : transforms) list.appendTag(transform.serializeNBT());
+            compound.setTag("transforms", list);
+        }
+
+        return compound;
+    }
+
+    @Override
+    public void deserializeNBT(NBTBase nbt)
+    {
+        NBTTagCompound compound = (NBTTagCompound) nbt;
+
+        transforms.clear();
+        if (compound.hasKey("transforms"))
+        {
+            NBTTagList list = (NBTTagList) compound.getTag("transforms");
+            for (int i = 0; i < list.tagCount(); i++)
+            {
+                CPathTransform transform = new CPathTransform();
+                transform.deserializeNBT(list.getCompoundTagAt(i));
+                transforms.add(transform);
+            }
+        }
+    }
+
     public static class PathData
     {
         public CPath path;
@@ -133,7 +173,7 @@ public abstract class CPath extends Component
     }
 
 
-    public static class CPathTransform extends Component
+    public static class CPathTransform extends NBTSerializableComponent
     {
         public static final int
                 TYPE_ADD = 0,
@@ -142,7 +182,7 @@ public abstract class CPath extends Component
                 TYPE_CROSS_PRODUCT = 3,
                 TYPE_POWER = 4;
 
-        public int type;
+        public int type = TYPE_ADD;
         public CPath[] paths;
 
         public CPathTransform()
@@ -227,6 +267,41 @@ public abstract class CPath extends Component
             for (int i = 0; i < paths.length; i++) paths[i] = (CPath) loadMarked(stream);
 
             return this;
+        }
+
+
+        @Override
+        public NBTTagCompound serializeNBT()
+        {
+            NBTTagCompound compound = new NBTTagCompound();
+
+            compound.setInteger("type", type);
+            if (paths.length > 0)
+            {
+                NBTTagList list = new NBTTagList();
+                for (CPath path : paths) list.appendTag(serializeMarked(path));
+            }
+
+            return compound;
+        }
+
+        @Override
+        public void deserializeNBT(NBTBase nbt)
+        {
+            NBTTagCompound compound = (NBTTagCompound) nbt;
+
+            type = compound.getInteger("type");
+
+            if (compound.hasKey("paths"))
+            {
+                NBTTagList list = (NBTTagList) compound.getTag("paths");
+                paths = new CPath[list.tagCount()];
+                for (int i = 0; i < paths.length; i++)
+                {
+                    paths[i] = (CPath) deserializeMarked(list.getCompoundTagAt(i));
+                }
+            }
+            else paths = new CPath[0];
         }
     }
 }

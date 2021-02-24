@@ -4,6 +4,8 @@ import com.fantasticsource.tools.TrigLookupTable;
 import com.fantasticsource.tools.component.CDouble;
 import com.fantasticsource.tools.datastructures.VectorN;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -86,5 +88,29 @@ public class CPathSinuous extends CPath
         thetaOffset = cd.load(stream).value;
 
         return this;
+    }
+
+
+    @Override
+    public NBTTagCompound serializeNBT()
+    {
+        NBTTagCompound compound = super.serializeNBT();
+
+        compound.setTag("highPointOffsetPath", serializeMarked(highPointOffsetPath));
+
+        compound.setDouble("thetaPerSec", thetaPerSec);
+        compound.setDouble("thetaOffset", thetaOffset);
+
+        return compound;
+    }
+
+    @Override
+    public void deserializeNBT(NBTBase nbt)
+    {
+        super.deserializeNBT(nbt);
+
+        NBTTagCompound compound = (NBTTagCompound) nbt;
+
+        highPointOffsetPath = (CPath) deserializeMarked(compound.getCompoundTag("highPointOffsetPath"));
     }
 }

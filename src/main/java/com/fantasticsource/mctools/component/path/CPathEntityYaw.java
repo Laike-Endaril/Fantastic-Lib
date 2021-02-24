@@ -7,6 +7,8 @@ import com.fantasticsource.tools.component.path.CPath;
 import com.fantasticsource.tools.datastructures.VectorN;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -73,5 +75,24 @@ public class CPathEntityYaw extends CPath
         entity = MCTools.getValidEntityByID(new CInt().load(stream).value);
 
         return this;
+    }
+
+
+    @Override
+    public NBTTagCompound serializeNBT()
+    {
+        NBTTagCompound compound = super.serializeNBT();
+
+        compound.setInteger("entity", entity.getEntityId());
+
+        return compound;
+    }
+
+    @Override
+    public void deserializeNBT(NBTBase nbt)
+    {
+        super.deserializeNBT(nbt);
+
+        entity = MCTools.getValidEntityByID(((NBTTagCompound) nbt).getInteger("entity"));
     }
 }

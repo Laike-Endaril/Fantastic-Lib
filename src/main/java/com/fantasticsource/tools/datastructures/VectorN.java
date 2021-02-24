@@ -5,7 +5,7 @@ import com.fantasticsource.mctools.MCTools;
 
 public class VectorN
 {
-    public final double[] values;
+    public double[] values;
 
     public VectorN(double... values)
     {

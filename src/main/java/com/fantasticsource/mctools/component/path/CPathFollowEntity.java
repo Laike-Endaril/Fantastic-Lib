@@ -6,31 +6,33 @@ import com.fantasticsource.tools.component.path.CPath;
 import com.fantasticsource.tools.datastructures.VectorN;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 
 public class CPathFollowEntity extends CPath
 {
-    public Entity entityToFollow;
+    public Entity entity;
 
 
     public CPathFollowEntity()
     {
     }
 
-    public CPathFollowEntity(Entity entityToFollow)
+    public CPathFollowEntity(Entity entity)
     {
-        this.entityToFollow = entityToFollow;
+        this.entity = entity;
     }
 
 
     @Override
     public VectorN getRelativePositionInternal(long time)
     {
-        if (entityToFollow == null) return null;
+        if (entity == null) return null;
 
-        return new VectorN(entityToFollow.posX, entityToFollow.posY, entityToFollow.posZ);
+        return new VectorN(entity.posX, entity.posY, entity.posZ);
     }
 
 
@@ -39,7 +41,7 @@ public class CPathFollowEntity extends CPath
     {
         super.write(buf);
 
-        buf.writeInt(entityToFollow.getEntityId());
+        buf.writeInt(entity.getEntityId());
 
         return this;
     }
@@ -49,7 +51,7 @@ public class CPathFollowEntity extends CPath
     {
         super.read(buf);
 
-        entityToFollow = MCTools.getValidEntityByID(buf.readInt());
+        entity = MCTools.getValidEntityByID(buf.readInt());
 
         return this;
     }
@@ -59,7 +61,7 @@ public class CPathFollowEntity extends CPath
     {
         super.save(stream);
 
-        new CInt().set(entityToFollow.getEntityId()).save(stream);
+        new CInt().set(entity.getEntityId()).save(stream);
 
         return this;
     }
@@ -69,8 +71,27 @@ public class CPathFollowEntity extends CPath
     {
         super.load(stream);
 
-        entityToFollow = MCTools.getValidEntityByID(new CInt().load(stream).value);
+        entity = MCTools.getValidEntityByID(new CInt().load(stream).value);
 
         return this;
+    }
+
+
+    @Override
+    public NBTTagCompound serializeNBT()
+    {
+        NBTTagCompound compound = super.serializeNBT();
+
+        compound.setInteger("entity", entity.getEntityId());
+
+        return compound;
+    }
+
+    @Override
+    public void deserializeNBT(NBTBase nbt)
+    {
+        super.deserializeNBT(nbt);
+
+        entity = MCTools.getValidEntityByID(((NBTTagCompound) nbt).getInteger("entity"));
     }
 }
