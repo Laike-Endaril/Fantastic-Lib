@@ -101,7 +101,6 @@ public class FantasticLib
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) throws IllegalAccessException
     {
-        DataFiles.output();
         Compat.betterportals = (Loader.isModLoaded("betterportals"));
         Compat.smoothfont = (Loader.isModLoaded("smoothfont"));
         Compat.baubles = (Loader.isModLoaded("baubles"));
@@ -115,6 +114,8 @@ public class FantasticLib
             MinecraftForge.EVENT_BUS.register(TransientAWSkinHandler.class);
             if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) ForcedAWSkinOverrides.clientInit();
         }
+
+        DataFiles.output();
     }
 
 
