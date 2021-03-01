@@ -34,12 +34,12 @@ public class CZone extends Component
 
     public BlockPos getMin()
     {
-        return min;
+        return new BlockPos(min);
     }
 
     public BlockPos getMax()
     {
-        return max;
+        return new BlockPos(max);
     }
 
     @Override
