@@ -1,6 +1,7 @@
 package com.fantasticsource.tools;
 
 import com.fantasticsource.lwjgl.Quaternion;
+import com.fantasticsource.tools.datastructures.Pair;
 import sun.misc.Cleaner;
 
 import java.io.*;
@@ -200,6 +201,11 @@ public class Tools
         return c1 != null && c2 != null && c2.isAssignableFrom(c1);
     }
 
+
+    public static Pair<Integer, Integer> getIntsFromLong(long l)
+    {
+        return new Pair<>((int) (l & 0xffffffffL), (int) ((l >>> 32) & 0xffffffffL));
+    }
 
     public static long getLong(int upper, int lower)
     {
