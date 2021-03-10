@@ -87,6 +87,12 @@ public class MCTools
     }
 
 
+    public static void trackFirstEvents()
+    {
+        FirstTimeEventMessenger.init();
+    }
+
+
     public static boolean isClient()
     {
         return FantasticLib.isClient;
