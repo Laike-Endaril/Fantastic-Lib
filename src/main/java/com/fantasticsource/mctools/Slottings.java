@@ -4,7 +4,10 @@ import com.fantasticsource.fantasticlib.Compat;
 import com.fantasticsource.tiamatitems.api.IPartSlot;
 import com.fantasticsource.tiamatitems.api.TiamatItemsAPI;
 import com.fantasticsource.tools.Tools;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -114,15 +117,24 @@ public class Slottings
 
     public static String getItemSlotting(ItemStack stack)
     {
-        if (!stack.hasTagCompound()) return "None";
+        return getItemSlotting(stack, null);
+    }
 
-        NBTTagCompound compound = stack.getTagCompound();
-        if (!compound.hasKey(DOMAIN)) return "None";
+    public static String getItemSlotting(ItemStack stack, EntityPlayer player)
+    {
+        if (stack.hasTagCompound())
+        {
+            NBTTagCompound compound = MCTools.getSubCompoundIfExists(stack.getTagCompound(), DOMAIN);
+            if (compound != null && compound.hasKey("slotting")) return compound.getString("slotting");
+        }
 
-        compound = compound.getCompoundTag(DOMAIN);
-        if (!compound.hasKey("slotting")) return "None";
+        Item item = stack.getItem();
+        if (item.isValidArmor(stack, EntityEquipmentSlot.HEAD, player)) return "Head";
+        if (item.isValidArmor(stack, EntityEquipmentSlot.CHEST, player)) return "Chest";
+        if (item.isValidArmor(stack, EntityEquipmentSlot.LEGS, player)) return "Legs";
+        if (item.isValidArmor(stack, EntityEquipmentSlot.FEET, player)) return "Feet";
 
-        return compound.getString("slotting");
+        return "None";
     }
 
     public static void clearItemSlotting(ItemStack stack)
@@ -150,14 +162,15 @@ public class Slottings
     }
 
 
-    public static boolean slottingIsValidForSlot(String itemSlotting, String slotType)
-    {
-        return SLOTS_AVAILABLE.containsKey(itemSlotting) && Tools.contains(SLOTS_AVAILABLE.get(itemSlotting), slotType);
-    }
-
     public static boolean itemIsValidForSlot(ItemStack stack, String slotType)
     {
-        if (!slottingIsValidForSlot(getItemSlotting(stack), slotType)) return false;
+        return itemIsValidForSlot(stack, slotType, null);
+    }
+
+    public static boolean itemIsValidForSlot(ItemStack stack, String slotType, EntityPlayer player)
+    {
+        if (!slottingIsValidForSlot(getItemSlotting(stack, player), slotType)) return false;
+
         ArrayList<IPartSlot> partSlots = TiamatItemsAPI.getPartSlots(stack);
         if (partSlots != null)
         {
@@ -167,5 +180,10 @@ public class Slottings
             }
         }
         return true;
+    }
+
+    public static boolean slottingIsValidForSlot(String itemSlotting, String slotType)
+    {
+        return SLOTS_AVAILABLE.containsKey(itemSlotting) && Tools.contains(SLOTS_AVAILABLE.get(itemSlotting), slotType);
     }
 }
