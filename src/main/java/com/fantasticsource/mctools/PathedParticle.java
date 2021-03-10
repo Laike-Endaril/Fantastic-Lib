@@ -14,7 +14,8 @@ import java.util.ArrayList;
 
 public class PathedParticle extends Particle
 {
-    public boolean useBlockLight = false;
+    protected boolean readyToRender = false;
+    public boolean useBlockLight = false, isBottomRight78ths = true;
     public double xScale3D = 1, yScale3D = 1, zScale3D = 1;
 
     protected CPath.PathData basePath;
@@ -23,8 +24,6 @@ public class PathedParticle extends Particle
     public PathedParticle(World worldIn, CPath basePath, CPath... morePaths)
     {
         super(worldIn, Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
-
-        particleAlpha = 0;
 
         this.basePath = new CPath.PathData(basePath);
         for (CPath path : morePaths) applyPath(path);
@@ -36,6 +35,8 @@ public class PathedParticle extends Particle
 
         setParticleTextureIndex(160);
         particleMaxAge = 60;
+        particleScale = 1;
+        canCollide = false;
 
         Minecraft.getMinecraft().effectRenderer.addEffect(this);
     }
@@ -57,7 +58,7 @@ public class PathedParticle extends Particle
     @Override
     public void onUpdate()
     {
-        if (particleAge++ >= particleMaxAge) setExpired();
+        if (particleAge++ > particleMaxAge) setExpired();
 
         prevPosX = posX;
         prevPosY = posY;
@@ -72,7 +73,7 @@ public class PathedParticle extends Particle
 
         setPosition(pos.values[0], pos.values[1], pos.values[2]);
 
-        particleAlpha = 1;
+        readyToRender = true;
     }
 
     public VectorN currentPos()
@@ -98,10 +99,12 @@ public class PathedParticle extends Particle
     @Override
     public void renderParticle(BufferBuilder buffer, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ)
     {
+        if (!readyToRender) return;
+
         double x = prevPosX + (posX - prevPosX) * partialTicks - interpPosX;
         double y = prevPosY + (posY - prevPosY) * partialTicks - interpPosY;
         double z = prevPosZ + (posZ - prevPosZ) * partialTicks - interpPosZ;
-        double scale = 0.1 * particleScale;
+        double scale = particleScale / 2;
         Vec3d[] vecs = new Vec3d[]
                 {
                         new Vec3d((-rotationX - rotationXY) * xScale3D, -rotationZ * yScale3D, (-rotationYZ - rotationXZ) * zScale3D).scale(scale),
@@ -130,9 +133,9 @@ public class PathedParticle extends Particle
         if (particleTexture == null)
         {
             u1 = (double) particleTextureIndexX / 16;
-            u2 = u1 + 0.0624375F;
+            u2 = u1 + 0.0624375;
             v1 = (double) particleTextureIndexY / 16;
-            v2 = v1 + 0.0624375F;
+            v2 = v1 + 0.0624375;
         }
         else
         {
@@ -140,6 +143,11 @@ public class PathedParticle extends Particle
             u2 = particleTexture.getMaxU();
             v1 = particleTexture.getMinV();
             v2 = particleTexture.getMaxV();
+        }
+        if (isBottomRight78ths)
+        {
+            u1 += 0.0078046875;
+            v1 += 0.0078046875;
         }
 
 
