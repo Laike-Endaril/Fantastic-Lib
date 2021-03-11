@@ -2,7 +2,6 @@ package com.fantasticsource.mctools;
 
 import com.fantasticsource.tools.component.path.CPath;
 import com.fantasticsource.tools.datastructures.VectorN;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.entity.Entity;
@@ -38,7 +37,7 @@ public class PathedParticle extends Particle
         particleScale = 1;
         canCollide = false;
 
-        Minecraft.getMinecraft().effectRenderer.addEffect(this);
+        PathedParticleManager.add(this);
     }
 
 
