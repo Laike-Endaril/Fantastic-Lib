@@ -1,6 +1,7 @@
 package com.fantasticsource.mctools;
 
 import com.fantasticsource.tools.component.path.CPath;
+import com.fantasticsource.tools.datastructures.Color;
 import com.fantasticsource.tools.datastructures.VectorN;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -19,7 +20,7 @@ public class PathedParticle extends Particle
     public boolean useBlockLight = false;
     public double xScale3D = 1, yScale3D = 1, zScale3D = 1;
 
-    protected CPath.PathData basePath;
+    protected CPath.PathData basePath, rgbPath = null, hsvPath = null, alphaPath = null;
     protected ArrayList<CPath.PathData> morePaths = new ArrayList<>();
 
     public PathedParticle(World world, CPath basePath, CPath... morePaths)
@@ -60,6 +61,24 @@ public class PathedParticle extends Particle
         return this;
     }
 
+    public PathedParticle rgbPath(CPath path)
+    {
+        rgbPath = new CPath.PathData(path);
+        return this;
+    }
+
+    public PathedParticle hsvPath(CPath path)
+    {
+        hsvPath = new CPath.PathData(path);
+        return this;
+    }
+
+    public PathedParticle alphaPath(CPath path)
+    {
+        alphaPath = new CPath.PathData(path);
+        return this;
+    }
+
 
     @Override
     public void onUpdate()
@@ -79,10 +98,24 @@ public class PathedParticle extends Particle
 
         setPosition(pos.values[0], pos.values[1], pos.values[2]);
 
+        if (rgbPath != null)
+        {
+            VectorN rgb = rgbPath.getRelativePosition();
+            setRBGColorF((float) rgb.values[0], (float) rgb.values[1], (float) rgb.values[2]);
+        }
+        else if (hsvPath != null)
+        {
+            VectorN hsv = hsvPath.getRelativePosition();
+            Color c = new Color(0).setColorHSV((float) hsv.values[0], (float) hsv.values[1], (float) hsv.values[2]);
+            setRBGColorF(c.rf(), c.gf(), c.bf());
+        }
+
+        if (alphaPath != null) setAlphaF((float) alphaPath.getRelativePosition().values[0]);
+
         readyToRender = true;
     }
 
-    public VectorN currentPos()
+    protected VectorN currentPos()
     {
         VectorN pos = basePath.getRelativePosition(), pathPos;
         for (CPath.PathData data : morePaths)

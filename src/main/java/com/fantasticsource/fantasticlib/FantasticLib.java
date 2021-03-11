@@ -193,11 +193,15 @@ public class FantasticLib
             p3 = new CPathConstant(v1.copy().scale(3)),
             p7 = new CPathConstant(v1.copy().scale(7)),
             pNeg1 = new CPathConstant(v1.copy().scale(-1)),
+            pIncreasing = new CPathLinear(new VectorN(0.2, 0.2, 0.2)),
+            pXIncreasing = new CPathLinear(vX1),
             pX1 = new CPathConstant(vX1),
             pY1 = new CPathConstant(vY1),
             pYNeg1 = new CPathConstant(vY1.copy().scale(-1)),
             pOneToInfintesimal = new CPathLinear(v1.copy().scale(5)).add(p1).power(pNeg1),
-            pVSpiralIn = new CPathSinuous(pX1, 0.5).add(new CPathSinuous(pY1, 0.5, 0.25)).mult(pOneToInfintesimal).mult(p3);
+            pNegOneToNegInfintesimal = new CPathLinear(v1.copy().scale(5)).add(p1).power(pNeg1).mult(pNeg1),
+            pOneToInfintesimalInv = p1.copy().add(pNegOneToNegInfintesimal),
+            pVSpiralIn = new CPathSinuous(pX1, 0.25).add(new CPathSinuous(pY1, 0.25, 0.25)).mult(pOneToInfintesimal).mult(p3);
 //    vSpiralIn = new CPathSinuous(x1PerSec.copy().add(pXNeg3), 0.5).add(new CPathSinuous(y1PerSec.copy().add(pYNeg3), 0.5, 0.25));
 
     @SubscribeEvent
@@ -223,8 +227,8 @@ public class FantasticLib
                 path.thetaOffset = offset;
                 ((CPathSinuous) path.transforms.get(0).paths[0]).thetaOffset += offset;
                 PathedParticle particle = new PathedParticle(player.world, follow, path.add(look));
-                particle.setRBGColorF(0, 0, 0);
                 particle.setAlphaF(0.2f);
+                particle.hsvPath(pXIncreasing.copy().add(new CPathConstant(new VectorN(Math.random(), 1, 1))));
                 particle.u1 = 32d / 128;
                 particle.v1 = 16d / 128;
                 particle.u2 = 64d / 128;
