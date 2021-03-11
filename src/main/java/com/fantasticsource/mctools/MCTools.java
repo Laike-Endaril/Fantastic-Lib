@@ -832,7 +832,7 @@ public class MCTools
         }
     }
 
-    public static double entityMatchesDoubleMapOrDefault(EntityLivingBase entity, LinkedHashMap<Class<? extends EntityLivingBase>, LinkedHashMap<String, Double>> populatedMap, double defaultValue)
+    public static double entityMatchesDoubleMapOrDefault(Entity entity, LinkedHashMap<Class<? extends Entity>, LinkedHashMap<String, Double>> populatedMap, double defaultValue)
     {
         HashMap<String, Double> map = populatedMap.get(entity.getClass());
         if (map == null) return defaultValue;
@@ -847,7 +847,7 @@ public class MCTools
     }
 
 
-    public static void populateEntityIntMap(String[] regexArray, LinkedHashMap<Class<? extends EntityLivingBase>, LinkedHashMap<String, Integer>> mapToPopulate)
+    public static void populateEntityIntMap(String[] regexArray, LinkedHashMap<Class<? extends Entity>, LinkedHashMap<String, Integer>> mapToPopulate)
     {
         for (String regex : regexArray)
         {
@@ -879,16 +879,13 @@ public class MCTools
                     if (!Pattern.matches(domain, entry.getKey().getResourceDomain())) continue;
                     if (!Pattern.matches(name, entry.getKey().getResourcePath())) continue;
 
-                    Class cls = entry.getValue().getEntityClass();
-                    if (!(EntityLivingBase.class.isAssignableFrom(cls))) continue;
-
-                    mapToPopulate.computeIfAbsent((Class<? extends EntityLivingBase>) cls, o -> new LinkedHashMap<>()).put(specificName, value);
+                    mapToPopulate.computeIfAbsent(entry.getValue().getEntityClass(), o -> new LinkedHashMap<>()).put(specificName, value);
                 }
             }
         }
     }
 
-    public static int entityMatchesIntMapOrDefault(EntityLivingBase entity, LinkedHashMap<Class<? extends EntityLivingBase>, LinkedHashMap<String, Integer>> populatedMap, int defaultValue)
+    public static int entityMatchesIntMapOrDefault(Entity entity, LinkedHashMap<Class<? extends Entity>, LinkedHashMap<String, Integer>> populatedMap, int defaultValue)
     {
         HashMap<String, Integer> map = populatedMap.get(entity.getClass());
         if (map == null) return defaultValue;
@@ -903,7 +900,7 @@ public class MCTools
     }
 
 
-    public static void populateEntityMap(String[] regexArray, LinkedHashMap<Class<? extends EntityLivingBase>, HashSet<String>> mapToPopulate)
+    public static void populateEntityMap(String[] regexArray, LinkedHashMap<Class<? extends Entity>, HashSet<String>> mapToPopulate)
     {
         for (String regex : regexArray)
         {
@@ -932,16 +929,13 @@ public class MCTools
                     if (!Pattern.matches(domain, entry.getKey().getResourceDomain())) continue;
                     if (!Pattern.matches(name, entry.getKey().getResourcePath())) continue;
 
-                    Class cls = entry.getValue().getEntityClass();
-                    if (!(EntityLivingBase.class.isAssignableFrom(cls))) continue;
-
-                    mapToPopulate.computeIfAbsent((Class<? extends EntityLivingBase>) cls, o -> new HashSet<>()).add(specificName);
+                    mapToPopulate.computeIfAbsent(entry.getValue().getEntityClass(), o -> new HashSet<>()).add(specificName);
                 }
             }
         }
     }
 
-    public static boolean entityMatchesMap(EntityLivingBase entity, LinkedHashMap<Class<? extends EntityLivingBase>, HashSet<String>> populatedMap)
+    public static boolean entityMatchesMap(Entity entity, LinkedHashMap<Class<? extends Entity>, HashSet<String>> populatedMap)
     {
         HashSet<String> set = populatedMap.get(entity.getClass());
         if (set == null) return false;
