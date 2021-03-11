@@ -6,10 +6,6 @@ import com.fantasticsource.mctools.*;
 import com.fantasticsource.mctools.aw.ForcedAWSkinOverrides;
 import com.fantasticsource.mctools.aw.RenderModes;
 import com.fantasticsource.mctools.aw.TransientAWSkinHandler;
-import com.fantasticsource.mctools.component.path.CPathEntityLook;
-import com.fantasticsource.mctools.component.path.CPathEntityPitch;
-import com.fantasticsource.mctools.component.path.CPathEntityYaw;
-import com.fantasticsource.mctools.component.path.CPathFollowEntity;
 import com.fantasticsource.mctools.data.CModpackDataHandler;
 import com.fantasticsource.mctools.data.CWorldDataHandler;
 import com.fantasticsource.mctools.event.GametypeChangedEvent;
@@ -18,14 +14,7 @@ import com.fantasticsource.mctools.gui.screen.TestGUI;
 import com.fantasticsource.mctools.nbtcap.NBTCap;
 import com.fantasticsource.mctools.nbtcap.NBTCapStorage;
 import com.fantasticsource.tools.ReflectionTool;
-import com.fantasticsource.tools.component.path.CPath;
-import com.fantasticsource.tools.component.path.CPathConstant;
-import com.fantasticsource.tools.component.path.CPathLinear;
-import com.fantasticsource.tools.component.path.CPathSinuous;
 import com.fantasticsource.tools.datastructures.ColorImmutable;
-import com.fantasticsource.tools.datastructures.VectorN;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
@@ -39,7 +28,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 @Mod(modid = FantasticLib.MODID, name = FantasticLib.NAME, version = FantasticLib.VERSION, acceptableRemoteVersions = "*")
@@ -48,7 +36,7 @@ public class FantasticLib
     public static final String MODID = "fantasticlib";
     public static final String DOMAIN = "flib";
     public static final String NAME = "Fantastic Lib";
-    public static final String VERSION = "1.12.2.044zm";
+    public static final String VERSION = "1.12.2.044zn";
 
 
     public static long serverStartTime = -1;
@@ -183,58 +171,58 @@ public class FantasticLib
     }
 
 
-    private static VectorN
-            v1 = new VectorN(1, 1, 1),
-            vX1 = new VectorN(1, 0, 0),
-            vY1 = new VectorN(0, 1, 0);
-
-    private static CPath
-            p1 = new CPathConstant(v1),
-            pX1YZ2 = new CPathConstant(new VectorN(1, 2, 2)),
-            p3 = new CPathConstant(v1.copy().scale(3)),
-            p7 = new CPathConstant(v1.copy().scale(7)),
-            pNeg1 = new CPathConstant(v1.copy().scale(-1)),
-            pIncreasing = new CPathLinear(new VectorN(0.2, 0.2, 0.2)),
-            pXIncreasing = new CPathLinear(vX1),
-            pX1 = new CPathConstant(vX1),
-            pY1 = new CPathConstant(vY1),
-            pYNeg1 = new CPathConstant(vY1.copy().scale(-1)),
-            pOneToInfintesimal = new CPathLinear(v1.copy().scale(5)).add(p1).power(pNeg1),
-            pNegOneToNegInfintesimal = new CPathLinear(v1.copy().scale(5)).add(p1).power(pNeg1).mult(pNeg1),
-            pOneToInfintesimalInv = p1.copy().add(pNegOneToNegInfintesimal),
-            pVSpiralIn = new CPathSinuous(pX1, 0.25).add(new CPathSinuous(pY1, 0.25, 0.25)).mult(pOneToInfintesimal).mult(p3);
-//    vSpiralIn = new CPathSinuous(x1PerSec.copy().add(pXNeg3), 0.5).add(new CPathSinuous(y1PerSec.copy().add(pYNeg3), 0.5, 0.25));
-
-    @SubscribeEvent
-    public static void test(TickEvent.ClientTickEvent event)
-    {
-        if (event.phase != TickEvent.Phase.END) return;
-
-        EntityPlayer player = Minecraft.getMinecraft().player;
-        if (player == null) return;
-
-        CPath follow = new CPathFollowEntity(player).add(new CPathConstant(new VectorN(0, player.eyeHeight, 0)));
-
-        CPath yaw = new CPathEntityYaw(player), pitch = new CPathEntityPitch(player);
-        CPath directionalSpiral = pVSpiralIn.copy().rotate(pX1, pitch).rotate(pYNeg1, yaw);
-        CPath look = new CPathEntityLook(player).mult(p7);
-
-        if (player.world.isRemote)
-        {
-            for (int i = 0; i < 10; i++)
-            {
-                double offset = Math.PI * 2 * Math.random();
-                CPathSinuous path = (CPathSinuous) directionalSpiral.copy();
-                path.thetaOffset = offset;
-                ((CPathSinuous) path.transforms.get(0).paths[0]).thetaOffset += offset;
-                PathedParticle particle = new PathedParticle(player.world, follow, path.add(look));
-                particle.setAlphaF(0.2f);
-                particle.hsvPath(pXIncreasing.copy().add(new CPathConstant(new VectorN(Math.random(), 1, 1))).mod(pX1YZ2));
-                particle.u1 = 32d / 128;
-                particle.v1 = 16d / 128;
-                particle.u2 = 64d / 128;
-                particle.v2 = 48d / 128;
-            }
-        }
-    }
+//    private static VectorN
+//            v1 = new VectorN(1, 1, 1),
+//            vX1 = new VectorN(1, 0, 0),
+//            vY1 = new VectorN(0, 1, 0);
+//
+//    private static CPath
+//            p1 = new CPathConstant(v1),
+//            pX1YZ2 = new CPathConstant(new VectorN(1, 2, 2)),
+//            p3 = new CPathConstant(v1.copy().scale(3)),
+//            p7 = new CPathConstant(v1.copy().scale(7)),
+//            pNeg1 = new CPathConstant(v1.copy().scale(-1)),
+//            pIncreasing = new CPathLinear(new VectorN(0.2, 0.2, 0.2)),
+//            pXIncreasing = new CPathLinear(vX1),
+//            pX1 = new CPathConstant(vX1),
+//            pY1 = new CPathConstant(vY1),
+//            pYNeg1 = new CPathConstant(vY1.copy().scale(-1)),
+//            pOneToInfintesimal = new CPathLinear(v1.copy().scale(5)).add(p1).power(pNeg1),
+//            pNegOneToNegInfintesimal = new CPathLinear(v1.copy().scale(5)).add(p1).power(pNeg1).mult(pNeg1),
+//            pOneToInfintesimalInv = p1.copy().add(pNegOneToNegInfintesimal),
+//            pVSpiralIn = new CPathSinuous(pX1, 0.25).add(new CPathSinuous(pY1, 0.25, 0.25)).mult(pOneToInfintesimal).mult(p3);
+////    vSpiralIn = new CPathSinuous(x1PerSec.copy().add(pXNeg3), 0.5).add(new CPathSinuous(y1PerSec.copy().add(pYNeg3), 0.5, 0.25));
+//
+//    @SubscribeEvent
+//    public static void test(TickEvent.ClientTickEvent event)
+//    {
+//        if (event.phase != TickEvent.Phase.END) return;
+//
+//        EntityPlayer player = Minecraft.getMinecraft().player;
+//        if (player == null) return;
+//
+//        CPath follow = new CPathFollowEntity(player).add(new CPathConstant(new VectorN(0, player.eyeHeight, 0)));
+//
+//        CPath yaw = new CPathEntityYaw(player), pitch = new CPathEntityPitch(player);
+//        CPath directionalSpiral = pVSpiralIn.copy().rotate(pX1, pitch).rotate(pYNeg1, yaw);
+//        CPath look = new CPathEntityLook(player).mult(p7);
+//
+//        if (player.world.isRemote)
+//        {
+//            for (int i = 0; i < 10; i++)
+//            {
+//                double offset = Math.PI * 2 * Math.random();
+//                CPathSinuous path = (CPathSinuous) directionalSpiral.copy();
+//                path.thetaOffset = offset;
+//                ((CPathSinuous) path.transforms.get(0).paths[0]).thetaOffset += offset;
+//                PathedParticle particle = new PathedParticle(player.world, follow, path.add(look));
+//                particle.setAlphaF(0.2f);
+//                particle.hsvPath(pXIncreasing.copy().add(new CPathConstant(new VectorN(Math.random(), 1, 1))).mod(pX1YZ2));
+//                particle.u1 = 32d / 128;
+//                particle.v1 = 16d / 128;
+//                particle.u2 = 64d / 128;
+//                particle.v2 = 48d / 128;
+//            }
+//        }
+//    }
 }
