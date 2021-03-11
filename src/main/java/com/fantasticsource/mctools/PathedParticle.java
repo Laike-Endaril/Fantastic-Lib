@@ -4,6 +4,7 @@ import com.fantasticsource.tools.component.path.CPath;
 import com.fantasticsource.tools.datastructures.VectorN;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -14,15 +15,21 @@ import java.util.ArrayList;
 public class PathedParticle extends Particle
 {
     protected boolean readyToRender = false;
-    public boolean useBlockLight = false, isBottomRight78ths = true;
+    public double u1 = 0, u2 = 1, v1 = 0, v2 = 1;
+    public boolean useBlockLight = false;
     public double xScale3D = 1, yScale3D = 1, zScale3D = 1;
 
     protected CPath.PathData basePath;
     protected ArrayList<CPath.PathData> morePaths = new ArrayList<>();
 
-    public PathedParticle(World worldIn, CPath basePath, CPath... morePaths)
+    public PathedParticle(World world, CPath basePath, CPath... morePaths)
     {
-        super(worldIn, Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
+        this(world, GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, basePath, morePaths);
+    }
+
+    public PathedParticle(World world, GlStateManager.SourceFactor sourceBlend, GlStateManager.DestFactor destBlend, CPath basePath, CPath... morePaths)
+    {
+        super(world, Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
 
         this.basePath = new CPath.PathData(basePath);
         for (CPath path : morePaths) applyPath(path);
@@ -37,7 +44,7 @@ public class PathedParticle extends Particle
         particleScale = 1;
         canCollide = false;
 
-        PathedParticleManager.add(this);
+        PathedParticleManager.add(this, sourceBlend, destBlend);
     }
 
 
@@ -125,28 +132,6 @@ public class PathedParticle extends Particle
             {
                 vecs[l] = vec3d.scale(2 * vecs[l].dotProduct(vec3d)).add(vecs[l].scale(cosTheta * cosTheta - vec3d.dotProduct(vec3d))).add(vec3d.crossProduct(vecs[l]).scale(2 * cosTheta));
             }
-        }
-
-
-        double u1, u2, v1, v2;
-        if (particleTexture == null)
-        {
-            u1 = (double) particleTextureIndexX / 16;
-            u2 = u1 + 0.0624375;
-            v1 = (double) particleTextureIndexY / 16;
-            v2 = v1 + 0.0624375;
-        }
-        else
-        {
-            u1 = particleTexture.getMinU();
-            u2 = particleTexture.getMaxU();
-            v1 = particleTexture.getMinV();
-            v2 = particleTexture.getMaxV();
-        }
-        if (isBottomRight78ths)
-        {
-            u1 += 0.0078046875;
-            v1 += 0.0078046875;
         }
 
 

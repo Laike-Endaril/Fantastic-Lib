@@ -24,6 +24,7 @@ import com.fantasticsource.tools.component.path.CPathLinear;
 import com.fantasticsource.tools.component.path.CPathSinuous;
 import com.fantasticsource.tools.datastructures.ColorImmutable;
 import com.fantasticsource.tools.datastructures.VectorN;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -31,7 +32,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
@@ -39,6 +39,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 @Mod(modid = FantasticLib.MODID, name = FantasticLib.NAME, version = FantasticLib.VERSION, acceptableRemoteVersions = "*")
@@ -200,9 +201,12 @@ public class FantasticLib
 //    vSpiralIn = new CPathSinuous(x1PerSec.copy().add(pXNeg3), 0.5).add(new CPathSinuous(y1PerSec.copy().add(pYNeg3), 0.5, 0.25));
 
     @SubscribeEvent
-    public static void test(PlayerInteractEvent.RightClickItem event)
+    public static void test(TickEvent.ClientTickEvent event)
     {
-        EntityPlayer player = event.getEntityPlayer();
+        if (event.phase != TickEvent.Phase.END) return;
+
+        EntityPlayer player = Minecraft.getMinecraft().player;
+        if (player == null) return;
 
         CPath follow = new CPathFollowEntity(player).add(new CPathConstant(new VectorN(0, player.eyeHeight, 0)));
 
@@ -218,7 +222,13 @@ public class FantasticLib
                 CPathSinuous path = (CPathSinuous) directionalSpiral.copy();
                 path.thetaOffset = offset;
                 ((CPathSinuous) path.transforms.get(0).paths[0]).thetaOffset += offset;
-                new PathedParticle(player.world, follow, path.add(look));
+                PathedParticle particle = new PathedParticle(player.world, follow, path.add(look));
+                particle.setRBGColorF(0, 0, 0);
+                particle.setAlphaF(0.2f);
+                particle.u1 = 32d / 128;
+                particle.v1 = 16d / 128;
+                particle.u2 = 64d / 128;
+                particle.v2 = 48d / 128;
             }
         }
     }
