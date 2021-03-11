@@ -1263,6 +1263,8 @@ public class GlobalInventory
 
     public static void syncAWWardrobeSkins(Entity entity, boolean syncToSelf, boolean syncToOthers)
     {
+        if (entity.world.isRemote) return;
+
         IEntitySkinCapability wardrobeSkinHandler = ArmourersWorkshopApi.getEntitySkinCapability(entity);
         if (wardrobeSkinHandler == null) return;
 

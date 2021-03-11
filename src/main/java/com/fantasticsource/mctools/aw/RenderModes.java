@@ -49,9 +49,9 @@ public class RenderModes
 
         compound.setString(renderModeChannel, renderMode);
 
-        refresh(entity);
-
         if (entity instanceof EntityPlayerMP) Network.WRAPPER.sendTo(new Network.RenderModesPacket(entity), (EntityPlayerMP) entity);
+
+        refresh(entity);
     }
 
     public static String getRenderMode(Entity entity, String renderModeChannel)
@@ -165,6 +165,8 @@ public class RenderModes
 
     public static void refresh(Entity entity)
     {
+        if (entity.world.isRemote) return;
+
         boolean changed = false;
         for (ItemStack stack : GlobalInventory.getAWSkins(entity))
         {
