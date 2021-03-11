@@ -8,6 +8,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.Vec3d;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -32,7 +33,7 @@ public class CPathEntityLook extends CPath
     {
         if (entity == null) return null;
 
-        return MCTools.getVectorN(entity.getLookVec());
+        return MCTools.getVectorN(Vec3d.fromPitchYaw(entity.rotationPitch, entity.getRotationYawHead()));
     }
 
 

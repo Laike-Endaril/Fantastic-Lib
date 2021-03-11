@@ -215,13 +215,9 @@ public class FantasticLib
 //                CPathSinuous path = (CPathSinuous) directionalSpiral.copy();
 //                path.thetaOffset = offset;
 //                ((CPathSinuous) path.transforms.get(0).paths[0]).thetaOffset += offset;
-//                PathedParticle particle = new PathedParticle(player.world, follow, path.add(look));
+//                PathedParticle particle = new PathedParticle(follow, path.add(look));
 //                particle.setAlphaF(0.2f);
 //                particle.hsvPath(pXIncreasing.copy().add(new CPathConstant(new VectorN(Math.random(), 1, 1))).mod(pX1YZ2));
-//                particle.u1 = 32d / 128;
-//                particle.v1 = 16d / 128;
-//                particle.u2 = 64d / 128;
-//                particle.v2 = 48d / 128;
 //            }
 //        }
 //    }
