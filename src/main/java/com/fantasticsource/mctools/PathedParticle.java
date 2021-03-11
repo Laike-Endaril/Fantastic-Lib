@@ -20,7 +20,7 @@ public class PathedParticle extends Particle
     public boolean useBlockLight = false;
     public double xScale3D = 1, yScale3D = 1, zScale3D = 1;
 
-    protected CPath.PathData basePath, rgbPath = null, hsvPath = null, alphaPath = null;
+    protected CPath.PathData basePath, rgbPath = null, hsvPath = null, alphaPath = null, scale3DPath = null;
     protected ArrayList<CPath.PathData> morePaths = new ArrayList<>();
 
     public PathedParticle(World world, CPath basePath, CPath... morePaths)
@@ -79,6 +79,12 @@ public class PathedParticle extends Particle
         return this;
     }
 
+    public PathedParticle scale3DPath(CPath path)
+    {
+        scale3DPath = new CPath.PathData(path);
+        return this;
+    }
+
 
     @Override
     public void onUpdate()
@@ -111,6 +117,14 @@ public class PathedParticle extends Particle
         }
 
         if (alphaPath != null) setAlphaF((float) alphaPath.getRelativePosition().values[0]);
+
+        if (scale3DPath != null)
+        {
+            VectorN scalar = scale3DPath.getRelativePosition();
+            xScale3D = scalar.values[0];
+            yScale3D = scalar.values[1];
+            zScale3D = scalar.values[2];
+        }
 
         readyToRender = true;
     }
