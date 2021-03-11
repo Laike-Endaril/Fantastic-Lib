@@ -190,6 +190,7 @@ public class FantasticLib
 
     private static CPath
             p1 = new CPathConstant(v1),
+            pX1YZ2 = new CPathConstant(new VectorN(1, 2, 2)),
             p3 = new CPathConstant(v1.copy().scale(3)),
             p7 = new CPathConstant(v1.copy().scale(7)),
             pNeg1 = new CPathConstant(v1.copy().scale(-1)),
@@ -228,7 +229,7 @@ public class FantasticLib
                 ((CPathSinuous) path.transforms.get(0).paths[0]).thetaOffset += offset;
                 PathedParticle particle = new PathedParticle(player.world, follow, path.add(look));
                 particle.setAlphaF(0.2f);
-                particle.hsvPath(pXIncreasing.copy().add(new CPathConstant(new VectorN(Math.random(), 1, 1))));
+                particle.hsvPath(pXIncreasing.copy().add(new CPathConstant(new VectorN(Math.random(), 1, 1))).mod(pX1YZ2));
                 particle.u1 = 32d / 128;
                 particle.v1 = 16d / 128;
                 particle.u2 = 64d / 128;

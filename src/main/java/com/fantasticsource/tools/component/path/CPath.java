@@ -47,6 +47,30 @@ public class CPath extends NBTSerializableComponent
         return this;
     }
 
+    public CPath mod(CPath other)
+    {
+        transforms.add(new CPathTransform(CPathTransform.TYPE_MOD, other));
+        return this;
+    }
+
+    public CPath posMod(CPath other)
+    {
+        transforms.add(new CPathTransform(CPathTransform.TYPE_POSMOD, other));
+        return this;
+    }
+
+    public CPath lowLimit(CPath other)
+    {
+        transforms.add(new CPathTransform(CPathTransform.TYPE_LOW_LIMIT, other));
+        return this;
+    }
+
+    public CPath highLimit(CPath other)
+    {
+        transforms.add(new CPathTransform(CPathTransform.TYPE_HIGH_LIMIT, other));
+        return this;
+    }
+
 
     /**
      * @param time spent on this path
@@ -180,7 +204,11 @@ public class CPath extends NBTSerializableComponent
                 TYPE_MULT = 1,
                 TYPE_ROTATE = 2,
                 TYPE_CROSS_PRODUCT = 3,
-                TYPE_POWER = 4;
+                TYPE_POWER = 4,
+                TYPE_MOD = 5,
+                TYPE_POSMOD = 6,
+                TYPE_LOW_LIMIT = 7,
+                TYPE_HIGH_LIMIT = 8;
 
         public int type = TYPE_ADD;
         public CPath[] paths;
@@ -218,6 +246,22 @@ public class CPath extends NBTSerializableComponent
 
                 case TYPE_POWER:
                     vectorN.power(paths[0].getRelativePosition(time));
+                    break;
+
+                case TYPE_MOD:
+                    vectorN.mod(paths[0].getRelativePosition(time));
+                    break;
+
+                case TYPE_POSMOD:
+                    vectorN.posMod(paths[0].getRelativePosition(time));
+                    break;
+
+                case TYPE_LOW_LIMIT:
+                    vectorN.lowLimit(paths[0].getRelativePosition(time));
+                    break;
+
+                case TYPE_HIGH_LIMIT:
+                    vectorN.highLimit(paths[0].getRelativePosition(time));
                     break;
             }
         }

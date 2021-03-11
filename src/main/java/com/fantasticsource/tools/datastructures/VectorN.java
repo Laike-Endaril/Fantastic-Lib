@@ -2,6 +2,7 @@ package com.fantasticsource.tools.datastructures;
 
 import com.fantasticsource.lwjgl.Quaternion;
 import com.fantasticsource.mctools.MCTools;
+import com.fantasticsource.tools.Tools;
 
 public class VectorN
 {
@@ -155,6 +156,94 @@ public class VectorN
             for (int i = 0; i < values.length; i++)
             {
                 values[i] = Math.pow(values[i], vector.values[i]);
+            }
+        }
+        return this;
+    }
+
+
+    public VectorN mod(double... values)
+    {
+        for (int i = 0; i < this.values.length; i++)
+        {
+            this.values[i] = this.values[i] % values[i];
+        }
+        return this;
+    }
+
+    public VectorN mod(VectorN... vectors)
+    {
+        for (VectorN vector : vectors)
+        {
+            for (int i = 0; i < values.length; i++)
+            {
+                values[i] = values[i] % vector.values[i];
+            }
+        }
+        return this;
+    }
+
+
+    public VectorN posMod(double... values)
+    {
+        for (int i = 0; i < this.values.length; i++)
+        {
+            this.values[i] = Tools.posMod(this.values[i], values[i]);
+        }
+        return this;
+    }
+
+    public VectorN posMod(VectorN... vectors)
+    {
+        for (VectorN vector : vectors)
+        {
+            for (int i = 0; i < values.length; i++)
+            {
+                values[i] = Tools.posMod(values[i], vector.values[i]);
+            }
+        }
+        return this;
+    }
+
+
+    public VectorN lowLimit(double... values)
+    {
+        for (int i = 0; i < this.values.length; i++)
+        {
+            this.values[i] = Tools.max(this.values[i], values[i]);
+        }
+        return this;
+    }
+
+    public VectorN lowLimit(VectorN... vectors)
+    {
+        for (VectorN vector : vectors)
+        {
+            for (int i = 0; i < values.length; i++)
+            {
+                values[i] = Tools.max(values[i], vector.values[i]);
+            }
+        }
+        return this;
+    }
+
+
+    public VectorN highLimit(double... values)
+    {
+        for (int i = 0; i < this.values.length; i++)
+        {
+            this.values[i] = Tools.min(this.values[i], values[i]);
+        }
+        return this;
+    }
+
+    public VectorN highLimit(VectorN... vectors)
+    {
+        for (VectorN vector : vectors)
+        {
+            for (int i = 0; i < values.length; i++)
+            {
+                values[i] = Tools.min(values[i], vector.values[i]);
             }
         }
         return this;
