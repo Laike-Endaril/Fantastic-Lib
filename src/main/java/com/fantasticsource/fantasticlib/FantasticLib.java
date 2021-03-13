@@ -51,9 +51,7 @@ public class FantasticLib
     public FantasticLib()
     {
         MinecraftForge.EVENT_BUS.register(FantasticLib.class);
-
         MinecraftForge.EVENT_BUS.register(NBTCap.class);
-
         Network.init();
 
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
