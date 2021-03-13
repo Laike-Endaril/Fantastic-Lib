@@ -62,6 +62,7 @@ public class FantasticLib
             isClient = true;
             if (FantasticConfig.entityRenderFixer) MinecraftForge.EVENT_BUS.register(EntityRenderFixer.class);
             MinecraftForge.EVENT_BUS.register(TooltipFixer.class);
+            MinecraftForge.EVENT_BUS.register(TooltipAlterer.class);
 
             if (DEV_ENV) MinecraftForge.EVENT_BUS.register(TestGUI.class);
         }

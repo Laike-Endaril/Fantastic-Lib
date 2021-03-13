@@ -30,6 +30,8 @@ fantasticlib.config.previewRenderModeOverrides=Preview Render Mode Overrides
 fantasticlib.config.previewRenderModeOverrides.tooltip=FILLSCREEN Overrides for render modes when previewing AW skins on items\nSyntax is...\nSlotting, Channel@Mode, Channel@Mode, etc\nValid entries for 'Slotting' can be found in config/fantasticlib/reference/slottings.txt\nValid channels and modes depend on the AW skins on the server (ask server admin)\nEg. if Tiamat Inventory is installed and a server has valid shoulder skins for it...\nTiamat Shoulders, ShoulderL@On, ShoulderR@On, ShoulderLControl@On, ShoulderRControl@On\n \n
 fantasticlib.config.negativeAttributes=Negative Attributes
 fantasticlib.config.negativeAttributes.tooltip=FILLSCREEN A list of attributes which are bad to have, for render color purposes\n \n
+fantasticlib.config.tooltipScaling=Tooltip Scaling
+fantasticlib.config.tooltipScaling.tooltip=FILLSCREEN Multiplies tooltip render size by this amount\n \n
 fantasticlib.config.guiSettings=GUI Settings
 fantasticlib.config.raytraceSettings=Raytrace Settings
 

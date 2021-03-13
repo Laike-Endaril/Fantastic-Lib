@@ -47,6 +47,14 @@ public class FantasticConfig
             })
     public static String[] negativeAttributes = new String[0];
 
+    @Config.Name("Tooltip Scaling")
+    @Config.LangKey(MODID + ".config.tooltipScaling")
+    @Config.Comment(
+            {
+                    "Multiplies tooltip render size by this amount"
+            })
+    public static double tooltipScaling = 1;
+
     @Config.Name("GUI Settings")
     @Config.LangKey(MODID + ".config.guiSettings")
     public static GUIConfig guiSettings = new GUIConfig();
