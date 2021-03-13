@@ -109,9 +109,9 @@ public class MCTools
     public static String getAttributeModString(String attributeName, double amount, int operation)
     {
         boolean isGoodAttribute = isGoodAttribute(attributeName);
-        if (operation == 0) return (getColorAndSign(isGoodAttribute, amount, operation) + formatNicely(Math.abs(amount)) + " " + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
-        if (operation == 1) return (getColorAndSign(isGoodAttribute, amount, operation) + formatNicely(Math.abs(amount) * 100) + "%" + " " + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
-        if (operation == 2) return (getColorAndSign(isGoodAttribute, amount, operation) + formatNicely(Math.abs(amount)) + "x" + " " + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
+        if (operation == 0) return (getColorAndSign(isGoodAttribute, amount, operation) + formatNicely(Math.abs(amount)) + " " + TextFormatting.GRAY + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
+        if (operation == 1) return (getColorAndSign(isGoodAttribute, amount, operation) + formatNicely(Math.abs(amount) * 100) + "% " + TextFormatting.GRAY + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
+        if (operation == 2) return (getColorAndSign(isGoodAttribute, amount, operation) + formatNicely(Math.abs(amount)) + "x " + TextFormatting.GRAY + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
         throw new IllegalArgumentException("Unknown mod attribute operation: " + operation);
     }
 
