@@ -473,6 +473,7 @@ public class MCTools
         return null;
     }
 
+    //The difference between this and vanilla is that this one triggers the AttachCapabilitiesEvent AFTER initializing NBT
     public static ItemStack cloneItemStack(ItemStack stack)
     {
         NBTTagCompound result = new NBTTagCompound();
@@ -483,10 +484,7 @@ public class MCTools
         result.setShort("Damage", (short) stack.getItemDamage());
 
         NBTTagCompound compound = stack.getTagCompound();
-        if (compound != null)
-        {
-            result.setTag("tag", compound.copy()); //Curse you vanilla
-        }
+        if (compound != null) result.setTag("tag", compound.copy());
 
         CapabilityDispatcher capabilities = (CapabilityDispatcher) ReflectionTool.get(ITEMSTACK_CAPABILITIES_FIELD, stack);
         if (capabilities != null)
