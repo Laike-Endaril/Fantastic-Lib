@@ -39,6 +39,14 @@ public class FantasticConfig
             })
     public static String[] previewRenderModeOverrides = new String[0];
 
+    @Config.Name("Negative Attributes")
+    @Config.LangKey(MODID + ".config.negativeAttributes")
+    @Config.Comment(
+            {
+                    "A list of attributes which are bad to have, for render color purposes"
+            })
+    public static String[] negativeAttributes = new String[0];
+
     @Config.Name("GUI Settings")
     @Config.LangKey(MODID + ".config.guiSettings")
     public static GUIConfig guiSettings = new GUIConfig();

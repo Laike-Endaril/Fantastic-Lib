@@ -1,6 +1,7 @@
 package com.fantasticsource.mctools;
 
 import com.fantasticsource.fantasticlib.FantasticLib;
+import com.fantasticsource.fantasticlib.config.FantasticConfig;
 import com.fantasticsource.lwjgl.Quaternion;
 import com.fantasticsource.tools.PNG;
 import com.fantasticsource.tools.ReflectionTool;
@@ -17,6 +18,7 @@ import net.minecraft.client.resources.LanguageManager;
 import net.minecraft.client.resources.Locale;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.*;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.item.EntityItem;
@@ -32,6 +34,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.*;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
@@ -84,6 +88,60 @@ public class MCTools
             languageManagerCurrentLocaleField = ReflectionTool.getField(LanguageManager.class, "field_135049_a", "CURRENT_LOCALE");
             localePropertiesField = ReflectionTool.getField(Locale.class, "field_135032_a", "properties");
         }
+    }
+
+
+    public static String getAttributeModString(IAttribute attribute, AttributeModifier mod)
+    {
+        return getAttributeModString(attribute.getName(), mod.getAmount(), mod.getOperation());
+    }
+
+    public static String getAttributeModString(IAttribute attribute, double amount, int operation)
+    {
+        return getAttributeModString(attribute.getName(), amount, operation);
+    }
+
+    public static String getAttributeModString(String attributeName, AttributeModifier mod)
+    {
+        return getAttributeModString(attributeName, mod.getAmount(), mod.getOperation());
+    }
+
+    public static String getAttributeModString(String attributeName, double amount, int operation)
+    {
+        boolean isGoodAttribute = isGoodAttribute(attributeName);
+        if (operation == 0) return (getColorAndSign(isGoodAttribute, amount, operation) + Math.abs(amount) + " " + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
+        if (operation == 1) return (getColorAndSign(isGoodAttribute, amount, operation) + (Math.abs(amount) * 100) + "%" + " " + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
+        if (operation == 2) return (getColorAndSign(isGoodAttribute, amount, operation) + Math.abs(amount) + "x" + " " + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
+        throw new IllegalArgumentException("Unknown mod attribute operation: " + operation);
+    }
+
+    public static String getColorAndSign(boolean isGoodAttribute, double amount, int operation)
+    {
+        String sign;
+        TextFormatting color;
+
+        if (operation == 2)
+        {
+            sign = amount < 0 ? "-" : "";
+            color = (amount < 1) == isGoodAttribute ? TextFormatting.RED : TextFormatting.GREEN;
+        }
+        else
+        {
+            sign = amount < 0 ? "-" : "+";
+            color = (amount < 0) == isGoodAttribute ? TextFormatting.RED : TextFormatting.GREEN;
+        }
+
+        return color + sign;
+    }
+
+    public static boolean isGoodAttribute(IAttribute attribute)
+    {
+        return isGoodAttribute(attribute.getName());
+    }
+
+    public static boolean isGoodAttribute(String attributeName)
+    {
+        return !Tools.contains(FantasticConfig.negativeAttributes, attributeName);
     }
 
 
