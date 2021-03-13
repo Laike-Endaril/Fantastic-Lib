@@ -5,10 +5,12 @@ import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.items.ItemMatcher;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -84,7 +86,7 @@ public class InventoryChangedEvent extends EntityEvent
                 else
                 {
                     events.add(new InventoryChangedEvent(entity, oldInventory, newInventory));
-                    newContents.put(entity, newInventory);
+                    newContents.put(entity, newInventory.deepCopy());
                 }
             }
         }
@@ -99,30 +101,24 @@ public class InventoryChangedEvent extends EntityEvent
     }
 
 
-    public static class GlobalInventoryData
+    public static class GlobalInventoryData implements INBTSerializable<NBTTagCompound>
     {
         public final ItemStack[] allNonSkin, tiamatInventory;
 
         public GlobalInventoryData(Entity entity)
         {
-            this(GlobalInventory.getAllNonSkinItems(entity).toArray(new ItemStack[0]), GlobalInventory.getAllTiamatItems(entity).toArray(new ItemStack[0]));
-        }
-
-        public GlobalInventoryData(ItemStack[] allNonSkin, ItemStack[] tiamatInventory)
-        {
-            this.allNonSkin = allNonSkin;
-            this.tiamatInventory = tiamatInventory;
+            allNonSkin = GlobalInventory.getAllNonSkinItems(entity).toArray(new ItemStack[0]);
+            tiamatInventory = GlobalInventory.getAllTiamatItems(entity).toArray(new ItemStack[0]);
         }
 
         public GlobalInventoryData deepCopy()
         {
-            int size1 = allNonSkin.length, size2 = tiamatInventory.length;
-            ItemStack[] newAllNonSkin = new ItemStack[size1], newTiamatInventory = new ItemStack[size2];
+            int i = 0;
+            for (ItemStack stack : allNonSkin) allNonSkin[i++] = stack.copy();
+            i = 0;
+            for (ItemStack stack : tiamatInventory) tiamatInventory[i++] = stack.copy();
 
-            System.arraycopy(allNonSkin, 0, newAllNonSkin, 0, size1);
-            System.arraycopy(tiamatInventory, 0, newTiamatInventory, 0, size2);
-
-            return new GlobalInventoryData(newAllNonSkin, newTiamatInventory);
+            return this;
         }
 
         @Override
@@ -134,6 +130,19 @@ public class InventoryChangedEvent extends EntityEvent
             if (allNonSkin.length != other.allNonSkin.length) return false;
 
             return ItemMatcher.stacksMatch(allNonSkin, other.allNonSkin);
+        }
+
+        @Override
+        public NBTTagCompound serializeNBT()
+        {
+            NBTTagCompound compound = new NBTTagCompound();
+            return null;
+        }
+
+        @Override
+        public void deserializeNBT(NBTTagCompound nbt)
+        {
+
         }
     }
 }
