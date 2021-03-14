@@ -54,6 +54,11 @@ public class AWSkinGenerator
                 }
             }
         }
+        else if (libraryFile.contains("@"))
+        {
+            otherFileNames.add(libraryFile);
+            libraryFile = "";
+        }
 
 
         ItemStack result = new ItemStack(awSkinItem);
