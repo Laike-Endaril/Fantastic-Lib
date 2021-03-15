@@ -21,6 +21,35 @@ public class Tools
     protected static PrintStream out = null, err = null;
 
 
+    public static String formatNicely(double d)
+    {
+        double ad = Math.abs(d);
+        if (ad >= 1000)
+        {
+            //High scientific
+            int i = (int) d, n = 0;
+            while (Math.abs(i) > 10)
+            {
+                i /= 10;
+                n++;
+            }
+            return i + "x10^" + n;
+        }
+        if (ad >= 100) return "" + (int) d;
+        if (ad > 1) return String.format("%.1f", d);
+
+
+        //Low scientific
+        int n = 0;
+        while (Math.abs(d) < 1)
+        {
+            d *= 10;
+            n++;
+        }
+        return String.format("%.1f", d) + "x10^-" + n;
+    }
+
+
     public static Quaternion rotatedQuaternion(Quaternion v, Quaternion axis, double theta)
     {
         double sinThetaDiv2 = TrigLookupTable.TRIG_TABLE_1024.sin(theta * 0.5);

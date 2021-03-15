@@ -109,9 +109,9 @@ public class MCTools
     public static String getAttributeModString(String attributeName, double amount, int operation)
     {
         boolean isGoodAttribute = isGoodAttribute(attributeName);
-        if (operation == 0) return (getColorAndSign(isGoodAttribute, amount, operation) + formatNicely(Math.abs(amount)) + " " + TextFormatting.GRAY + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
-        if (operation == 1) return (getColorAndSign(isGoodAttribute, amount, operation) + formatNicely(Math.abs(amount) * 100) + "% " + TextFormatting.GRAY + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
-        if (operation == 2) return (getColorAndSign(isGoodAttribute, amount, operation) + formatNicely(Math.abs(amount)) + "x " + TextFormatting.GRAY + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
+        if (operation == 0) return (getColorAndSign(isGoodAttribute, amount, operation) + Tools.formatNicely(Math.abs(amount)) + " " + TextFormatting.GRAY + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
+        if (operation == 1) return (getColorAndSign(isGoodAttribute, amount, operation) + Tools.formatNicely(Math.abs(amount) * 100) + "% " + TextFormatting.GRAY + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
+        if (operation == 2) return (getColorAndSign(isGoodAttribute, amount, operation) + Tools.formatNicely(Math.abs(amount)) + "x " + TextFormatting.GRAY + I18n.translateToLocal("attribute.name." + attributeName)).replaceAll("[.]0([^0-9])", "$1");
         throw new IllegalArgumentException("Unknown mod attribute operation: " + operation);
     }
 
@@ -142,34 +142,6 @@ public class MCTools
     public static boolean isGoodAttribute(String attributeName)
     {
         return !Tools.contains(FantasticConfig.negativeAttributes, attributeName);
-    }
-
-    public static String formatNicely(double d)
-    {
-        double ad = Math.abs(d);
-        if (ad >= 1000)
-        {
-            //High scientific
-            int i = (int) d, n = 0;
-            while (Math.abs(i) > 10)
-            {
-                i /= 10;
-                n++;
-            }
-            return i + "x10^" + n;
-        }
-        if (ad >= 100) return "" + (int) d;
-        if (ad > 1) return String.format("%.1f", d);
-
-
-        //Low scientific
-        int n = 0;
-        while (Math.abs(d) < 1)
-        {
-            d *= 10;
-            n++;
-        }
-        return String.format("%.1f", d) + "x10^" + n;
     }
 
 
