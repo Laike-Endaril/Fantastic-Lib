@@ -12,6 +12,8 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
@@ -35,6 +37,13 @@ public class RenderModes
 
     public static void setRenderMode(Entity entity, String renderModeChannel, String renderMode)
     {
+        SetRenderModeEvent event = new SetRenderModeEvent(entity, renderModeChannel, renderMode);
+        if (MinecraftForge.EVENT_BUS.post(event)) return;
+
+
+        renderModeChannel = event.renderModeChannel;
+        renderMode = event.renderMode;
+
         if (renderMode == null)
         {
             clearRenderMode(entity, renderModeChannel);
@@ -298,5 +307,19 @@ public class RenderModes
     {
         EntityPlayerMP player = (EntityPlayerMP) event.player;
         Network.WRAPPER.sendTo(new Network.RenderModesPacket(player), player);
+    }
+
+
+    @Cancelable
+    public static class SetRenderModeEvent extends EntityEvent
+    {
+        public String renderModeChannel, renderMode;
+
+        public SetRenderModeEvent(Entity entity, String renderModeChannel, String renderMode)
+        {
+            super(entity);
+            this.renderModeChannel = renderModeChannel;
+            this.renderMode = renderMode;
+        }
     }
 }
