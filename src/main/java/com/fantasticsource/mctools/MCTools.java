@@ -555,12 +555,12 @@ public class MCTools
     }
 
 
-    public static void give(EntityPlayerMP player, ItemStack stack)
+    public static void give(EntityPlayer player, ItemStack stack)
     {
         give(player, stack, player.getName());
     }
 
-    public static void give(EntityPlayerMP player, ItemStack stack, String owner)
+    public static void give(EntityPlayer player, ItemStack stack, String owner)
     {
         EntityItem entityitem = player.dropItem(stack, false);
 
@@ -570,9 +570,9 @@ public class MCTools
             entityitem.setOwner(owner);
             entityitem.onCollideWithPlayer(player);
 
-            if (!entityitem.isDead && Loader.isModLoaded("rpg_economy"))
+            if (!entityitem.isDead)
             {
-                //TODO send via mail
+                //If the item was not (fully) picked up
             }
         }
     }
