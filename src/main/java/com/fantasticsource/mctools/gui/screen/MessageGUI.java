@@ -46,7 +46,7 @@ public class MessageGUI extends GUIScreen
                         new GUITextSpacer(this),
                         new GUIText(this, message, Color.PURPLE),
                         new GUITextSpacer(this),
-                        new GUITextButton(this, "OK", Color.RED).addClickActions(this::close)
+                        new GUITextButton(this, "OK", Color.WHITE).addClickActions(this::close)
                 );
     }
 
