@@ -25,13 +25,7 @@ public class GUIGradientBorder extends GUIElement
     {
         super(screen, width, height);
         this.thickness = borderThickness;
-
-        this.border = border;
-        this.center = center;
-        this.hoverBorder = hoverBorder;
-        this.hoverCenter = hoverCenter;
-        this.activeBorder = activeBorder;
-        this.activeCenter = activeCenter;
+        setColors(border, center, hoverBorder, hoverCenter, activeBorder, activeCenter);
     }
 
     public GUIGradientBorder(GUIScreen screen, double x, double y, double width, double height, double borderThickness, Color border, Color center)
@@ -43,20 +37,28 @@ public class GUIGradientBorder extends GUIElement
     {
         super(screen, x, y, width, height);
         this.thickness = borderThickness;
-
-        this.border = border;
-        this.center = center;
-        this.hoverBorder = hoverBorder;
-        this.hoverCenter = hoverCenter;
-        this.activeBorder = activeBorder;
-        this.activeCenter = activeCenter;
+        setColors(border, center, hoverBorder, hoverCenter, activeBorder, activeCenter);
     }
+
 
     public GUIGradientBorder setThickness(double thickness)
     {
         this.thickness = thickness;
         return this;
     }
+
+    public GUIGradientBorder setColors(Color border, Color center, Color hoverBorder, Color hoverCenter, Color activeBorder, Color activeCenter)
+    {
+        this.border = border;
+        this.center = center;
+        this.hoverBorder = hoverBorder;
+        this.hoverCenter = hoverCenter;
+        this.activeBorder = activeBorder;
+        this.activeCenter = activeCenter;
+
+        return this;
+    }
+
 
     @Override
     public void draw()
