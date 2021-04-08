@@ -9,6 +9,7 @@ import com.fantasticsource.mctools.gui.element.view.GUITooltipView;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ public class GUIElement
     public double x, y, width, height;
     public GUIElement parent = null;
     public ArrayList<GUIElement> children = new ArrayList<>();
-    public GUITooltipView tooltip = null;
+    public Object tooltip = null;
     public boolean autoplace = false;
     protected double autoX = 0, autoY = 0, furthestX = 0, furthestY = 0;
     protected byte subElementAutoplaceMethod;
@@ -99,8 +100,14 @@ public class GUIElement
             return this;
         }
 
-        if (this.tooltip == null) this.tooltip = new GUITooltipView(screen);
-        this.tooltip.setTooltip(tooltip);
+        if (!(this.tooltip instanceof GUITooltipView)) this.tooltip = new GUITooltipView(screen);
+        ((GUITooltipView) this.tooltip).setTooltip(tooltip);
+        return this;
+    }
+
+    public GUIElement setTooltip(ItemStack stack)
+    {
+        tooltip = stack;
         return this;
     }
 
@@ -172,7 +179,11 @@ public class GUIElement
             }
         }
 
-        if (isMouseWithin() && tooltip != null) screen.tooltips.add(tooltip);
+        if (isMouseWithin())
+        {
+            if (tooltip instanceof GUITooltipView) screen.tooltips.add((GUITooltipView) tooltip);
+            else if (tooltip instanceof ItemStack) screen.tooltipStack = (ItemStack) tooltip;
+        }
     }
 
     private void postDraw(int[] lastScissor)

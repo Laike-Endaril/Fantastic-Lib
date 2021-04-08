@@ -11,7 +11,9 @@ import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -44,6 +46,7 @@ public abstract class GUIScreen extends GuiScreen
 
 
     public final GUIView root, tooltips;
+    public ItemStack tooltipStack = null;
     public final ArrayList<Runnable> onClosedActions = new ArrayList<>();
     public final double textScale;
     public boolean drawStack = true;
@@ -223,13 +226,11 @@ public abstract class GUIScreen extends GuiScreen
         //Draw normal elements
         root.draw();
 
-        //Draw and clear tooltips
+        //Draw and clear text tooltips
         currentScissor = new int[]{0, 0, pxWidth, pxHeight};
         GlStateManager.disableDepth();
         tooltips.draw();
         tooltips.clear();
-        GlStateManager.enableDepth();
-
 
         //Undo scissor
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
@@ -238,10 +239,18 @@ public abstract class GUIScreen extends GuiScreen
         Render.endOrtho();
 
         //Undo misc GL settings
+        GlStateManager.enableDepth();
         GlStateManager.shadeModel(7424);
         GlStateManager.disableBlend();
         GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();
+
+        //Draw and clear itemstack tooltip
+        if (tooltipStack != null)
+        {
+            renderToolTip(tooltipStack);
+            tooltipStack = null;
+        }
     }
 
     @Override
@@ -387,5 +396,11 @@ public abstract class GUIScreen extends GuiScreen
             this.mouseX = mouseX;
             this.mouseY = mouseY;
         }
+    }
+
+    public void renderToolTip(ItemStack stack)
+    {
+        ScaledResolution sr = new ScaledResolution(mc);
+        super.renderToolTip(stack, Mouse.getX() * sr.getScaledWidth() / mc.displayWidth, sr.getScaledHeight() - Mouse.getY() * sr.getScaledHeight() / mc.displayHeight - 1);
     }
 }
