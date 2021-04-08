@@ -229,7 +229,7 @@ public abstract class GUIScreen extends GuiScreen
         //Draw and clear text tooltips
         currentScissor = new int[]{0, 0, pxWidth, pxHeight};
         GlStateManager.disableDepth();
-        tooltips.draw();
+        if (isVisible()) tooltips.draw();
         tooltips.clear();
 
         //Undo scissor
@@ -246,11 +246,8 @@ public abstract class GUIScreen extends GuiScreen
         GlStateManager.enableTexture2D();
 
         //Draw and clear itemstack tooltip
-        if (tooltipStack != null)
-        {
-            renderToolTip(tooltipStack);
-            tooltipStack = null;
-        }
+        if (isVisible() && tooltipStack != null) renderToolTip(tooltipStack);
+        tooltipStack = null;
     }
 
     @Override
