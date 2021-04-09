@@ -1,7 +1,6 @@
 package com.fantasticsource.mctools;
 
 import com.fantasticsource.fantasticlib.Compat;
-import com.fantasticsource.tiamatitems.api.IPartSlot;
 import com.fantasticsource.tiamatitems.api.TiamatItemsAPI;
 import com.fantasticsource.tools.Tools;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,7 +10,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 public class Slottings
@@ -170,16 +168,7 @@ public class Slottings
     public static boolean itemIsValidForSlot(ItemStack stack, String slotType, EntityPlayer player)
     {
         if (!slottingIsValidForSlot(getItemSlotting(stack, player), slotType)) return false;
-
-        ArrayList<IPartSlot> partSlots = TiamatItemsAPI.getPartSlots(stack);
-        if (partSlots != null)
-        {
-            for (IPartSlot partSlot : TiamatItemsAPI.getPartSlots(stack))
-            {
-                if (partSlot.getRequired() && !partSlot.partIsValidForSlot(partSlot.getPart())) return false;
-            }
-        }
-        return true;
+        return TiamatItemsAPI.isUsable(stack);
     }
 
     public static boolean slottingIsValidForSlot(String itemSlotting, String slotType)

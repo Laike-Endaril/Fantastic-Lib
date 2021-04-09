@@ -7,7 +7,6 @@ import com.fantasticsource.fantasticlib.Compat;
 import com.fantasticsource.mctools.aw.RenderModes;
 import com.fantasticsource.tiamatinventory.api.ITiamatPlayerInventory;
 import com.fantasticsource.tiamatinventory.api.TiamatInventoryAPI;
-import com.fantasticsource.tiamatitems.api.IPartSlot;
 import com.fantasticsource.tiamatitems.api.TiamatItemsAPI;
 import moe.plushie.armourers_workshop.api.ArmourersWorkshopApi;
 import moe.plushie.armourers_workshop.api.common.capability.IEntitySkinCapability;
@@ -535,16 +534,8 @@ public class GlobalInventory
         }
 
 
-        //Remove incomplete items
-        result.removeIf(stack ->
-        {
-            ArrayList<IPartSlot> partSlots = TiamatItemsAPI.getPartSlots(stack);
-            for (IPartSlot partSlot : partSlots)
-            {
-                if (partSlot.getRequired() && !partSlot.partIsValidForSlot(partSlot.getPart())) return true;
-            }
-            return false;
-        });
+        //Remove unusable items
+        result.removeIf(stack -> !TiamatItemsAPI.isUsable(stack));
 
 
         return result;

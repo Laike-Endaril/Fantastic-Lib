@@ -28,6 +28,11 @@ public class TiamatItemsAPI
     }
 
 
+    public static boolean isUsable(ItemStack stack)
+    {
+        return tiamatItemsAPIMethods == null || tiamatItemsAPIMethods.isUsable(stack);
+    }
+
     public static ArrayList<IPartSlot> getPartSlots(ItemStack stack)
     {
         return tiamatItemsAPIMethods == null ? null : tiamatItemsAPIMethods.getPartSlots(stack);
