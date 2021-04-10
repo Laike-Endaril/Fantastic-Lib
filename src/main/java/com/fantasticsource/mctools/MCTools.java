@@ -103,6 +103,8 @@ public class MCTools
         if (world == null) return;
 
 
+        if (!world.isRemote) Network.WRAPPER.sendToAllTracking(new Network.RemoveEntityImmediatePacket(entity), entity);
+
         int chunkX = entity.chunkCoordX;
         int chunkZ = entity.chunkCoordZ;
 

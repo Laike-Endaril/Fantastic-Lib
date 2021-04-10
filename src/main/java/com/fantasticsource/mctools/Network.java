@@ -38,6 +38,7 @@ public class Network
         WRAPPER.registerMessage(ControlEventPacketHandler.class, ControlEventPacket.class, discriminator++, Side.SERVER);
         WRAPPER.registerMessage(GenericComponentPacketHandler.class, GenericComponentPacket.class, discriminator++, Side.CLIENT);
         WRAPPER.registerMessage(RenderModesPacketHandler.class, RenderModesPacket.class, discriminator++, Side.CLIENT);
+        WRAPPER.registerMessage(RemoveEntityImmediatePacketHandler.class, RemoveEntityImmediatePacket.class, discriminator++, Side.CLIENT);
     }
 
 
@@ -318,6 +319,56 @@ public class Network
                 {
                     RenderModes.setRenderMode(player, entry.getKey(), entry.getValue());
                 }
+            });
+            return null;
+        }
+    }
+
+
+    public static class RemoveEntityImmediatePacket implements IMessage
+    {
+        public int id;
+
+        public RemoveEntityImmediatePacket()
+        {
+            //Required
+        }
+
+        public RemoveEntityImmediatePacket(Entity entity)
+        {
+            id = entity.getEntityId();
+        }
+
+        @Override
+        public void toBytes(ByteBuf buf)
+        {
+            buf.writeInt(id);
+        }
+
+        @Override
+        public void fromBytes(ByteBuf buf)
+        {
+            id = buf.readInt();
+        }
+    }
+
+    public static class RemoveEntityImmediatePacketHandler implements IMessageHandler<RemoveEntityImmediatePacket, IMessage>
+    {
+        @Override
+        @SideOnly(Side.CLIENT)
+        public IMessage onMessage(RemoveEntityImmediatePacket packet, MessageContext ctx)
+        {
+            Minecraft mc = Minecraft.getMinecraft();
+            mc.addScheduledTask(() ->
+            {
+                if (mc.world == null) return;
+
+                Entity entity = mc.world.getEntityByID(packet.id);
+                if (entity == null) return;
+
+
+                MCTools.removeEntityImmediate(entity);
+                mc.world.removeAllEntities();
             });
             return null;
         }
