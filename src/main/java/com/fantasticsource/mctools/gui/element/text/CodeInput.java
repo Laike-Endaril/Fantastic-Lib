@@ -7,6 +7,8 @@ import com.fantasticsource.mctools.gui.element.view.GUIScrollView;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 
+import java.util.ArrayList;
+
 public class CodeInput extends GUIScrollView
 {
     public final double scale;
@@ -76,6 +78,29 @@ public class CodeInput extends GUIScrollView
 
         cursorX = ((GUITextInput) children.get(0)).text.length();
     }
+
+
+    public ArrayList<String> getCodeLines()
+    {
+        ArrayList<String> result = new ArrayList<>();
+        for (GUIElement element : children) result.add(((GUITextInput) element).getText());
+        return result;
+    }
+
+    public ArrayList<String> getTrimmedCodeLines()
+    {
+        ArrayList<String> result = new ArrayList<>();
+        for (GUIElement element : children) result.add(((GUITextInput) element).getText().trim());
+        return result;
+    }
+
+    public String getCodeAsCompressedString()
+    {
+        StringBuilder builder = new StringBuilder();
+        for (GUIElement element : children) builder.append(((GUITextInput) element).getText().trim());
+        return builder.toString();
+    }
+
 
     @Override
     public GUIElement recalc(int subIndexChanged)
