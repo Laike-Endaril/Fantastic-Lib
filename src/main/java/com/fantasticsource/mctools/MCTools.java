@@ -60,6 +60,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -77,6 +78,9 @@ public class MCTools
             CONFIGURATION_CHANGED_FIELD = ReflectionTool.getField(Configuration.class, "changed"),
             ITEMSTACK_CAPABILITIES_FIELD = ReflectionTool.getField(ItemStack.class, "capabilities");
 
+    protected static final Method
+            WORLD_IS_CHUNK_LOADED_METHOD = ReflectionTool.getMethod(World.class, "func_175680_a", "isChunkLoaded");
+
     protected static Field languageManagerCurrentLocaleField, localePropertiesField;
     protected static boolean host = false;
 
@@ -88,6 +92,27 @@ public class MCTools
             languageManagerCurrentLocaleField = ReflectionTool.getField(LanguageManager.class, "field_135049_a", "CURRENT_LOCALE");
             localePropertiesField = ReflectionTool.getField(Locale.class, "field_135032_a", "properties");
         }
+    }
+
+
+    public static void removeEntityImmediate(Entity entity)
+    {
+        entity.setDead();
+
+        World world = entity.world;
+        if (world == null) return;
+
+
+        int chunkX = entity.chunkCoordX;
+        int chunkZ = entity.chunkCoordZ;
+
+        if (entity.addedToChunk && (boolean) ReflectionTool.invoke(WORLD_IS_CHUNK_LOADED_METHOD, world, chunkX, chunkZ, true))
+        {
+            world.getChunkFromChunkCoords(chunkX, chunkZ).removeEntity(entity);
+        }
+
+        world.loadedEntityList.remove(entity);
+        world.onEntityRemoved(entity);
     }
 
 
