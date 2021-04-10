@@ -1,6 +1,5 @@
 package com.fantasticsource.mctools;
 
-import com.fantasticsource.fantasticlib.FantasticLib;
 import com.fantasticsource.mctools.aw.RenderModes;
 import com.fantasticsource.mctools.component.CResourceLocation;
 import com.fantasticsource.mctools.controlintercept.ControlEvent;
@@ -27,9 +26,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static com.fantasticsource.fantasticlib.FantasticLib.MODID;
+
 public class Network
 {
-    public static final SimpleNetworkWrapper WRAPPER = new SimpleNetworkWrapper(FantasticLib.MODID);
+    public static final SimpleNetworkWrapper WRAPPER = new SimpleNetworkWrapper(MODID);
     private static int discriminator = 0;
 
     public static void init()
