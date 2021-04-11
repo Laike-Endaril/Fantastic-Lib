@@ -13,7 +13,7 @@ public class GUITextButton extends GUIAutocroppedView
 {
     public static final double DEFAULT_PADDING = 0.5;
 
-    private GUIText textElement;
+    public GUIText internalText;
 
     public GUITextButton(GUIScreen screen, String text)
     {
@@ -44,9 +44,9 @@ public class GUITextButton extends GUIAutocroppedView
     {
         super(screen, DEFAULT_PADDING, new GUIGradientBorder(screen, 1, 1, DEFAULT_PADDING / (1 + DEFAULT_PADDING) / 2, getIdleColor(border), getIdleColor(center), getHoverColor(border), getHoverColor(center), border, center));
 
-        this.textElement = new GUIText(screen, text, getIdleColor(border), getHoverColor(border), border, scale);
-        add(this.textElement);
-        linkMouseActivity(this.textElement);
+        this.internalText = new GUIText(screen, text, getIdleColor(border), getHoverColor(border), border, scale);
+        add(this.internalText);
+        linkMouseActivity(this.internalText);
         linkMouseActivity(this.background);
 
         recalc(0);
@@ -82,9 +82,9 @@ public class GUITextButton extends GUIAutocroppedView
     {
         super(screen, x, y, DEFAULT_PADDING, new GUIGradientBorder(screen, 1, 1, DEFAULT_PADDING / (1 + DEFAULT_PADDING) / 2, getIdleColor(border), getIdleColor(center), getHoverColor(border), getHoverColor(center), border, center));
 
-        this.textElement = new GUIText(screen, text, getIdleColor(border), getHoverColor(border), border, scale);
-        add(this.textElement);
-        linkMouseActivity(this.textElement);
+        this.internalText = new GUIText(screen, text, getIdleColor(border), getHoverColor(border), border, scale);
+        add(this.internalText);
+        linkMouseActivity(this.internalText);
         linkMouseActivity(this.background);
 
         recalc(0);
@@ -93,6 +93,6 @@ public class GUITextButton extends GUIAutocroppedView
     @Override
     public String toString()
     {
-        return textElement.text;
+        return internalText.text;
     }
 }
