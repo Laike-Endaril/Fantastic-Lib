@@ -1,11 +1,13 @@
 package com.fantasticsource.mctools.gui.element.text;
 
+import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterNone;
 import com.fantasticsource.mctools.gui.element.view.GUIScrollView;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
+import net.minecraft.nbt.NBTBase;
 
 import java.util.ArrayList;
 
@@ -99,6 +101,24 @@ public class CodeInput extends GUIScrollView
         StringBuilder builder = new StringBuilder();
         for (GUIElement element : children) builder.append(((GUITextInput) element).getText().trim());
         return builder.toString();
+    }
+
+
+    public void setCode(ArrayList<String> code)
+    {
+        children.clear();
+        for (String line : code) add(line);
+    }
+
+    public void setCode(String code)
+    {
+        children.clear();
+        for (String line : Tools.fixedSplit(code, "\n")) add(line.replaceAll("\r", ""));
+    }
+
+    public void setCode(NBTBase compound)
+    {
+        setCode(MCTools.legibleNBT(compound));
     }
 
 
