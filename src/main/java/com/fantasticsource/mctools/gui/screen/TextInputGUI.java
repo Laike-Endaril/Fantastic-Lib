@@ -86,6 +86,8 @@ public class TextInputGUI extends GUIScreen
                         new GUITextSpacer(this),
                         cancelButton.addClickActions(this::close)
                 );
+
+        input.input.setActive(true);
     }
 
     @Override
