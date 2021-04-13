@@ -8,7 +8,6 @@ import com.fantasticsource.mctools.gui.element.text.GUIText;
 import com.fantasticsource.mctools.gui.element.text.GUITextButton;
 import com.fantasticsource.mctools.gui.element.text.GUITextSpacer;
 import com.fantasticsource.tools.datastructures.Color;
-import net.minecraft.client.Minecraft;
 
 public class YesNoGUI extends GUIScreen
 {
@@ -23,27 +22,22 @@ public class YesNoGUI extends GUIScreen
     public YesNoGUI(String title, String message, double textScale)
     {
         super(textScale);
-
         this.title = title;
-
-
-        if (Minecraft.getMinecraft().currentScreen instanceof GUIScreen) GUIScreen.showStacked(this);
-        else Minecraft.getMinecraft().displayGuiScreen(this);
-
-
+        show();
         drawStack = false;
 
 
-        //Navigation bar
-        GUINavbar navbar = new GUINavbar(this);
+        //Background and Navigation bar
+        root.addAll(
+                new GUIDarkenedBackground(this),
+                new GUINavbar(this)
+        );
 
 
         //Add elements
         root.setSubElementAutoplaceMethod(GUIElement.AP_CENTERED_H_TOP_TO_BOTTOM);
         root.addAll
                 (
-                        new GUIDarkenedBackground(this),
-                        navbar,
                         new GUITextSpacer(this),
                         new GUIText(this, message, Color.PURPLE),
                         new GUITextSpacer(this),

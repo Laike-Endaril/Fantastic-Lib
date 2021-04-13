@@ -32,7 +32,7 @@ public class GUITextInput extends GUIText
 
     protected int cursorPosition, selectorPosition = -1;
     protected long cursorTime;
-    protected TextFilter filter;
+    public TextFilter filter;
 
     protected long lastClickTime;
     protected int clicks = 1;
