@@ -63,7 +63,7 @@ public class InventoryChangedEvent extends EntityEvent
         boolean found;
         for (WorldServer world : MCTools.DIMENSION_MANAGER_WORLDS.values())
         {
-            for (Entity entity : world.loadedEntityList)
+            for (Entity entity : world.loadedEntityList.toArray(new Entity[0]))
             {
                 if (entity.isDead) continue;
 
