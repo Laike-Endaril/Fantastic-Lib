@@ -1,11 +1,10 @@
 package com.fantasticsource.mctools.betterattributes;
 
-import com.fantasticsource.fantasticlib.api.ABetterAttribute;
 import net.minecraft.entity.Entity;
 
-public class MultipliedParentsAttribute extends ABetterAttribute
+public class MultipliedParentsAttribute extends BetterAttribute
 {
-    public MultipliedParentsAttribute(String name, boolean isGood, double defaultBaseAmount, ABetterAttribute... parents)
+    public MultipliedParentsAttribute(String name, boolean isGood, double defaultBaseAmount, BetterAttribute... parents)
     {
         super(name, isGood, defaultBaseAmount, true, parents);
     }
@@ -14,7 +13,7 @@ public class MultipliedParentsAttribute extends ABetterAttribute
     public double calculateTotalAmount(Entity entity)
     {
         double result = getBaseAmount(entity);
-        for (ABetterAttribute parent : parents) result *= parent.getTotalAmount(entity);
+        for (BetterAttribute parent : parents) result *= parent.getTotalAmount(entity);
         return result;
     }
 }

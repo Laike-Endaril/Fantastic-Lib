@@ -1,28 +1,27 @@
 package com.fantasticsource.mctools.betterattributes;
 
-import com.fantasticsource.fantasticlib.api.ABetterAttribute;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ScaledParentsAttribute extends ABetterAttribute
+public class ScaledParentsAttribute extends BetterAttribute
 {
-    public final HashMap<ABetterAttribute, Double> parentMultipliers;
+    public final HashMap<BetterAttribute, Double> parentMultipliers;
 
-    public ScaledParentsAttribute(String name, boolean isGood, double defaultBaseAmount, ABetterAttribute... parents)
+    public ScaledParentsAttribute(String name, boolean isGood, double defaultBaseAmount, BetterAttribute... parents)
     {
         this(name, isGood, defaultBaseAmount, generateDefaults(parents));
     }
 
-    public ScaledParentsAttribute(String name, boolean isGood, double defaultBaseAmount, HashMap<ABetterAttribute, Double> parents)
+    public ScaledParentsAttribute(String name, boolean isGood, double defaultBaseAmount, HashMap<BetterAttribute, Double> parents)
     {
-        super(name, isGood, defaultBaseAmount, true, parents.keySet().toArray(new ABetterAttribute[0]));
+        super(name, isGood, defaultBaseAmount, true, parents.keySet().toArray(new BetterAttribute[0]));
         parentMultipliers = parents;
 
         boolean good = true;
-        for (Map.Entry<ABetterAttribute, Double> entry : parents.entrySet())
+        for (Map.Entry<BetterAttribute, Double> entry : parents.entrySet())
         {
             if (entry == null || entry.getKey() == null)
             {
@@ -42,10 +41,10 @@ public class ScaledParentsAttribute extends ABetterAttribute
         if (!good) BETTER_ATTRIBUTES.remove(name, this);
     }
 
-    protected static HashMap<ABetterAttribute, Double> generateDefaults(ABetterAttribute... parents)
+    protected static HashMap<BetterAttribute, Double> generateDefaults(BetterAttribute... parents)
     {
-        HashMap<ABetterAttribute, Double> result = new HashMap<>();
-        for (ABetterAttribute parent : parents) result.put(parent, 1d);
+        HashMap<BetterAttribute, Double> result = new HashMap<>();
+        for (BetterAttribute parent : parents) result.put(parent, 1d);
         return result;
     }
 
@@ -53,7 +52,7 @@ public class ScaledParentsAttribute extends ABetterAttribute
     public double calculateTotalAmount(Entity entity)
     {
         double result = getBaseAmount(entity);
-        for (Map.Entry<ABetterAttribute, Double> entry : parentMultipliers.entrySet()) result += entry.getKey().getTotalAmount(entity) * entry.getValue();
+        for (Map.Entry<BetterAttribute, Double> entry : parentMultipliers.entrySet()) result += entry.getKey().getTotalAmount(entity) * entry.getValue();
         return result;
     }
 }

@@ -1,12 +1,11 @@
 package com.fantasticsource.mctools.betterattributes;
 
-import com.fantasticsource.fantasticlib.api.ABetterAttribute;
 import com.fantasticsource.mctools.MCTools;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.IAttribute;
 
-public class ConvertedAttribute extends ABetterAttribute
+public class ConvertedAttribute extends BetterAttribute
 {
     public final IAttribute mcAttribute;
 

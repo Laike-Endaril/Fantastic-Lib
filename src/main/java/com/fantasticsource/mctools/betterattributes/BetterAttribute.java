@@ -1,4 +1,4 @@
-package com.fantasticsource.fantasticlib.api;
+package com.fantasticsource.mctools.betterattributes;
 
 import com.fantasticsource.mctools.MCTools;
 import net.minecraft.entity.Entity;
@@ -11,15 +11,15 @@ import java.util.HashMap;
 
 import static com.fantasticsource.fantasticlib.FantasticLib.MODID;
 
-public abstract class ABetterAttribute
+public class BetterAttribute
 {
-    public static final HashMap<String, ABetterAttribute> BETTER_ATTRIBUTES = new HashMap<>();
+    public static final HashMap<String, BetterAttribute> BETTER_ATTRIBUTES = new HashMap<>();
 
-    public static void register(ABetterAttribute betterAttribute)
+    public static void register(BetterAttribute betterAttribute)
     {
         String name = betterAttribute.name;
 
-        for (ABetterAttribute parent : betterAttribute.parents)
+        for (BetterAttribute parent : betterAttribute.parents)
         {
             if (parent == null)
             {
@@ -40,7 +40,7 @@ public abstract class ABetterAttribute
     public final String name;
     public final double defaultBaseAmount;
     public final boolean isGood, canUseTotalAmountCaching;
-    public final ArrayList<ABetterAttribute> parents = new ArrayList<>();
+    public final ArrayList<BetterAttribute> parents = new ArrayList<>();
 
     /**
      * @param name                     The name of the attribute.  May be used for name/description lang keys.  I suggest using the MC format eg. generic.maxHealth and expecting related lang keys eg. attribute.name.generic.maxHealth, attribute.description.generic.maxHealth.  Try to use a unique namespace instead of "generic".
@@ -48,7 +48,7 @@ public abstract class ABetterAttribute
      * @param canUseTotalAmountCaching Whether the total can be cached and referenced via cache.  If true, the total is only recalculated when a parent attribute's value changes.  If false, calculateTotalAmount() is called every time getTotalAmount() is called.
      * @param parents                  Parent attributes whose values have an effect on this attribute's total value.  Mostly important if canUseTotalAmountCaching is true.  May also be used for categorization purposes, eg. in GUIs
      */
-    public ABetterAttribute(String name, boolean isGood, double defaultBaseAmount, boolean canUseTotalAmountCaching, ABetterAttribute... parents)
+    public BetterAttribute(String name, boolean isGood, double defaultBaseAmount, boolean canUseTotalAmountCaching, BetterAttribute... parents)
     {
         this.name = name;
         this.isGood = isGood;
@@ -89,7 +89,7 @@ public abstract class ABetterAttribute
     public double calculateTotalAmount(Entity entity)
     {
         double result = getBaseAmount(entity);
-        for (ABetterAttribute parent : parents) result += parent.getTotalAmount(entity);
+        for (BetterAttribute parent : parents) result += parent.getTotalAmount(entity);
         return result;
     }
 }
