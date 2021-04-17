@@ -44,7 +44,7 @@ public class ScaledParentsAttribute extends BetterAttribute
     protected static HashMap<BetterAttribute, Double> generateDefaults(BetterAttribute... parents)
     {
         HashMap<BetterAttribute, Double> result = new HashMap<>();
-        for (BetterAttribute parent : parents) result.put(parent, 1d);
+        for (BetterAttribute parent : parents) result.put(parent, 1d / parents.length);
         return result;
     }
 
