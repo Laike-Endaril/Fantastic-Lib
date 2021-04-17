@@ -130,10 +130,8 @@ public class BetterAttribute
         }
         else result = calculateTotalAmount(entity);
 
-        if (entity instanceof EntityPlayerMP) System.out.println(TextFormatting.LIGHT_PURPLE + name);
         if (mcAttributeToSet != null && entity instanceof EntityLivingBase)
         {
-            if (entity instanceof EntityPlayerMP) System.out.println(TextFormatting.AQUA + mcAttributeToSet.getName());
             AttributeMap attributeMap = (AttributeMap) ((EntityLivingBase) entity).getAttributeMap();
             IAttributeInstance attributeInstance = attributeMap.getAttributeInstance(mcAttributeToSet);
             if (attributeInstance != null)
@@ -147,7 +145,6 @@ public class BetterAttribute
                     ReflectionTool.set(PLAYER_CAPABILITIES_WALK_SPEED_FIELD, ((EntityPlayer) entity).capabilities, (float) convertedAmount);
                 }
             }
-            else if (entity instanceof EntityPlayerMP) System.out.println(TextFormatting.RED + "NULL");
         }
 
         return result;
