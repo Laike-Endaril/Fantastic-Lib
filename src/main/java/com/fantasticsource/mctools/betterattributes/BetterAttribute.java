@@ -2,6 +2,8 @@ package com.fantasticsource.mctools.betterattributes;
 
 import com.fantasticsource.mctools.MCTools;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
 
@@ -41,6 +43,7 @@ public class BetterAttribute
     public final double defaultBaseAmount;
     public final boolean isGood, canUseTotalAmountCaching;
     public final ArrayList<BetterAttribute> parents = new ArrayList<>();
+    public IAttribute mcAttributeToSet = null;
 
     /**
      * @param name                     The name of the attribute.  May be used for name/description lang keys.  I suggest using the MC format eg. generic.maxHealth and expecting related lang keys eg. attribute.name.generic.maxHealth, attribute.description.generic.maxHealth.  Try to use a unique namespace instead of "generic".
@@ -71,19 +74,25 @@ public class BetterAttribute
 
     public final double getTotalAmount(Entity entity)
     {
+        double result;
         if (canUseTotalAmountCaching)
         {
             NBTTagCompound compound = MCTools.getOrGenerateSubCompound(entity.getEntityData(), MODID, "attributes");
             if (compound.hasKey(name)) return compound.getDouble(name);
             else
             {
-                double result = calculateTotalAmount(entity);
+                result = calculateTotalAmount(entity);
                 compound.setDouble(name, result);
-                return result;
             }
         }
+        else result = calculateTotalAmount(entity);
 
-        return calculateTotalAmount(entity);
+        if (mcAttributeToSet != null && entity instanceof EntityLivingBase)
+        {
+            ((EntityLivingBase) entity).getAttributeMap().getAttributeInstance(mcAttributeToSet).setBaseValue(result);
+        }
+
+        return result;
     }
 
     public double calculateTotalAmount(Entity entity)
@@ -91,5 +100,11 @@ public class BetterAttribute
         double result = getBaseAmount(entity);
         for (BetterAttribute parent : parents) result += parent.getTotalAmount(entity);
         return result;
+    }
+
+    public BetterAttribute setMCAttribute(IAttribute mcAttribute)
+    {
+        this.mcAttributeToSet = mcAttribute;
+        return this;
     }
 }
