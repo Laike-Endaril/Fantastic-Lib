@@ -58,6 +58,11 @@ public class BetterAttribute
     public IAttribute mcAttributeToSet = null;
     public double mcAttributeScalar = 1;
 
+    public BetterAttribute(String name, boolean isGood, double defaultBaseAmount, BetterAttribute... parents)
+    {
+        this(name, isGood, defaultBaseAmount, true, parents);
+    }
+
     /**
      * @param name                     The name of the attribute.  May be used for name/description lang keys.  I suggest using the MC format eg. generic.maxHealth and expecting related lang keys eg. attribute.name.generic.maxHealth, attribute.description.generic.maxHealth.  Try to use a unique namespace instead of "generic".
      * @param defaultBaseAmount        The default base amount of the attribute (ie. not accounting for any changes from parent attributes or other external systems).
