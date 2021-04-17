@@ -1,12 +1,21 @@
 package com.fantasticsource.mctools.betterattributes;
 
 import com.fantasticsource.mctools.MCTools;
+import com.fantasticsource.tools.ReflectionTool;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.AttributeMap;
 import net.minecraft.entity.ai.attributes.IAttribute;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerCapabilities;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -16,6 +25,9 @@ import static com.fantasticsource.fantasticlib.FantasticLib.MODID;
 public class BetterAttribute
 {
     public static final HashMap<String, BetterAttribute> BETTER_ATTRIBUTES = new HashMap<>();
+    public static final Field
+            MODIFIABLE_ATTRIBUTE_INSTANCE_NEEDS_UPDATE_FIELD = ReflectionTool.getField(ModifiableAttributeInstance.class, "field_111133_g", "needsUpdate"),
+            PLAYER_CAPABILITIES_WALK_SPEED_FIELD = ReflectionTool.getField(PlayerCapabilities.class, "field_75097_g", "walkSpeed");
 
     public static void register(BetterAttribute betterAttribute)
     {
@@ -42,7 +54,7 @@ public class BetterAttribute
     public final String name;
     public final double defaultBaseAmount;
     public final boolean isGood, canUseTotalAmountCaching;
-    public final ArrayList<BetterAttribute> parents = new ArrayList<>();
+    public final ArrayList<BetterAttribute> parents = new ArrayList<>(), children = new ArrayList<>();
     public IAttribute mcAttributeToSet = null;
     public double mcAttributeScalar = 1;
 
@@ -59,17 +71,47 @@ public class BetterAttribute
         this.defaultBaseAmount = defaultBaseAmount;
         this.canUseTotalAmountCaching = canUseTotalAmountCaching;
         this.parents.addAll(Arrays.asList(parents));
+        for (BetterAttribute parent : parents) parent.children.add(this);
         register(this);
+    }
+
+    public final boolean removeFrom(Entity entity)
+    {
+        NBTTagCompound mainCompound = MCTools.getSubCompoundIfExists(entity.getEntityData(), MODID);
+        if (mainCompound == null) return false;
+
+        NBTTagCompound compound = MCTools.getSubCompoundIfExists(mainCompound, "baseAttributes");
+        boolean found = false;
+        if (compound != null && compound.hasKey(name))
+        {
+            compound.removeTag(name);
+            found = true;
+        }
+
+        compound = MCTools.getSubCompoundIfExists(mainCompound, "attributes");
+        if (compound != null && compound.hasKey(name))
+        {
+            compound.removeTag(name);
+            found = true;
+        }
+
+        return found;
     }
 
     public final void setBaseAmount(Entity entity, double value)
     {
-        MCTools.getOrGenerateSubCompound(entity.getEntityData(), MODID, "attributes").setDouble(name, value);
+        MCTools.getOrGenerateSubCompound(entity.getEntityData(), MODID, "baseAttributes").setDouble(name, value);
+        getTotalAmount(entity); //Recalc total (necessary if no caching children exist)
+        for (BetterAttribute child : children)
+        {
+            if (!child.canUseTotalAmountCaching) continue;
+            if (child.removeFrom(entity)) child.getTotalAmount(entity);
+        }
     }
 
     public final double getBaseAmount(Entity entity)
     {
-        NBTTagCompound compound = MCTools.getSubCompoundIfExists(entity.getEntityData(), MODID, "attributes");
+        NBTTagCompound compound = MCTools.getSubCompoundIfExists(entity.getEntityData(), MODID, "baseAttributes");
         return compound == null || !compound.hasKey(name) ? defaultBaseAmount : compound.getDouble(name);
     }
 
@@ -79,7 +121,7 @@ public class BetterAttribute
         if (canUseTotalAmountCaching)
         {
             NBTTagCompound compound = MCTools.getOrGenerateSubCompound(entity.getEntityData(), MODID, "attributes");
-            if (compound.hasKey(name)) return compound.getDouble(name);
+            if (compound.hasKey(name)) result = compound.getDouble(name);
             else
             {
                 result = calculateTotalAmount(entity);
@@ -88,9 +130,24 @@ public class BetterAttribute
         }
         else result = calculateTotalAmount(entity);
 
+        if (entity instanceof EntityPlayerMP) System.out.println(TextFormatting.LIGHT_PURPLE + name);
         if (mcAttributeToSet != null && entity instanceof EntityLivingBase)
         {
-            ((EntityLivingBase) entity).getAttributeMap().getAttributeInstance(mcAttributeToSet).setBaseValue(result * mcAttributeScalar);
+            if (entity instanceof EntityPlayerMP) System.out.println(TextFormatting.AQUA + mcAttributeToSet.getName());
+            AttributeMap attributeMap = (AttributeMap) ((EntityLivingBase) entity).getAttributeMap();
+            IAttributeInstance attributeInstance = attributeMap.getAttributeInstance(mcAttributeToSet);
+            if (attributeInstance != null)
+            {
+                double convertedAmount = result * mcAttributeScalar;
+                attributeInstance.setBaseValue(convertedAmount);
+                ReflectionTool.set(MODIFIABLE_ATTRIBUTE_INSTANCE_NEEDS_UPDATE_FIELD, attributeInstance, true);
+                if (entity instanceof EntityPlayerMP && mcAttributeToSet == SharedMonsterAttributes.MOVEMENT_SPEED)
+                {
+                    //Because MC is EXTRA SPECIAL and can't even use its own attribute system correctly
+                    ReflectionTool.set(PLAYER_CAPABILITIES_WALK_SPEED_FIELD, ((EntityPlayer) entity).capabilities, (float) convertedAmount);
+                }
+            }
+            else if (entity instanceof EntityPlayerMP) System.out.println(TextFormatting.RED + "NULL");
         }
 
         return result;
