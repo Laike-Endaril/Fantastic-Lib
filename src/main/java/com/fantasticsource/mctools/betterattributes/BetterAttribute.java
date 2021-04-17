@@ -44,6 +44,7 @@ public class BetterAttribute
     public final boolean isGood, canUseTotalAmountCaching;
     public final ArrayList<BetterAttribute> parents = new ArrayList<>();
     public IAttribute mcAttributeToSet = null;
+    public double mcAttributeScalar = 1;
 
     /**
      * @param name                     The name of the attribute.  May be used for name/description lang keys.  I suggest using the MC format eg. generic.maxHealth and expecting related lang keys eg. attribute.name.generic.maxHealth, attribute.description.generic.maxHealth.  Try to use a unique namespace instead of "generic".
@@ -89,7 +90,7 @@ public class BetterAttribute
 
         if (mcAttributeToSet != null && entity instanceof EntityLivingBase)
         {
-            ((EntityLivingBase) entity).getAttributeMap().getAttributeInstance(mcAttributeToSet).setBaseValue(result);
+            ((EntityLivingBase) entity).getAttributeMap().getAttributeInstance(mcAttributeToSet).setBaseValue(result * mcAttributeScalar);
         }
 
         return result;
@@ -102,9 +103,10 @@ public class BetterAttribute
         return result;
     }
 
-    public BetterAttribute setMCAttribute(IAttribute mcAttribute)
+    public BetterAttribute setMCAttribute(IAttribute mcAttribute, double scalar)
     {
-        this.mcAttributeToSet = mcAttribute;
+        mcAttributeToSet = mcAttribute;
+        mcAttributeScalar = scalar;
         return this;
     }
 }
