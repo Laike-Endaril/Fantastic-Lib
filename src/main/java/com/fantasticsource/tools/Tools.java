@@ -2,6 +2,7 @@ package com.fantasticsource.tools;
 
 import com.fantasticsource.lwjgl.Quaternion;
 import com.fantasticsource.tools.datastructures.Pair;
+import net.minecraft.util.text.TextFormatting;
 import sun.misc.Cleaner;
 
 import java.io.*;
@@ -23,11 +24,26 @@ public class Tools
 
     public static String formatNicely(double d)
     {
+        int i = (int) d;
+        if ((int) (d + 0.00000001) != i) //Fix eg. 0.99999999999999999999
+        {
+            d = ++i;
+        }
+        else if ((int) (d - 0.00000001) != i) //Fix eg. 0.00000000000000000001
+        {
+            d = i;
+        }
+
         double ad = Math.abs(d);
+        if (ad == 0)
+        {
+            return "0";
+        }
+
         if (ad >= 1000)
         {
             //High scientific
-            int i = (int) d, n = 0;
+            int n = 0;
             while (Math.abs(i) > 10)
             {
                 i /= 10;
@@ -35,8 +51,14 @@ public class Tools
             }
             return i + "x10^" + n;
         }
+
+        //Other common formats
         if (ad >= 100) return "" + (int) d;
-        if (ad > 1) return String.format("%.1f", d);
+        if (ad >= 0.1)
+        {
+            String result = String.format("%.1f", d);
+            return result.contains(".") && result.substring(result.length() - 2).equals(".0") ? "" + i : result;
+        }
 
 
         //Low scientific
@@ -46,7 +68,8 @@ public class Tools
             d *= 10;
             n++;
         }
-        return String.format("%.1f", d) + "x10^-" + n;
+        String base = String.format("%.1f", d);
+        return base.contains(".") && base.substring(base.length() - 2).equals(".0") ? i + "x10^-" + n : base + "x10^-" + n;
     }
 
 

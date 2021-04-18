@@ -2,6 +2,7 @@ package com.fantasticsource.mctools.betterattributes;
 
 import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.tools.ReflectionTool;
+import com.fantasticsource.tools.Tools;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -182,12 +183,12 @@ public class BetterAttribute
         String result;
         if (mcAttributeToSet == SharedMonsterAttributes.MAX_HEALTH && entity instanceof EntityLivingBase)
         {
-            result = I18n.translateToLocalFormatted("attribute.value." + name, ((EntityLivingBase) entity).getHealth(), total);
-            return result.contains("attribute.value") ? ((EntityLivingBase) entity).getHealth() + " / " + total : result;
+            result = I18n.translateToLocalFormatted("attribute.value." + name, Tools.formatNicely(((EntityLivingBase) entity).getHealth()), Tools.formatNicely(total));
+            return result.contains("attribute.value") ? Tools.formatNicely(((EntityLivingBase) entity).getHealth()) + " / " + Tools.formatNicely(total) : result;
         }
 
-        result = I18n.translateToLocalFormatted("attribute.value." + name, total);
-        return result.contains("attribute.value") ? "" + total : result;
+        result = I18n.translateToLocalFormatted("attribute.value." + name, Tools.formatNicely(total));
+        return result.contains("attribute.value") ? "" + Tools.formatNicely(total) : result;
     }
 
     public String getLocalizedDescription()
