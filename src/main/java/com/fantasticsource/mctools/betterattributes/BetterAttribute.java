@@ -14,6 +14,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.PlayerCapabilities;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.translation.I18n;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -167,5 +168,25 @@ public class BetterAttribute
         mcAttributeToSet = mcAttribute;
         mcAttributeScalar = scalar;
         return this;
+    }
+
+    public String getLocalizedName()
+    {
+        return I18n.translateToLocal("attribute.name." + name);
+    }
+
+    public String getLocalizedDisplayValue(Entity entity)
+    {
+        if (mcAttributeToSet == SharedMonsterAttributes.MAX_HEALTH && entity instanceof EntityLivingBase)
+        {
+            return I18n.translateToLocalFormatted("attribute.value." + name, ((EntityLivingBase) entity).getHealth(), getTotalAmount(entity));
+        }
+
+        return I18n.translateToLocalFormatted("attribute.value." + name, getTotalAmount(entity));
+    }
+
+    public String getLocalizedDescription()
+    {
+        return I18n.translateToLocal("attribute.description." + name);
     }
 }
