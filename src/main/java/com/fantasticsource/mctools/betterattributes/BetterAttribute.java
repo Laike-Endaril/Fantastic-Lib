@@ -177,12 +177,17 @@ public class BetterAttribute
 
     public String getLocalizedDisplayValue(Entity entity)
     {
+        double total = getTotalAmount(entity);
+
+        String result;
         if (mcAttributeToSet == SharedMonsterAttributes.MAX_HEALTH && entity instanceof EntityLivingBase)
         {
-            return I18n.translateToLocalFormatted("attribute.value." + name, ((EntityLivingBase) entity).getHealth(), getTotalAmount(entity));
+            result = I18n.translateToLocalFormatted("attribute.value." + name, ((EntityLivingBase) entity).getHealth(), total);
+            return result.contains("attribute.value") ? ((EntityLivingBase) entity).getHealth() + " / " + total : result;
         }
 
-        return I18n.translateToLocalFormatted("attribute.value." + name, getTotalAmount(entity));
+        result = I18n.translateToLocalFormatted("attribute.value." + name, total);
+        return result.contains("attribute.value") ? "" + total : result;
     }
 
     public String getLocalizedDescription()
