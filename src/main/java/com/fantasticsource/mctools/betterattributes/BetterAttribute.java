@@ -173,14 +173,15 @@ public class BetterAttribute
         return this;
     }
 
+    public BetterAttribute addDisplayValueArgumentEditor(Predicate<ArrayList<String>> predicate)
+    {
+        displayValueArgumentEditors.add(predicate);
+        return this;
+    }
+
     public String getLocalizedName()
     {
         return I18n.translateToLocal("attribute.name." + name);
-    }
-
-    public void addDisplayValueArgumentEditor(Predicate<ArrayList<String>> predicate)
-    {
-        displayValueArgumentEditors.add(predicate);
     }
 
     public String getLocalizedDisplayValue(Entity entity)
