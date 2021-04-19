@@ -196,6 +196,11 @@ public class BetterAttribute
         {
             args.add(Tools.formatNicely(((EntityLivingBase) entity).getHealth()));
         }
+        else
+        {
+            NBTTagCompound compound = MCTools.getSubCompoundIfExists(entity.getEntityData(), MODID, "currentAttributes");
+            args.add(compound != null && compound.hasKey(name) ? Tools.formatNicely(compound.getDouble(name)) : args.get(0));
+        }
 
         for (Predicate<Pair<Entity, ArrayList<String>>> editor : displayValueArgumentEditors) editor.test(new Pair<>(entity, args));
 
