@@ -21,6 +21,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.function.Predicate;
 
 import static com.fantasticsource.fantasticlib.FantasticLib.MODID;
 
@@ -59,6 +60,7 @@ public class BetterAttribute
     public final ArrayList<BetterAttribute> parents = new ArrayList<>(), children = new ArrayList<>();
     public IAttribute mcAttributeToSet = null;
     public double mcAttributeScalar = 1;
+    public ArrayList<Predicate<ArrayList<String>>> displayValueArgumentEditors = new ArrayList<>();
 
     public BetterAttribute(String name, boolean isGood, double defaultBaseAmount, BetterAttribute... parents)
     {
@@ -176,6 +178,11 @@ public class BetterAttribute
         return I18n.translateToLocal("attribute.name." + name);
     }
 
+    public void addDisplayValueArgumentEditor(Predicate<ArrayList<String>> predicate)
+    {
+        displayValueArgumentEditors.add(predicate);
+    }
+
     public String getLocalizedDisplayValue(Entity entity)
     {
         ArrayList<String> args = new ArrayList<>();
@@ -187,6 +194,8 @@ public class BetterAttribute
         {
             args.add(Tools.formatNicely(((EntityLivingBase) entity).getHealth()));
         }
+
+        for (Predicate<ArrayList<String>> editor : displayValueArgumentEditors) editor.test(args);
 
         result = I18n.translateToLocalFormatted("attribute.value." + name, args);
         return result.contains("attribute.value") ? "" + args.get(0) : result;
