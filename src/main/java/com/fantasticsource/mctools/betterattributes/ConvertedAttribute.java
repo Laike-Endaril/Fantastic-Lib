@@ -11,7 +11,8 @@ public class ConvertedAttribute extends BetterAttribute
 
     public ConvertedAttribute(IAttribute mcAttribute, boolean isGood)
     {
-        super(mcAttribute.getName(), isGood, mcAttribute.getDefaultValue(), false);
+        super(mcAttribute.getName(), isGood, mcAttribute.getDefaultValue());
+        canUseTotalAmountCaching = false;
         this.mcAttribute = mcAttribute;
     }
 

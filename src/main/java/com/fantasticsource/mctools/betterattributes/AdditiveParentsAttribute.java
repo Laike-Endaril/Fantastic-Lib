@@ -23,7 +23,7 @@ public class AdditiveParentsAttribute extends BetterAttribute
 
     public AdditiveParentsAttribute(String name, boolean isGood, double defaultBaseAmount, HashMap<BetterAttribute, Double> parents)
     {
-        super(name, isGood, defaultBaseAmount, true, parents.keySet().toArray(new BetterAttribute[0]));
+        super(name, isGood, defaultBaseAmount, parents.keySet().toArray(new BetterAttribute[0]));
         parentMultipliers = parents;
 
         boolean good = true;
