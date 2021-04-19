@@ -6,19 +6,19 @@ import net.minecraft.entity.Entity;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MultipliedByParentsAttribute extends ScaledParentsAttribute
+public class ScalarParentsAttribute extends AdditiveParentsAttribute
 {
-    public MultipliedByParentsAttribute(String name, boolean isGood, double defaultBaseAmount, BetterAttribute... parents)
+    public ScalarParentsAttribute(String name, boolean isGood, double defaultBaseAmount, BetterAttribute... parents)
     {
         super(name, isGood, defaultBaseAmount, parents);
     }
 
-    public MultipliedByParentsAttribute(String name, boolean isGood, double defaultBaseAmount, Pair<BetterAttribute, Double>... parents)
+    public ScalarParentsAttribute(String name, boolean isGood, double defaultBaseAmount, Pair<BetterAttribute, Double>... parents)
     {
         super(name, isGood, defaultBaseAmount, parents);
     }
 
-    public MultipliedByParentsAttribute(String name, boolean isGood, double defaultBaseAmount, HashMap<BetterAttribute, Double> parents)
+    public ScalarParentsAttribute(String name, boolean isGood, double defaultBaseAmount, HashMap<BetterAttribute, Double> parents)
     {
         super(name, isGood, defaultBaseAmount, parents);
     }

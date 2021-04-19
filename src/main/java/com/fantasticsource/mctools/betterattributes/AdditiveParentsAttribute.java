@@ -7,21 +7,21 @@ import net.minecraft.util.text.TextFormatting;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ScaledParentsAttribute extends BetterAttribute
+public class AdditiveParentsAttribute extends BetterAttribute
 {
     public final HashMap<BetterAttribute, Double> parentMultipliers;
 
-    public ScaledParentsAttribute(String name, boolean isGood, double defaultBaseAmount, BetterAttribute... parents)
+    public AdditiveParentsAttribute(String name, boolean isGood, double defaultBaseAmount, BetterAttribute... parents)
     {
         this(name, isGood, defaultBaseAmount, generateDefaults(parents));
     }
 
-    public ScaledParentsAttribute(String name, boolean isGood, double defaultBaseAmount, Pair<BetterAttribute, Double>... parents)
+    public AdditiveParentsAttribute(String name, boolean isGood, double defaultBaseAmount, Pair<BetterAttribute, Double>... parents)
     {
         this(name, isGood, defaultBaseAmount, generateDefaults(parents));
     }
 
-    public ScaledParentsAttribute(String name, boolean isGood, double defaultBaseAmount, HashMap<BetterAttribute, Double> parents)
+    public AdditiveParentsAttribute(String name, boolean isGood, double defaultBaseAmount, HashMap<BetterAttribute, Double> parents)
     {
         super(name, isGood, defaultBaseAmount, true, parents.keySet().toArray(new BetterAttribute[0]));
         parentMultipliers = parents;
