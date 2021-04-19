@@ -204,7 +204,7 @@ public class BetterAttribute
 
         for (Predicate<Pair<Entity, ArrayList<String>>> editor : displayValueArgumentEditors) editor.test(new Pair<>(entity, args));
 
-        result = I18n.translateToLocalFormatted("attribute.value." + name, args);
+        result = I18n.translateToLocalFormatted("attribute.value." + name, args.toArray());
         return result.contains("attribute.value") ? "" + args.get(0) : result;
     }
 
