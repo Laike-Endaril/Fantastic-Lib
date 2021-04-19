@@ -3,6 +3,7 @@ package com.fantasticsource.mctools.betterattributes;
 import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.tools.ReflectionTool;
 import com.fantasticsource.tools.Tools;
+import com.fantasticsource.tools.datastructures.Pair;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -60,7 +61,7 @@ public class BetterAttribute
     public final ArrayList<BetterAttribute> parents = new ArrayList<>(), children = new ArrayList<>();
     public IAttribute mcAttributeToSet = null;
     public double mcAttributeScalar = 1;
-    public ArrayList<Predicate<ArrayList<String>>> displayValueArgumentEditors = new ArrayList<>();
+    public ArrayList<Predicate<Pair<Entity, ArrayList<String>>>> displayValueArgumentEditors = new ArrayList<>();
 
     public BetterAttribute(String name, boolean isGood, double defaultBaseAmount, BetterAttribute... parents)
     {
@@ -173,7 +174,7 @@ public class BetterAttribute
         return this;
     }
 
-    public BetterAttribute addDisplayValueArgumentEditor(Predicate<ArrayList<String>> predicate)
+    public BetterAttribute addDisplayValueArgumentEditor(Predicate<Pair<Entity, ArrayList<String>>> predicate)
     {
         displayValueArgumentEditors.add(predicate);
         return this;
@@ -196,7 +197,7 @@ public class BetterAttribute
             args.add(Tools.formatNicely(((EntityLivingBase) entity).getHealth()));
         }
 
-        for (Predicate<ArrayList<String>> editor : displayValueArgumentEditors) editor.test(args);
+        for (Predicate<Pair<Entity, ArrayList<String>>> editor : displayValueArgumentEditors) editor.test(new Pair<>(entity, args));
 
         result = I18n.translateToLocalFormatted("attribute.value." + name, args);
         return result.contains("attribute.value") ? "" + args.get(0) : result;
