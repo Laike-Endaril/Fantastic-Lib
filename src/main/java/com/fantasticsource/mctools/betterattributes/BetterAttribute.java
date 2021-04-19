@@ -3,6 +3,7 @@ package com.fantasticsource.mctools.betterattributes;
 import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.tools.ReflectionTool;
 import com.fantasticsource.tools.Tools;
+import com.fantasticsource.tools.datastructures.ExplicitPriorityQueue;
 import com.fantasticsource.tools.datastructures.Pair;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -17,6 +18,8 @@ import net.minecraft.entity.player.PlayerCapabilities;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.Event;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -57,29 +60,23 @@ public class BetterAttribute
 
     public final String name;
     public final double defaultBaseAmount;
-    public final boolean isGood, canUseTotalAmountCaching;
+    public final boolean isGood;
+    public boolean canUseTotalAmountCaching = true;
     public final ArrayList<BetterAttribute> parents = new ArrayList<>(), children = new ArrayList<>();
     public IAttribute mcAttributeToSet = null;
     public double mcAttributeScalar = 1;
     public ArrayList<Predicate<Pair<Entity, ArrayList<String>>>> displayValueArgumentEditors = new ArrayList<>();
 
-    public BetterAttribute(String name, boolean isGood, double defaultBaseAmount, BetterAttribute... parents)
-    {
-        this(name, isGood, defaultBaseAmount, true, parents);
-    }
-
     /**
-     * @param name                     The name of the attribute.  May be used for name/description lang keys.  I suggest using the MC format eg. generic.maxHealth and expecting related lang keys eg. attribute.name.generic.maxHealth, attribute.description.generic.maxHealth.  Try to use a unique namespace instead of "generic".
-     * @param defaultBaseAmount        The default base amount of the attribute (ie. not accounting for any changes from parent attributes or other external systems).
-     * @param canUseTotalAmountCaching Whether the total can be cached and referenced via cache.  If true, the total is only recalculated when a parent attribute's value changes.  If false, calculateTotalAmount() is called every time getTotalAmount() is called.
-     * @param parents                  Parent attributes whose values have an effect on this attribute's total value.  Mostly important if canUseTotalAmountCaching is true.  May also be used for categorization purposes, eg. in GUIs
+     * @param name              The name of the attribute.  May be used for name/description lang keys.  I suggest using the MC format eg. generic.maxHealth and expecting related lang keys eg. attribute.name.generic.maxHealth, attribute.description.generic.maxHealth.  Try to use a unique namespace instead of "generic".
+     * @param defaultBaseAmount The default base amount of the attribute (ie. not accounting for any changes from parent attributes or other external systems).
+     * @param parents           Parent attributes whose values have an effect on this attribute's total value.  Mostly important if canUseTotalAmountCaching is true.  May also be used for categorization purposes, eg. in GUIs
      */
-    public BetterAttribute(String name, boolean isGood, double defaultBaseAmount, boolean canUseTotalAmountCaching, BetterAttribute... parents)
+    public BetterAttribute(String name, boolean isGood, double defaultBaseAmount, BetterAttribute... parents)
     {
         this.name = name;
         this.isGood = isGood;
         this.defaultBaseAmount = defaultBaseAmount;
-        this.canUseTotalAmountCaching = canUseTotalAmountCaching;
         this.parents.addAll(Arrays.asList(parents));
         for (BetterAttribute parent : parents) parent.children.add(this);
         register(this);
@@ -139,6 +136,18 @@ public class BetterAttribute
             }
         }
         else result = calculateTotalAmount(entity);
+
+        BetterAttributeCalcEvent event = new BetterAttributeCalcEvent(this, entity);
+        MinecraftForge.EVENT_BUS.post(event);
+        if (!event.functions.isEmpty())
+        {
+            double[] d = new double[]{result};
+            while (!event.functions.isEmpty())
+            {
+                if (!event.functions.poll().test(d)) break;
+            }
+            result = d[0];
+        }
 
         if (mcAttributeToSet != null && entity instanceof EntityLivingBase)
         {
@@ -211,5 +220,26 @@ public class BetterAttribute
     public String getLocalizedDescription()
     {
         return I18n.translateToLocal("attribute.description." + name);
+    }
+
+
+    /**
+     * The "functions" field allows you to add predicates which alter the final calculated value of the attribute
+     * Functions will run in ascending priority order (0, 10, 212)
+     * Function priority can be negative, and does not need to be consecutive with the priority of other functions
+     * The current attribute total (after changes made by any functions run before yours) is stored in the double array passed to your function
+     * If your function returns false, it will prevent any other functions from running after it
+     */
+    public static class BetterAttributeCalcEvent extends Event
+    {
+        public final BetterAttribute attribute;
+        public final Entity entity;
+        public final ExplicitPriorityQueue<Predicate<double[]>> functions = new ExplicitPriorityQueue<>();
+
+        protected BetterAttributeCalcEvent(BetterAttribute attribute, Entity entity)
+        {
+            this.attribute = attribute;
+            this.entity = entity;
+        }
     }
 }
