@@ -107,11 +107,11 @@ public class BetterAttribute
     public final void setBaseAmount(Entity entity, double amount)
     {
         MCTools.getOrGenerateSubCompound(entity.getEntityData(), MODID, "baseAttributes").setDouble(name, amount);
-        getTotalAmount(entity); //Recalc total (necessary if no caching children exist, and also takes care of any caching and client sync)
+        calculateTotal(entity); //Recalc total (necessary if no caching children exist, and also takes care of any caching and client sync)
         for (BetterAttribute child : children)
         {
             if (!child.canUseTotalAmountCaching) continue;
-            if (child.removeFrom(entity)) child.getTotalAmount(entity);
+            if (child.removeFrom(entity)) child.calculateTotal(entity);
         }
     }
 
