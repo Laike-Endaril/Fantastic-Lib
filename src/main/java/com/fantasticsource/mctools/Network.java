@@ -434,14 +434,11 @@ public class Network
                 Entity entity = mc.world.getEntityByID(packet.entityID);
                 if (entity == null) return;
 
-                NBTTagCompound compound = MCTools.getOrGenerateSubCompound(entity.getEntityData(), MODID), compound2 = MCTools.getOrGenerateSubCompound(compound, "baseAttributes");
-                compound2.setDouble(packet.attributeName, packet.base);
-
-                compound2 = MCTools.getOrGenerateSubCompound(compound, "attributes");
-                compound2.setDouble(packet.attributeName, packet.total);
-
-                compound2 = MCTools.getOrGenerateSubCompound(compound, "currentAttributes");
-                compound2.setDouble(packet.attributeName, packet.current);
+                String name = packet.attributeName;
+                NBTTagCompound compound = MCTools.getOrGenerateSubCompound(entity.getEntityData(), MODID);
+                MCTools.getOrGenerateSubCompound(compound, "baseAttributes").setDouble(name, packet.base);
+                MCTools.getOrGenerateSubCompound(compound, "attributes").setDouble(name, packet.total);
+                MCTools.getOrGenerateSubCompound(compound, "currentAttributes").setDouble(name, packet.current);
             });
             return null;
         }
