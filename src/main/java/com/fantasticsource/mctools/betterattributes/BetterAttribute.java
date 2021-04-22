@@ -61,7 +61,7 @@ public class BetterAttribute
 
     public final String name;
     public final double defaultBaseAmount;
-    public boolean isGood = true, canUseTotalAmountCaching = true, syncClientEntityDataToClient = false, syncOtherEntityDataToClient = false;
+    public boolean isGood = true, canUseTotalAmountCaching = true, syncClientEntityDataToClient = true, syncOtherEntityDataToClient = false;
     public ArrayList<BetterAttribute> parents = new ArrayList<>(), children = new ArrayList<>();
     public IAttribute mcAttributeToSet = null;
     public double mcAttributeScalar = 1;
