@@ -106,6 +106,8 @@ public class BetterAttribute
 
     public final void setBaseAmount(Entity entity, double amount)
     {
+        if (amount == getBaseAmount(entity)) return;
+
         MCTools.getOrGenerateSubCompound(entity.getEntityData(), MODID, "baseAttributes").setDouble(name, amount);
         calculateTotal(entity); //Recalc total (necessary if no caching children exist, and also takes care of any caching and client sync)
         for (BetterAttribute child : children)
@@ -167,6 +169,7 @@ public class BetterAttribute
             compound.setDouble(name, result);
         }
 
+        MinecraftForge.EVENT_BUS.post(new BetterAttributeChangedEvent(this, entity));
         sync(entity);
         return result;
     }
@@ -184,7 +187,10 @@ public class BetterAttribute
 
     public void setCurrentAmount(Entity entity, double amount)
     {
+        if (amount == getCurrentAmount(entity)) return;
+
         MCTools.getOrGenerateSubCompound(entity.getEntityData(), MODID, "currentAttributes").setDouble(name, amount);
+        MinecraftForge.EVENT_BUS.post(new BetterAttributeChangedEvent(this, entity));
         sync(entity);
     }
 
@@ -267,6 +273,21 @@ public class BetterAttribute
         public final ExplicitPriorityQueue<Predicate<double[]>> functions = new ExplicitPriorityQueue<>();
 
         protected BetterAttributeCalcEvent(BetterAttribute attribute, Entity entity)
+        {
+            this.attribute = attribute;
+            this.entity = entity;
+        }
+    }
+
+    /**
+     * Despite the event's name, it is possible for the attribute values to be the same as before
+     */
+    public static class BetterAttributeChangedEvent extends Event
+    {
+        public final BetterAttribute attribute;
+        public final Entity entity;
+
+        public BetterAttributeChangedEvent(BetterAttribute attribute, Entity entity)
         {
             this.attribute = attribute;
             this.entity = entity;

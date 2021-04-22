@@ -439,6 +439,7 @@ public class Network
                 MCTools.getOrGenerateSubCompound(compound, "baseAttributes").setDouble(name, packet.base);
                 MCTools.getOrGenerateSubCompound(compound, "attributes").setDouble(name, packet.total);
                 MCTools.getOrGenerateSubCompound(compound, "currentAttributes").setDouble(name, packet.current);
+                MinecraftForge.EVENT_BUS.post(new BetterAttribute.BetterAttributeChangedEvent(BetterAttribute.BETTER_ATTRIBUTES.get(name), entity));
             });
             return null;
         }
