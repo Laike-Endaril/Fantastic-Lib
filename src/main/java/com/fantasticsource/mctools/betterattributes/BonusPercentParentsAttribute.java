@@ -8,23 +8,23 @@ import java.util.Map;
 
 public class BonusPercentParentsAttribute extends AdditiveParentsAttribute
 {
-    public BonusPercentParentsAttribute(String name, boolean isGood, double defaultBaseAmount, BetterAttribute... parents)
+    public BonusPercentParentsAttribute(String name, double defaultBaseAmount, BetterAttribute... parents)
     {
-        super(name, isGood, defaultBaseAmount, parents);
+        super(name, defaultBaseAmount, parents);
     }
 
-    public BonusPercentParentsAttribute(String name, boolean isGood, double defaultBaseAmount, Pair<BetterAttribute, Double>... parents)
+    public BonusPercentParentsAttribute(String name, double defaultBaseAmount, Pair<BetterAttribute, Double>... parents)
     {
-        super(name, isGood, defaultBaseAmount, parents);
+        super(name, defaultBaseAmount, parents);
     }
 
-    public BonusPercentParentsAttribute(String name, boolean isGood, double defaultBaseAmount, HashMap<BetterAttribute, Double> parents)
+    public BonusPercentParentsAttribute(String name, double defaultBaseAmount, HashMap<BetterAttribute, Double> parents)
     {
-        super(name, isGood, defaultBaseAmount, parents);
+        super(name, defaultBaseAmount, parents);
     }
 
     @Override
-    public double calculateTotalAmount(Entity entity)
+    protected double calculateSubtotal(Entity entity)
     {
         double multiplier = 1;
         for (Map.Entry<BetterAttribute, Double> entry : parentMultipliers.entrySet()) multiplier += entry.getKey().getTotalAmount(entity) * entry.getValue() / 100;

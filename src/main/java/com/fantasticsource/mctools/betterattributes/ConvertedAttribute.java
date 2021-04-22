@@ -9,15 +9,15 @@ public class ConvertedAttribute extends BetterAttribute
 {
     public final IAttribute mcAttribute;
 
-    public ConvertedAttribute(IAttribute mcAttribute, boolean isGood)
+    public ConvertedAttribute(IAttribute mcAttribute)
     {
-        super(mcAttribute.getName(), isGood, mcAttribute.getDefaultValue());
+        super(mcAttribute.getName(), mcAttribute.getDefaultValue());
         canUseTotalAmountCaching = false;
         this.mcAttribute = mcAttribute;
     }
 
     @Override
-    public double calculateTotalAmount(Entity entity)
+    protected double calculateSubtotal(Entity entity)
     {
         if (entity instanceof EntityLivingBase) return MCTools.getAttribute((EntityLivingBase) entity, mcAttribute);
         return defaultBaseAmount;

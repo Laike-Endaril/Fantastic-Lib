@@ -11,19 +11,19 @@ public class AdditiveParentsAttribute extends BetterAttribute
 {
     public final HashMap<BetterAttribute, Double> parentMultipliers;
 
-    public AdditiveParentsAttribute(String name, boolean isGood, double defaultBaseAmount, BetterAttribute... parents)
+    public AdditiveParentsAttribute(String name, double defaultBaseAmount, BetterAttribute... parents)
     {
-        this(name, isGood, defaultBaseAmount, generateDefaults(parents));
+        this(name, defaultBaseAmount, generateDefaults(parents));
     }
 
-    public AdditiveParentsAttribute(String name, boolean isGood, double defaultBaseAmount, Pair<BetterAttribute, Double>... parents)
+    public AdditiveParentsAttribute(String name, double defaultBaseAmount, Pair<BetterAttribute, Double>... parents)
     {
-        this(name, isGood, defaultBaseAmount, generateDefaults(parents));
+        this(name, defaultBaseAmount, generateDefaults(parents));
     }
 
-    public AdditiveParentsAttribute(String name, boolean isGood, double defaultBaseAmount, HashMap<BetterAttribute, Double> parents)
+    public AdditiveParentsAttribute(String name, double defaultBaseAmount, HashMap<BetterAttribute, Double> parents)
     {
-        super(name, isGood, defaultBaseAmount, parents.keySet().toArray(new BetterAttribute[0]));
+        super(name, defaultBaseAmount, parents.keySet().toArray(new BetterAttribute[0]));
         parentMultipliers = parents;
 
         boolean good = true;
@@ -62,7 +62,7 @@ public class AdditiveParentsAttribute extends BetterAttribute
     }
 
     @Override
-    public double calculateTotalAmount(Entity entity)
+    protected double calculateSubtotal(Entity entity)
     {
         double result = getBaseAmount(entity);
         for (Map.Entry<BetterAttribute, Double> entry : parentMultipliers.entrySet()) result += entry.getKey().getTotalAmount(entity) * entry.getValue();

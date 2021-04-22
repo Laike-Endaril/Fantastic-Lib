@@ -1,6 +1,7 @@
 package com.fantasticsource.mctools.betterattributes;
 
 import com.fantasticsource.mctools.MCTools;
+import com.fantasticsource.mctools.Network;
 import com.fantasticsource.tools.ReflectionTool;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.ExplicitPriorityQueue;
@@ -60,9 +61,8 @@ public class BetterAttribute
 
     public final String name;
     public final double defaultBaseAmount;
-    public final boolean isGood;
-    public boolean canUseTotalAmountCaching = true;
-    public final ArrayList<BetterAttribute> parents = new ArrayList<>(), children = new ArrayList<>();
+    public boolean isGood = true, canUseTotalAmountCaching = true, syncClientEntityDataToClient = false, syncOtherEntityDataToClient = false;
+    public ArrayList<BetterAttribute> parents = new ArrayList<>(), children = new ArrayList<>();
     public IAttribute mcAttributeToSet = null;
     public double mcAttributeScalar = 1;
     public ArrayList<Predicate<Pair<Entity, ArrayList<String>>>> displayValueArgumentEditors = new ArrayList<>();
@@ -72,10 +72,9 @@ public class BetterAttribute
      * @param defaultBaseAmount The default base amount of the attribute (ie. not accounting for any changes from parent attributes or other external systems).
      * @param parents           Parent attributes whose values have an effect on this attribute's total value.  Mostly important if canUseTotalAmountCaching is true.  May also be used for categorization purposes, eg. in GUIs
      */
-    public BetterAttribute(String name, boolean isGood, double defaultBaseAmount, BetterAttribute... parents)
+    public BetterAttribute(String name, double defaultBaseAmount, BetterAttribute... parents)
     {
         this.name = name;
-        this.isGood = isGood;
         this.defaultBaseAmount = defaultBaseAmount;
         this.parents.addAll(Arrays.asList(parents));
         for (BetterAttribute parent : parents) parent.children.add(this);
@@ -105,10 +104,10 @@ public class BetterAttribute
         return found;
     }
 
-    public final void setBaseAmount(Entity entity, double value)
+    public final void setBaseAmount(Entity entity, double amount)
     {
-        MCTools.getOrGenerateSubCompound(entity.getEntityData(), MODID, "baseAttributes").setDouble(name, value);
-        getTotalAmount(entity); //Recalc total (necessary if no caching children exist)
+        MCTools.getOrGenerateSubCompound(entity.getEntityData(), MODID, "baseAttributes").setDouble(name, amount);
+        getTotalAmount(entity); //Recalc total (necessary if no caching children exist, and also takes care of any caching and client sync)
         for (BetterAttribute child : children)
         {
             if (!child.canUseTotalAmountCaching) continue;
@@ -122,20 +121,16 @@ public class BetterAttribute
         return compound == null || !compound.hasKey(name) ? defaultBaseAmount : compound.getDouble(name);
     }
 
-    public final double getTotalAmount(Entity entity)
+    protected double calculateSubtotal(Entity entity)
     {
-        double result;
-        if (canUseTotalAmountCaching)
-        {
-            NBTTagCompound compound = MCTools.getOrGenerateSubCompound(entity.getEntityData(), MODID, "attributes");
-            if (compound.hasKey(name)) result = compound.getDouble(name);
-            else
-            {
-                result = calculateTotalAmount(entity);
-                compound.setDouble(name, result);
-            }
-        }
-        else result = calculateTotalAmount(entity);
+        double result = getBaseAmount(entity);
+        for (BetterAttribute parent : parents) result += parent.getTotalAmount(entity);
+        return result;
+    }
+
+    protected final double calculateTotal(Entity entity)
+    {
+        double result = calculateSubtotal(entity);
 
         BetterAttributeCalcEvent event = new BetterAttributeCalcEvent(this, entity);
         MinecraftForge.EVENT_BUS.post(event);
@@ -166,14 +161,58 @@ public class BetterAttribute
             }
         }
 
+        if (canUseTotalAmountCaching)
+        {
+            NBTTagCompound compound = MCTools.getOrGenerateSubCompound(entity.getEntityData(), MODID, "attributes");
+            compound.setDouble(name, result);
+        }
+
+        sync(entity);
         return result;
     }
 
-    public double calculateTotalAmount(Entity entity)
+    public final double getTotalAmount(Entity entity)
     {
-        double result = getBaseAmount(entity);
-        for (BetterAttribute parent : parents) result += parent.getTotalAmount(entity);
-        return result;
+        if (canUseTotalAmountCaching)
+        {
+            NBTTagCompound compound = MCTools.getOrGenerateSubCompound(entity.getEntityData(), MODID, "attributes");
+            if (compound.hasKey(name)) return compound.getDouble(name);
+        }
+
+        return calculateTotal(entity);
+    }
+
+    public void setCurrentAmount(Entity entity, double amount)
+    {
+        MCTools.getOrGenerateSubCompound(entity.getEntityData(), MODID, "currentAttributes").setDouble(name, amount);
+        sync(entity);
+    }
+
+    public double getCurrentAmount(Entity entity)
+    {
+        if (mcAttributeToSet == SharedMonsterAttributes.MAX_HEALTH && entity instanceof EntityLivingBase)
+        {
+            return ((EntityLivingBase) entity).getHealth();
+        }
+
+        NBTTagCompound compound = MCTools.getSubCompoundIfExists(entity.getEntityData(), MODID, "currentAttributes");
+        if (compound == null || !compound.hasKey(name)) return getTotalAmount(entity);
+        return compound.getDouble(name);
+    }
+
+    public final void sync(Entity entity)
+    {
+        if (!entity.world.isRemote)
+        {
+            if (syncOtherEntityDataToClient)
+            {
+                Network.WRAPPER.sendToAllTracking(new Network.BetterAttributePacket(entity, this), entity);
+            }
+            else if (syncClientEntityDataToClient && entity instanceof EntityPlayerMP)
+            {
+                Network.WRAPPER.sendTo(new Network.BetterAttributePacket(entity, this), (EntityPlayerMP) entity);
+            }
+        }
     }
 
     public BetterAttribute setMCAttribute(IAttribute mcAttribute, double scalar)
@@ -199,21 +238,11 @@ public class BetterAttribute
         ArrayList<String> args = new ArrayList<>();
         args.add(Tools.formatNicely(getTotalAmount(entity)));
         args.add(Tools.formatNicely(getBaseAmount(entity)));
-
-        String result;
-        if (mcAttributeToSet == SharedMonsterAttributes.MAX_HEALTH && entity instanceof EntityLivingBase)
-        {
-            args.add(Tools.formatNicely(((EntityLivingBase) entity).getHealth()));
-        }
-        else
-        {
-            NBTTagCompound compound = MCTools.getSubCompoundIfExists(entity.getEntityData(), MODID, "currentAttributes");
-            args.add(compound != null && compound.hasKey(name) ? Tools.formatNicely(compound.getDouble(name)) : args.get(0));
-        }
+        args.add(Tools.formatNicely(getCurrentAmount(entity)));
 
         for (Predicate<Pair<Entity, ArrayList<String>>> editor : displayValueArgumentEditors) editor.test(new Pair<>(entity, args));
 
-        result = I18n.translateToLocalFormatted("attribute.value." + name, args.toArray());
+        String result = I18n.translateToLocalFormatted("attribute.value." + name, args.toArray());
         return result.contains("attribute.value") ? "" + args.get(0) : result;
     }
 
@@ -229,6 +258,7 @@ public class BetterAttribute
      * Function priority can be negative, and does not need to be consecutive with the priority of other functions
      * The current attribute total (after changes made by any functions run before yours) is stored in the double array passed to your function
      * If your function returns false, it will prevent any other functions from running after it
+     * IF YOUR FUNCTION RELIES ON VARIABLES OUTSIDE THOSE OF THE ATTRIBUTE AND ITS PARENTS, SET THE ATTRIBUTE'S canUseTotalAmountCaching FIELD TO FALSE!!!
      */
     public static class BetterAttributeCalcEvent extends Event
     {

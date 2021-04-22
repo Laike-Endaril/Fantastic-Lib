@@ -8,23 +8,23 @@ import java.util.Map;
 
 public class ScalarParentsAttribute extends AdditiveParentsAttribute
 {
-    public ScalarParentsAttribute(String name, boolean isGood, double defaultBaseAmount, BetterAttribute... parents)
+    public ScalarParentsAttribute(String name, double defaultBaseAmount, BetterAttribute... parents)
     {
-        super(name, isGood, defaultBaseAmount, parents);
+        super(name, defaultBaseAmount, parents);
     }
 
-    public ScalarParentsAttribute(String name, boolean isGood, double defaultBaseAmount, Pair<BetterAttribute, Double>... parents)
+    public ScalarParentsAttribute(String name, double defaultBaseAmount, Pair<BetterAttribute, Double>... parents)
     {
-        super(name, isGood, defaultBaseAmount, parents);
+        super(name, defaultBaseAmount, parents);
     }
 
-    public ScalarParentsAttribute(String name, boolean isGood, double defaultBaseAmount, HashMap<BetterAttribute, Double> parents)
+    public ScalarParentsAttribute(String name, double defaultBaseAmount, HashMap<BetterAttribute, Double> parents)
     {
-        super(name, isGood, defaultBaseAmount, parents);
+        super(name, defaultBaseAmount, parents);
     }
 
     @Override
-    public double calculateTotalAmount(Entity entity)
+    protected double calculateSubtotal(Entity entity)
     {
         double result = getBaseAmount(entity);
         for (Map.Entry<BetterAttribute, Double> entry : parentMultipliers.entrySet()) result *= entry.getKey().getTotalAmount(entity) * entry.getValue();

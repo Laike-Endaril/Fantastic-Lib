@@ -1,6 +1,7 @@
 package com.fantasticsource.mctools;
 
 import com.fantasticsource.mctools.aw.RenderModes;
+import com.fantasticsource.mctools.betterattributes.BetterAttribute;
 import com.fantasticsource.mctools.component.CResourceLocation;
 import com.fantasticsource.mctools.controlintercept.ControlEvent;
 import com.fantasticsource.mctools.sound.SimpleSound;
@@ -10,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
@@ -40,6 +42,7 @@ public class Network
         WRAPPER.registerMessage(GenericComponentPacketHandler.class, GenericComponentPacket.class, discriminator++, Side.CLIENT);
         WRAPPER.registerMessage(RenderModesPacketHandler.class, RenderModesPacket.class, discriminator++, Side.CLIENT);
         WRAPPER.registerMessage(RemoveEntityImmediatePacketHandler.class, RemoveEntityImmediatePacket.class, discriminator++, Side.CLIENT);
+        WRAPPER.registerMessage(BetterAttributePacketHandler.class, BetterAttributePacket.class, discriminator++, Side.CLIENT);
     }
 
 
@@ -370,6 +373,75 @@ public class Network
 
                 MCTools.removeEntityImmediate(entity);
                 mc.world.removeAllEntities();
+            });
+            return null;
+        }
+    }
+
+
+    public static class BetterAttributePacket implements IMessage
+    {
+        int entityID;
+        String attributeName;
+        double base, total, current;
+
+        public BetterAttributePacket()
+        {
+            //Required
+        }
+
+        public BetterAttributePacket(Entity entity, BetterAttribute attribute)
+        {
+            entityID = entity.getEntityId();
+            attributeName = attribute.name;
+            base = attribute.getBaseAmount(entity);
+            total = attribute.getTotalAmount(entity);
+            current = attribute.getCurrentAmount(entity);
+        }
+
+        @Override
+        public void toBytes(ByteBuf buf)
+        {
+            buf.writeInt(entityID);
+            ByteBufUtils.writeUTF8String(buf, attributeName);
+            buf.writeDouble(base);
+            buf.writeDouble(total);
+            buf.writeDouble(current);
+        }
+
+        @Override
+        public void fromBytes(ByteBuf buf)
+        {
+            entityID = buf.readInt();
+            attributeName = ByteBufUtils.readUTF8String(buf);
+            base = buf.readDouble();
+            total = buf.readDouble();
+            current = buf.readDouble();
+        }
+    }
+
+    public static class BetterAttributePacketHandler implements IMessageHandler<BetterAttributePacket, IMessage>
+    {
+        @Override
+        @SideOnly(Side.CLIENT)
+        public IMessage onMessage(BetterAttributePacket packet, MessageContext ctx)
+        {
+            Minecraft mc = Minecraft.getMinecraft();
+            mc.addScheduledTask(() ->
+            {
+                if (mc.world == null) return;
+
+                Entity entity = mc.world.getEntityByID(packet.entityID);
+                if (entity == null) return;
+
+                NBTTagCompound compound = MCTools.getOrGenerateSubCompound(entity.getEntityData(), MODID), compound2 = MCTools.getOrGenerateSubCompound(compound, "baseAttributes");
+                compound2.setDouble(packet.attributeName, packet.base);
+
+                compound2 = MCTools.getOrGenerateSubCompound(compound, "attributes");
+                compound2.setDouble(packet.attributeName, packet.total);
+
+                compound2 = MCTools.getOrGenerateSubCompound(compound, "currentAttributes");
+                compound2.setDouble(packet.attributeName, packet.current);
             });
             return null;
         }
