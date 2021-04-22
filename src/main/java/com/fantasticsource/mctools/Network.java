@@ -434,12 +434,13 @@ public class Network
                 Entity entity = mc.world.getEntityByID(packet.entityID);
                 if (entity == null) return;
 
-                String name = packet.attributeName;
+                BetterAttribute attribute = BetterAttribute.BETTER_ATTRIBUTES.get(packet.attributeName);
+                if (attribute == null) return;
+
                 NBTTagCompound compound = MCTools.getOrGenerateSubCompound(entity.getEntityData(), MODID);
-                MCTools.getOrGenerateSubCompound(compound, "baseAttributes").setDouble(name, packet.base);
-                MCTools.getOrGenerateSubCompound(compound, "attributes").setDouble(name, packet.total);
-                MCTools.getOrGenerateSubCompound(compound, "currentAttributes").setDouble(name, packet.current);
-                MinecraftForge.EVENT_BUS.post(new BetterAttribute.BetterAttributeChangedEvent(BetterAttribute.BETTER_ATTRIBUTES.get(name), entity));
+                attribute.setBaseAmount(entity, packet.base);
+                MCTools.getOrGenerateSubCompound(compound, "attributes").setDouble(attribute.name, packet.total);
+                attribute.setCurrentAmount(entity, packet.current);
             });
             return null;
         }

@@ -190,6 +190,8 @@ public class BetterAttribute
         if (amount == getCurrentAmount(entity)) return;
 
         MCTools.getOrGenerateSubCompound(entity.getEntityData(), MODID, "currentAttributes").setDouble(name, amount);
+        if (mcAttributeToSet == SharedMonsterAttributes.MAX_HEALTH && entity instanceof EntityLivingBase) ((EntityLivingBase) entity).setHealth((float) amount);
+
         MinecraftForge.EVENT_BUS.post(new BetterAttributeChangedEvent(this, entity));
         sync(entity);
     }
@@ -281,6 +283,7 @@ public class BetterAttribute
 
     /**
      * Despite the event's name, it is possible for the attribute values to be the same as before
+     * In some cases, it is also possible that the attribute values have changed even if this event has not been posted (especially true for an attribute linked to MC health)
      */
     public static class BetterAttributeChangedEvent extends Event
     {
