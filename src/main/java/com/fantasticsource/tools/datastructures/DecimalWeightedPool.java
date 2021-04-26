@@ -7,8 +7,8 @@ import java.util.Map;
 
 public class DecimalWeightedPool<T>
 {
-    protected HashMap<T, Double> pool = new HashMap<>();
-    protected double totalWeight = 0;
+    public HashMap<T, Double> pool = new HashMap<>();
+    public double totalWeight = 0;
 
     public void addWeight(T object, double weight)
     {
@@ -54,10 +54,5 @@ public class DecimalWeightedPool<T>
         }
 
         throw new IllegalStateException();
-    }
-
-    public double getTotalWeight()
-    {
-        return totalWeight;
     }
 }

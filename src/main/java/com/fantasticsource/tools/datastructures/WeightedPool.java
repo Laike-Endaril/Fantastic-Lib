@@ -7,8 +7,8 @@ import java.util.Map;
 
 public class WeightedPool<T>
 {
-    protected HashMap<T, Integer> pool = new HashMap<>();
-    protected int totalWeight = 0;
+    public HashMap<T, Integer> pool = new HashMap<>();
+    public int totalWeight = 0;
 
     public void addWeight(T object, int weight)
     {
@@ -54,10 +54,5 @@ public class WeightedPool<T>
         }
 
         throw new IllegalStateException();
-    }
-
-    public int getTotalWeight()
-    {
-        return totalWeight;
     }
 }
