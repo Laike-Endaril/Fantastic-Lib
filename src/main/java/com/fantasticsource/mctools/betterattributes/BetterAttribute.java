@@ -138,10 +138,18 @@ public class BetterAttribute
         MinecraftForge.EVENT_BUS.post(event);
         if (!event.functions.isEmpty())
         {
-            double[] d = new double[]{result};
+            double[] d = new double[]{result, result};
+            int oldTier = (int) event.functions.peekPriority(), newTier;
             while (!event.functions.isEmpty())
             {
                 if (!event.functions.poll().test(d)) break;
+
+                newTier = (int) event.functions.peekPriority();
+                if (newTier != oldTier)
+                {
+                    d[1] = d[0];
+                    oldTier = newTier;
+                }
             }
             result = d[0];
         }

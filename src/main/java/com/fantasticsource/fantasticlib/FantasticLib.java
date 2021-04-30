@@ -6,6 +6,7 @@ import com.fantasticsource.mctools.*;
 import com.fantasticsource.mctools.aw.ForcedAWSkinOverrides;
 import com.fantasticsource.mctools.aw.RenderModes;
 import com.fantasticsource.mctools.aw.TransientAWSkinHandler;
+import com.fantasticsource.mctools.betterattributes.BetterAttributeMod;
 import com.fantasticsource.mctools.data.CModpackDataHandler;
 import com.fantasticsource.mctools.data.CWorldDataHandler;
 import com.fantasticsource.mctools.event.GametypeChangedEvent;
@@ -52,6 +53,7 @@ public class FantasticLib
     {
         MinecraftForge.EVENT_BUS.register(FantasticLib.class);
         MinecraftForge.EVENT_BUS.register(NBTCap.class);
+        MinecraftForge.EVENT_BUS.register(BetterAttributeMod.class);
         Network.init();
 
         if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
