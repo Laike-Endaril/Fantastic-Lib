@@ -20,6 +20,7 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.function.Predicate;
 
 import static com.fantasticsource.fantasticlib.FantasticLib.MODID;
 
@@ -252,6 +253,44 @@ public class BetterAttributeMod extends NBTSerializableComponent
         if (compound != null) compound.removeTag(modName);
     }
 
+    public static void removeInvalidMods(Entity entity)
+    {
+        NBTTagCompound compound = MCTools.getSubCompoundIfExists(entity.getEntityData(), MODID, "betterAttributeMods");
+        for (String key : compound.getKeySet().toArray(new String[0]))
+        {
+            if (!BetterAttribute.BETTER_ATTRIBUTES.containsKey(key)) compound.removeTag(key);
+        }
+    }
+
+    public static void removeAttributeModsWithName(Entity entity, String modName)
+    {
+        NBTTagCompound compound = MCTools.getSubCompoundIfExists(entity.getEntityData(), MODID, "betterAttributeMods");
+        for (String key : compound.getKeySet())
+        {
+            NBTTagCompound compound2 = compound.getCompoundTag(key);
+            for (String key2 : compound2.getKeySet().toArray(new String[0]))
+            {
+                if (key2.equals(modName)) compound2.removeTag(key2);
+            }
+        }
+    }
+
+    public static void removeAttributeModsIf(Entity entity, Predicate<BetterAttributeMod> condition)
+    {
+        NBTTagCompound compound = MCTools.getSubCompoundIfExists(entity.getEntityData(), MODID, "betterAttributeMods");
+        for (String key : compound.getKeySet())
+        {
+            NBTTagCompound compound2 = compound.getCompoundTag(key);
+            BetterAttributeMod mod = new BetterAttributeMod();
+            for (String key2 : compound2.getKeySet().toArray(new String[0]))
+            {
+                mod.deserializeNBT(compound2.getCompoundTag(key2));
+                if (condition.test(mod)) compound2.removeTag(key2);
+            }
+        }
+    }
+
+
     public static void removeBetterAttributeMod(ItemStack stack, BetterAttributeMod mod)
     {
         removeBetterAttributeMod(stack, mod.betterAttributeName, mod.name);
@@ -262,5 +301,45 @@ public class BetterAttributeMod extends NBTSerializableComponent
         if (!stack.hasTagCompound()) return;
         NBTTagCompound compound = MCTools.getSubCompoundIfExists(stack.getTagCompound(), MODID, "betterAttributeMods", betterAttributeName);
         if (compound != null) compound.removeTag(modName);
+    }
+
+    public static void removeInvalidMods(ItemStack stack)
+    {
+        if (!stack.hasTagCompound()) return;
+        NBTTagCompound compound = MCTools.getSubCompoundIfExists(stack.getTagCompound(), MODID, "betterAttributeMods");
+        for (String key : compound.getKeySet().toArray(new String[0]))
+        {
+            if (!BetterAttribute.BETTER_ATTRIBUTES.containsKey(key)) compound.removeTag(key);
+        }
+    }
+
+    public static void removeAttributeModsWithName(ItemStack stack, String modName)
+    {
+        if (!stack.hasTagCompound()) return;
+        NBTTagCompound compound = MCTools.getSubCompoundIfExists(stack.getTagCompound(), MODID, "betterAttributeMods");
+        for (String key : compound.getKeySet())
+        {
+            NBTTagCompound compound2 = compound.getCompoundTag(key);
+            for (String key2 : compound2.getKeySet().toArray(new String[0]))
+            {
+                if (key2.equals(modName)) compound2.removeTag(key2);
+            }
+        }
+    }
+
+    public static void removeAttributeModsIf(ItemStack stack, Predicate<BetterAttributeMod> condition)
+    {
+        if (!stack.hasTagCompound()) return;
+        NBTTagCompound compound = MCTools.getSubCompoundIfExists(stack.getTagCompound(), MODID, "betterAttributeMods");
+        for (String key : compound.getKeySet())
+        {
+            NBTTagCompound compound2 = compound.getCompoundTag(key);
+            BetterAttributeMod mod = new BetterAttributeMod();
+            for (String key2 : compound2.getKeySet().toArray(new String[0]))
+            {
+                mod.deserializeNBT(compound2.getCompoundTag(key2));
+                if (condition.test(mod)) compound2.removeTag(key2);
+            }
+        }
     }
 }
