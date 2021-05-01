@@ -3,6 +3,7 @@ package com.fantasticsource.mctools.betterattributes;
 import com.fantasticsource.mctools.GlobalInventory;
 import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.component.NBTSerializableComponent;
+import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.component.CDouble;
 import com.fantasticsource.tools.component.CInt;
 import com.fantasticsource.tools.component.CStringUTF8;
@@ -11,6 +12,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
@@ -53,6 +56,42 @@ public class BetterAttributeMod extends NBTSerializableComponent
         this.priority = priority;
         this.operation = operation;
         this.amount = amount;
+    }
+
+
+    @Override
+    public String toString()
+    {
+        BetterAttribute attribute = BetterAttribute.BETTER_ATTRIBUTES.get(betterAttributeName);
+        boolean good = attribute == null || attribute.isGood;
+        switch (operation)
+        {
+            case 0:
+            case 1:
+                if (amount < 0) good = !good;
+                break;
+
+            case 2:
+                if (amount < 1) good = !good;
+                break;
+        }
+        String result = "" + (good ? TextFormatting.GREEN : TextFormatting.RED);
+
+        switch (operation)
+        {
+            case 0:
+            case 1:
+                if (amount >= 0) result += "+" + Tools.formatNicely(amount);
+                break;
+
+            case 2:
+                result += Tools.formatNicely(amount) + "x";
+                break;
+        }
+
+        result += TextFormatting.GRAY + " " + I18n.translateToLocal(betterAttributeName);
+
+        return result;
     }
 
 
