@@ -27,9 +27,33 @@ public class BetterAttributeMod extends NBTSerializableComponent
             OPERATION_ADD_OLD_TIER_TIMES_AMOUNT = 1,
             OPERATION_MULT = 2;
 
-    public String name, betterAttributeName;
-    public int priority, operation;
-    public double amount;
+    public String name = "", betterAttributeName = "";
+    public int priority = 0, operation = 0;
+    public double amount = 0;
+
+
+    public BetterAttributeMod()
+    {
+    }
+
+    public BetterAttributeMod(String name, String betterAttributeName, double amount)
+    {
+        this(name, betterAttributeName, 0, amount);
+    }
+
+    public BetterAttributeMod(String name, String betterAttributeName, int operation, double amount)
+    {
+        this(name, betterAttributeName, 0, operation, amount);
+    }
+
+    public BetterAttributeMod(String name, String betterAttributeName, int priority, int operation, double amount)
+    {
+        this.name = name;
+        this.betterAttributeName = betterAttributeName;
+        this.priority = priority;
+        this.operation = operation;
+        this.amount = amount;
+    }
 
 
     @Override
