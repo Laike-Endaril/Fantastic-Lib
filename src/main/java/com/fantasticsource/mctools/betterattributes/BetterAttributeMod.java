@@ -3,6 +3,7 @@ package com.fantasticsource.mctools.betterattributes;
 import com.fantasticsource.mctools.GlobalInventory;
 import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.component.NBTSerializableComponent;
+import com.fantasticsource.mctools.event.InventoryChangedEvent;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.component.CDouble;
 import com.fantasticsource.tools.component.CInt;
@@ -20,6 +21,7 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.function.Predicate;
 
 import static com.fantasticsource.fantasticlib.FantasticLib.MODID;
@@ -184,6 +186,13 @@ public class BetterAttributeMod extends NBTSerializableComponent
 
 
     @SubscribeEvent
+    public static void inventoryChanged(InventoryChangedEvent event)
+    {
+        Entity entity = event.getEntity();
+        for (BetterAttribute attribute : BetterAttribute.BETTER_ATTRIBUTES.values()) attribute.calculateTotal(entity);
+    }
+
+    @SubscribeEvent
     public static void betterAttributeCalc(BetterAttribute.BetterAttributeCalcEvent event)
     {
         String attributeName = event.attribute.name;
@@ -230,115 +239,265 @@ public class BetterAttributeMod extends NBTSerializableComponent
     }
 
 
-    public static void addBetterAttributeMod(Entity entity, BetterAttributeMod mod)
+    public static void addMods(Entity entity, BetterAttributeMod... mods)
     {
-        MCTools.getOrGenerateSubCompound(entity.getEntityData(), MODID, "betterAttributeMods", mod.betterAttributeName).setTag(mod.name, mod.serializeNBT());
+        NBTTagCompound compound = MCTools.getOrGenerateSubCompound(entity.getEntityData(), MODID, "betterAttributeMods");
+
+        HashSet<String> attributesToRecalc = new HashSet<>();
+        for (BetterAttributeMod mod : mods)
+        {
+            MCTools.getOrGenerateSubCompound(compound, mod.betterAttributeName).setTag(mod.name, mod.serializeNBT());
+            attributesToRecalc.add(mod.betterAttributeName);
+        }
+
+        for (String attributeName : attributesToRecalc)
+        {
+            BetterAttribute attribute = BetterAttribute.BETTER_ATTRIBUTES.get(attributeName);
+            if (attribute != null) attribute.calculateTotal(entity);
+        }
     }
 
-    public static void addBetterAttributeMod(ItemStack stack, BetterAttributeMod mod)
+
+    public static void addMods(Entity entity, ItemStack stack, BetterAttributeMod... mods)
     {
         if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
-        MCTools.getOrGenerateSubCompound(stack.getTagCompound(), MODID, "betterAttributeMods", mod.betterAttributeName).setTag(mod.name, mod.serializeNBT());
-    }
+        NBTTagCompound compound = MCTools.getOrGenerateSubCompound(stack.getTagCompound(), MODID, "betterAttributeMods");
 
-
-    public static void removeBetterAttributeMod(Entity entity, BetterAttributeMod mod)
-    {
-        removeBetterAttributeMod(entity, mod.betterAttributeName, mod.name);
-    }
-
-    public static void removeBetterAttributeMod(Entity entity, String betterAttributeName, String modName)
-    {
-        NBTTagCompound compound = MCTools.getSubCompoundIfExists(entity.getEntityData(), MODID, "betterAttributeMods", betterAttributeName);
-        if (compound != null) compound.removeTag(modName);
-    }
-
-    public static void removeInvalidMods(Entity entity)
-    {
-        NBTTagCompound compound = MCTools.getSubCompoundIfExists(entity.getEntityData(), MODID, "betterAttributeMods");
-        for (String key : compound.getKeySet().toArray(new String[0]))
+        HashSet<String> attributesToRecalc = new HashSet<>();
+        for (BetterAttributeMod mod : mods)
         {
-            if (!BetterAttribute.BETTER_ATTRIBUTES.containsKey(key)) compound.removeTag(key);
+            MCTools.getOrGenerateSubCompound(compound, mod.betterAttributeName).setTag(mod.name, mod.serializeNBT());
+            attributesToRecalc.add(mod.betterAttributeName);
         }
-    }
 
-    public static void removeAttributeModsWithName(Entity entity, String modName)
-    {
-        NBTTagCompound compound = MCTools.getSubCompoundIfExists(entity.getEntityData(), MODID, "betterAttributeMods");
-        for (String key : compound.getKeySet())
+        if (entity != null)
         {
-            NBTTagCompound compound2 = compound.getCompoundTag(key);
-            for (String key2 : compound2.getKeySet().toArray(new String[0]))
+            for (String attributeName : attributesToRecalc)
             {
-                if (key2.equals(modName)) compound2.removeTag(key2);
+                BetterAttribute attribute = BetterAttribute.BETTER_ATTRIBUTES.get(attributeName);
+                if (attribute != null) attribute.calculateTotal(entity);
             }
         }
     }
 
-    public static void removeAttributeModsIf(Entity entity, Predicate<BetterAttributeMod> condition)
+
+    public static void removeMods(Entity entity, BetterAttributeMod... mods)
     {
         NBTTagCompound compound = MCTools.getSubCompoundIfExists(entity.getEntityData(), MODID, "betterAttributeMods");
-        for (String key : compound.getKeySet())
+        if (compound == null) return;
+
+        HashSet<String> attributesToRecalc = new HashSet<>();
+        for (BetterAttributeMod mod : mods)
         {
-            NBTTagCompound compound2 = compound.getCompoundTag(key);
+            NBTTagCompound compound2 = MCTools.getSubCompoundIfExists(compound, mod.betterAttributeName);
+            if (compound2 != null && compound2.hasKey(mod.name))
+            {
+                compound2.removeTag(mod.name);
+                attributesToRecalc.add(mod.betterAttributeName);
+            }
+        }
+
+        for (String attributeName : attributesToRecalc)
+        {
+            BetterAttribute attribute = BetterAttribute.BETTER_ATTRIBUTES.get(attributeName);
+            if (attribute != null) attribute.calculateTotal(entity);
+        }
+    }
+
+    public static void removeModsWithName(Entity entity, String modName)
+    {
+        NBTTagCompound compound = MCTools.getSubCompoundIfExists(entity.getEntityData(), MODID, "betterAttributeMods");
+        if (compound == null) return;
+
+        HashSet<String> attributesToRecalc = new HashSet<>();
+        for (String attributeName : compound.getKeySet())
+        {
+            NBTTagCompound compound2 = compound.getCompoundTag(attributeName);
+            if (compound2.hasKey(modName))
+            {
+                compound2.removeTag(modName);
+                attributesToRecalc.add(attributeName);
+            }
+        }
+
+        for (String attributeName : attributesToRecalc)
+        {
+            BetterAttribute attribute = BetterAttribute.BETTER_ATTRIBUTES.get(attributeName);
+            if (attribute != null) attribute.calculateTotal(entity);
+        }
+    }
+
+    public static void removeModsWithNameContaining(Entity entity, String partialModName, boolean ignored)
+    {
+        NBTTagCompound compound = MCTools.getSubCompoundIfExists(entity.getEntityData(), MODID, "betterAttributeMods");
+        if (compound == null) return;
+
+        HashSet<String> attributesToRecalc = new HashSet<>();
+        for (String attributeName : compound.getKeySet())
+        {
+            NBTTagCompound compound2 = compound.getCompoundTag(attributeName);
+            for (String foundModName : compound2.getKeySet().toArray(new String[0]))
+            {
+                if (foundModName.contains(partialModName))
+                {
+                    compound2.removeTag(foundModName);
+                    attributesToRecalc.add(attributeName);
+                }
+            }
+        }
+
+        for (String attributeName : attributesToRecalc)
+        {
+            BetterAttribute attribute = BetterAttribute.BETTER_ATTRIBUTES.get(attributeName);
+            if (attribute != null) attribute.calculateTotal(entity);
+        }
+    }
+
+    public static void removeModsIf(Entity entity, Predicate<BetterAttributeMod> condition)
+    {
+        NBTTagCompound compound = MCTools.getSubCompoundIfExists(entity.getEntityData(), MODID, "betterAttributeMods");
+        if (compound == null) return;
+
+        HashSet<String> attributesToRecalc = new HashSet<>();
+        for (String attributeName : compound.getKeySet())
+        {
+            NBTTagCompound compound2 = compound.getCompoundTag(attributeName);
             BetterAttributeMod mod = new BetterAttributeMod();
             for (String key2 : compound2.getKeySet().toArray(new String[0]))
             {
                 mod.deserializeNBT(compound2.getCompoundTag(key2));
-                if (condition.test(mod)) compound2.removeTag(key2);
+                if (condition.test(mod))
+                {
+                    compound2.removeTag(key2);
+                    attributesToRecalc.add(attributeName);
+                }
             }
         }
-    }
 
-
-    public static void removeBetterAttributeMod(ItemStack stack, BetterAttributeMod mod)
-    {
-        removeBetterAttributeMod(stack, mod.betterAttributeName, mod.name);
-    }
-
-    public static void removeBetterAttributeMod(ItemStack stack, String betterAttributeName, String modName)
-    {
-        if (!stack.hasTagCompound()) return;
-        NBTTagCompound compound = MCTools.getSubCompoundIfExists(stack.getTagCompound(), MODID, "betterAttributeMods", betterAttributeName);
-        if (compound != null) compound.removeTag(modName);
-    }
-
-    public static void removeInvalidMods(ItemStack stack)
-    {
-        if (!stack.hasTagCompound()) return;
-        NBTTagCompound compound = MCTools.getSubCompoundIfExists(stack.getTagCompound(), MODID, "betterAttributeMods");
-        for (String key : compound.getKeySet().toArray(new String[0]))
+        for (String attributeName : attributesToRecalc)
         {
-            if (!BetterAttribute.BETTER_ATTRIBUTES.containsKey(key)) compound.removeTag(key);
+            BetterAttribute attribute = BetterAttribute.BETTER_ATTRIBUTES.get(attributeName);
+            if (attribute != null) attribute.calculateTotal(entity);
         }
     }
 
-    public static void removeAttributeModsWithName(ItemStack stack, String modName)
+
+    public static void removeMods(Entity entity, ItemStack stack, BetterAttributeMod... mods)
     {
         if (!stack.hasTagCompound()) return;
+
         NBTTagCompound compound = MCTools.getSubCompoundIfExists(stack.getTagCompound(), MODID, "betterAttributeMods");
-        for (String key : compound.getKeySet())
+        if (compound == null) return;
+
+        HashSet<String> attributesToRecalc = new HashSet<>();
+        for (BetterAttributeMod mod : mods)
         {
-            NBTTagCompound compound2 = compound.getCompoundTag(key);
-            for (String key2 : compound2.getKeySet().toArray(new String[0]))
+            NBTTagCompound compound2 = MCTools.getSubCompoundIfExists(compound, mod.betterAttributeName);
+            if (compound2 != null && compound2.hasKey(mod.name))
             {
-                if (key2.equals(modName)) compound2.removeTag(key2);
+                compound2.removeTag(mod.name);
+                attributesToRecalc.add(mod.betterAttributeName);
+            }
+        }
+
+        if (entity != null)
+        {
+            for (String attributeName : attributesToRecalc)
+            {
+                BetterAttribute attribute = BetterAttribute.BETTER_ATTRIBUTES.get(attributeName);
+                if (attribute != null) attribute.calculateTotal(entity);
             }
         }
     }
 
-    public static void removeAttributeModsIf(ItemStack stack, Predicate<BetterAttributeMod> condition)
+    public static void removeModsWithName(Entity entity, ItemStack stack, String modName)
     {
         if (!stack.hasTagCompound()) return;
+
         NBTTagCompound compound = MCTools.getSubCompoundIfExists(stack.getTagCompound(), MODID, "betterAttributeMods");
-        for (String key : compound.getKeySet())
+        if (compound == null) return;
+
+        HashSet<String> attributesToRecalc = new HashSet<>();
+        for (String attributeName : compound.getKeySet())
         {
-            NBTTagCompound compound2 = compound.getCompoundTag(key);
+            NBTTagCompound compound2 = compound.getCompoundTag(attributeName);
+            if (compound2.hasKey(modName))
+            {
+                compound2.removeTag(modName);
+                attributesToRecalc.add(attributeName);
+            }
+        }
+
+        if (entity != null)
+        {
+            for (String attributeName : attributesToRecalc)
+            {
+                BetterAttribute attribute = BetterAttribute.BETTER_ATTRIBUTES.get(attributeName);
+                if (attribute != null) attribute.calculateTotal(entity);
+            }
+        }
+    }
+
+    public static void removeModsWithNameContaining(Entity entity, ItemStack stack, String partialModName, boolean ignored)
+    {
+        if (!stack.hasTagCompound()) return;
+
+        NBTTagCompound compound = MCTools.getSubCompoundIfExists(stack.getTagCompound(), MODID, "betterAttributeMods");
+        if (compound == null) return;
+
+        HashSet<String> attributesToRecalc = new HashSet<>();
+        for (String attributeName : compound.getKeySet())
+        {
+            NBTTagCompound compound2 = compound.getCompoundTag(attributeName);
+            for (String foundModName : compound2.getKeySet().toArray(new String[0]))
+            {
+                if (foundModName.contains(partialModName))
+                {
+                    compound2.removeTag(foundModName);
+                    attributesToRecalc.add(attributeName);
+                }
+            }
+        }
+
+        if (entity != null)
+        {
+            for (String attributeName : attributesToRecalc)
+            {
+                BetterAttribute attribute = BetterAttribute.BETTER_ATTRIBUTES.get(attributeName);
+                if (attribute != null) attribute.calculateTotal(entity);
+            }
+        }
+    }
+
+    public static void removeModsIf(Entity entity, ItemStack stack, Predicate<BetterAttributeMod> condition)
+    {
+        if (!stack.hasTagCompound()) return;
+
+        NBTTagCompound compound = MCTools.getSubCompoundIfExists(stack.getTagCompound(), MODID, "betterAttributeMods");
+        if (compound == null) return;
+
+        HashSet<String> attributesToRecalc = new HashSet<>();
+        for (String attributeName : compound.getKeySet())
+        {
+            NBTTagCompound compound2 = compound.getCompoundTag(attributeName);
             BetterAttributeMod mod = new BetterAttributeMod();
             for (String key2 : compound2.getKeySet().toArray(new String[0]))
             {
                 mod.deserializeNBT(compound2.getCompoundTag(key2));
-                if (condition.test(mod)) compound2.removeTag(key2);
+                if (condition.test(mod))
+                {
+                    compound2.removeTag(key2);
+                    attributesToRecalc.add(attributeName);
+                }
+            }
+        }
+
+        if (entity != null)
+        {
+            for (String attributeName : attributesToRecalc)
+            {
+                BetterAttribute attribute = BetterAttribute.BETTER_ATTRIBUTES.get(attributeName);
+                if (attribute != null) attribute.calculateTotal(entity);
             }
         }
     }
