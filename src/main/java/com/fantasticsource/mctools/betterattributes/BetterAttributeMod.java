@@ -8,6 +8,7 @@ import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.component.CDouble;
 import com.fantasticsource.tools.component.CInt;
 import com.fantasticsource.tools.component.CStringUTF8;
+import com.fantasticsource.tools.datastructures.ExplicitPriorityQueue;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
@@ -198,13 +199,14 @@ public class BetterAttributeMod extends NBTSerializableComponent
         String attributeName = event.attribute.name;
         Entity entity = event.entity;
 
+        for (BetterAttributeMod parentMod : event.attribute.parentMods) applyMod(event.functions, parentMod);
+
         ArrayList<NBTTagCompound> compounds = new ArrayList<>();
         compounds.add(entity.getEntityData());
         for (ItemStack stack : GlobalInventory.getValidEquippedItems(entity))
         {
             if (stack.hasTagCompound()) compounds.add(stack.getTagCompound());
         }
-
 
         for (NBTTagCompound compound : compounds)
         {
@@ -215,27 +217,31 @@ public class BetterAttributeMod extends NBTSerializableComponent
             {
                 BetterAttributeMod mod = new BetterAttributeMod();
                 mod.deserializeNBT(compound.getCompoundTag(key));
-
-                event.functions.add(d ->
-                {
-                    switch (mod.operation)
-                    {
-                        case 0:
-                            d[0] += mod.amount;
-                            break;
-
-                        case 1:
-                            d[0] += d[1] * mod.amount;
-                            break;
-
-                        case 2:
-                            d[0] *= mod.amount;
-                            break;
-                    }
-                    return true;
-                }, mod.priority);
+                applyMod(event.functions, mod);
             }
         }
+    }
+
+    protected static void applyMod(ExplicitPriorityQueue<Predicate<double[]>> functions, BetterAttributeMod mod)
+    {
+        functions.add(d ->
+        {
+            switch (mod.operation)
+            {
+                case 0:
+                    d[0] += mod.amount;
+                    break;
+
+                case 1:
+                    d[0] += d[1] * mod.amount;
+                    break;
+
+                case 2:
+                    d[0] *= mod.amount;
+                    break;
+            }
+            return true;
+        }, mod.priority);
     }
 
 

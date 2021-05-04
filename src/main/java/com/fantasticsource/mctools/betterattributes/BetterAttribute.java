@@ -41,9 +41,9 @@ public class BetterAttribute
     {
         String name = betterAttribute.name;
 
-        for (BetterAttribute parent : betterAttribute.parents)
+        for (BetterAttributeMod parentMod : betterAttribute.parentMods)
         {
-            if (parent == null)
+            if (BETTER_ATTRIBUTES.get(parentMod.betterAttributeName) == null)
             {
                 System.err.println(TextFormatting.RED + "COULD NOT REGISTER BETTER ATTRIBUTE, BECAUSE ONE OF ITS PARENTS IS NULL: " + name);
                 return;
@@ -62,7 +62,8 @@ public class BetterAttribute
     public final String name;
     public final double defaultBaseAmount;
     public boolean isGood = true, canUseTotalAmountCaching = true, syncClientEntityDataToClient = true, syncOtherEntityDataToClient = false;
-    public ArrayList<BetterAttribute> parents = new ArrayList<>(), children = new ArrayList<>();
+    public ArrayList<BetterAttributeMod> parentMods = new ArrayList<>();
+    public ArrayList<BetterAttribute> children = new ArrayList<>();
     public IAttribute mcAttributeToSet = null;
     public double mcAttributeScalar = 1;
     public ArrayList<Predicate<Pair<Entity, ArrayList<String>>>> displayValueArgumentEditors = new ArrayList<>();
@@ -70,38 +71,15 @@ public class BetterAttribute
     /**
      * @param name              The name of the attribute.  May be used for name/description lang keys.  I suggest using the MC format eg. generic.maxHealth and expecting related lang keys eg. attribute.name.generic.maxHealth, attribute.description.generic.maxHealth.  Try to use a unique namespace instead of "generic".
      * @param defaultBaseAmount The default base amount of the attribute (ie. not accounting for any changes from parent attributes or other external systems).
-     * @param parents           Parent attributes whose values have an effect on this attribute's total value.  Mostly important if canUseTotalAmountCaching is true.  May also be used for categorization purposes, eg. in GUIs
+     * @param parentMods        Parent attributes whose values have an effect on this attribute's total value.  Mostly important if canUseTotalAmountCaching is true.  May also be used for categorization purposes, eg. in GUIs
      */
-    public BetterAttribute(String name, double defaultBaseAmount, BetterAttribute... parents)
+    public BetterAttribute(String name, double defaultBaseAmount, BetterAttributeMod... parentMods)
     {
         this.name = name;
         this.defaultBaseAmount = defaultBaseAmount;
-        this.parents.addAll(Arrays.asList(parents));
-        for (BetterAttribute parent : parents) parent.children.add(this);
+        this.parentMods.addAll(Arrays.asList(parentMods));
+        for (BetterAttributeMod parent : parentMods) BETTER_ATTRIBUTES.get(parent.betterAttributeName).children.add(this);
         register(this);
-    }
-
-    public final boolean removeFrom(Entity entity)
-    {
-        NBTTagCompound mainCompound = MCTools.getSubCompoundIfExists(entity.getEntityData(), MODID);
-        if (mainCompound == null) return false;
-
-        NBTTagCompound compound = MCTools.getSubCompoundIfExists(mainCompound, "baseAttributes");
-        boolean found = false;
-        if (compound != null && compound.hasKey(name))
-        {
-            compound.removeTag(name);
-            found = true;
-        }
-
-        compound = MCTools.getSubCompoundIfExists(mainCompound, "attributes");
-        if (compound != null && compound.hasKey(name))
-        {
-            compound.removeTag(name);
-            found = true;
-        }
-
-        return found;
     }
 
     public final void setBaseAmount(Entity entity, double amount)
@@ -109,30 +87,18 @@ public class BetterAttribute
         if (amount == getBaseAmount(entity)) return;
 
         MCTools.getOrGenerateSubCompound(entity.getEntityData(), MODID, "baseAttributes").setDouble(name, amount);
-        calculateTotal(entity); //Recalc total (necessary if no caching children exist, and also takes care of any caching and client sync)
-        for (BetterAttribute child : children)
-        {
-            if (!child.canUseTotalAmountCaching) continue;
-            if (child.removeFrom(entity)) child.calculateTotal(entity);
-        }
+        calculateTotal(entity);
     }
 
-    public final double getBaseAmount(Entity entity)
+    public double getBaseAmount(Entity entity)
     {
         NBTTagCompound compound = MCTools.getSubCompoundIfExists(entity.getEntityData(), MODID, "baseAttributes");
         return compound == null || !compound.hasKey(name) ? defaultBaseAmount : compound.getDouble(name);
     }
 
-    protected double calculateSubtotal(Entity entity)
-    {
-        double result = getBaseAmount(entity);
-        for (BetterAttribute parent : parents) result += parent.getTotalAmount(entity);
-        return result;
-    }
-
     protected final double calculateTotal(Entity entity)
     {
-        double result = calculateSubtotal(entity);
+        double result = getBaseAmount(entity);
 
         BetterAttributeCalcEvent event = new BetterAttributeCalcEvent(this, entity);
         MinecraftForge.EVENT_BUS.post(event);
@@ -179,6 +145,13 @@ public class BetterAttribute
 
         MinecraftForge.EVENT_BUS.post(new BetterAttributeChangedEvent(this, entity));
         sync(entity);
+
+        for (BetterAttribute child : children)
+        {
+            if (!child.canUseTotalAmountCaching) continue;
+            child.calculateTotal(entity);
+        }
+
         return result;
     }
 

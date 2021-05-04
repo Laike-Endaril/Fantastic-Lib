@@ -17,7 +17,7 @@ public class ConvertedAttribute extends BetterAttribute
     }
 
     @Override
-    protected double calculateSubtotal(Entity entity)
+    public double getBaseAmount(Entity entity)
     {
         if (entity instanceof EntityLivingBase) return MCTools.getAttribute((EntityLivingBase) entity, mcAttribute);
         return defaultBaseAmount;
