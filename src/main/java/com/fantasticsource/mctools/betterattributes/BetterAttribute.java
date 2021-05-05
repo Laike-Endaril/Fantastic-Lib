@@ -43,7 +43,7 @@ public class BetterAttribute
 
         for (BetterAttributeMod parentMod : betterAttribute.parentMods)
         {
-            if (BETTER_ATTRIBUTES.get(parentMod.betterAttributeName) == null)
+            if (BETTER_ATTRIBUTES.get(parentMod.parentAttributeName) == null)
             {
                 System.err.println(TextFormatting.RED + "COULD NOT REGISTER BETTER ATTRIBUTE, BECAUSE ONE OF ITS PARENTS IS NULL: " + name);
                 return;
@@ -68,19 +68,59 @@ public class BetterAttribute
     public double mcAttributeScalar = 1;
     public ArrayList<Predicate<Pair<Entity, ArrayList<String>>>> displayValueArgumentEditors = new ArrayList<>();
 
-    /**
-     * @param name              The name of the attribute.  May be used for name/description lang keys.  I suggest using the MC format eg. generic.maxHealth and expecting related lang keys eg. attribute.name.generic.maxHealth, attribute.description.generic.maxHealth.  Try to use a unique namespace instead of "generic".
-     * @param defaultBaseAmount The default base amount of the attribute (ie. not accounting for any changes from parent attributes or other external systems).
-     * @param parentMods        Parent attributes whose values have an effect on this attribute's total value.  Mostly important if canUseTotalAmountCaching is true.  May also be used for categorization purposes, eg. in GUIs
-     */
-    public BetterAttribute(String name, double defaultBaseAmount, BetterAttributeMod... parentMods)
+
+    public BetterAttribute(String name, BetterAttribute... parents)
+    {
+        this(name, 0, parents);
+    }
+
+    public BetterAttribute(String name, double defaultBaseAmount, BetterAttribute... parents)
+    {
+        this(name, defaultBaseAmount, 0, parents);
+    }
+
+    public BetterAttribute(String name, double defaultBaseAmount, int parentsOperation, BetterAttribute... parents)
+    {
+        this(name, defaultBaseAmount, true, genParentMods(name, parentsOperation, parents));
+    }
+
+    public BetterAttribute(String name, double defaultBaseAmount, int parentsOperation, Pair<BetterAttribute, Double>... parents)
+    {
+        this(name, defaultBaseAmount, true, genParentMods(name, parentsOperation, parents));
+    }
+
+    public BetterAttribute(String name, double defaultBaseAmount, boolean ignored, BetterAttributeMod... parentMods)
     {
         this.name = name;
         this.defaultBaseAmount = defaultBaseAmount;
         this.parentMods.addAll(Arrays.asList(parentMods));
-        for (BetterAttributeMod parent : parentMods) BETTER_ATTRIBUTES.get(parent.betterAttributeName).children.add(this);
+        for (BetterAttributeMod parentMod : parentMods) BETTER_ATTRIBUTES.get(parentMod.parentAttributeName).children.add(this);
         register(this);
     }
+
+
+    protected static BetterAttributeMod[] genParentMods(String attributeName, int operation, BetterAttribute... parents)
+    {
+        BetterAttributeMod[] mods = new BetterAttributeMod[parents.length];
+        for (int i = 0; i < mods.length; i++)
+        {
+            mods[i] = new BetterAttributeMod("Parent", attributeName, operation * 100, operation, 1);
+            mods[i].parentAttributeName = parents[i].name;
+        }
+        return mods;
+    }
+
+    protected static BetterAttributeMod[] genParentMods(String attributeName, int operation, Pair<BetterAttribute, Double>... parents)
+    {
+        BetterAttributeMod[] mods = new BetterAttributeMod[parents.length];
+        for (int i = 0; i < mods.length; i++)
+        {
+            mods[i] = new BetterAttributeMod("Parent", attributeName, operation * 100, operation, parents[i].getValue());
+            mods[i].parentAttributeName = parents[i].getKey().name;
+        }
+        return mods;
+    }
+
 
     public final void setBaseAmount(Entity entity, double amount)
     {

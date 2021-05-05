@@ -34,7 +34,7 @@ public class BetterAttributeMod extends NBTSerializableComponent
             OPERATION_ADD_OLD_TIER_TIMES_AMOUNT = 1,
             OPERATION_MULT = 2;
 
-    public String name = "", betterAttributeName = "";
+    public String name = "", betterAttributeName = "", parentAttributeName = "";
     public int priority = 0, operation = 0;
     public double amount = 0;
 
@@ -104,6 +104,7 @@ public class BetterAttributeMod extends NBTSerializableComponent
     {
         ByteBufUtils.writeUTF8String(buf, name);
         ByteBufUtils.writeUTF8String(buf, betterAttributeName);
+        ByteBufUtils.writeUTF8String(buf, parentAttributeName);
 
         buf.writeInt(priority);
         buf.writeInt(operation);
@@ -118,6 +119,7 @@ public class BetterAttributeMod extends NBTSerializableComponent
     {
         name = ByteBufUtils.readUTF8String(buf);
         betterAttributeName = ByteBufUtils.readUTF8String(buf);
+        parentAttributeName = ByteBufUtils.readUTF8String(buf);
 
         priority = buf.readInt();
         operation = buf.readInt();
@@ -130,7 +132,7 @@ public class BetterAttributeMod extends NBTSerializableComponent
     @Override
     public BetterAttributeMod save(OutputStream stream)
     {
-        new CStringUTF8().set(name).save(stream).set(betterAttributeName).save(stream);
+        new CStringUTF8().set(name).save(stream).set(betterAttributeName).save(stream).set(parentAttributeName).save(stream);
         new CInt().set(priority).save(stream).set(operation).save(stream);
         new CDouble().set(amount).save(stream);
 
@@ -145,6 +147,7 @@ public class BetterAttributeMod extends NBTSerializableComponent
 
         name = cs.load(stream).value;
         betterAttributeName = cs.load(stream).value;
+        parentAttributeName = cs.load(stream).value;
 
         priority = ci.load(stream).value;
         operation = ci.load(stream).value;
@@ -162,6 +165,7 @@ public class BetterAttributeMod extends NBTSerializableComponent
 
         compound.setString("name", name);
         compound.setString("betterAttributeName", betterAttributeName);
+        compound.setString("parentAttributeName", parentAttributeName);
 
         compound.setInteger("priority", priority);
         compound.setInteger("operation", operation);
@@ -178,6 +182,7 @@ public class BetterAttributeMod extends NBTSerializableComponent
 
         name = compound.getString("name");
         betterAttributeName = compound.getString("betterAttributeName");
+        parentAttributeName = compound.getString("parentAttributeName");
 
         priority = compound.getInteger("priority");
         operation = compound.getInteger("operation");
@@ -199,7 +204,7 @@ public class BetterAttributeMod extends NBTSerializableComponent
         String attributeName = event.attribute.name;
         Entity entity = event.entity;
 
-        for (BetterAttributeMod parentMod : event.attribute.parentMods) applyMod(event.functions, parentMod);
+        for (BetterAttributeMod parentMod : event.attribute.parentMods) applyMod(entity, event.functions, parentMod);
 
         ArrayList<NBTTagCompound> compounds = new ArrayList<>();
         compounds.add(entity.getEntityData());
@@ -217,27 +222,28 @@ public class BetterAttributeMod extends NBTSerializableComponent
             {
                 BetterAttributeMod mod = new BetterAttributeMod();
                 mod.deserializeNBT(compound.getCompoundTag(key));
-                applyMod(event.functions, mod);
+                applyMod(entity, event.functions, mod);
             }
         }
     }
 
-    protected static void applyMod(ExplicitPriorityQueue<Predicate<double[]>> functions, BetterAttributeMod mod)
+    protected static void applyMod(Entity entity, ExplicitPriorityQueue<Predicate<double[]>> functions, BetterAttributeMod mod)
     {
         functions.add(d ->
         {
+            BetterAttribute parent = BetterAttribute.BETTER_ATTRIBUTES.get(mod.parentAttributeName);
             switch (mod.operation)
             {
                 case 0:
-                    d[0] += mod.amount;
+                    d[0] += parent != null ? parent.getTotalAmount(entity) * mod.amount : mod.amount;
                     break;
 
                 case 1:
-                    d[0] += d[1] * mod.amount;
+                    d[0] += d[1] * (parent != null ? parent.getTotalAmount(entity) * mod.amount : mod.amount);
                     break;
 
                 case 2:
-                    d[0] *= mod.amount;
+                    d[0] *= parent != null ? parent.getTotalAmount(entity) * mod.amount : mod.amount;
                     break;
             }
             return true;
