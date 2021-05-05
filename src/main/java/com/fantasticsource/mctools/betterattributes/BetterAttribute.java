@@ -126,7 +126,12 @@ public class BetterAttribute
     {
         if (amount == getBaseAmount(entity)) return;
 
-        MCTools.getOrGenerateSubCompound(entity.getEntityData(), MODID, "baseAttributes").setDouble(name, amount);
+        if (amount == defaultBaseAmount)
+        {
+            NBTTagCompound compound = MCTools.getSubCompoundIfExists(entity.getEntityData(), MODID, "baseAttributes");
+            if (compound != null) compound.removeTag(name);
+        }
+        else MCTools.getOrGenerateSubCompound(entity.getEntityData(), MODID, "baseAttributes").setDouble(name, amount);
         calculateTotal(entity);
     }
 
