@@ -43,6 +43,21 @@ public class BetterAttributeMod extends NBTSerializableComponent
     {
     }
 
+    public BetterAttributeMod(String name, BetterAttribute attribute, double amount)
+    {
+        this(name, attribute, 0, amount);
+    }
+
+    public BetterAttributeMod(String name, BetterAttribute attribute, int operation, double amount)
+    {
+        this(name, attribute, 0, operation, amount);
+    }
+
+    public BetterAttributeMod(String name, BetterAttribute attribute, int priority, int operation, double amount)
+    {
+        this(name, attribute.name, priority, operation, amount);
+    }
+
     public BetterAttributeMod(String name, String betterAttributeName, double amount)
     {
         this(name, betterAttributeName, 0, amount);
