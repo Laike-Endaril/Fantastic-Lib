@@ -108,7 +108,7 @@ public class BetterAttributeMod extends NBTSerializableComponent
                 break;
         }
 
-        result += TextFormatting.GRAY + " " + I18n.translateToLocal(betterAttributeName);
+        result += TextFormatting.GRAY + " " + I18n.translateToLocal("attribute.name." + betterAttributeName);
 
         return result;
     }
