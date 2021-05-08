@@ -3,7 +3,7 @@ package com.fantasticsource.fantasticlib;
 import com.fantasticsource.fantasticlib.api.INBTCap;
 import com.fantasticsource.fantasticlib.config.FantasticConfig;
 import com.fantasticsource.mctools.*;
-import com.fantasticsource.mctools.animation.CPlayerAnimation;
+import com.fantasticsource.mctools.animation.CBipedAnimation;
 import com.fantasticsource.mctools.animation.ModelPlayerEdit;
 import com.fantasticsource.mctools.aw.ForcedAWSkinOverrides;
 import com.fantasticsource.mctools.aw.RenderModes;
@@ -126,7 +126,7 @@ public class FantasticLib
             if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) ForcedAWSkinOverrides.clientInit();
         }
 
-        if (event.getSide() == Side.CLIENT) ModelPlayerEdit.init(event);
+        if (event.getSide() == Side.CLIENT) CBipedAnimation.init(event);
 
         DataFiles.output();
     }
@@ -243,41 +243,41 @@ public class FantasticLib
         //Floating
         CPath floatyPath = new CPathConstant(new VectorN(-0.25)).add(new CPathSinuous(new CPathConstant(new VectorN(0.25)), 0.2));
         CPath floatyPath2 = new CPathConstant(new VectorN(-1)).mult(floatyPath);
-        CPlayerAnimation.setHeadYPath(event.getEntity(), floatyPath);
-        CPlayerAnimation.setChestZPath(event.getEntity(), floatyPath);
-        CPlayerAnimation.setLeftArmXPath(event.getEntity(), floatyPath2);
-        CPlayerAnimation.setRightArmXPath(event.getEntity(), floatyPath);
-        CPlayerAnimation.setLeftLegXPath(event.getEntity(), floatyPath2);
-        CPlayerAnimation.setRightLegXPath(event.getEntity(), floatyPath);
+        CBipedAnimation.setHeadYPath(event.getEntity(), floatyPath);
+        CBipedAnimation.setChestZPath(event.getEntity(), floatyPath);
+        CBipedAnimation.setLeftArmXPath(event.getEntity(), floatyPath2);
+        CBipedAnimation.setRightArmXPath(event.getEntity(), floatyPath);
+        CBipedAnimation.setLeftLegXPath(event.getEntity(), floatyPath2);
+        CBipedAnimation.setRightLegXPath(event.getEntity(), floatyPath);
 
         //Nodding
         CPath nodPath = new CPathSinuous(new CPathConstant(new VectorN(0.25)), 0.75);
-        CPlayerAnimation.setHeadXRotPath(event.getEntity(), nodPath);
-        CPlayerAnimation.setChestXRotPath(event.getEntity(), nodPath);
-        CPlayerAnimation.setLeftArmXRotPath(event.getEntity(), nodPath);
-        CPlayerAnimation.setRightArmXRotPath(event.getEntity(), nodPath);
-        CPlayerAnimation.setLeftLegXRotPath(event.getEntity(), nodPath);
-        CPlayerAnimation.setRightLegXRotPath(event.getEntity(), nodPath);
+        CBipedAnimation.setHeadXRotPath(event.getEntity(), nodPath);
+        CBipedAnimation.setChestXRotPath(event.getEntity(), nodPath);
+        CBipedAnimation.setLeftArmXRotPath(event.getEntity(), nodPath);
+        CBipedAnimation.setRightArmXRotPath(event.getEntity(), nodPath);
+        CBipedAnimation.setLeftLegXRotPath(event.getEntity(), nodPath);
+        CBipedAnimation.setRightLegXRotPath(event.getEntity(), nodPath);
 
         //Expanding/shrinking
         CPath expandShrinkPath = new CPathConstant(new VectorN(1)).add(new CPathSinuous(new CPathConstant(new VectorN(0.1)), 1));
-        CPlayerAnimation.setHeadXScalePath(event.getEntity(), expandShrinkPath);
-        CPlayerAnimation.setHeadYScalePath(event.getEntity(), expandShrinkPath);
-        CPlayerAnimation.setHeadZScalePath(event.getEntity(), expandShrinkPath);
-        CPlayerAnimation.setChestXScalePath(event.getEntity(), expandShrinkPath);
-        CPlayerAnimation.setChestYScalePath(event.getEntity(), expandShrinkPath);
-        CPlayerAnimation.setChestZScalePath(event.getEntity(), expandShrinkPath);
-        CPlayerAnimation.setLeftArmXScalePath(event.getEntity(), expandShrinkPath);
-        CPlayerAnimation.setLeftArmYScalePath(event.getEntity(), expandShrinkPath);
-        CPlayerAnimation.setLeftArmZScalePath(event.getEntity(), expandShrinkPath);
-        CPlayerAnimation.setRightArmXScalePath(event.getEntity(), expandShrinkPath);
-        CPlayerAnimation.setRightArmYScalePath(event.getEntity(), expandShrinkPath);
-        CPlayerAnimation.setRightArmZScalePath(event.getEntity(), expandShrinkPath);
-        CPlayerAnimation.setLeftLegXScalePath(event.getEntity(), expandShrinkPath);
-        CPlayerAnimation.setLeftLegYScalePath(event.getEntity(), expandShrinkPath);
-        CPlayerAnimation.setLeftLegZScalePath(event.getEntity(), expandShrinkPath);
-        CPlayerAnimation.setRightLegXScalePath(event.getEntity(), expandShrinkPath);
-        CPlayerAnimation.setRightLegYScalePath(event.getEntity(), expandShrinkPath);
-        CPlayerAnimation.setRightLegZScalePath(event.getEntity(), expandShrinkPath);
+        CBipedAnimation.setHeadXScalePath(event.getEntity(), expandShrinkPath);
+        CBipedAnimation.setHeadYScalePath(event.getEntity(), expandShrinkPath);
+        CBipedAnimation.setHeadZScalePath(event.getEntity(), expandShrinkPath);
+        CBipedAnimation.setChestXScalePath(event.getEntity(), expandShrinkPath);
+        CBipedAnimation.setChestYScalePath(event.getEntity(), expandShrinkPath);
+        CBipedAnimation.setChestZScalePath(event.getEntity(), expandShrinkPath);
+        CBipedAnimation.setLeftArmXScalePath(event.getEntity(), expandShrinkPath);
+        CBipedAnimation.setLeftArmYScalePath(event.getEntity(), expandShrinkPath);
+        CBipedAnimation.setLeftArmZScalePath(event.getEntity(), expandShrinkPath);
+        CBipedAnimation.setRightArmXScalePath(event.getEntity(), expandShrinkPath);
+        CBipedAnimation.setRightArmYScalePath(event.getEntity(), expandShrinkPath);
+        CBipedAnimation.setRightArmZScalePath(event.getEntity(), expandShrinkPath);
+        CBipedAnimation.setLeftLegXScalePath(event.getEntity(), expandShrinkPath);
+        CBipedAnimation.setLeftLegYScalePath(event.getEntity(), expandShrinkPath);
+        CBipedAnimation.setLeftLegZScalePath(event.getEntity(), expandShrinkPath);
+        CBipedAnimation.setRightLegXScalePath(event.getEntity(), expandShrinkPath);
+        CBipedAnimation.setRightLegYScalePath(event.getEntity(), expandShrinkPath);
+        CBipedAnimation.setRightLegZScalePath(event.getEntity(), expandShrinkPath);
     }
 }

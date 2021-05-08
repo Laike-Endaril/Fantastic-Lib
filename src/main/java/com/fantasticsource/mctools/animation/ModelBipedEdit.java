@@ -1,9 +1,6 @@
 package com.fantasticsource.mctools.animation;
 
-import com.fantasticsource.tools.ReflectionTool;
 import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.model.ModelBox;
-import net.minecraft.client.model.ModelPlayer;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
@@ -11,22 +8,15 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.math.MathHelper;
 
-import java.lang.reflect.Field;
-
-public class ModelPlayerEdit extends ModelPlayer
+public class ModelBipedEdit extends ModelBiped
 {
-    public static final Field MODEL_PLAYER_BIPED_CAPE_FIELD = ReflectionTool.getField(ModelPlayer.class, "field_178729_w", "bipedCape");
-
-
-    public ModelPlayerEdit(float modelSize, boolean smallArmsIn)
+    public ModelBipedEdit(float modelSize)
     {
-        super(modelSize, smallArmsIn);
+        super(modelSize);
     }
 
-    public ModelPlayerEdit(ModelPlayer oldModel)
+    public ModelBipedEdit(ModelBiped oldModel)
     {
-        super(0, isSmallArms(oldModel));
-
         leftArmPose = oldModel.leftArmPose;
         rightArmPose = oldModel.rightArmPose;
         textureWidth = oldModel.textureWidth;
@@ -40,20 +30,6 @@ public class ModelPlayerEdit extends ModelPlayer
         bipedRightLeg = oldModel.bipedRightLeg;
 
         bipedHeadwear = oldModel.bipedHeadwear;
-        bipedBodyWear = oldModel.bipedBodyWear;
-        bipedLeftArmwear = oldModel.bipedLeftArmwear;
-        bipedRightArmwear = oldModel.bipedRightArmwear;
-        bipedLeftLegwear = oldModel.bipedLeftLegwear;
-        bipedRightLegwear = oldModel.bipedRightLegwear;
-
-        ReflectionTool.set(MODEL_PLAYER_BIPED_CAPE_FIELD, this, ReflectionTool.get(MODEL_PLAYER_BIPED_CAPE_FIELD, oldModel));
-    }
-
-
-    public static boolean isSmallArms(ModelPlayer modelPlayer)
-    {
-        ModelBox box = modelPlayer.bipedLeftArm.cubeList.get(0);
-        return box.posX2 - box.posX1 == 3;
     }
 
 
@@ -202,26 +178,20 @@ public class ModelPlayerEdit extends ModelPlayer
         bipedRightArm.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
         bipedLeftArm.rotateAngleX -= MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
 
-        if (rightArmPose == ModelBiped.ArmPose.BOW_AND_ARROW)
+        if (rightArmPose == ArmPose.BOW_AND_ARROW)
         {
             bipedRightArm.rotateAngleY = -0.1F + bipedHead.rotateAngleY;
             bipedLeftArm.rotateAngleY = 0.1F + bipedHead.rotateAngleY + 0.4F;
             bipedRightArm.rotateAngleX = -((float) Math.PI / 2F) + bipedHead.rotateAngleX;
             bipedLeftArm.rotateAngleX = -((float) Math.PI / 2F) + bipedHead.rotateAngleX;
         }
-        else if (leftArmPose == ModelBiped.ArmPose.BOW_AND_ARROW)
+        else if (leftArmPose == ArmPose.BOW_AND_ARROW)
         {
             bipedRightArm.rotateAngleY = -0.1F + bipedHead.rotateAngleY - 0.4F;
             bipedLeftArm.rotateAngleY = 0.1F + bipedHead.rotateAngleY;
             bipedRightArm.rotateAngleX = -((float) Math.PI / 2F) + bipedHead.rotateAngleX;
             bipedLeftArm.rotateAngleX = -((float) Math.PI / 2F) + bipedHead.rotateAngleX;
         }
-
-
-        //From ModelPlayer
-        ModelRenderer bipedCape = (ModelRenderer) ReflectionTool.get(MODEL_PLAYER_BIPED_CAPE_FIELD, this);
-        if (entityIn.isSneaking()) bipedCape.rotationPointY = 2.0F;
-        else bipedCape.rotationPointY = 0.0F;
 
 
         //Custom via paths
@@ -276,11 +246,6 @@ public class ModelPlayerEdit extends ModelPlayer
 
         //Lastly, copy values from body parts to correlating worn armor parts
         copyModelData(bipedHead, bipedHeadwear);
-        copyModelData(bipedBody, bipedBodyWear);
-        copyModelData(bipedLeftArm, bipedLeftArmwear);
-        copyModelData(bipedRightArm, bipedRightArmwear);
-        copyModelData(bipedLeftLeg, bipedLeftLegwear);
-        copyModelData(bipedRightLeg, bipedRightLegwear);
     }
 
     public static void copyModelData(ModelRenderer from, ModelRenderer to)
@@ -414,7 +379,6 @@ public class ModelPlayerEdit extends ModelPlayer
                 GlStateManager.scale(chestScale[0], chestScale[1], chestScale[2]);
             }
             bipedBody.render(scale);
-            bipedBodyWear.render(scale);
             if (chestScale != null) GlStateManager.popMatrix();
 
             if (leftArmScale != null)
@@ -423,7 +387,6 @@ public class ModelPlayerEdit extends ModelPlayer
                 GlStateManager.scale(leftArmScale[0], leftArmScale[1], leftArmScale[2]);
             }
             bipedLeftArm.render(scale);
-            bipedLeftArmwear.render(scale);
             if (leftArmScale != null) GlStateManager.popMatrix();
 
             if (rightArmScale != null)
@@ -432,7 +395,6 @@ public class ModelPlayerEdit extends ModelPlayer
                 GlStateManager.scale(rightArmScale[0], rightArmScale[1], rightArmScale[2]);
             }
             bipedRightArm.render(scale);
-            bipedRightArmwear.render(scale);
             if (rightArmScale != null) GlStateManager.popMatrix();
 
             if (leftLegScale != null)
@@ -441,12 +403,10 @@ public class ModelPlayerEdit extends ModelPlayer
                 GlStateManager.scale(leftLegScale[0], leftLegScale[1], leftLegScale[2]);
             }
             bipedLeftLeg.render(scale);
-            bipedLeftLegwear.render(scale);
             if (leftLegScale != null) GlStateManager.popMatrix();
 
             if (rightLegScale != null) GlStateManager.scale(rightLegScale[0], rightLegScale[1], rightLegScale[2]);
             bipedRightLeg.render(scale);
-            bipedRightLegwear.render(scale);
         }
         else
         {
@@ -470,7 +430,6 @@ public class ModelPlayerEdit extends ModelPlayer
                 GlStateManager.scale(chestScale[0], chestScale[1], chestScale[2]);
             }
             bipedBody.render(scale);
-            bipedBodyWear.render(scale);
             if (chestScale != null) GlStateManager.popMatrix();
 
             if (leftArmScale != null)
@@ -479,7 +438,6 @@ public class ModelPlayerEdit extends ModelPlayer
                 GlStateManager.scale(leftArmScale[0], leftArmScale[1], leftArmScale[2]);
             }
             bipedLeftArm.render(scale);
-            bipedLeftArmwear.render(scale);
             if (leftArmScale != null) GlStateManager.popMatrix();
 
             if (rightArmScale != null)
@@ -488,7 +446,6 @@ public class ModelPlayerEdit extends ModelPlayer
                 GlStateManager.scale(rightArmScale[0], rightArmScale[1], rightArmScale[2]);
             }
             bipedRightArm.render(scale);
-            bipedRightArmwear.render(scale);
             if (rightArmScale != null) GlStateManager.popMatrix();
 
             if (leftLegScale != null)
@@ -497,12 +454,10 @@ public class ModelPlayerEdit extends ModelPlayer
                 GlStateManager.scale(leftLegScale[0], leftLegScale[1], leftLegScale[2]);
             }
             bipedLeftLeg.render(scale);
-            bipedLeftLegwear.render(scale);
             if (leftLegScale != null) GlStateManager.popMatrix();
 
             if (rightLegScale != null) GlStateManager.scale(rightLegScale[0], rightLegScale[1], rightLegScale[2]);
             bipedRightLeg.render(scale);
-            bipedRightLegwear.render(scale);
         }
 
         GlStateManager.popMatrix();
