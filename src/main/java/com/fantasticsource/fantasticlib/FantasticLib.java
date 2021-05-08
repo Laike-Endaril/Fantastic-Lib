@@ -63,6 +63,7 @@ public class FantasticLib
             if (FantasticConfig.entityRenderFixer) MinecraftForge.EVENT_BUS.register(EntityRenderFixer.class);
             MinecraftForge.EVENT_BUS.register(TooltipFixer.class);
             MinecraftForge.EVENT_BUS.register(TooltipAlterer.class);
+            MinecraftForge.EVENT_BUS.register(ModelPlayerEdit.class);
 
             if (DEV_ENV) MinecraftForge.EVENT_BUS.register(TestGUI.class);
         }
@@ -116,6 +117,8 @@ public class FantasticLib
             MinecraftForge.EVENT_BUS.register(TransientAWSkinHandler.class);
             if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) ForcedAWSkinOverrides.clientInit();
         }
+
+        if (event.getSide() == Side.CLIENT) ModelPlayerEdit.init(event);
 
         DataFiles.output();
     }
