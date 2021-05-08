@@ -1,4 +1,4 @@
-package com.fantasticsource.mctools;
+package com.fantasticsource.mctools.animation;
 
 import com.fantasticsource.tools.ReflectionTool;
 import net.minecraft.client.Minecraft;
@@ -209,22 +209,51 @@ public class ModelPlayerEdit extends ModelPlayer
             bipedLeftArm.rotateAngleX = -((float) Math.PI / 2F) + bipedHead.rotateAngleX;
         }
 
-        copyModelAngles(bipedHead, bipedHeadwear);
-
 
         //From ModelPlayer
-        copyModelAngles(bipedLeftLeg, bipedLeftLegwear);
-        copyModelAngles(bipedRightLeg, bipedRightLegwear);
-        copyModelAngles(bipedLeftArm, bipedLeftArmwear);
-        copyModelAngles(bipedRightArm, bipedRightArmwear);
-        copyModelAngles(bipedBody, bipedBodyWear);
-
         ModelRenderer bipedCape = (ModelRenderer) ReflectionTool.get(MODEL_PLAYER_BIPED_CAPE_FIELD, this);
         if (entityIn.isSneaking()) bipedCape.rotationPointY = 2.0F;
         else bipedCape.rotationPointY = 0.0F;
 
 
         //Custom via paths
+        long millis = System.currentTimeMillis();
+        CPlayerAnimation playerAnimation = CPlayerAnimation.ANIMATION_DATA.get(entityIn);
+        if (playerAnimation != null)
+        {
+            if (playerAnimation.head.xRotPath != null) bipedHead.rotateAngleX = (float) playerAnimation.head.xRotPath.getRelativePosition(millis).values[0];
+            if (playerAnimation.head.yRotPath != null) bipedHead.rotateAngleY = (float) playerAnimation.head.yRotPath.getRelativePosition(millis).values[0];
+            if (playerAnimation.head.zRotPath != null) bipedHead.rotateAngleZ = (float) playerAnimation.head.zRotPath.getRelativePosition(millis).values[0];
+
+            if (playerAnimation.chest.xRotPath != null) bipedBody.rotateAngleX = (float) playerAnimation.chest.xRotPath.getRelativePosition(millis).values[0];
+            if (playerAnimation.chest.yRotPath != null) bipedBody.rotateAngleY = (float) playerAnimation.chest.yRotPath.getRelativePosition(millis).values[0];
+            if (playerAnimation.chest.zRotPath != null) bipedBody.rotateAngleZ = (float) playerAnimation.chest.zRotPath.getRelativePosition(millis).values[0];
+
+            if (playerAnimation.leftArm.xRotPath != null) bipedLeftArm.rotateAngleX = (float) playerAnimation.leftArm.xRotPath.getRelativePosition(millis).values[0];
+            if (playerAnimation.leftArm.yRotPath != null) bipedLeftArm.rotateAngleY = (float) playerAnimation.leftArm.yRotPath.getRelativePosition(millis).values[0];
+            if (playerAnimation.leftArm.zRotPath != null) bipedLeftArm.rotateAngleZ = (float) playerAnimation.leftArm.zRotPath.getRelativePosition(millis).values[0];
+
+            if (playerAnimation.rightArm.xRotPath != null) bipedRightArm.rotateAngleX = (float) playerAnimation.rightArm.xRotPath.getRelativePosition(millis).values[0];
+            if (playerAnimation.rightArm.yRotPath != null) bipedRightArm.rotateAngleY = (float) playerAnimation.rightArm.yRotPath.getRelativePosition(millis).values[0];
+            if (playerAnimation.rightArm.zRotPath != null) bipedRightArm.rotateAngleZ = (float) playerAnimation.rightArm.zRotPath.getRelativePosition(millis).values[0];
+
+            if (playerAnimation.leftLeg.xRotPath != null) bipedLeftLeg.rotateAngleX = (float) playerAnimation.leftLeg.xRotPath.getRelativePosition(millis).values[0];
+            if (playerAnimation.leftLeg.yRotPath != null) bipedLeftLeg.rotateAngleY = (float) playerAnimation.leftLeg.yRotPath.getRelativePosition(millis).values[0];
+            if (playerAnimation.leftLeg.zRotPath != null) bipedLeftLeg.rotateAngleZ = (float) playerAnimation.leftLeg.zRotPath.getRelativePosition(millis).values[0];
+
+            if (playerAnimation.rightLeg.xRotPath != null) bipedRightLeg.rotateAngleX = (float) playerAnimation.rightLeg.xRotPath.getRelativePosition(millis).values[0];
+            if (playerAnimation.rightLeg.yRotPath != null) bipedRightLeg.rotateAngleY = (float) playerAnimation.rightLeg.yRotPath.getRelativePosition(millis).values[0];
+            if (playerAnimation.rightLeg.zRotPath != null) bipedRightLeg.rotateAngleZ = (float) playerAnimation.rightLeg.zRotPath.getRelativePosition(millis).values[0];
+        }
+
+
+        //Lastly, copy values from body parts to correlating worn armor parts
+        copyModelAngles(bipedHead, bipedHeadwear);
+        copyModelAngles(bipedLeftLeg, bipedLeftLegwear);
+        copyModelAngles(bipedRightLeg, bipedRightLegwear);
+        copyModelAngles(bipedLeftArm, bipedLeftArmwear);
+        copyModelAngles(bipedRightArm, bipedRightArmwear);
+        copyModelAngles(bipedBody, bipedBodyWear);
     }
 
 

@@ -3,6 +3,7 @@ package com.fantasticsource.fantasticlib;
 import com.fantasticsource.fantasticlib.api.INBTCap;
 import com.fantasticsource.fantasticlib.config.FantasticConfig;
 import com.fantasticsource.mctools.*;
+import com.fantasticsource.mctools.animation.ModelPlayerEdit;
 import com.fantasticsource.mctools.aw.ForcedAWSkinOverrides;
 import com.fantasticsource.mctools.aw.RenderModes;
 import com.fantasticsource.mctools.aw.TransientAWSkinHandler;
@@ -22,6 +23,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
@@ -225,4 +227,12 @@ public class FantasticLib
 //            }
 //        }
 //    }
+
+
+    @SubscribeEvent
+    public static void test(EntityJoinWorldEvent event)
+    {
+        //Nodding
+//        if (event.getEntity() instanceof EntityPlayer) CPlayerAnimation.setHeadXRotPath(event.getEntity(), new CPathSinuous(new CPathConstant(new VectorN(0.15)), 0.75));
+    }
 }

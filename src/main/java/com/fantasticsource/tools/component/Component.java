@@ -13,6 +13,17 @@ public abstract class Component
         return component;
     }
 
+    public static <T extends Component> T writeMarkedOrNull(ByteBuf buf, T component)
+    {
+        if (component == null) buf.writeBoolean(false);
+        else
+        {
+            buf.writeBoolean(true);
+            writeMarked(buf, component);
+        }
+        return component;
+    }
+
     public static Component readMarked(ByteBuf buf)
     {
         try
@@ -26,10 +37,27 @@ public abstract class Component
         }
     }
 
+    public static Component readMarkedOrNull(ByteBuf buf)
+    {
+        if (buf.readBoolean()) return readMarked(buf);
+        return null;
+    }
+
     public static <T extends Component> T saveMarked(OutputStream stream, T component)
     {
         new CStringUTF8().set(component.getClass().getName()).save(stream);
         component.save(stream);
+        return component;
+    }
+
+    public static <T extends Component> T saveMarkedOrNull(OutputStream stream, T component)
+    {
+        if (component == null) new CBoolean().set(false).save(stream);
+        else
+        {
+            new CBoolean().set(true).save(stream);
+            saveMarked(stream, component);
+        }
         return component;
     }
 
@@ -44,6 +72,12 @@ public abstract class Component
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static Component loadMarkedOrNull(InputStream stream)
+    {
+        if (new CBoolean().load(stream).value) return loadMarked(stream);
+        return null;
     }
 
     public static <T extends Component> T writeTextMarked(BufferedWriter writer, T component)
