@@ -33,6 +33,21 @@ public class CPlayerAnimation extends Component
     }
 
 
+    public static void setHeadXPath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).head.xPath = path;
+    }
+
+    public static void setHeadYPath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).head.yPath = path;
+    }
+
+    public static void setHeadZPath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).head.zPath = path;
+    }
+
     public static void setHeadXRotPath(Entity entity, CPath path)
     {
         ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).head.xRotPath = path;
@@ -48,6 +63,36 @@ public class CPlayerAnimation extends Component
         ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).head.zRotPath = path;
     }
 
+    public static void setHeadXScalePath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).head.xScalePath = path;
+    }
+
+    public static void setHeadYScalePath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).head.yScalePath = path;
+    }
+
+    public static void setHeadZScalePath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).head.zScalePath = path;
+    }
+
+
+    public static void setChestXPath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).chest.xPath = path;
+    }
+
+    public static void setChestYPath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).chest.yPath = path;
+    }
+
+    public static void setChestZPath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).chest.zPath = path;
+    }
 
     public static void setChestXRotPath(Entity entity, CPath path)
     {
@@ -64,6 +109,36 @@ public class CPlayerAnimation extends Component
         ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).chest.zRotPath = path;
     }
 
+    public static void setChestXScalePath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).chest.xScalePath = path;
+    }
+
+    public static void setChestYScalePath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).chest.yScalePath = path;
+    }
+
+    public static void setChestZScalePath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).chest.zScalePath = path;
+    }
+
+
+    public static void setLeftArmXPath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).leftArm.xPath = path;
+    }
+
+    public static void setLeftArmYPath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).leftArm.yPath = path;
+    }
+
+    public static void setLeftArmZPath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).leftArm.zPath = path;
+    }
 
     public static void setLeftArmXRotPath(Entity entity, CPath path)
     {
@@ -80,6 +155,36 @@ public class CPlayerAnimation extends Component
         ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).leftArm.zRotPath = path;
     }
 
+    public static void setLeftArmXScalePath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).leftArm.xScalePath = path;
+    }
+
+    public static void setLeftArmYScalePath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).leftArm.yScalePath = path;
+    }
+
+    public static void setLeftArmZScalePath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).leftArm.zScalePath = path;
+    }
+
+
+    public static void setRightArmXPath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).rightArm.xPath = path;
+    }
+
+    public static void setRightArmYPath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).rightArm.yPath = path;
+    }
+
+    public static void setRightArmZPath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).rightArm.zPath = path;
+    }
 
     public static void setRightArmXRotPath(Entity entity, CPath path)
     {
@@ -96,6 +201,36 @@ public class CPlayerAnimation extends Component
         ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).rightArm.zRotPath = path;
     }
 
+    public static void setRightArmXScalePath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).rightArm.xScalePath = path;
+    }
+
+    public static void setRightArmYScalePath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).rightArm.yScalePath = path;
+    }
+
+    public static void setRightArmZScalePath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).rightArm.zScalePath = path;
+    }
+
+
+    public static void setLeftLegXPath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).leftLeg.xPath = path;
+    }
+
+    public static void setLeftLegYPath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).leftLeg.yPath = path;
+    }
+
+    public static void setLeftLegZPath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).leftLeg.zPath = path;
+    }
 
     public static void setLeftLegXRotPath(Entity entity, CPath path)
     {
@@ -112,6 +247,36 @@ public class CPlayerAnimation extends Component
         ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).leftLeg.zRotPath = path;
     }
 
+    public static void setLeftLegXScalePath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).leftLeg.xScalePath = path;
+    }
+
+    public static void setLeftLegYScalePath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).leftLeg.yScalePath = path;
+    }
+
+    public static void setLeftLegZScalePath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).leftLeg.zScalePath = path;
+    }
+
+
+    public static void setRightLegXPath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).rightLeg.xPath = path;
+    }
+
+    public static void setRightLegYPath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).rightLeg.yPath = path;
+    }
+
+    public static void setRightLegZPath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).rightLeg.zPath = path;
+    }
 
     public static void setRightLegXRotPath(Entity entity, CPath path)
     {
@@ -126,6 +291,21 @@ public class CPlayerAnimation extends Component
     public static void setRightLegZRotPath(Entity entity, CPath path)
     {
         ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).rightLeg.zRotPath = path;
+    }
+
+    public static void setRightLegXScalePath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).rightLeg.xScalePath = path;
+    }
+
+    public static void setRightLegYScalePath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).rightLeg.yScalePath = path;
+    }
+
+    public static void setRightLegZScalePath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CPlayerAnimation()).rightLeg.zScalePath = path;
     }
 
 

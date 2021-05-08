@@ -3,6 +3,7 @@ package com.fantasticsource.mctools.animation;
 import com.fantasticsource.tools.ReflectionTool;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.*;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -217,30 +218,49 @@ public class ModelPlayerEdit extends ModelPlayer
 
 
         //Custom via paths
-        long millis = System.currentTimeMillis();
         CPlayerAnimation playerAnimation = CPlayerAnimation.ANIMATION_DATA.get(entityIn);
         if (playerAnimation != null)
         {
+            long millis = System.currentTimeMillis();
+
+            if (playerAnimation.head.xPath != null) bipedHead.offsetX = (float) playerAnimation.head.xPath.getRelativePosition(millis).values[0];
+            if (playerAnimation.head.yPath != null) bipedHead.offsetY = (float) playerAnimation.head.yPath.getRelativePosition(millis).values[0];
+            if (playerAnimation.head.zPath != null) bipedHead.offsetZ = (float) playerAnimation.head.zPath.getRelativePosition(millis).values[0];
             if (playerAnimation.head.xRotPath != null) bipedHead.rotateAngleX = (float) playerAnimation.head.xRotPath.getRelativePosition(millis).values[0];
             if (playerAnimation.head.yRotPath != null) bipedHead.rotateAngleY = (float) playerAnimation.head.yRotPath.getRelativePosition(millis).values[0];
             if (playerAnimation.head.zRotPath != null) bipedHead.rotateAngleZ = (float) playerAnimation.head.zRotPath.getRelativePosition(millis).values[0];
 
+            if (playerAnimation.chest.xPath != null) bipedBody.offsetX = (float) playerAnimation.chest.xPath.getRelativePosition(millis).values[0];
+            if (playerAnimation.chest.yPath != null) bipedBody.offsetY = (float) playerAnimation.chest.yPath.getRelativePosition(millis).values[0];
+            if (playerAnimation.chest.zPath != null) bipedBody.offsetZ = (float) playerAnimation.chest.zPath.getRelativePosition(millis).values[0];
             if (playerAnimation.chest.xRotPath != null) bipedBody.rotateAngleX = (float) playerAnimation.chest.xRotPath.getRelativePosition(millis).values[0];
             if (playerAnimation.chest.yRotPath != null) bipedBody.rotateAngleY = (float) playerAnimation.chest.yRotPath.getRelativePosition(millis).values[0];
             if (playerAnimation.chest.zRotPath != null) bipedBody.rotateAngleZ = (float) playerAnimation.chest.zRotPath.getRelativePosition(millis).values[0];
 
+            if (playerAnimation.leftArm.xPath != null) bipedLeftArm.offsetX = (float) playerAnimation.leftArm.xPath.getRelativePosition(millis).values[0];
+            if (playerAnimation.leftArm.yPath != null) bipedLeftArm.offsetY = (float) playerAnimation.leftArm.yPath.getRelativePosition(millis).values[0];
+            if (playerAnimation.leftArm.zPath != null) bipedLeftArm.offsetZ = (float) playerAnimation.leftArm.zPath.getRelativePosition(millis).values[0];
             if (playerAnimation.leftArm.xRotPath != null) bipedLeftArm.rotateAngleX = (float) playerAnimation.leftArm.xRotPath.getRelativePosition(millis).values[0];
             if (playerAnimation.leftArm.yRotPath != null) bipedLeftArm.rotateAngleY = (float) playerAnimation.leftArm.yRotPath.getRelativePosition(millis).values[0];
             if (playerAnimation.leftArm.zRotPath != null) bipedLeftArm.rotateAngleZ = (float) playerAnimation.leftArm.zRotPath.getRelativePosition(millis).values[0];
 
+            if (playerAnimation.rightArm.xPath != null) bipedRightArm.offsetX = (float) playerAnimation.rightArm.xPath.getRelativePosition(millis).values[0];
+            if (playerAnimation.rightArm.yPath != null) bipedRightArm.offsetY = (float) playerAnimation.rightArm.yPath.getRelativePosition(millis).values[0];
+            if (playerAnimation.rightArm.zPath != null) bipedRightArm.offsetZ = (float) playerAnimation.rightArm.zPath.getRelativePosition(millis).values[0];
             if (playerAnimation.rightArm.xRotPath != null) bipedRightArm.rotateAngleX = (float) playerAnimation.rightArm.xRotPath.getRelativePosition(millis).values[0];
             if (playerAnimation.rightArm.yRotPath != null) bipedRightArm.rotateAngleY = (float) playerAnimation.rightArm.yRotPath.getRelativePosition(millis).values[0];
             if (playerAnimation.rightArm.zRotPath != null) bipedRightArm.rotateAngleZ = (float) playerAnimation.rightArm.zRotPath.getRelativePosition(millis).values[0];
 
+            if (playerAnimation.leftLeg.xPath != null) bipedLeftLeg.offsetX = (float) playerAnimation.leftLeg.xPath.getRelativePosition(millis).values[0];
+            if (playerAnimation.leftLeg.yPath != null) bipedLeftLeg.offsetY = (float) playerAnimation.leftLeg.yPath.getRelativePosition(millis).values[0];
+            if (playerAnimation.leftLeg.zPath != null) bipedLeftLeg.offsetZ = (float) playerAnimation.leftLeg.zPath.getRelativePosition(millis).values[0];
             if (playerAnimation.leftLeg.xRotPath != null) bipedLeftLeg.rotateAngleX = (float) playerAnimation.leftLeg.xRotPath.getRelativePosition(millis).values[0];
             if (playerAnimation.leftLeg.yRotPath != null) bipedLeftLeg.rotateAngleY = (float) playerAnimation.leftLeg.yRotPath.getRelativePosition(millis).values[0];
             if (playerAnimation.leftLeg.zRotPath != null) bipedLeftLeg.rotateAngleZ = (float) playerAnimation.leftLeg.zRotPath.getRelativePosition(millis).values[0];
 
+            if (playerAnimation.rightLeg.xPath != null) bipedRightLeg.offsetX = (float) playerAnimation.rightLeg.xPath.getRelativePosition(millis).values[0];
+            if (playerAnimation.rightLeg.yPath != null) bipedRightLeg.offsetY = (float) playerAnimation.rightLeg.yPath.getRelativePosition(millis).values[0];
+            if (playerAnimation.rightLeg.zPath != null) bipedRightLeg.offsetZ = (float) playerAnimation.rightLeg.zPath.getRelativePosition(millis).values[0];
             if (playerAnimation.rightLeg.xRotPath != null) bipedRightLeg.rotateAngleX = (float) playerAnimation.rightLeg.xRotPath.getRelativePosition(millis).values[0];
             if (playerAnimation.rightLeg.yRotPath != null) bipedRightLeg.rotateAngleY = (float) playerAnimation.rightLeg.yRotPath.getRelativePosition(millis).values[0];
             if (playerAnimation.rightLeg.zRotPath != null) bipedRightLeg.rotateAngleZ = (float) playerAnimation.rightLeg.zRotPath.getRelativePosition(millis).values[0];
@@ -248,14 +268,238 @@ public class ModelPlayerEdit extends ModelPlayer
 
 
         //Lastly, copy values from body parts to correlating worn armor parts
-        copyModelAngles(bipedHead, bipedHeadwear);
-        copyModelAngles(bipedLeftLeg, bipedLeftLegwear);
-        copyModelAngles(bipedRightLeg, bipedRightLegwear);
-        copyModelAngles(bipedLeftArm, bipedLeftArmwear);
-        copyModelAngles(bipedRightArm, bipedRightArmwear);
-        copyModelAngles(bipedBody, bipedBodyWear);
+        copyModelData(bipedHead, bipedHeadwear);
+        copyModelData(bipedBody, bipedBodyWear);
+        copyModelData(bipedLeftArm, bipedLeftArmwear);
+        copyModelData(bipedRightArm, bipedRightArmwear);
+        copyModelData(bipedLeftLeg, bipedLeftLegwear);
+        copyModelData(bipedRightLeg, bipedRightLegwear);
     }
 
+    public static void copyModelData(ModelRenderer from, ModelRenderer to)
+    {
+        to.offsetX = from.offsetX;
+        to.offsetY = from.offsetY;
+        to.offsetZ = from.offsetZ;
+        copyModelAngles(from, to);
+    }
+
+    @Override
+    public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale)
+    {
+        setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, entityIn);
+
+        float[] headScale = null, chestScale = null, leftArmScale = null, rightArmScale = null, leftLegScale = null, rightLegScale = null;
+        CPlayerAnimation playerAnimation = CPlayerAnimation.ANIMATION_DATA.get(entityIn);
+        if (playerAnimation != null)
+        {
+            long millis = System.currentTimeMillis();
+
+            if (playerAnimation.head.xScalePath != null)
+            {
+                headScale = new float[]{(float) playerAnimation.head.xScalePath.getRelativePosition(millis).values[0], 1, 1};
+            }
+            if (playerAnimation.head.yScalePath != null)
+            {
+                if (headScale == null) headScale = new float[]{1, (float) playerAnimation.head.yScalePath.getRelativePosition(millis).values[0], 1};
+                else headScale[1] = (float) playerAnimation.head.yScalePath.getRelativePosition(millis).values[0];
+            }
+            if (playerAnimation.head.zScalePath != null)
+            {
+                if (headScale == null) headScale = new float[]{1, 1, (float) playerAnimation.head.zScalePath.getRelativePosition(millis).values[0]};
+                else headScale[2] = (float) playerAnimation.head.zScalePath.getRelativePosition(millis).values[0];
+            }
+
+            if (playerAnimation.chest.xScalePath != null)
+            {
+                chestScale = new float[]{(float) playerAnimation.chest.xScalePath.getRelativePosition(millis).values[0], 1, 1};
+            }
+            if (playerAnimation.chest.yScalePath != null)
+            {
+                if (chestScale == null) chestScale = new float[]{1, (float) playerAnimation.chest.yScalePath.getRelativePosition(millis).values[0], 1};
+                else chestScale[1] = (float) playerAnimation.chest.yScalePath.getRelativePosition(millis).values[0];
+            }
+            if (playerAnimation.chest.zScalePath != null)
+            {
+                if (chestScale == null) chestScale = new float[]{1, 1, (float) playerAnimation.chest.zScalePath.getRelativePosition(millis).values[0]};
+                else chestScale[2] = (float) playerAnimation.chest.zScalePath.getRelativePosition(millis).values[0];
+            }
+
+            if (playerAnimation.leftArm.xScalePath != null)
+            {
+                leftArmScale = new float[]{(float) playerAnimation.leftArm.xScalePath.getRelativePosition(millis).values[0], 1, 1};
+            }
+            if (playerAnimation.leftArm.yScalePath != null)
+            {
+                if (leftArmScale == null) leftArmScale = new float[]{1, (float) playerAnimation.leftArm.yScalePath.getRelativePosition(millis).values[0], 1};
+                else leftArmScale[1] = (float) playerAnimation.leftArm.yScalePath.getRelativePosition(millis).values[0];
+            }
+            if (playerAnimation.leftArm.zScalePath != null)
+            {
+                if (leftArmScale == null) leftArmScale = new float[]{1, 1, (float) playerAnimation.leftArm.zScalePath.getRelativePosition(millis).values[0]};
+                else leftArmScale[2] = (float) playerAnimation.leftArm.zScalePath.getRelativePosition(millis).values[0];
+            }
+
+            if (playerAnimation.rightArm.xScalePath != null)
+            {
+                rightArmScale = new float[]{(float) playerAnimation.rightArm.xScalePath.getRelativePosition(millis).values[0], 1, 1};
+            }
+            if (playerAnimation.rightArm.yScalePath != null)
+            {
+                if (rightArmScale == null) rightArmScale = new float[]{1, (float) playerAnimation.rightArm.yScalePath.getRelativePosition(millis).values[0], 1};
+                else rightArmScale[1] = (float) playerAnimation.rightArm.yScalePath.getRelativePosition(millis).values[0];
+            }
+            if (playerAnimation.rightArm.zScalePath != null)
+            {
+                if (rightArmScale == null) rightArmScale = new float[]{1, 1, (float) playerAnimation.rightArm.zScalePath.getRelativePosition(millis).values[0]};
+                else rightArmScale[2] = (float) playerAnimation.rightArm.zScalePath.getRelativePosition(millis).values[0];
+            }
+
+            if (playerAnimation.leftLeg.xScalePath != null)
+            {
+                leftLegScale = new float[]{(float) playerAnimation.leftLeg.xScalePath.getRelativePosition(millis).values[0], 1, 1};
+            }
+            if (playerAnimation.leftLeg.yScalePath != null)
+            {
+                if (leftLegScale == null) leftLegScale = new float[]{1, (float) playerAnimation.leftLeg.yScalePath.getRelativePosition(millis).values[0], 1};
+                else leftLegScale[1] = (float) playerAnimation.leftLeg.yScalePath.getRelativePosition(millis).values[0];
+            }
+            if (playerAnimation.leftLeg.zScalePath != null)
+            {
+                if (leftLegScale == null) leftLegScale = new float[]{1, 1, (float) playerAnimation.leftLeg.zScalePath.getRelativePosition(millis).values[0]};
+                else leftLegScale[2] = (float) playerAnimation.leftLeg.zScalePath.getRelativePosition(millis).values[0];
+            }
+
+            if (playerAnimation.rightLeg.xScalePath != null)
+            {
+                rightLegScale = new float[]{(float) playerAnimation.rightLeg.xScalePath.getRelativePosition(millis).values[0], 1, 1};
+            }
+            if (playerAnimation.rightLeg.yScalePath != null)
+            {
+                if (rightLegScale == null) rightLegScale = new float[]{1, (float) playerAnimation.rightLeg.yScalePath.getRelativePosition(millis).values[0], 1};
+                else rightLegScale[1] = (float) playerAnimation.rightLeg.yScalePath.getRelativePosition(millis).values[0];
+            }
+            if (playerAnimation.rightLeg.zScalePath != null)
+            {
+                if (rightLegScale == null) rightLegScale = new float[]{1, 1, (float) playerAnimation.rightLeg.zScalePath.getRelativePosition(millis).values[0]};
+                else rightLegScale[2] = (float) playerAnimation.rightLeg.zScalePath.getRelativePosition(millis).values[0];
+            }
+        }
+
+        GlStateManager.pushMatrix();
+
+        if (isChild)
+        {
+            GlStateManager.scale(0.75F, 0.75F, 0.75F);
+            GlStateManager.translate(0.0F, 16.0F * scale, 0.0F);
+            if (headScale != null) GlStateManager.scale(headScale[0], headScale[1], headScale[2]);
+            bipedHead.render(scale);
+            bipedHeadwear.render(scale);
+            GlStateManager.popMatrix();
+
+            GlStateManager.pushMatrix();
+            GlStateManager.scale(0.5F, 0.5F, 0.5F);
+            GlStateManager.translate(0.0F, 24.0F * scale, 0.0F);
+
+            if (chestScale != null)
+            {
+                GlStateManager.pushMatrix();
+                GlStateManager.scale(chestScale[0], chestScale[1], chestScale[2]);
+            }
+            bipedBody.render(scale);
+            bipedBodyWear.render(scale);
+            if (chestScale != null) GlStateManager.popMatrix();
+
+            if (leftArmScale != null)
+            {
+                GlStateManager.pushMatrix();
+                GlStateManager.scale(leftArmScale[0], leftArmScale[1], leftArmScale[2]);
+            }
+            bipedLeftArm.render(scale);
+            bipedLeftArmwear.render(scale);
+            if (leftArmScale != null) GlStateManager.popMatrix();
+
+            if (rightArmScale != null)
+            {
+                GlStateManager.pushMatrix();
+                GlStateManager.scale(rightArmScale[0], rightArmScale[1], rightArmScale[2]);
+            }
+            bipedRightArm.render(scale);
+            bipedRightArmwear.render(scale);
+            if (rightArmScale != null) GlStateManager.popMatrix();
+
+            if (leftLegScale != null)
+            {
+                GlStateManager.pushMatrix();
+                GlStateManager.scale(leftLegScale[0], leftLegScale[1], leftLegScale[2]);
+            }
+            bipedLeftLeg.render(scale);
+            bipedLeftLegwear.render(scale);
+            if (leftLegScale != null) GlStateManager.popMatrix();
+
+            if (rightLegScale != null) GlStateManager.scale(rightLegScale[0], rightLegScale[1], rightLegScale[2]);
+            bipedRightLeg.render(scale);
+            bipedRightLegwear.render(scale);
+        }
+        else
+        {
+            if (entityIn.isSneaking())
+            {
+                GlStateManager.translate(0.0F, 0.2F, 0.0F);
+            }
+
+            if (headScale != null)
+            {
+                GlStateManager.pushMatrix();
+                GlStateManager.scale(headScale[0], headScale[1], headScale[2]);
+            }
+            bipedHead.render(scale);
+            bipedHeadwear.render(scale);
+            if (headScale != null) GlStateManager.popMatrix();
+
+            if (chestScale != null)
+            {
+                GlStateManager.pushMatrix();
+                GlStateManager.scale(chestScale[0], chestScale[1], chestScale[2]);
+            }
+            bipedBody.render(scale);
+            bipedBodyWear.render(scale);
+            if (chestScale != null) GlStateManager.popMatrix();
+
+            if (leftArmScale != null)
+            {
+                GlStateManager.pushMatrix();
+                GlStateManager.scale(leftArmScale[0], leftArmScale[1], leftArmScale[2]);
+            }
+            bipedLeftArm.render(scale);
+            bipedLeftArmwear.render(scale);
+            if (leftArmScale != null) GlStateManager.popMatrix();
+
+            if (rightArmScale != null)
+            {
+                GlStateManager.pushMatrix();
+                GlStateManager.scale(rightArmScale[0], rightArmScale[1], rightArmScale[2]);
+            }
+            bipedRightArm.render(scale);
+            bipedRightArmwear.render(scale);
+            if (rightArmScale != null) GlStateManager.popMatrix();
+
+            if (leftLegScale != null)
+            {
+                GlStateManager.pushMatrix();
+                GlStateManager.scale(leftLegScale[0], leftLegScale[1], leftLegScale[2]);
+            }
+            bipedLeftLeg.render(scale);
+            bipedLeftLegwear.render(scale);
+            if (leftLegScale != null) GlStateManager.popMatrix();
+
+            if (rightLegScale != null) GlStateManager.scale(rightLegScale[0], rightLegScale[1], rightLegScale[2]);
+            bipedRightLeg.render(scale);
+            bipedRightLegwear.render(scale);
+        }
+
+        GlStateManager.popMatrix();
+    }
 
     public static void init(FMLPostInitializationEvent event)
     {

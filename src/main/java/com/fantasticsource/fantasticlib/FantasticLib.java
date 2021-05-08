@@ -3,6 +3,7 @@ package com.fantasticsource.fantasticlib;
 import com.fantasticsource.fantasticlib.api.INBTCap;
 import com.fantasticsource.fantasticlib.config.FantasticConfig;
 import com.fantasticsource.mctools.*;
+import com.fantasticsource.mctools.animation.CPlayerAnimation;
 import com.fantasticsource.mctools.animation.ModelPlayerEdit;
 import com.fantasticsource.mctools.aw.ForcedAWSkinOverrides;
 import com.fantasticsource.mctools.aw.RenderModes;
@@ -16,7 +17,12 @@ import com.fantasticsource.mctools.gui.screen.TestGUI;
 import com.fantasticsource.mctools.nbtcap.NBTCap;
 import com.fantasticsource.mctools.nbtcap.NBTCapStorage;
 import com.fantasticsource.tools.ReflectionTool;
+import com.fantasticsource.tools.component.path.CPath;
+import com.fantasticsource.tools.component.path.CPathConstant;
+import com.fantasticsource.tools.component.path.CPathSinuous;
 import com.fantasticsource.tools.datastructures.ColorImmutable;
+import com.fantasticsource.tools.datastructures.VectorN;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
@@ -232,7 +238,18 @@ public class FantasticLib
     @SubscribeEvent
     public static void test(EntityJoinWorldEvent event)
     {
+        if (!(event.getEntity() instanceof EntityPlayer)) return;
+
+        //Floating head
+        CPlayerAnimation.setHeadYPath(event.getEntity(), new CPathConstant(new VectorN(-0.05)).add(new CPathSinuous(new CPathConstant(new VectorN(0.05)), 0.2)));
+
         //Nodding
-//        if (event.getEntity() instanceof EntityPlayer) CPlayerAnimation.setHeadXRotPath(event.getEntity(), new CPathSinuous(new CPathConstant(new VectorN(0.15)), 0.75));
+        CPlayerAnimation.setHeadXRotPath(event.getEntity(), new CPathSinuous(new CPathConstant(new VectorN(0.25)), 0.75));
+
+        //Expanding/shrinking head
+        CPath scalePath = new CPathConstant(new VectorN(1)).add(new CPathSinuous(new CPathConstant(new VectorN(0.1)), 1));
+        CPlayerAnimation.setHeadXScalePath(event.getEntity(), scalePath);
+        CPlayerAnimation.setHeadYScalePath(event.getEntity(), scalePath);
+        CPlayerAnimation.setHeadZScalePath(event.getEntity(), scalePath);
     }
 }
