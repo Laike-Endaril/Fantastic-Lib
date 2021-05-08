@@ -240,16 +240,44 @@ public class FantasticLib
     {
         if (!(event.getEntity() instanceof EntityPlayer)) return;
 
-        //Floating head
-        CPlayerAnimation.setHeadYPath(event.getEntity(), new CPathConstant(new VectorN(-0.05)).add(new CPathSinuous(new CPathConstant(new VectorN(0.05)), 0.2)));
+        //Floating
+        CPath floatyPath = new CPathConstant(new VectorN(-0.25)).add(new CPathSinuous(new CPathConstant(new VectorN(0.25)), 0.2));
+        CPath floatyPath2 = new CPathConstant(new VectorN(-1)).mult(floatyPath);
+        CPlayerAnimation.setHeadYPath(event.getEntity(), floatyPath);
+        CPlayerAnimation.setChestZPath(event.getEntity(), floatyPath);
+        CPlayerAnimation.setLeftArmXPath(event.getEntity(), floatyPath2);
+        CPlayerAnimation.setRightArmXPath(event.getEntity(), floatyPath);
+        CPlayerAnimation.setLeftLegXPath(event.getEntity(), floatyPath2);
+        CPlayerAnimation.setRightLegXPath(event.getEntity(), floatyPath);
 
         //Nodding
-        CPlayerAnimation.setHeadXRotPath(event.getEntity(), new CPathSinuous(new CPathConstant(new VectorN(0.25)), 0.75));
+        CPath nodPath = new CPathSinuous(new CPathConstant(new VectorN(0.25)), 0.75);
+        CPlayerAnimation.setHeadXRotPath(event.getEntity(), nodPath);
+        CPlayerAnimation.setChestXRotPath(event.getEntity(), nodPath);
+        CPlayerAnimation.setLeftArmXRotPath(event.getEntity(), nodPath);
+        CPlayerAnimation.setRightArmXRotPath(event.getEntity(), nodPath);
+        CPlayerAnimation.setLeftLegXRotPath(event.getEntity(), nodPath);
+        CPlayerAnimation.setRightLegXRotPath(event.getEntity(), nodPath);
 
-        //Expanding/shrinking head
-        CPath scalePath = new CPathConstant(new VectorN(1)).add(new CPathSinuous(new CPathConstant(new VectorN(0.1)), 1));
-        CPlayerAnimation.setHeadXScalePath(event.getEntity(), scalePath);
-        CPlayerAnimation.setHeadYScalePath(event.getEntity(), scalePath);
-        CPlayerAnimation.setHeadZScalePath(event.getEntity(), scalePath);
+        //Expanding/shrinking
+        CPath expandShrinkPath = new CPathConstant(new VectorN(1)).add(new CPathSinuous(new CPathConstant(new VectorN(0.1)), 1));
+        CPlayerAnimation.setHeadXScalePath(event.getEntity(), expandShrinkPath);
+        CPlayerAnimation.setHeadYScalePath(event.getEntity(), expandShrinkPath);
+        CPlayerAnimation.setHeadZScalePath(event.getEntity(), expandShrinkPath);
+        CPlayerAnimation.setChestXScalePath(event.getEntity(), expandShrinkPath);
+        CPlayerAnimation.setChestYScalePath(event.getEntity(), expandShrinkPath);
+        CPlayerAnimation.setChestZScalePath(event.getEntity(), expandShrinkPath);
+        CPlayerAnimation.setLeftArmXScalePath(event.getEntity(), expandShrinkPath);
+        CPlayerAnimation.setLeftArmYScalePath(event.getEntity(), expandShrinkPath);
+        CPlayerAnimation.setLeftArmZScalePath(event.getEntity(), expandShrinkPath);
+        CPlayerAnimation.setRightArmXScalePath(event.getEntity(), expandShrinkPath);
+        CPlayerAnimation.setRightArmYScalePath(event.getEntity(), expandShrinkPath);
+        CPlayerAnimation.setRightArmZScalePath(event.getEntity(), expandShrinkPath);
+        CPlayerAnimation.setLeftLegXScalePath(event.getEntity(), expandShrinkPath);
+        CPlayerAnimation.setLeftLegYScalePath(event.getEntity(), expandShrinkPath);
+        CPlayerAnimation.setLeftLegZScalePath(event.getEntity(), expandShrinkPath);
+        CPlayerAnimation.setRightLegXScalePath(event.getEntity(), expandShrinkPath);
+        CPlayerAnimation.setRightLegYScalePath(event.getEntity(), expandShrinkPath);
+        CPlayerAnimation.setRightLegZScalePath(event.getEntity(), expandShrinkPath);
     }
 }
