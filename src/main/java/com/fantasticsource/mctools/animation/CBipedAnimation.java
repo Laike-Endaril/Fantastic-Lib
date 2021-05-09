@@ -5,6 +5,8 @@ import com.fantasticsource.tools.ReflectionTool;
 import com.fantasticsource.tools.component.Component;
 import com.fantasticsource.tools.component.path.CPath;
 import io.netty.buffer.ByteBuf;
+import moe.plushie.armourers_workshop.client.render.SkinModelRenderHelper;
+import moe.plushie.armourers_workshop.common.skin.type.SkinTypeRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
@@ -19,6 +21,7 @@ import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -35,7 +38,8 @@ public class CBipedAnimation extends Component
             RENDER_LIVING_BASE_MAIN_MODEL_FIELD = ReflectionTool.getField(RenderLivingBase.class, "field_77045_g", "mainModel"),
             RENDER_LIVING_BASE_LAYER_RENDERERS_FIELD = ReflectionTool.getField(RenderLivingBase.class, "field_177097_h", "layerRenderers"),
             LAYER_ARMOR_BASE_MODEL_LEGGINGS_FIELD = ReflectionTool.getField(LayerArmorBase.class, "field_177189_c", "modelLeggings"),
-            LAYER_ARMOR_BASE_MODEL_ARMOR_FIELD = ReflectionTool.getField(LayerArmorBase.class, "field_177186_d", "modelArmor");
+            LAYER_ARMOR_BASE_MODEL_ARMOR_FIELD = ReflectionTool.getField(LayerArmorBase.class, "field_177186_d", "modelArmor"),
+            SKIN_MODEL_RENDER_HELPER_MODEL_HEAD_FIELD = ReflectionTool.getField(SkinModelRenderHelper.class, "modelHead");
 
 
     public static final HashMap<Entity, CBipedAnimation> ANIMATION_DATA = new HashMap<>();
@@ -414,6 +418,12 @@ public class CBipedAnimation extends Component
             }
 
             MinecraftForge.EVENT_BUS.register(CBipedAnimation.class);
+
+            if (Loader.isModLoaded("armourers_workshop"))
+            {
+                ReflectionTool.set(SKIN_MODEL_RENDER_HELPER_MODEL_HEAD_FIELD, SkinModelRenderHelper.INSTANCE, new ModelSkinHeadEdit());
+                SkinModelRenderHelper.INSTANCE.registerSkinTypeHelperForModel(SkinModelRenderHelper.ModelType.MODEL_BIPED, SkinTypeRegistry.skinHead, SkinModelRenderHelper.INSTANCE.modelHead);
+            }
         });
     }
 
