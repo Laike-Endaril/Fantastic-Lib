@@ -581,9 +581,9 @@ public class CBipedAnimation extends Component
                     ReflectionTool.set(LAYER_ARMOR_BASE_MODEL_ARMOR_FIELD, layer, new ModelBipedEdit((ModelBiped) armorModel));
                 }
             }
-            else if (Loader.isModLoaded("armourers_workshop") && layer.getClass() == AW_SKIN_LAYER_RENDERER_HELD_ITEM_CLASS)
+            else if (Loader.isModLoaded("armourers_workshop") && (layer.getClass() == AW_SKIN_LAYER_RENDERER_HELD_ITEM_CLASS))
             {
-                //TODO
+                layers.set(i, new SkinLayerRendererHeldItemEdit((RenderLivingBase<?>) ReflectionTool.get(LAYER_HELD_ITEM_LIVING_ENTITY_RENDERER_FIELD, layer), (LayerHeldItem) layer));
             }
             else if (layer.getClass() == LayerHeldItem.class)
             {

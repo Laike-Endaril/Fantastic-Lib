@@ -282,18 +282,22 @@ public class FantasticLib
         CBipedAnimation.setRightLegYScalePath(entity, expandShrinkPath);
         CBipedAnimation.setRightLegZScalePath(entity, expandShrinkPath);
 
-        //Item-specific animation test
+        //Item-specific animation tests
         CPath translatePath = new CPathConstant(new VectorN(-3)).mult(floatyPath);
         CPath expandShrinkPath2 = new CPathConstant(new VectorN(1)).add(new CPathSinuous(new CPathConstant(new VectorN(0.3)), 1, 0.5));
+        CBipedAnimation.setLeftItemXPath(entity, translatePath);
+        CBipedAnimation.setRightItemXPath(entity, translatePath);
         CBipedAnimation.setLeftItemYPath(entity, translatePath);
         CBipedAnimation.setRightItemYPath(entity, translatePath);
-        CBipedAnimation.setLeftItemYRotPath(entity, nodPath);
-        CBipedAnimation.setRightItemYRotPath(entity, nodPath);
-        CBipedAnimation.setLeftItemXScalePath(entity, expandShrinkPath2);
-        CBipedAnimation.setRightItemXScalePath(entity, expandShrinkPath2);
-        CBipedAnimation.setLeftItemYScalePath(entity, expandShrinkPath2);
-        CBipedAnimation.setRightItemYScalePath(entity, expandShrinkPath2);
-        CBipedAnimation.setLeftItemZScalePath(entity, expandShrinkPath2);
-        CBipedAnimation.setRightItemZScalePath(entity, expandShrinkPath2);
+        CBipedAnimation.setLeftItemZPath(entity, translatePath);
+        CBipedAnimation.setRightItemZPath(entity, translatePath);
+//        CBipedAnimation.setLeftItemYRotPath(entity, nodPath);
+//        CBipedAnimation.setRightItemYRotPath(entity, nodPath);
+//        CBipedAnimation.setLeftItemXScalePath(entity, expandShrinkPath2);
+//        CBipedAnimation.setRightItemXScalePath(entity, expandShrinkPath2);
+//        CBipedAnimation.setLeftItemYScalePath(entity, expandShrinkPath2);
+//        CBipedAnimation.setRightItemYScalePath(entity, expandShrinkPath2);
+//        CBipedAnimation.setLeftItemZScalePath(entity, expandShrinkPath2);
+//        CBipedAnimation.setRightItemZScalePath(entity, expandShrinkPath2);
     }
 }
