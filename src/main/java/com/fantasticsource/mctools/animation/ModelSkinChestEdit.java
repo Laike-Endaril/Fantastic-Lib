@@ -79,6 +79,7 @@ public class ModelSkinChestEdit extends ModelSkinChest
 
             //FLib compat start
             CBipedAnimation playerAnimation = CBipedAnimation.ANIMATION_DATA.get(entity);
+            long millis = System.currentTimeMillis();
             //FLib compat end
 
 
@@ -87,8 +88,6 @@ public class ModelSkinChestEdit extends ModelSkinChest
                 //FLib compat start
                 if (playerAnimation != null)
                 {
-                    long millis = System.currentTimeMillis();
-
                     if (playerAnimation.chest.xPath != null) bipedBody.offsetX = (float) playerAnimation.chest.xPath.getRelativePosition(millis).values[0];
                     if (playerAnimation.chest.yPath != null) bipedBody.offsetY = (float) playerAnimation.chest.yPath.getRelativePosition(millis).values[0];
                     if (playerAnimation.chest.zPath != null) bipedBody.offsetZ = (float) playerAnimation.chest.zPath.getRelativePosition(millis).values[0];
@@ -126,8 +125,6 @@ public class ModelSkinChestEdit extends ModelSkinChest
                 //FLib compat start
                 if (playerAnimation != null)
                 {
-                    long millis = System.currentTimeMillis();
-
                     if (playerAnimation.leftArm.xPath != null) bipedLeftArm.offsetX = (float) playerAnimation.leftArm.xPath.getRelativePosition(millis).values[0];
                     if (playerAnimation.leftArm.yPath != null) bipedLeftArm.offsetY = (float) playerAnimation.leftArm.yPath.getRelativePosition(millis).values[0];
                     if (playerAnimation.leftArm.zPath != null) bipedLeftArm.offsetZ = (float) playerAnimation.leftArm.zPath.getRelativePosition(millis).values[0];
@@ -161,8 +158,6 @@ public class ModelSkinChestEdit extends ModelSkinChest
                 //FLib compat start
                 if (playerAnimation != null)
                 {
-                    long millis = System.currentTimeMillis();
-
                     if (playerAnimation.rightArm.xPath != null) bipedRightArm.offsetX = (float) playerAnimation.rightArm.xPath.getRelativePosition(millis).values[0];
                     if (playerAnimation.rightArm.yPath != null) bipedRightArm.offsetY = (float) playerAnimation.rightArm.yPath.getRelativePosition(millis).values[0];
                     if (playerAnimation.rightArm.zPath != null) bipedRightArm.offsetZ = (float) playerAnimation.rightArm.zPath.getRelativePosition(millis).values[0];

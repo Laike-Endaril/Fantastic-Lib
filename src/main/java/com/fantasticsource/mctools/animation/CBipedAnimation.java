@@ -42,7 +42,9 @@ public class CBipedAnimation extends Component
             SKIN_MODEL_RENDER_HELPER_MODEL_HEAD_FIELD = ReflectionTool.getField(SkinModelRenderHelper.class, "modelHead"),
             SKIN_MODEL_RENDER_HELPER_MODEL_CHEST_FIELD = ReflectionTool.getField(SkinModelRenderHelper.class, "modelChest"),
             SKIN_MODEL_RENDER_HELPER_MODEL_LEGS_FIELD = ReflectionTool.getField(SkinModelRenderHelper.class, "modelLegs"),
-            SKIN_MODEL_RENDER_HELPER_MODEL_FEET_FIELD = ReflectionTool.getField(SkinModelRenderHelper.class, "modelFeet");
+            SKIN_MODEL_RENDER_HELPER_MODEL_FEET_FIELD = ReflectionTool.getField(SkinModelRenderHelper.class, "modelFeet"),
+            SKIN_MODEL_RENDER_HELPER_MODEL_WINGS_FIELD = ReflectionTool.getField(SkinModelRenderHelper.class, "modelWings"),
+            SKIN_MODEL_RENDER_HELPER_MODEL_OUTFIT_FIELD = ReflectionTool.getField(SkinModelRenderHelper.class, "modelOutfit");
 
 
     public static final HashMap<Entity, CBipedAnimation> ANIMATION_DATA = new HashMap<>();
@@ -435,6 +437,12 @@ public class CBipedAnimation extends Component
 
                 ReflectionTool.set(SKIN_MODEL_RENDER_HELPER_MODEL_FEET_FIELD, SkinModelRenderHelper.INSTANCE, new ModelSkinFeetEdit());
                 SkinModelRenderHelper.INSTANCE.registerSkinTypeHelperForModel(SkinModelRenderHelper.ModelType.MODEL_BIPED, SkinTypeRegistry.skinFeet, SkinModelRenderHelper.INSTANCE.modelFeet);
+
+                ReflectionTool.set(SKIN_MODEL_RENDER_HELPER_MODEL_WINGS_FIELD, SkinModelRenderHelper.INSTANCE, new ModelSkinWingsEdit());
+                SkinModelRenderHelper.INSTANCE.registerSkinTypeHelperForModel(SkinModelRenderHelper.ModelType.MODEL_BIPED, SkinTypeRegistry.skinWings, SkinModelRenderHelper.INSTANCE.modelWings);
+
+                ReflectionTool.set(SKIN_MODEL_RENDER_HELPER_MODEL_OUTFIT_FIELD, SkinModelRenderHelper.INSTANCE, new ModelSkinOutfitEdit());
+                SkinModelRenderHelper.INSTANCE.registerSkinTypeHelperForModel(SkinModelRenderHelper.ModelType.MODEL_BIPED, SkinTypeRegistry.skinOutfit, SkinModelRenderHelper.INSTANCE.modelOutfit);
             }
         });
     }

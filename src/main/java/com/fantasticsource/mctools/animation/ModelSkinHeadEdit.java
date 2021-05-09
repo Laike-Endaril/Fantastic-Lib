@@ -76,7 +76,7 @@ public class ModelSkinHeadEdit extends ModelSkinHead
             if (isSneak)
             {
                 GlStateManager.translate(0.0F, 0.2F, 0.0F);
-                GlStateManager.translate(0.0F, 1 * SCALE, 0.0F);
+                GlStateManager.translate(0.0F, SCALE, 0.0F);
             }
 
 

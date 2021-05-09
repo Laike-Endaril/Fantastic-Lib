@@ -89,6 +89,7 @@ public class ModelSkinFeetEdit extends ModelSkinFeet
 
             //FLib compat start
             CBipedAnimation playerAnimation = CBipedAnimation.ANIMATION_DATA.get(entity);
+            long millis = System.currentTimeMillis();
             //FLib compat end
 
 
@@ -97,8 +98,6 @@ public class ModelSkinFeetEdit extends ModelSkinFeet
                 //FLib compat start
                 if (playerAnimation != null)
                 {
-                    long millis = System.currentTimeMillis();
-
                     if (playerAnimation.leftLeg.xPath != null) bipedLeftLeg.offsetX = (float) playerAnimation.leftLeg.xPath.getRelativePosition(millis).values[0];
                     if (playerAnimation.leftLeg.yPath != null) bipedLeftLeg.offsetY = (float) playerAnimation.leftLeg.yPath.getRelativePosition(millis).values[0];
                     if (playerAnimation.leftLeg.zPath != null) bipedLeftLeg.offsetZ = (float) playerAnimation.leftLeg.zPath.getRelativePosition(millis).values[0];
@@ -132,8 +131,6 @@ public class ModelSkinFeetEdit extends ModelSkinFeet
                 //FLib compat start
                 if (playerAnimation != null)
                 {
-                    long millis = System.currentTimeMillis();
-
                     if (playerAnimation.rightLeg.xPath != null) bipedRightLeg.offsetX = (float) playerAnimation.rightLeg.xPath.getRelativePosition(millis).values[0];
                     if (playerAnimation.rightLeg.yPath != null) bipedRightLeg.offsetY = (float) playerAnimation.rightLeg.yPath.getRelativePosition(millis).values[0];
                     if (playerAnimation.rightLeg.zPath != null) bipedRightLeg.offsetZ = (float) playerAnimation.rightLeg.zPath.getRelativePosition(millis).values[0];
