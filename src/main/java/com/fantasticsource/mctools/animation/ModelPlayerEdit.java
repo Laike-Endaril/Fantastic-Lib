@@ -18,14 +18,13 @@ public class ModelPlayerEdit extends ModelPlayer
     public static final Field MODEL_PLAYER_BIPED_CAPE_FIELD = ReflectionTool.getField(ModelPlayer.class, "field_178729_w", "bipedCape");
 
 
-    public ModelPlayerEdit(float modelSize, boolean smallArmsIn)
-    {
-        super(modelSize, smallArmsIn);
-    }
+    public boolean hasSmallArms;
+    public float[] headScale = null, chestScale = null, leftArmScale = null, rightArmScale = null, leftLegScale = null, rightLegScale = null;
+
 
     public ModelPlayerEdit(ModelPlayer oldModel)
     {
-        super(0, isSmallArms(oldModel));
+        this(0, isSmallArms(oldModel));
 
         leftArmPose = oldModel.leftArmPose;
         rightArmPose = oldModel.rightArmPose;
@@ -47,6 +46,12 @@ public class ModelPlayerEdit extends ModelPlayer
         bipedRightLegwear = oldModel.bipedRightLegwear;
 
         ReflectionTool.set(MODEL_PLAYER_BIPED_CAPE_FIELD, this, ReflectionTool.get(MODEL_PLAYER_BIPED_CAPE_FIELD, oldModel));
+    }
+
+    public ModelPlayerEdit(float modelSize, boolean smallArmsIn)
+    {
+        super(modelSize, smallArmsIn);
+        hasSmallArms = smallArmsIn;
     }
 
 
@@ -296,7 +301,6 @@ public class ModelPlayerEdit extends ModelPlayer
     {
         setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, entityIn);
 
-        float[] headScale = null, chestScale = null, leftArmScale = null, rightArmScale = null, leftLegScale = null, rightLegScale = null;
         CBipedAnimation playerAnimation = CBipedAnimation.ANIMATION_DATA.get(entityIn);
         if (playerAnimation != null)
         {
@@ -506,5 +510,29 @@ public class ModelPlayerEdit extends ModelPlayer
         }
 
         GlStateManager.popMatrix();
+    }
+
+    @Override
+    public void postRenderArm(float scale, EnumHandSide side)
+    {
+        if (side == EnumHandSide.LEFT) GlStateManager.scale(leftArmScale[0], leftArmScale[1], leftArmScale[2]);
+        else GlStateManager.scale(rightArmScale[0], rightArmScale[1], rightArmScale[2]);
+
+
+        ModelRenderer armRenderer = getArmForSide(side);
+        GlStateManager.translate(armRenderer.offsetX, armRenderer.offsetY, armRenderer.offsetZ);
+
+
+        float offset = side == EnumHandSide.RIGHT ? 0.5f : -0.5f;
+        if (hasSmallArms)
+        {
+            armRenderer.rotationPointX += offset;
+            armRenderer.postRender(scale);
+            armRenderer.rotationPointX -= offset;
+        }
+        else
+        {
+            armRenderer.postRender(scale);
+        }
     }
 }

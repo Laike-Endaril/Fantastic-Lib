@@ -35,8 +35,7 @@ public class CBipedAnimation extends Component
             RENDER_LIVING_BASE_MAIN_MODEL_FIELD = ReflectionTool.getField(RenderLivingBase.class, "field_77045_g", "mainModel"),
             RENDER_LIVING_BASE_LAYER_RENDERERS_FIELD = ReflectionTool.getField(RenderLivingBase.class, "field_177097_h", "layerRenderers"),
             LAYER_ARMOR_BASE_MODEL_LEGGINGS_FIELD = ReflectionTool.getField(LayerArmorBase.class, "field_177189_c", "modelLeggings"),
-            LAYER_ARMOR_BASE_MODEL_ARMOR_FIELD = ReflectionTool.getField(LayerArmorBase.class, "field_177186_d", "modelArmor"),
-            MODEL_BOX_VERTEX_POSITIONS_FIELD = ReflectionTool.getField(ModelBox.class, "field_78253_h", "vertexPositions");
+            LAYER_ARMOR_BASE_MODEL_ARMOR_FIELD = ReflectionTool.getField(LayerArmorBase.class, "field_177186_d", "modelArmor");
 
 
     public static final HashMap<Entity, CBipedAnimation> ANIMATION_DATA = new HashMap<>();

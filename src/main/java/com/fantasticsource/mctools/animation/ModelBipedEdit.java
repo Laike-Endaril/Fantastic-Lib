@@ -10,6 +10,8 @@ import net.minecraft.util.math.MathHelper;
 
 public class ModelBipedEdit extends ModelBiped
 {
+    public float[] headScale = null, chestScale = null, leftArmScale = null, rightArmScale = null, leftLegScale = null, rightLegScale = null;
+
     public ModelBipedEdit(float modelSize)
     {
         super(modelSize);
@@ -261,7 +263,6 @@ public class ModelBipedEdit extends ModelBiped
     {
         setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, entityIn);
 
-        float[] headScale = null, chestScale = null, leftArmScale = null, rightArmScale = null, leftLegScale = null, rightLegScale = null;
         CBipedAnimation playerAnimation = CBipedAnimation.ANIMATION_DATA.get(entityIn);
         if (playerAnimation != null)
         {
@@ -461,5 +462,19 @@ public class ModelBipedEdit extends ModelBiped
         }
 
         GlStateManager.popMatrix();
+    }
+
+    @Override
+    public void postRenderArm(float scale, EnumHandSide side)
+    {
+        if (side == EnumHandSide.LEFT) GlStateManager.scale(leftArmScale[0], leftArmScale[1], leftArmScale[2]);
+        else GlStateManager.scale(rightArmScale[0], rightArmScale[1], rightArmScale[2]);
+
+
+        ModelRenderer armRenderer = getArmForSide(side);
+        GlStateManager.translate(armRenderer.offsetX, armRenderer.offsetY, armRenderer.offsetZ);
+
+
+        getArmForSide(side).postRender(scale);
     }
 }
