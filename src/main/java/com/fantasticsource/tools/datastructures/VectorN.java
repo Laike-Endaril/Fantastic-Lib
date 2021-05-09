@@ -250,6 +250,34 @@ public class VectorN
     }
 
 
+    public VectorN round()
+    {
+        for (int i = 0; i < values.length; i++)
+        {
+            values[i] = Math.round(values[i]);
+        }
+        return this;
+    }
+
+    public VectorN floor()
+    {
+        for (int i = 0; i < values.length; i++)
+        {
+            values[i] = Math.floor(values[i]);
+        }
+        return this;
+    }
+
+    public VectorN ceil()
+    {
+        for (int i = 0; i < values.length; i++)
+        {
+            values[i] = Math.ceil(values[i]);
+        }
+        return this;
+    }
+
+
     /**
      * Only doing 3D cross product for now...I don't see myself using the alternatives
      */

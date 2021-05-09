@@ -71,6 +71,24 @@ public class CPath extends NBTSerializableComponent
         return this;
     }
 
+    public CPath round()
+    {
+        transforms.add(new CPathTransform(CPathTransform.TYPE_ROUND));
+        return this;
+    }
+
+    public CPath floor()
+    {
+        transforms.add(new CPathTransform(CPathTransform.TYPE_FLOOR));
+        return this;
+    }
+
+    public CPath ceil()
+    {
+        transforms.add(new CPathTransform(CPathTransform.TYPE_CEIL));
+        return this;
+    }
+
 
     /**
      * @param time spent on this path
@@ -208,7 +226,10 @@ public class CPath extends NBTSerializableComponent
                 TYPE_MOD = 5,
                 TYPE_POSMOD = 6,
                 TYPE_LOW_LIMIT = 7,
-                TYPE_HIGH_LIMIT = 8;
+                TYPE_HIGH_LIMIT = 8,
+                TYPE_ROUND = 9,
+                TYPE_FLOOR = 10,
+                TYPE_CEIL = 11;
 
         public int type = TYPE_ADD;
         public CPath[] paths;
@@ -262,6 +283,18 @@ public class CPath extends NBTSerializableComponent
 
                 case TYPE_HIGH_LIMIT:
                     vectorN.highLimit(paths[0].getRelativePosition(time));
+                    break;
+
+                case TYPE_ROUND:
+                    vectorN.round();
+                    break;
+
+                case TYPE_FLOOR:
+                    vectorN.floor();
+                    break;
+
+                case TYPE_CEIL:
+                    vectorN.ceil();
                     break;
             }
         }

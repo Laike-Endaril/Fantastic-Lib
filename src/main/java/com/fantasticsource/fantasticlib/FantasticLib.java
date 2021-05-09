@@ -36,7 +36,7 @@ public class FantasticLib
     public static final String MODID = "fantasticlib";
     public static final String DOMAIN = "flib";
     public static final String NAME = "Fantastic Lib";
-    public static final String VERSION = "1.12.2.044zzzs";
+    public static final String VERSION = "1.12.2.044zzzt";
 
 
     public static long serverStartTime = -1;
@@ -224,14 +224,35 @@ public class FantasticLib
 //        Entity entity = event.getEntity();
 //        if (!(entity instanceof EntityPlayer)) return;
 //
+//
+//        //Standard hand-swap code
+//        CBipedAnimation.setLeftItemYScalePath(entity, new CPathConstant(new VectorN(-1)));
+//        CBipedAnimation.setRightItemYPath(entity, new CPathConstant(new VectorN(-0.1)));
+//        CBipedAnimation.setLeftItemYPath(entity, new CPathConstant(new VectorN(0.1)));
+//
+//
+//        //Staff spin arms
 //        CBipedAnimation.setRightArmZRotPath(entity, new CPathConstant(new VectorN(Math.PI * 0.5)));
 //        CBipedAnimation.setRightArmYRotPath(entity, new CPathConstant(new VectorN(0)));
-//        CBipedAnimation.setRightArmXRotPath(entity, new CPathSinuous(new CPathConstant(new VectorN(Math.PI * 0.6)), 0.5));
+//        CBipedAnimation.setRightArmXRotPath(entity, new CPathSinuous(new CPathConstant(new VectorN(Math.PI * 0.7)), 0.5));
 //
 //        CBipedAnimation.setLeftArmZRotPath(entity, new CPathConstant(new VectorN(Math.PI * 1.5)));
 //        CBipedAnimation.setLeftArmYRotPath(entity, new CPathConstant(new VectorN(0)));
-//        CBipedAnimation.setLeftArmXRotPath(entity, new CPathSinuous(new CPathConstant(new VectorN(Math.PI * 0.6)), 0.5));
+//        CBipedAnimation.setLeftArmXRotPath(entity, new CPathSinuous(new CPathConstant(new VectorN(Math.PI * 0.7)), 0.5));
 //
-//        CBipedAnimation.setRightItemZRotPath(entity, new CPathLinear(new VectorN(Math.PI)));
+//
+//        //Staff spin hand swap
+//        CPath sine = new CPathSinuous(new CPathConstant(new VectorN(1)), 0.5, 0.75);
+//        CBipedAnimation.setHandItemSwapPath(entity, sine);
+//
+//
+//        //Staff spin item rotation correction
+//        CBipedAnimation.setRightItemXRotPath(entity, new CPathSinuous(new CPathConstant(new VectorN(Math.PI * 0.2)), 0.5));
+//        CBipedAnimation.setLeftItemXRotPath(entity, new CPathSinuous(new CPathConstant(new VectorN(Math.PI * 0.2)), 0.5, 0.5));
+//
+//
+//        //Actual staff spin
+////        CBipedAnimation.setRightItemZRotPath(entity, new CPathLinear(new VectorN(Math.PI * 2)).add(new CPathConstant(new VectorN(Math.PI))));
+////        CBipedAnimation.setLeftItemZRotPath(entity, new CPathLinear(new VectorN(-Math.PI * 2)).add(new CPathConstant(new VectorN(Math.PI))));
 //    }
 }

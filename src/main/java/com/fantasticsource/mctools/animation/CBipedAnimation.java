@@ -44,6 +44,7 @@ public class CBipedAnimation extends Component
 
 
     public CModelRendererAnimation head, chest, leftArm, rightArm, leftLeg, rightLeg, leftItem, rightItem;
+    public CPath handItemSwap = null; //Renders items in hands swapped when the current value < 0
 
 
     public CBipedAnimation()
@@ -432,6 +433,12 @@ public class CBipedAnimation extends Component
     }
 
 
+    public static void setHandItemSwapPath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CBipedAnimation()).handItemSwap = path;
+    }
+
+
     @Override
     public CBipedAnimation write(ByteBuf buf)
     {
@@ -443,6 +450,8 @@ public class CBipedAnimation extends Component
         rightLeg.write(buf);
         leftItem.write(buf);
         rightItem.write(buf);
+
+        writeMarkedOrNull(buf, handItemSwap);
 
         return this;
     }
@@ -459,6 +468,8 @@ public class CBipedAnimation extends Component
         leftItem.read(buf);
         rightItem.read(buf);
 
+        handItemSwap = (CPath) readMarkedOrNull(buf);
+
         return this;
     }
 
@@ -474,6 +485,8 @@ public class CBipedAnimation extends Component
         leftItem.save(stream);
         rightItem.save(stream);
 
+        saveMarkedOrNull(stream, handItemSwap);
+
         return this;
     }
 
@@ -488,6 +501,8 @@ public class CBipedAnimation extends Component
         rightLeg.load(stream);
         leftItem.load(stream);
         rightItem.load(stream);
+
+        handItemSwap = (CPath) loadMarkedOrNull(stream);
 
         return this;
     }
