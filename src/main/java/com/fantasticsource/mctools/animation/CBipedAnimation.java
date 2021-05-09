@@ -1,5 +1,6 @@
 package com.fantasticsource.mctools.animation;
 
+import com.fantasticsource.mctools.ClientTickTimer;
 import com.fantasticsource.tools.ReflectionTool;
 import com.fantasticsource.tools.component.Component;
 import com.fantasticsource.tools.component.path.CPath;
@@ -7,7 +8,6 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.model.ModelBox;
 import net.minecraft.client.model.ModelPlayer;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
@@ -391,27 +391,30 @@ public class CBipedAnimation extends Component
 
     public static void init(FMLPostInitializationEvent event)
     {
-        RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
-        Map<String, RenderPlayer> map = renderManager.getSkinMap();
-        ReflectionTool.set(RENDER_LIVING_BASE_MAIN_MODEL_FIELD, map.get("default"), new ModelPlayerEdit(0, false));
-        ReflectionTool.set(RENDER_LIVING_BASE_MAIN_MODEL_FIELD, map.get("slim"), new ModelPlayerEdit(0, true));
-
-        for (Render<? extends Entity> render : renderManager.entityRenderMap.values())
+        ClientTickTimer.schedule(1, () ->
         {
-            if (!(render instanceof RenderLivingBase)) continue;
+            RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
+            Map<String, RenderPlayer> map = renderManager.getSkinMap();
+            ReflectionTool.set(RENDER_LIVING_BASE_MAIN_MODEL_FIELD, map.get("default"), new ModelPlayerEdit(0, false));
+            ReflectionTool.set(RENDER_LIVING_BASE_MAIN_MODEL_FIELD, map.get("slim"), new ModelPlayerEdit(0, true));
 
-            ModelBase oldModel = ((RenderLivingBase) render).getMainModel();
-            if (oldModel.getClass() == ModelPlayer.class)
+            for (Render<? extends Entity> render : renderManager.entityRenderMap.values())
             {
-                ReflectionTool.set(RENDER_LIVING_BASE_MAIN_MODEL_FIELD, render, new ModelPlayerEdit((ModelPlayer) oldModel));
-            }
-            else if (oldModel.getClass() == ModelBiped.class)
-            {
-                ReflectionTool.set(RENDER_LIVING_BASE_MAIN_MODEL_FIELD, render, new ModelBipedEdit((ModelBiped) oldModel));
-            }
-        }
+                if (!(render instanceof RenderLivingBase)) continue;
 
-        MinecraftForge.EVENT_BUS.register(CBipedAnimation.class);
+                ModelBase oldModel = ((RenderLivingBase) render).getMainModel();
+                if (oldModel.getClass() == ModelPlayer.class)
+                {
+                    ReflectionTool.set(RENDER_LIVING_BASE_MAIN_MODEL_FIELD, render, new ModelPlayerEdit((ModelPlayer) oldModel));
+                }
+                else if (oldModel.getClass() == ModelBiped.class)
+                {
+                    ReflectionTool.set(RENDER_LIVING_BASE_MAIN_MODEL_FIELD, render, new ModelBipedEdit((ModelBiped) oldModel));
+                }
+            }
+
+            MinecraftForge.EVENT_BUS.register(CBipedAnimation.class);
+        });
     }
 
     @SubscribeEvent
