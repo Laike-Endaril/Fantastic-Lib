@@ -515,8 +515,14 @@ public class ModelPlayerEdit extends ModelPlayer
     @Override
     public void postRenderArm(float scale, EnumHandSide side)
     {
-        if (side == EnumHandSide.LEFT) GlStateManager.scale(leftArmScale[0], leftArmScale[1], leftArmScale[2]);
-        else GlStateManager.scale(rightArmScale[0], rightArmScale[1], rightArmScale[2]);
+        if (side == EnumHandSide.LEFT)
+        {
+            if (leftArmScale != null) GlStateManager.scale(leftArmScale[0], leftArmScale[1], leftArmScale[2]);
+        }
+        else
+        {
+            if (rightArmScale != null) GlStateManager.scale(rightArmScale[0], rightArmScale[1], rightArmScale[2]);
+        }
 
 
         ModelRenderer armRenderer = getArmForSide(side);
