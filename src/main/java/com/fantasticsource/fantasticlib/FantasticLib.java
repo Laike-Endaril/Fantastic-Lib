@@ -5,9 +5,6 @@ import com.fantasticsource.fantasticlib.config.FantasticConfig;
 import com.fantasticsource.mctools.*;
 import com.fantasticsource.mctools.animation.CBipedAnimation;
 import com.fantasticsource.mctools.animation.ModelPlayerEdit;
-import com.fantasticsource.mctools.aw.ForcedAWSkinOverrides;
-import com.fantasticsource.mctools.aw.RenderModes;
-import com.fantasticsource.mctools.aw.TransientAWSkinHandler;
 import com.fantasticsource.mctools.betterattributes.BetterAttributeMod;
 import com.fantasticsource.mctools.data.CModpackDataHandler;
 import com.fantasticsource.mctools.data.CWorldDataHandler;
@@ -39,7 +36,7 @@ public class FantasticLib
     public static final String MODID = "fantasticlib";
     public static final String DOMAIN = "flib";
     public static final String NAME = "Fantastic Lib";
-    public static final String VERSION = "1.12.2.044zzzr";
+    public static final String VERSION = "1.12.2.044zzzs";
 
 
     public static long serverStartTime = -1;
@@ -104,21 +101,13 @@ public class FantasticLib
     }
 
     @EventHandler
-    public void postInit(FMLPostInitializationEvent event) throws IllegalAccessException
+    public void postInit(FMLPostInitializationEvent event)
     {
         Compat.betterportals = (Loader.isModLoaded("betterportals"));
         Compat.smoothfont = (Loader.isModLoaded("smoothfont"));
         Compat.baubles = (Loader.isModLoaded("baubles"));
         Compat.tiamatinventory = (Loader.isModLoaded("tiamatinventory"));
         ImprovedRayTracing.reloadConfigs();
-
-        if (Loader.isModLoaded("armourers_workshop"))
-        {
-            RenderModes.init();
-
-            MinecraftForge.EVENT_BUS.register(TransientAWSkinHandler.class);
-            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) ForcedAWSkinOverrides.clientInit();
-        }
 
         if (event.getSide() == Side.CLIENT) CBipedAnimation.init(event);
 
@@ -226,5 +215,23 @@ public class FantasticLib
 //                particle.hsvPath(pXIncreasing.copy().add(new CPathConstant(new VectorN(Math.random(), 1, 1))).mod(pX1YZ2));
 //            }
 //        }
+//    }
+
+
+//    @SubscribeEvent
+//    public static void test(EntityJoinWorldEvent event)
+//    {
+//        Entity entity = event.getEntity();
+//        if (!(entity instanceof EntityPlayer)) return;
+//
+//        CBipedAnimation.setRightArmZRotPath(entity, new CPathConstant(new VectorN(Math.PI * 0.5)));
+//        CBipedAnimation.setRightArmYRotPath(entity, new CPathConstant(new VectorN(0)));
+//        CBipedAnimation.setRightArmXRotPath(entity, new CPathSinuous(new CPathConstant(new VectorN(Math.PI * 0.6)), 0.5));
+//
+//        CBipedAnimation.setLeftArmZRotPath(entity, new CPathConstant(new VectorN(Math.PI * 1.5)));
+//        CBipedAnimation.setLeftArmYRotPath(entity, new CPathConstant(new VectorN(0)));
+//        CBipedAnimation.setLeftArmXRotPath(entity, new CPathSinuous(new CPathConstant(new VectorN(Math.PI * 0.6)), 0.5));
+//
+//        CBipedAnimation.setRightItemZRotPath(entity, new CPathLinear(new VectorN(Math.PI)));
 //    }
 }

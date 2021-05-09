@@ -5,7 +5,6 @@ import com.fantasticsource.tools.ReflectionTool;
 import com.fantasticsource.tools.component.Component;
 import com.fantasticsource.tools.component.path.CPath;
 import io.netty.buffer.ByteBuf;
-import moe.plushie.armourers_workshop.api.ArmourersWorkshopApi;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
@@ -21,40 +20,24 @@ import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class CBipedAnimation extends Component
 {
-    public static final Class
-            AW_SKIN_MODEL_RENDER_HELPER_CLASS = !Loader.isModLoaded("armourers_workshop") ? null : ReflectionTool.getClassByName("moe.plushie.armourers_workshop.client.render.SkinModelRenderHelper"),
-            AW_SKIN_LAYER_RENDERER_HELD_ITEM_CLASS = !Loader.isModLoaded("armourers_workshop") ? null : ReflectionTool.getClassByName("moe.plushie.armourers_workshop.client.render.entity.SkinLayerRendererHeldItem"),
-            SKIN_MODEL_RENDER_HELPER_MODEL_TYPE_ENUM = !Loader.isModLoaded("armourers_workshop") ? null : ReflectionTool.getClassByName("moe.plushie.armourers_workshop.client.render.SkinModelRenderHelper$ModelType");
-
     public static final Field
             RENDER_LIVING_BASE_MAIN_MODEL_FIELD = ReflectionTool.getField(RenderLivingBase.class, "field_77045_g", "mainModel"),
             RENDER_LIVING_BASE_LAYER_RENDERERS_FIELD = ReflectionTool.getField(RenderLivingBase.class, "field_177097_h", "layerRenderers"),
             LAYER_ARMOR_BASE_MODEL_LEGGINGS_FIELD = ReflectionTool.getField(LayerArmorBase.class, "field_177189_c", "modelLeggings"),
             LAYER_ARMOR_BASE_MODEL_ARMOR_FIELD = ReflectionTool.getField(LayerArmorBase.class, "field_177186_d", "modelArmor"),
-            SKIN_MODEL_RENDER_HELPER_MODEL_HEAD_FIELD = !Loader.isModLoaded("armourers_workshop") ? null : ReflectionTool.getField(AW_SKIN_MODEL_RENDER_HELPER_CLASS, "modelHead"),
-            SKIN_MODEL_RENDER_HELPER_MODEL_CHEST_FIELD = !Loader.isModLoaded("armourers_workshop") ? null : ReflectionTool.getField(AW_SKIN_MODEL_RENDER_HELPER_CLASS, "modelChest"),
-            SKIN_MODEL_RENDER_HELPER_MODEL_LEGS_FIELD = !Loader.isModLoaded("armourers_workshop") ? null : ReflectionTool.getField(AW_SKIN_MODEL_RENDER_HELPER_CLASS, "modelLegs"),
-            SKIN_MODEL_RENDER_HELPER_MODEL_FEET_FIELD = !Loader.isModLoaded("armourers_workshop") ? null : ReflectionTool.getField(AW_SKIN_MODEL_RENDER_HELPER_CLASS, "modelFeet"),
-            SKIN_MODEL_RENDER_HELPER_MODEL_WINGS_FIELD = !Loader.isModLoaded("armourers_workshop") ? null : ReflectionTool.getField(AW_SKIN_MODEL_RENDER_HELPER_CLASS, "modelWings"),
-            SKIN_MODEL_RENDER_HELPER_MODEL_OUTFIT_FIELD = !Loader.isModLoaded("armourers_workshop") ? null : ReflectionTool.getField(AW_SKIN_MODEL_RENDER_HELPER_CLASS, "modelOutfit"),
-            LAYER_HELD_ITEM_LIVING_ENTITY_RENDERER_FIELD = ReflectionTool.getField(LayerHeldItem.class, "field_177206_a", "livingEntityRenderer"),
-            SKIN_MODEL_RENDER_HELPER_INSTANCE_FIELD = !Loader.isModLoaded("armourers_workshop") ? null : ReflectionTool.getField(AW_SKIN_MODEL_RENDER_HELPER_CLASS, "INSTANCE");
-
-    public static final Method SKIN_MODEL_RENDER_HELPER_REGISTER_SKIN_TYPE_HELPER_FOR_MODEL_METHOD = !Loader.isModLoaded("armourers_workshop") ? null : ReflectionTool.getMethod(AW_SKIN_MODEL_RENDER_HELPER_CLASS, "registerSkinTypeHelperForModel");
+            LAYER_HELD_ITEM_LIVING_ENTITY_RENDERER_FIELD = ReflectionTool.getField(LayerHeldItem.class, "field_177206_a", "livingEntityRenderer");
 
 
     public static final HashMap<Entity, CBipedAnimation> ANIMATION_DATA = new HashMap<>();
@@ -535,29 +518,6 @@ public class CBipedAnimation extends Component
             }
 
             MinecraftForge.EVENT_BUS.register(CBipedAnimation.class);
-
-            if (Loader.isModLoaded("armourers_workshop"))
-            {
-                Object skinModelRenderHelper = ReflectionTool.get(SKIN_MODEL_RENDER_HELPER_INSTANCE_FIELD, null);
-
-                ReflectionTool.set(SKIN_MODEL_RENDER_HELPER_MODEL_HEAD_FIELD, skinModelRenderHelper, new ModelSkinHeadEdit());
-                ReflectionTool.invoke(SKIN_MODEL_RENDER_HELPER_REGISTER_SKIN_TYPE_HELPER_FOR_MODEL_METHOD, skinModelRenderHelper, SKIN_MODEL_RENDER_HELPER_MODEL_TYPE_ENUM.getEnumConstants()[0], ArmourersWorkshopApi.getSkinTypeRegistry().getSkinTypeFromRegistryName("armourers:head"), ReflectionTool.get(SKIN_MODEL_RENDER_HELPER_MODEL_HEAD_FIELD, skinModelRenderHelper));
-
-                ReflectionTool.set(SKIN_MODEL_RENDER_HELPER_MODEL_CHEST_FIELD, skinModelRenderHelper, new ModelSkinChestEdit());
-                ReflectionTool.invoke(SKIN_MODEL_RENDER_HELPER_REGISTER_SKIN_TYPE_HELPER_FOR_MODEL_METHOD, skinModelRenderHelper, SKIN_MODEL_RENDER_HELPER_MODEL_TYPE_ENUM.getEnumConstants()[0], ArmourersWorkshopApi.getSkinTypeRegistry().getSkinTypeFromRegistryName("armourers:chest"), ReflectionTool.get(SKIN_MODEL_RENDER_HELPER_MODEL_CHEST_FIELD, skinModelRenderHelper));
-
-                ReflectionTool.set(SKIN_MODEL_RENDER_HELPER_MODEL_LEGS_FIELD, skinModelRenderHelper, new ModelSkinLegsEdit());
-                ReflectionTool.invoke(SKIN_MODEL_RENDER_HELPER_REGISTER_SKIN_TYPE_HELPER_FOR_MODEL_METHOD, skinModelRenderHelper, SKIN_MODEL_RENDER_HELPER_MODEL_TYPE_ENUM.getEnumConstants()[0], ArmourersWorkshopApi.getSkinTypeRegistry().getSkinTypeFromRegistryName("armourers:legs"), ReflectionTool.get(SKIN_MODEL_RENDER_HELPER_MODEL_LEGS_FIELD, skinModelRenderHelper));
-
-                ReflectionTool.set(SKIN_MODEL_RENDER_HELPER_MODEL_FEET_FIELD, skinModelRenderHelper, new ModelSkinFeetEdit());
-                ReflectionTool.invoke(SKIN_MODEL_RENDER_HELPER_REGISTER_SKIN_TYPE_HELPER_FOR_MODEL_METHOD, skinModelRenderHelper, SKIN_MODEL_RENDER_HELPER_MODEL_TYPE_ENUM.getEnumConstants()[0], ArmourersWorkshopApi.getSkinTypeRegistry().getSkinTypeFromRegistryName("armourers:feet"), ReflectionTool.get(SKIN_MODEL_RENDER_HELPER_MODEL_FEET_FIELD, skinModelRenderHelper));
-
-                ReflectionTool.set(SKIN_MODEL_RENDER_HELPER_MODEL_WINGS_FIELD, skinModelRenderHelper, new ModelSkinWingsEdit());
-                ReflectionTool.invoke(SKIN_MODEL_RENDER_HELPER_REGISTER_SKIN_TYPE_HELPER_FOR_MODEL_METHOD, skinModelRenderHelper, SKIN_MODEL_RENDER_HELPER_MODEL_TYPE_ENUM.getEnumConstants()[0], ArmourersWorkshopApi.getSkinTypeRegistry().getSkinTypeFromRegistryName("armourers:wings"), ReflectionTool.get(SKIN_MODEL_RENDER_HELPER_MODEL_WINGS_FIELD, skinModelRenderHelper));
-
-                ReflectionTool.set(SKIN_MODEL_RENDER_HELPER_MODEL_OUTFIT_FIELD, skinModelRenderHelper, new ModelSkinOutfitEdit());
-                ReflectionTool.invoke(SKIN_MODEL_RENDER_HELPER_REGISTER_SKIN_TYPE_HELPER_FOR_MODEL_METHOD, skinModelRenderHelper, SKIN_MODEL_RENDER_HELPER_MODEL_TYPE_ENUM.getEnumConstants()[0], ArmourersWorkshopApi.getSkinTypeRegistry().getSkinTypeFromRegistryName("armourers:outfit"), ReflectionTool.get(SKIN_MODEL_RENDER_HELPER_MODEL_OUTFIT_FIELD, skinModelRenderHelper));
-            }
         });
     }
 
@@ -580,10 +540,6 @@ public class CBipedAnimation extends Component
                 {
                     ReflectionTool.set(LAYER_ARMOR_BASE_MODEL_ARMOR_FIELD, layer, new ModelBipedEdit((ModelBiped) armorModel));
                 }
-            }
-            else if (Loader.isModLoaded("armourers_workshop") && (layer.getClass() == AW_SKIN_LAYER_RENDERER_HELD_ITEM_CLASS))
-            {
-                layers.set(i, new SkinLayerRendererHeldItemEdit((RenderLivingBase<?>) ReflectionTool.get(LAYER_HELD_ITEM_LIVING_ENTITY_RENDERER_FIELD, layer), (LayerHeldItem) layer));
             }
             else if (layer.getClass() == LayerHeldItem.class)
             {

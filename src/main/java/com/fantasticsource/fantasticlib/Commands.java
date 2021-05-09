@@ -1,15 +1,11 @@
 package com.fantasticsource.fantasticlib;
 
-import com.fantasticsource.mctools.PlayerData;
-import com.fantasticsource.mctools.aw.RenderModes;
 import com.fantasticsource.tools.Tools;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
 
 import javax.annotation.Nullable;
@@ -24,7 +20,6 @@ public class Commands extends CommandBase
 
     static
     {
-        subcommands.put("rendermodes", 3);
         subcommands.put("uptime", 3);
         subcommands.put("heapdump", 3);
     }
@@ -58,10 +53,6 @@ public class Commands extends CommandBase
     {
         String result = "";
 
-        if (sender.canUseCommand(subcommands.get("rendermodes"), getName()))
-        {
-            result += AQUA + "/" + getName() + " rendermodes <playername> [renderchannel] [null|mode]";
-        }
         if (sender.canUseCommand(subcommands.get("uptime"), getName()))
         {
             result += "\n" + AQUA + "/" + getName() + " uptime";
@@ -92,15 +83,6 @@ public class Commands extends CommandBase
                 if (sender.canUseCommand(entry.getValue(), getName())) result.add(entry.getKey());
             }
         }
-        else if (args.length == 2)
-        {
-            switch (args[0])
-            {
-                case "rendermodes":
-                    result.addAll(Arrays.asList(server.getPlayerList().getOnlinePlayerNames()));
-                    break;
-            }
-        }
 
         if (partial.length() != 0) result.removeIf(k -> partial.length() > k.length() || !k.substring(0, partial.length()).equalsIgnoreCase(partial));
         return result;
@@ -118,46 +100,6 @@ public class Commands extends CommandBase
 
         switch (cmd)
         {
-            case "rendermodes":
-                if (args.length < 2)
-                {
-                    notifyCommandListener(sender, this, getUsage(sender));
-                    return;
-                }
-
-                EntityPlayer player = PlayerData.getEntity(args[1]);
-                if (player == null)
-                {
-                    notifyCommandListener(sender, this, "commands.generic.playerEntityNotFound");
-                    return;
-                }
-
-                if (args.length >= 4)
-                {
-                    RenderModes.setRenderMode(player, args[2], args[3].equals("null") ? null : args[3]);
-                    notifyCommandListener(sender, this, MODID + ".cmd.rendermodes.get.comment", TextFormatting.GOLD + args[2] + TextFormatting.RESET, TextFormatting.GOLD + args[3] + TextFormatting.RESET, TextFormatting.GOLD + player.getName() + TextFormatting.RESET);
-                }
-                else if (args.length >= 3)
-                {
-                    String result = RenderModes.getRenderMode(player, args[2]);
-                    if (result == null) notifyCommandListener(sender, this, MODID + ".cmd.rendermodes.notSet.comment", TextFormatting.GOLD + args[2] + TextFormatting.RESET, TextFormatting.GOLD + player.getName() + TextFormatting.RESET);
-                    notifyCommandListener(sender, this, MODID + ".cmd.rendermodes.get.comment", TextFormatting.GOLD + args[2] + TextFormatting.RESET, TextFormatting.GOLD + result + TextFormatting.RESET, TextFormatting.GOLD + player.getName() + TextFormatting.RESET);
-                }
-                else //2
-                {
-                    LinkedHashMap<String, String> result = RenderModes.getRenderModes(player);
-                    if (result == null) notifyCommandListener(sender, this, MODID + ".cmd.rendermodes.noneSet.comment", TextFormatting.GOLD + player.getName() + TextFormatting.RESET);
-                    else
-                    {
-                        for (Map.Entry<String, String> entry : result.entrySet())
-                        {
-                            notifyCommandListener(sender, this, MODID + ".cmd.rendermodes.get.comment", TextFormatting.GOLD + entry.getKey() + TextFormatting.RESET, TextFormatting.GOLD + entry.getValue() + TextFormatting.RESET, TextFormatting.GOLD + player.getName() + TextFormatting.RESET);
-                        }
-                    }
-                }
-                break;
-
-
             case "uptime":
                 if (FantasticLib.serverStartTime == -1)
                 {

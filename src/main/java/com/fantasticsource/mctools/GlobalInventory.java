@@ -3,8 +3,8 @@ package com.fantasticsource.mctools;
 import baubles.api.BaubleType;
 import baubles.api.BaublesApi;
 import baubles.api.cap.IBaublesItemHandler;
+import com.fantasticsource.fantasticaw.api.FantasticAWAPI;
 import com.fantasticsource.fantasticlib.Compat;
-import com.fantasticsource.mctools.aw.RenderModes;
 import com.fantasticsource.tiamatinventory.api.ITiamatPlayerInventory;
 import com.fantasticsource.tiamatinventory.api.TiamatInventoryAPI;
 import com.fantasticsource.tiamatitems.api.TiamatItemsAPI;
@@ -1228,7 +1228,7 @@ public class GlobalInventory
 
 
         ItemStack result = wardrobeSkinHandler.setSkinStack(skinType, index, newSkin);
-        RenderModes.refresh(entity);
+        FantasticAWAPI.refreshRenderModes(entity);
         return result;
     }
 
