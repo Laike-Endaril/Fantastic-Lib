@@ -9,6 +9,7 @@ import moe.plushie.armourers_workshop.client.skin.SkinModelTexture;
 import moe.plushie.armourers_workshop.client.skin.cache.ClientSkinPaintCache;
 import moe.plushie.armourers_workshop.common.addons.ModAddonManager;
 import moe.plushie.armourers_workshop.common.skin.data.Skin;
+import moe.plushie.armourers_workshop.common.skin.data.SkinPart;
 import moe.plushie.armourers_workshop.proxies.ClientProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -45,8 +46,8 @@ public class ModelSkinHeadEdit extends ModelSkinHead
         if (entity instanceof EntityPlayer)
         {
             EntityPlayer player = (EntityPlayer) entity;
-            this.isSneak = player.isSneaking();
-            this.isRiding = player.isRiding();
+            isSneak = player.isSneaking();
+            isRiding = player.isRiding();
         }
 
         GlStateManager.pushAttrib();
@@ -63,13 +64,12 @@ public class ModelSkinHeadEdit extends ModelSkinHead
             GL11.glPopAttrib();
         }
 
-        for (int i = 0; i < skin.getPartCount(); i++)
+        for (SkinPart skinPart : skin.getParts())
         {
             GL11.glPushMatrix();
             if (isChild)
             {
-                float f6 = 2.0F;
-                GL11.glScalef(1.5F / f6, 1.5F / f6, 1.5F / f6);
+                GL11.glScalef(0.75f, 0.75f, 0.75f);
                 GL11.glTranslatef(0.0F, 16.0F * SCALE, 0.0F);
             }
 
@@ -79,6 +79,8 @@ public class ModelSkinHeadEdit extends ModelSkinHead
                 GlStateManager.translate(0.0F, 1 * SCALE, 0.0F);
             }
 
+
+            //FLib compat start
             CBipedAnimation playerAnimation = CBipedAnimation.ANIMATION_DATA.get(entity);
             if (playerAnimation != null)
             {
@@ -90,6 +92,7 @@ public class ModelSkinHeadEdit extends ModelSkinHead
                 if (playerAnimation.head.xRotPath != null) bipedHead.rotateAngleX = (float) playerAnimation.head.xRotPath.getRelativePosition(millis).values[0];
                 if (playerAnimation.head.yRotPath != null) bipedHead.rotateAngleY = (float) playerAnimation.head.yRotPath.getRelativePosition(millis).values[0];
                 if (playerAnimation.head.zRotPath != null) bipedHead.rotateAngleZ = (float) playerAnimation.head.zRotPath.getRelativePosition(millis).values[0];
+
                 if (playerAnimation.head.xScalePath != null)
                 {
                     headScale = new float[]{(float) playerAnimation.head.xScalePath.getRelativePosition(millis).values[0], 1, 1};
@@ -107,13 +110,15 @@ public class ModelSkinHeadEdit extends ModelSkinHead
             }
             if (headScale != null) GlStateManager.scale(headScale[0], headScale[1], headScale[2]);
             GL11.glTranslatef(bipedHead.offsetX, bipedHead.offsetY, bipedHead.offsetZ);
+            //FLib compat end
+
 
             GL11.glColor3f(1F, 1F, 1F);
             GL11.glRotated(Math.toDegrees(bipedHead.rotateAngleZ), 0, 0, 1);
             GL11.glRotated(Math.toDegrees(bipedHead.rotateAngleY), 0, 1, 0);
             GL11.glRotated(Math.toDegrees(bipedHead.rotateAngleX), 1, 0, 0);
 
-            renderHead(new SkinPartRenderData(skin.getParts().get(i), renderData));
+            renderHead(new SkinPartRenderData(skinPart, renderData));
 
             GL11.glPopMatrix();
         }

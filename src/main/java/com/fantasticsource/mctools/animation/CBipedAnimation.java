@@ -39,7 +39,10 @@ public class CBipedAnimation extends Component
             RENDER_LIVING_BASE_LAYER_RENDERERS_FIELD = ReflectionTool.getField(RenderLivingBase.class, "field_177097_h", "layerRenderers"),
             LAYER_ARMOR_BASE_MODEL_LEGGINGS_FIELD = ReflectionTool.getField(LayerArmorBase.class, "field_177189_c", "modelLeggings"),
             LAYER_ARMOR_BASE_MODEL_ARMOR_FIELD = ReflectionTool.getField(LayerArmorBase.class, "field_177186_d", "modelArmor"),
-            SKIN_MODEL_RENDER_HELPER_MODEL_HEAD_FIELD = ReflectionTool.getField(SkinModelRenderHelper.class, "modelHead");
+            SKIN_MODEL_RENDER_HELPER_MODEL_HEAD_FIELD = ReflectionTool.getField(SkinModelRenderHelper.class, "modelHead"),
+            SKIN_MODEL_RENDER_HELPER_MODEL_CHEST_FIELD = ReflectionTool.getField(SkinModelRenderHelper.class, "modelChest"),
+            SKIN_MODEL_RENDER_HELPER_MODEL_LEGS_FIELD = ReflectionTool.getField(SkinModelRenderHelper.class, "modelLegs"),
+            SKIN_MODEL_RENDER_HELPER_MODEL_FEET_FIELD = ReflectionTool.getField(SkinModelRenderHelper.class, "modelFeet");
 
 
     public static final HashMap<Entity, CBipedAnimation> ANIMATION_DATA = new HashMap<>();
@@ -423,6 +426,15 @@ public class CBipedAnimation extends Component
             {
                 ReflectionTool.set(SKIN_MODEL_RENDER_HELPER_MODEL_HEAD_FIELD, SkinModelRenderHelper.INSTANCE, new ModelSkinHeadEdit());
                 SkinModelRenderHelper.INSTANCE.registerSkinTypeHelperForModel(SkinModelRenderHelper.ModelType.MODEL_BIPED, SkinTypeRegistry.skinHead, SkinModelRenderHelper.INSTANCE.modelHead);
+
+                ReflectionTool.set(SKIN_MODEL_RENDER_HELPER_MODEL_CHEST_FIELD, SkinModelRenderHelper.INSTANCE, new ModelSkinChestEdit());
+                SkinModelRenderHelper.INSTANCE.registerSkinTypeHelperForModel(SkinModelRenderHelper.ModelType.MODEL_BIPED, SkinTypeRegistry.skinChest, SkinModelRenderHelper.INSTANCE.modelChest);
+
+                ReflectionTool.set(SKIN_MODEL_RENDER_HELPER_MODEL_LEGS_FIELD, SkinModelRenderHelper.INSTANCE, new ModelSkinLegsEdit());
+                SkinModelRenderHelper.INSTANCE.registerSkinTypeHelperForModel(SkinModelRenderHelper.ModelType.MODEL_BIPED, SkinTypeRegistry.skinLegs, SkinModelRenderHelper.INSTANCE.modelLegs);
+
+                ReflectionTool.set(SKIN_MODEL_RENDER_HELPER_MODEL_FEET_FIELD, SkinModelRenderHelper.INSTANCE, new ModelSkinFeetEdit());
+                SkinModelRenderHelper.INSTANCE.registerSkinTypeHelperForModel(SkinModelRenderHelper.ModelType.MODEL_BIPED, SkinTypeRegistry.skinFeet, SkinModelRenderHelper.INSTANCE.modelFeet);
             }
         });
     }
