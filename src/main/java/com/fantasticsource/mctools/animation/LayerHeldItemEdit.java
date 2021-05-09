@@ -38,18 +38,15 @@ public class LayerHeldItemEdit extends LayerHeldItem
 
             CBipedAnimation playerAnimation = CBipedAnimation.ANIMATION_DATA.get(entitylivingbaseIn);
             long millis = System.currentTimeMillis();
-            if (playerAnimation != null)
+            if (playerAnimation != null && playerAnimation.handItemSwap != null && playerAnimation.handItemSwap.getRelativePosition(millis).values[0] < 0)
             {
-                if (playerAnimation.handItemSwap != null && playerAnimation.handItemSwap.getRelativePosition(millis).values[0] < 0)
-                {
-                    renderHeldItem(entitylivingbaseIn, itemstack, ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, EnumHandSide.RIGHT, millis);
-                    renderHeldItem(entitylivingbaseIn, itemstack1, ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, EnumHandSide.LEFT, millis);
-                }
-                else
-                {
-                    renderHeldItem(entitylivingbaseIn, itemstack1, ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, EnumHandSide.RIGHT, millis);
-                    renderHeldItem(entitylivingbaseIn, itemstack, ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, EnumHandSide.LEFT, millis);
-                }
+                renderHeldItem(entitylivingbaseIn, itemstack, ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, EnumHandSide.RIGHT, millis);
+                renderHeldItem(entitylivingbaseIn, itemstack1, ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, EnumHandSide.LEFT, millis);
+            }
+            else
+            {
+                renderHeldItem(entitylivingbaseIn, itemstack1, ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, EnumHandSide.RIGHT, millis);
+                renderHeldItem(entitylivingbaseIn, itemstack, ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, EnumHandSide.LEFT, millis);
             }
 
 

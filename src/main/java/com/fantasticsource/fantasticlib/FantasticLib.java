@@ -36,7 +36,7 @@ public class FantasticLib
     public static final String MODID = "fantasticlib";
     public static final String DOMAIN = "flib";
     public static final String NAME = "Fantastic Lib";
-    public static final String VERSION = "1.12.2.044zzzt";
+    public static final String VERSION = "1.12.2.044zzzu";
 
 
     public static long serverStartTime = -1;
@@ -219,16 +219,15 @@ public class FantasticLib
 
 
 //    @SubscribeEvent
-//    public static void test(EntityJoinWorldEvent event)
+//    public static void staffSpinTest(EntityJoinWorldEvent event)
 //    {
+//        //Based on the dual-lightsaber skin in AW; a vanilla sword would not match up correctly unless you added an offset constant path to items
 //        Entity entity = event.getEntity();
 //        if (!(entity instanceof EntityPlayer)) return;
 //
 //
 //        //Standard hand-swap code
 //        CBipedAnimation.setLeftItemYScalePath(entity, new CPathConstant(new VectorN(-1)));
-//        CBipedAnimation.setRightItemYPath(entity, new CPathConstant(new VectorN(-0.1)));
-//        CBipedAnimation.setLeftItemYPath(entity, new CPathConstant(new VectorN(0.1)));
 //
 //
 //        //Staff spin arms
@@ -252,7 +251,7 @@ public class FantasticLib
 //
 //
 //        //Actual staff spin
-////        CBipedAnimation.setRightItemZRotPath(entity, new CPathLinear(new VectorN(Math.PI * 2)).add(new CPathConstant(new VectorN(Math.PI))));
-////        CBipedAnimation.setLeftItemZRotPath(entity, new CPathLinear(new VectorN(-Math.PI * 2)).add(new CPathConstant(new VectorN(Math.PI))));
+//        CBipedAnimation.setRightItemZRotPath(entity, new CPathLinear(new VectorN(Math.PI * 2)).add(new CPathConstant(new VectorN(Math.PI))));
+//        CBipedAnimation.setLeftItemZRotPath(entity, new CPathLinear(new VectorN(-Math.PI * 2)).add(new CPathConstant(new VectorN(Math.PI))));
 //    }
 }
