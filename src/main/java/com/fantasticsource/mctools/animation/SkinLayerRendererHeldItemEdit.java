@@ -179,9 +179,10 @@ public class SkinLayerRendererHeldItemEdit extends LayerHeldItem
                                         //CAREFUL, THIS NEEDED CERTAIN NEGATIONS SPECIFICALLY FOR AW SKINS
                                         GL11.glTranslatef(playerAnimation.leftItem.xPath == null ? 0 : (float) playerAnimation.leftItem.xPath.getRelativePosition(millis).values[0], playerAnimation.leftItem.yPath == null ? 0 : -(float) playerAnimation.leftItem.yPath.getRelativePosition(millis).values[0], playerAnimation.leftItem.zPath == null ? 0 : (float) playerAnimation.leftItem.zPath.getRelativePosition(millis).values[0]);
 
-                                        if (playerAnimation.leftItem.zRotPath != null) GL11.glRotated(Math.toDegrees(playerAnimation.leftItem.zRotPath.getRelativePosition(millis).values[0]), 0, 0, 1);
+                                        //CAREFUL, THIS NEEDED CERTAIN NEGATIONS SPECIFICALLY FOR AW SKINS
+                                        if (playerAnimation.leftItem.zRotPath != null) GL11.glRotated(Math.toDegrees(playerAnimation.leftItem.zRotPath.getRelativePosition(millis).values[0]), 0, 0, -1);
                                         if (playerAnimation.leftItem.yRotPath != null) GL11.glRotated(Math.toDegrees(playerAnimation.leftItem.yRotPath.getRelativePosition(millis).values[0]), 0, 1, 0);
-                                        if (playerAnimation.leftItem.xRotPath != null) GL11.glRotated(Math.toDegrees(playerAnimation.leftItem.xRotPath.getRelativePosition(millis).values[0]), 1, 0, 0);
+                                        if (playerAnimation.leftItem.xRotPath != null) GL11.glRotated(Math.toDegrees(playerAnimation.leftItem.xRotPath.getRelativePosition(millis).values[0]), -1, 0, 0);
                                     }
                                     else
                                     {
@@ -204,9 +205,10 @@ public class SkinLayerRendererHeldItemEdit extends LayerHeldItem
                                         //CAREFUL, THIS NEEDED CERTAIN NEGATIONS SPECIFICALLY FOR AW SKINS
                                         GL11.glTranslatef(playerAnimation.rightItem.xPath == null ? 0 : -(float) playerAnimation.rightItem.xPath.getRelativePosition(millis).values[0], playerAnimation.rightItem.yPath == null ? 0 : -(float) playerAnimation.rightItem.yPath.getRelativePosition(millis).values[0], playerAnimation.rightItem.zPath == null ? 0 : (float) playerAnimation.rightItem.zPath.getRelativePosition(millis).values[0]);
 
+                                        //CAREFUL, THIS NEEDED CERTAIN NEGATIONS SPECIFICALLY FOR AW SKINS
                                         if (playerAnimation.rightItem.zRotPath != null) GL11.glRotated(Math.toDegrees(playerAnimation.rightItem.zRotPath.getRelativePosition(millis).values[0]), 0, 0, 1);
-                                        if (playerAnimation.rightItem.yRotPath != null) GL11.glRotated(Math.toDegrees(playerAnimation.rightItem.yRotPath.getRelativePosition(millis).values[0]), 0, 1, 0);
-                                        if (playerAnimation.rightItem.xRotPath != null) GL11.glRotated(Math.toDegrees(playerAnimation.rightItem.xRotPath.getRelativePosition(millis).values[0]), 1, 0, 0);
+                                        if (playerAnimation.rightItem.yRotPath != null) GL11.glRotated(Math.toDegrees(playerAnimation.rightItem.yRotPath.getRelativePosition(millis).values[0]), 0, -1, 0);
+                                        if (playerAnimation.rightItem.xRotPath != null) GL11.glRotated(Math.toDegrees(playerAnimation.rightItem.xRotPath.getRelativePosition(millis).values[0]), -1, 0, 0);
                                     }
                                 }
                                 //FLib compat end

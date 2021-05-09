@@ -17,20 +17,13 @@ import com.fantasticsource.mctools.gui.screen.TestGUI;
 import com.fantasticsource.mctools.nbtcap.NBTCap;
 import com.fantasticsource.mctools.nbtcap.NBTCapStorage;
 import com.fantasticsource.tools.ReflectionTool;
-import com.fantasticsource.tools.component.path.CPath;
-import com.fantasticsource.tools.component.path.CPathConstant;
-import com.fantasticsource.tools.component.path.CPathSinuous;
 import com.fantasticsource.tools.datastructures.ColorImmutable;
-import com.fantasticsource.tools.datastructures.VectorN;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
@@ -234,73 +227,4 @@ public class FantasticLib
 //            }
 //        }
 //    }
-
-
-    @SubscribeEvent
-    public static void test(EntityJoinWorldEvent event)
-    {
-        Entity entity = event.getEntity();
-        if (!(entity instanceof EntityPlayer)) return;
-
-        //Floating
-        CPath floatyPath = new CPathConstant(new VectorN(-0.25)).add(new CPathSinuous(new CPathConstant(new VectorN(0.25)), 0.2));
-        CPath floatyPath2 = new CPathConstant(new VectorN(-1)).mult(floatyPath);
-//        CBipedAnimation.setHeadYPath(entity, floatyPath);
-//        CBipedAnimation.setChestZPath(entity, floatyPath);
-//        CBipedAnimation.setLeftArmXPath(entity, floatyPath2);
-//        CBipedAnimation.setRightArmXPath(entity, floatyPath);
-//        CBipedAnimation.setLeftLegXPath(entity, floatyPath2);
-//        CBipedAnimation.setRightLegXPath(entity, floatyPath);
-
-        //Nodding
-        CPath nodPath = new CPathSinuous(new CPathConstant(new VectorN(0.25)), 0.75);
-//        CBipedAnimation.setHeadXRotPath(entity, nodPath);
-//        CBipedAnimation.setChestXRotPath(entity, nodPath);
-//        CBipedAnimation.setLeftArmXRotPath(entity, nodPath);
-//        CBipedAnimation.setRightArmXRotPath(entity, nodPath);
-//        CBipedAnimation.setLeftLegXRotPath(entity, nodPath);
-//        CBipedAnimation.setRightLegXRotPath(entity, nodPath);
-
-        //Expanding/shrinking
-        CPath expandShrinkPath = new CPathConstant(new VectorN(1)).add(new CPathSinuous(new CPathConstant(new VectorN(0.1)), 1));
-//        CBipedAnimation.setHeadXScalePath(entity, expandShrinkPath);
-//        CBipedAnimation.setHeadYScalePath(entity, expandShrinkPath);
-//        CBipedAnimation.setHeadZScalePath(entity, expandShrinkPath);
-//        CBipedAnimation.setChestXScalePath(entity, expandShrinkPath);
-//        CBipedAnimation.setChestYScalePath(entity, expandShrinkPath);
-//        CBipedAnimation.setChestZScalePath(entity, expandShrinkPath);
-//        CBipedAnimation.setLeftArmXScalePath(entity, expandShrinkPath);
-//        CBipedAnimation.setLeftArmYScalePath(entity, expandShrinkPath);
-//        CBipedAnimation.setLeftArmZScalePath(entity, expandShrinkPath);
-//        CBipedAnimation.setRightArmXScalePath(entity, expandShrinkPath);
-//        CBipedAnimation.setRightArmYScalePath(entity, expandShrinkPath);
-//        CBipedAnimation.setRightArmZScalePath(entity, expandShrinkPath);
-//        CBipedAnimation.setLeftLegXScalePath(entity, expandShrinkPath);
-//        CBipedAnimation.setLeftLegYScalePath(entity, expandShrinkPath);
-//        CBipedAnimation.setLeftLegZScalePath(entity, expandShrinkPath);
-//        CBipedAnimation.setRightLegXScalePath(entity, expandShrinkPath);
-//        CBipedAnimation.setRightLegYScalePath(entity, expandShrinkPath);
-//        CBipedAnimation.setRightLegZScalePath(entity, expandShrinkPath);
-
-        //Item-specific animation tests
-        CPath expandShrinkPath2 = new CPathConstant(new VectorN(1)).add(new CPathSinuous(new CPathConstant(new VectorN(0.3)), 1, 0.5));
-//        CBipedAnimation.setLeftItemXPath(entity, floatyPath);
-//        CBipedAnimation.setRightItemXPath(entity, floatyPath);
-//        CBipedAnimation.setLeftItemYPath(entity, floatyPath);
-//        CBipedAnimation.setRightItemYPath(entity, floatyPath);
-//        CBipedAnimation.setLeftItemZPath(entity, floatyPath);
-//        CBipedAnimation.setRightItemZPath(entity, floatyPath);
-        CBipedAnimation.setLeftItemXRotPath(entity, floatyPath);
-        CBipedAnimation.setRightItemXRotPath(entity, floatyPath);
-        CBipedAnimation.setLeftItemYRotPath(entity, floatyPath);
-        CBipedAnimation.setRightItemYRotPath(entity, floatyPath);
-        CBipedAnimation.setLeftItemZRotPath(entity, floatyPath);
-        CBipedAnimation.setRightItemZRotPath(entity, floatyPath);
-//        CBipedAnimation.setLeftItemXScalePath(entity, expandShrinkPath2);
-//        CBipedAnimation.setRightItemXScalePath(entity, expandShrinkPath2);
-//        CBipedAnimation.setLeftItemYScalePath(entity, expandShrinkPath2);
-//        CBipedAnimation.setRightItemYScalePath(entity, expandShrinkPath2);
-//        CBipedAnimation.setLeftItemZScalePath(entity, expandShrinkPath2);
-//        CBipedAnimation.setRightItemZScalePath(entity, expandShrinkPath2);
-    }
 }
