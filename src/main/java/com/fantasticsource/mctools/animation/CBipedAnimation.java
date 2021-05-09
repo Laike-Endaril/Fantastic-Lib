@@ -5,8 +5,7 @@ import com.fantasticsource.tools.ReflectionTool;
 import com.fantasticsource.tools.component.Component;
 import com.fantasticsource.tools.component.path.CPath;
 import io.netty.buffer.ByteBuf;
-import moe.plushie.armourers_workshop.client.render.SkinModelRenderHelper;
-import moe.plushie.armourers_workshop.common.skin.type.SkinTypeRegistry;
+import moe.plushie.armourers_workshop.api.ArmourersWorkshopApi;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
@@ -17,6 +16,7 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.entity.layers.LayerArmorBase;
 import net.minecraft.client.renderer.entity.layers.LayerBipedArmor;
+import net.minecraft.client.renderer.entity.layers.LayerHeldItem;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraftforge.client.event.RenderLivingEvent;
@@ -28,37 +28,47 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class CBipedAnimation extends Component
 {
+    public static final Class
+            AW_SKIN_MODEL_RENDER_HELPER_CLASS = !Loader.isModLoaded("armourers_workshop") ? null : ReflectionTool.getClassByName("moe.plushie.armourers_workshop.client.render.SkinModelRenderHelper"),
+            AW_SKIN_LAYER_RENDERER_HELD_ITEM_CLASS = !Loader.isModLoaded("armourers_workshop") ? null : ReflectionTool.getClassByName("moe.plushie.armourers_workshop.client.render.entity.SkinLayerRendererHeldItem"),
+            SKIN_MODEL_RENDER_HELPER_MODEL_TYPE_ENUM = !Loader.isModLoaded("armourers_workshop") ? null : ReflectionTool.getClassByName("moe.plushie.armourers_workshop.client.render.SkinModelRenderHelper$ModelType");
+
     public static final Field
             RENDER_LIVING_BASE_MAIN_MODEL_FIELD = ReflectionTool.getField(RenderLivingBase.class, "field_77045_g", "mainModel"),
             RENDER_LIVING_BASE_LAYER_RENDERERS_FIELD = ReflectionTool.getField(RenderLivingBase.class, "field_177097_h", "layerRenderers"),
             LAYER_ARMOR_BASE_MODEL_LEGGINGS_FIELD = ReflectionTool.getField(LayerArmorBase.class, "field_177189_c", "modelLeggings"),
             LAYER_ARMOR_BASE_MODEL_ARMOR_FIELD = ReflectionTool.getField(LayerArmorBase.class, "field_177186_d", "modelArmor"),
-            SKIN_MODEL_RENDER_HELPER_MODEL_HEAD_FIELD = ReflectionTool.getField(SkinModelRenderHelper.class, "modelHead"),
-            SKIN_MODEL_RENDER_HELPER_MODEL_CHEST_FIELD = ReflectionTool.getField(SkinModelRenderHelper.class, "modelChest"),
-            SKIN_MODEL_RENDER_HELPER_MODEL_LEGS_FIELD = ReflectionTool.getField(SkinModelRenderHelper.class, "modelLegs"),
-            SKIN_MODEL_RENDER_HELPER_MODEL_FEET_FIELD = ReflectionTool.getField(SkinModelRenderHelper.class, "modelFeet"),
-            SKIN_MODEL_RENDER_HELPER_MODEL_WINGS_FIELD = ReflectionTool.getField(SkinModelRenderHelper.class, "modelWings"),
-            SKIN_MODEL_RENDER_HELPER_MODEL_OUTFIT_FIELD = ReflectionTool.getField(SkinModelRenderHelper.class, "modelOutfit");
+            SKIN_MODEL_RENDER_HELPER_MODEL_HEAD_FIELD = !Loader.isModLoaded("armourers_workshop") ? null : ReflectionTool.getField(AW_SKIN_MODEL_RENDER_HELPER_CLASS, "modelHead"),
+            SKIN_MODEL_RENDER_HELPER_MODEL_CHEST_FIELD = !Loader.isModLoaded("armourers_workshop") ? null : ReflectionTool.getField(AW_SKIN_MODEL_RENDER_HELPER_CLASS, "modelChest"),
+            SKIN_MODEL_RENDER_HELPER_MODEL_LEGS_FIELD = !Loader.isModLoaded("armourers_workshop") ? null : ReflectionTool.getField(AW_SKIN_MODEL_RENDER_HELPER_CLASS, "modelLegs"),
+            SKIN_MODEL_RENDER_HELPER_MODEL_FEET_FIELD = !Loader.isModLoaded("armourers_workshop") ? null : ReflectionTool.getField(AW_SKIN_MODEL_RENDER_HELPER_CLASS, "modelFeet"),
+            SKIN_MODEL_RENDER_HELPER_MODEL_WINGS_FIELD = !Loader.isModLoaded("armourers_workshop") ? null : ReflectionTool.getField(AW_SKIN_MODEL_RENDER_HELPER_CLASS, "modelWings"),
+            SKIN_MODEL_RENDER_HELPER_MODEL_OUTFIT_FIELD = !Loader.isModLoaded("armourers_workshop") ? null : ReflectionTool.getField(AW_SKIN_MODEL_RENDER_HELPER_CLASS, "modelOutfit"),
+            LAYER_HELD_ITEM_LIVING_ENTITY_RENDERER_FIELD = ReflectionTool.getField(LayerHeldItem.class, "field_177206_a", "livingEntityRenderer"),
+            SKIN_MODEL_RENDER_HELPER_INSTANCE_FIELD = !Loader.isModLoaded("armourers_workshop") ? null : ReflectionTool.getField(AW_SKIN_MODEL_RENDER_HELPER_CLASS, "INSTANCE");
+
+    public static final Method SKIN_MODEL_RENDER_HELPER_REGISTER_SKIN_TYPE_HELPER_FOR_MODEL_METHOD = !Loader.isModLoaded("armourers_workshop") ? null : ReflectionTool.getMethod(AW_SKIN_MODEL_RENDER_HELPER_CLASS, "registerSkinTypeHelperForModel");
 
 
     public static final HashMap<Entity, CBipedAnimation> ANIMATION_DATA = new HashMap<>();
 
 
-    public CModelRendererAnimation head, chest, leftArm, rightArm, leftLeg, rightLeg;
+    public CModelRendererAnimation head, chest, leftArm, rightArm, leftLeg, rightLeg, leftItem, rightItem;
 
 
     public CBipedAnimation()
     {
-        this(new CModelRendererAnimation(), new CModelRendererAnimation(), new CModelRendererAnimation(), new CModelRendererAnimation(), new CModelRendererAnimation(), new CModelRendererAnimation());
+        this(new CModelRendererAnimation(), new CModelRendererAnimation(), new CModelRendererAnimation(), new CModelRendererAnimation(), new CModelRendererAnimation(), new CModelRendererAnimation(), new CModelRendererAnimation(), new CModelRendererAnimation());
     }
 
-    public CBipedAnimation(CModelRendererAnimation head, CModelRendererAnimation chest, CModelRendererAnimation leftArm, CModelRendererAnimation rightArm, CModelRendererAnimation leftLeg, CModelRendererAnimation rightLeg)
+    public CBipedAnimation(CModelRendererAnimation head, CModelRendererAnimation chest, CModelRendererAnimation leftArm, CModelRendererAnimation rightArm, CModelRendererAnimation leftLeg, CModelRendererAnimation rightLeg, CModelRendererAnimation leftItem, CModelRendererAnimation rightItem)
     {
         this.head = head;
         this.chest = chest;
@@ -66,6 +76,8 @@ public class CBipedAnimation extends Component
         this.rightArm = rightArm;
         this.leftLeg = leftLeg;
         this.rightLeg = rightLeg;
+        this.leftItem = leftItem;
+        this.rightItem = rightItem;
     }
 
 
@@ -345,6 +357,98 @@ public class CBipedAnimation extends Component
     }
 
 
+    public static void setLeftItemXPath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CBipedAnimation()).leftItem.xPath = path;
+    }
+
+    public static void setLeftItemYPath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CBipedAnimation()).leftItem.yPath = path;
+    }
+
+    public static void setLeftItemZPath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CBipedAnimation()).leftItem.zPath = path;
+    }
+
+    public static void setLeftItemXRotPath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CBipedAnimation()).leftItem.xRotPath = path;
+    }
+
+    public static void setLeftItemYRotPath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CBipedAnimation()).leftItem.yRotPath = path;
+    }
+
+    public static void setLeftItemZRotPath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CBipedAnimation()).leftItem.zRotPath = path;
+    }
+
+    public static void setLeftItemXScalePath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CBipedAnimation()).leftItem.xScalePath = path;
+    }
+
+    public static void setLeftItemYScalePath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CBipedAnimation()).leftItem.yScalePath = path;
+    }
+
+    public static void setLeftItemZScalePath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CBipedAnimation()).leftItem.zScalePath = path;
+    }
+
+
+    public static void setRightItemXPath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CBipedAnimation()).rightItem.xPath = path;
+    }
+
+    public static void setRightItemYPath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CBipedAnimation()).rightItem.yPath = path;
+    }
+
+    public static void setRightItemZPath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CBipedAnimation()).rightItem.zPath = path;
+    }
+
+    public static void setRightItemXRotPath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CBipedAnimation()).rightItem.xRotPath = path;
+    }
+
+    public static void setRightItemYRotPath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CBipedAnimation()).rightItem.yRotPath = path;
+    }
+
+    public static void setRightItemZRotPath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CBipedAnimation()).rightItem.zRotPath = path;
+    }
+
+    public static void setRightItemXScalePath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CBipedAnimation()).rightItem.xScalePath = path;
+    }
+
+    public static void setRightItemYScalePath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CBipedAnimation()).rightItem.yScalePath = path;
+    }
+
+    public static void setRightItemZScalePath(Entity entity, CPath path)
+    {
+        ANIMATION_DATA.computeIfAbsent(entity, o -> new CBipedAnimation()).rightItem.zScalePath = path;
+    }
+
+
     @Override
     public CBipedAnimation write(ByteBuf buf)
     {
@@ -354,6 +458,8 @@ public class CBipedAnimation extends Component
         rightArm.write(buf);
         leftLeg.write(buf);
         rightLeg.write(buf);
+        leftItem.write(buf);
+        rightItem.write(buf);
 
         return this;
     }
@@ -367,6 +473,8 @@ public class CBipedAnimation extends Component
         rightArm.read(buf);
         leftLeg.read(buf);
         rightLeg.read(buf);
+        leftItem.read(buf);
+        rightItem.read(buf);
 
         return this;
     }
@@ -380,6 +488,8 @@ public class CBipedAnimation extends Component
         rightArm.save(stream);
         leftLeg.save(stream);
         rightLeg.save(stream);
+        leftItem.save(stream);
+        rightItem.save(stream);
 
         return this;
     }
@@ -393,6 +503,8 @@ public class CBipedAnimation extends Component
         rightArm.load(stream);
         leftLeg.load(stream);
         rightLeg.load(stream);
+        leftItem.load(stream);
+        rightItem.load(stream);
 
         return this;
     }
@@ -426,23 +538,25 @@ public class CBipedAnimation extends Component
 
             if (Loader.isModLoaded("armourers_workshop"))
             {
-                ReflectionTool.set(SKIN_MODEL_RENDER_HELPER_MODEL_HEAD_FIELD, SkinModelRenderHelper.INSTANCE, new ModelSkinHeadEdit());
-                SkinModelRenderHelper.INSTANCE.registerSkinTypeHelperForModel(SkinModelRenderHelper.ModelType.MODEL_BIPED, SkinTypeRegistry.skinHead, SkinModelRenderHelper.INSTANCE.modelHead);
+                Object skinModelRenderHelper = ReflectionTool.get(SKIN_MODEL_RENDER_HELPER_INSTANCE_FIELD, null);
 
-                ReflectionTool.set(SKIN_MODEL_RENDER_HELPER_MODEL_CHEST_FIELD, SkinModelRenderHelper.INSTANCE, new ModelSkinChestEdit());
-                SkinModelRenderHelper.INSTANCE.registerSkinTypeHelperForModel(SkinModelRenderHelper.ModelType.MODEL_BIPED, SkinTypeRegistry.skinChest, SkinModelRenderHelper.INSTANCE.modelChest);
+                ReflectionTool.set(SKIN_MODEL_RENDER_HELPER_MODEL_HEAD_FIELD, skinModelRenderHelper, new ModelSkinHeadEdit());
+                ReflectionTool.invoke(SKIN_MODEL_RENDER_HELPER_REGISTER_SKIN_TYPE_HELPER_FOR_MODEL_METHOD, skinModelRenderHelper, SKIN_MODEL_RENDER_HELPER_MODEL_TYPE_ENUM.getEnumConstants()[0], ArmourersWorkshopApi.getSkinTypeRegistry().getSkinTypeFromRegistryName("armourers:head"), ReflectionTool.get(SKIN_MODEL_RENDER_HELPER_MODEL_HEAD_FIELD, skinModelRenderHelper));
 
-                ReflectionTool.set(SKIN_MODEL_RENDER_HELPER_MODEL_LEGS_FIELD, SkinModelRenderHelper.INSTANCE, new ModelSkinLegsEdit());
-                SkinModelRenderHelper.INSTANCE.registerSkinTypeHelperForModel(SkinModelRenderHelper.ModelType.MODEL_BIPED, SkinTypeRegistry.skinLegs, SkinModelRenderHelper.INSTANCE.modelLegs);
+                ReflectionTool.set(SKIN_MODEL_RENDER_HELPER_MODEL_CHEST_FIELD, skinModelRenderHelper, new ModelSkinChestEdit());
+                ReflectionTool.invoke(SKIN_MODEL_RENDER_HELPER_REGISTER_SKIN_TYPE_HELPER_FOR_MODEL_METHOD, skinModelRenderHelper, SKIN_MODEL_RENDER_HELPER_MODEL_TYPE_ENUM.getEnumConstants()[0], ArmourersWorkshopApi.getSkinTypeRegistry().getSkinTypeFromRegistryName("armourers:chest"), ReflectionTool.get(SKIN_MODEL_RENDER_HELPER_MODEL_CHEST_FIELD, skinModelRenderHelper));
 
-                ReflectionTool.set(SKIN_MODEL_RENDER_HELPER_MODEL_FEET_FIELD, SkinModelRenderHelper.INSTANCE, new ModelSkinFeetEdit());
-                SkinModelRenderHelper.INSTANCE.registerSkinTypeHelperForModel(SkinModelRenderHelper.ModelType.MODEL_BIPED, SkinTypeRegistry.skinFeet, SkinModelRenderHelper.INSTANCE.modelFeet);
+                ReflectionTool.set(SKIN_MODEL_RENDER_HELPER_MODEL_LEGS_FIELD, skinModelRenderHelper, new ModelSkinLegsEdit());
+                ReflectionTool.invoke(SKIN_MODEL_RENDER_HELPER_REGISTER_SKIN_TYPE_HELPER_FOR_MODEL_METHOD, skinModelRenderHelper, SKIN_MODEL_RENDER_HELPER_MODEL_TYPE_ENUM.getEnumConstants()[0], ArmourersWorkshopApi.getSkinTypeRegistry().getSkinTypeFromRegistryName("armourers:legs"), ReflectionTool.get(SKIN_MODEL_RENDER_HELPER_MODEL_LEGS_FIELD, skinModelRenderHelper));
 
-                ReflectionTool.set(SKIN_MODEL_RENDER_HELPER_MODEL_WINGS_FIELD, SkinModelRenderHelper.INSTANCE, new ModelSkinWingsEdit());
-                SkinModelRenderHelper.INSTANCE.registerSkinTypeHelperForModel(SkinModelRenderHelper.ModelType.MODEL_BIPED, SkinTypeRegistry.skinWings, SkinModelRenderHelper.INSTANCE.modelWings);
+                ReflectionTool.set(SKIN_MODEL_RENDER_HELPER_MODEL_FEET_FIELD, skinModelRenderHelper, new ModelSkinFeetEdit());
+                ReflectionTool.invoke(SKIN_MODEL_RENDER_HELPER_REGISTER_SKIN_TYPE_HELPER_FOR_MODEL_METHOD, skinModelRenderHelper, SKIN_MODEL_RENDER_HELPER_MODEL_TYPE_ENUM.getEnumConstants()[0], ArmourersWorkshopApi.getSkinTypeRegistry().getSkinTypeFromRegistryName("armourers:feet"), ReflectionTool.get(SKIN_MODEL_RENDER_HELPER_MODEL_FEET_FIELD, skinModelRenderHelper));
 
-                ReflectionTool.set(SKIN_MODEL_RENDER_HELPER_MODEL_OUTFIT_FIELD, SkinModelRenderHelper.INSTANCE, new ModelSkinOutfitEdit());
-                SkinModelRenderHelper.INSTANCE.registerSkinTypeHelperForModel(SkinModelRenderHelper.ModelType.MODEL_BIPED, SkinTypeRegistry.skinOutfit, SkinModelRenderHelper.INSTANCE.modelOutfit);
+                ReflectionTool.set(SKIN_MODEL_RENDER_HELPER_MODEL_WINGS_FIELD, skinModelRenderHelper, new ModelSkinWingsEdit());
+                ReflectionTool.invoke(SKIN_MODEL_RENDER_HELPER_REGISTER_SKIN_TYPE_HELPER_FOR_MODEL_METHOD, skinModelRenderHelper, SKIN_MODEL_RENDER_HELPER_MODEL_TYPE_ENUM.getEnumConstants()[0], ArmourersWorkshopApi.getSkinTypeRegistry().getSkinTypeFromRegistryName("armourers:wings"), ReflectionTool.get(SKIN_MODEL_RENDER_HELPER_MODEL_WINGS_FIELD, skinModelRenderHelper));
+
+                ReflectionTool.set(SKIN_MODEL_RENDER_HELPER_MODEL_OUTFIT_FIELD, skinModelRenderHelper, new ModelSkinOutfitEdit());
+                ReflectionTool.invoke(SKIN_MODEL_RENDER_HELPER_REGISTER_SKIN_TYPE_HELPER_FOR_MODEL_METHOD, skinModelRenderHelper, SKIN_MODEL_RENDER_HELPER_MODEL_TYPE_ENUM.getEnumConstants()[0], ArmourersWorkshopApi.getSkinTypeRegistry().getSkinTypeFromRegistryName("armourers:outfit"), ReflectionTool.get(SKIN_MODEL_RENDER_HELPER_MODEL_OUTFIT_FIELD, skinModelRenderHelper));
             }
         });
     }
@@ -466,6 +580,14 @@ public class CBipedAnimation extends Component
                 {
                     ReflectionTool.set(LAYER_ARMOR_BASE_MODEL_ARMOR_FIELD, layer, new ModelBipedEdit((ModelBiped) armorModel));
                 }
+            }
+            else if (Loader.isModLoaded("armourers_workshop") && layer.getClass() == AW_SKIN_LAYER_RENDERER_HELD_ITEM_CLASS)
+            {
+                //TODO
+            }
+            else if (layer.getClass() == LayerHeldItem.class)
+            {
+                layers.set(i, new LayerHeldItemEdit((RenderLivingBase<?>) ReflectionTool.get(LAYER_HELD_ITEM_LIVING_ENTITY_RENDERER_FIELD, layer)));
             }
         }
     }

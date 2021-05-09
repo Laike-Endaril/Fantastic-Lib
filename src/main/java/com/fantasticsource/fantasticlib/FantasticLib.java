@@ -22,6 +22,7 @@ import com.fantasticsource.tools.component.path.CPathConstant;
 import com.fantasticsource.tools.component.path.CPathSinuous;
 import com.fantasticsource.tools.datastructures.ColorImmutable;
 import com.fantasticsource.tools.datastructures.VectorN;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -238,46 +239,61 @@ public class FantasticLib
     @SubscribeEvent
     public static void test(EntityJoinWorldEvent event)
     {
-        if (!(event.getEntity() instanceof EntityPlayer)) return;
+        Entity entity = event.getEntity();
+        if (!(entity instanceof EntityPlayer)) return;
 
         //Floating
         CPath floatyPath = new CPathConstant(new VectorN(-0.25)).add(new CPathSinuous(new CPathConstant(new VectorN(0.25)), 0.2));
         CPath floatyPath2 = new CPathConstant(new VectorN(-1)).mult(floatyPath);
-        CBipedAnimation.setHeadYPath(event.getEntity(), floatyPath);
-        CBipedAnimation.setChestZPath(event.getEntity(), floatyPath);
-        CBipedAnimation.setLeftArmXPath(event.getEntity(), floatyPath2);
-        CBipedAnimation.setRightArmXPath(event.getEntity(), floatyPath);
-        CBipedAnimation.setLeftLegXPath(event.getEntity(), floatyPath2);
-        CBipedAnimation.setRightLegXPath(event.getEntity(), floatyPath);
+        CBipedAnimation.setHeadYPath(entity, floatyPath);
+        CBipedAnimation.setChestZPath(entity, floatyPath);
+        CBipedAnimation.setLeftArmXPath(entity, floatyPath2);
+        CBipedAnimation.setRightArmXPath(entity, floatyPath);
+        CBipedAnimation.setLeftLegXPath(entity, floatyPath2);
+        CBipedAnimation.setRightLegXPath(entity, floatyPath);
 
         //Nodding
         CPath nodPath = new CPathSinuous(new CPathConstant(new VectorN(0.25)), 0.75);
-        CBipedAnimation.setHeadXRotPath(event.getEntity(), nodPath);
-        CBipedAnimation.setChestXRotPath(event.getEntity(), nodPath);
-        CBipedAnimation.setLeftArmXRotPath(event.getEntity(), nodPath);
-        CBipedAnimation.setRightArmXRotPath(event.getEntity(), nodPath);
-        CBipedAnimation.setLeftLegXRotPath(event.getEntity(), nodPath);
-        CBipedAnimation.setRightLegXRotPath(event.getEntity(), nodPath);
+        CBipedAnimation.setHeadXRotPath(entity, nodPath);
+        CBipedAnimation.setChestXRotPath(entity, nodPath);
+        CBipedAnimation.setLeftArmXRotPath(entity, nodPath);
+        CBipedAnimation.setRightArmXRotPath(entity, nodPath);
+        CBipedAnimation.setLeftLegXRotPath(entity, nodPath);
+        CBipedAnimation.setRightLegXRotPath(entity, nodPath);
 
         //Expanding/shrinking
         CPath expandShrinkPath = new CPathConstant(new VectorN(1)).add(new CPathSinuous(new CPathConstant(new VectorN(0.1)), 1));
-        CBipedAnimation.setHeadXScalePath(event.getEntity(), expandShrinkPath);
-        CBipedAnimation.setHeadYScalePath(event.getEntity(), expandShrinkPath);
-        CBipedAnimation.setHeadZScalePath(event.getEntity(), expandShrinkPath);
-        CBipedAnimation.setChestXScalePath(event.getEntity(), expandShrinkPath);
-        CBipedAnimation.setChestYScalePath(event.getEntity(), expandShrinkPath);
-        CBipedAnimation.setChestZScalePath(event.getEntity(), expandShrinkPath);
-        CBipedAnimation.setLeftArmXScalePath(event.getEntity(), expandShrinkPath);
-        CBipedAnimation.setLeftArmYScalePath(event.getEntity(), expandShrinkPath);
-        CBipedAnimation.setLeftArmZScalePath(event.getEntity(), expandShrinkPath);
-        CBipedAnimation.setRightArmXScalePath(event.getEntity(), expandShrinkPath);
-        CBipedAnimation.setRightArmYScalePath(event.getEntity(), expandShrinkPath);
-        CBipedAnimation.setRightArmZScalePath(event.getEntity(), expandShrinkPath);
-        CBipedAnimation.setLeftLegXScalePath(event.getEntity(), expandShrinkPath);
-        CBipedAnimation.setLeftLegYScalePath(event.getEntity(), expandShrinkPath);
-        CBipedAnimation.setLeftLegZScalePath(event.getEntity(), expandShrinkPath);
-        CBipedAnimation.setRightLegXScalePath(event.getEntity(), expandShrinkPath);
-        CBipedAnimation.setRightLegYScalePath(event.getEntity(), expandShrinkPath);
-        CBipedAnimation.setRightLegZScalePath(event.getEntity(), expandShrinkPath);
+        CBipedAnimation.setHeadXScalePath(entity, expandShrinkPath);
+        CBipedAnimation.setHeadYScalePath(entity, expandShrinkPath);
+        CBipedAnimation.setHeadZScalePath(entity, expandShrinkPath);
+        CBipedAnimation.setChestXScalePath(entity, expandShrinkPath);
+        CBipedAnimation.setChestYScalePath(entity, expandShrinkPath);
+        CBipedAnimation.setChestZScalePath(entity, expandShrinkPath);
+        CBipedAnimation.setLeftArmXScalePath(entity, expandShrinkPath);
+        CBipedAnimation.setLeftArmYScalePath(entity, expandShrinkPath);
+        CBipedAnimation.setLeftArmZScalePath(entity, expandShrinkPath);
+        CBipedAnimation.setRightArmXScalePath(entity, expandShrinkPath);
+        CBipedAnimation.setRightArmYScalePath(entity, expandShrinkPath);
+        CBipedAnimation.setRightArmZScalePath(entity, expandShrinkPath);
+        CBipedAnimation.setLeftLegXScalePath(entity, expandShrinkPath);
+        CBipedAnimation.setLeftLegYScalePath(entity, expandShrinkPath);
+        CBipedAnimation.setLeftLegZScalePath(entity, expandShrinkPath);
+        CBipedAnimation.setRightLegXScalePath(entity, expandShrinkPath);
+        CBipedAnimation.setRightLegYScalePath(entity, expandShrinkPath);
+        CBipedAnimation.setRightLegZScalePath(entity, expandShrinkPath);
+
+        //Item-specific animation test
+        CPath translatePath = new CPathConstant(new VectorN(-3)).mult(floatyPath);
+        CPath expandShrinkPath2 = new CPathConstant(new VectorN(1)).add(new CPathSinuous(new CPathConstant(new VectorN(0.3)), 1, 0.5));
+        CBipedAnimation.setLeftItemYPath(entity, translatePath);
+        CBipedAnimation.setRightItemYPath(entity, translatePath);
+        CBipedAnimation.setLeftItemYRotPath(entity, nodPath);
+        CBipedAnimation.setRightItemYRotPath(entity, nodPath);
+        CBipedAnimation.setLeftItemXScalePath(entity, expandShrinkPath2);
+        CBipedAnimation.setRightItemXScalePath(entity, expandShrinkPath2);
+        CBipedAnimation.setLeftItemYScalePath(entity, expandShrinkPath2);
+        CBipedAnimation.setRightItemYScalePath(entity, expandShrinkPath2);
+        CBipedAnimation.setLeftItemZScalePath(entity, expandShrinkPath2);
+        CBipedAnimation.setRightItemZScalePath(entity, expandShrinkPath2);
     }
 }
