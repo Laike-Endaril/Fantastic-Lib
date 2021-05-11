@@ -475,13 +475,23 @@ public class MCTools
         char[] chars = nbtString.toCharArray();
         StringBuilder current = new StringBuilder();
         StringBuilder indent = new StringBuilder();
+        boolean string = false;
         for (int i = 0; i < chars.length; i++)
         {
             char c = chars[i];
             switch (c)
             {
+                case '"':
+                    string = !string;
+                    current.append(c);
+                    break;
                 case '{':
                 case '[':
+                    if (string)
+                    {
+                        current.append(c);
+                        break;
+                    }
                     if (!current.toString().equals("")) result.add(indent + current.toString());
                     result.add(indent.toString() + c);
                     current = new StringBuilder();
@@ -490,6 +500,11 @@ public class MCTools
 
                 case '}':
                 case ']':
+                    if (string)
+                    {
+                        current.append(c);
+                        break;
+                    }
                     if (!current.toString().equals("")) result.add(indent + current.toString());
                     indent = new StringBuilder(indent.substring(0, indent.length() - 1));
                     result.add(indent.toString() + c + (i + 1 < chars.length && chars[i + 1] == ',' ? ',' : ""));
@@ -497,6 +512,11 @@ public class MCTools
                     break;
 
                 case ',':
+                    if (string)
+                    {
+                        current.append(c);
+                        break;
+                    }
                     if (!current.toString().equals("")) result.add(indent + current.toString() + c);
                     current = new StringBuilder();
                     break;
