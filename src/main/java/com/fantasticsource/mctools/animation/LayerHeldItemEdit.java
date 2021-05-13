@@ -1,6 +1,7 @@
 package com.fantasticsource.mctools.animation;
 
 import com.fantasticsource.tools.Tools;
+import com.fantasticsource.tools.component.path.CPath;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -10,6 +11,8 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHandSide;
 import org.lwjgl.opengl.GL11;
+
+import java.util.ArrayList;
 
 public class LayerHeldItemEdit extends LayerHeldItem
 {
@@ -36,9 +39,13 @@ public class LayerHeldItemEdit extends LayerHeldItem
                 GlStateManager.scale(0.5F, 0.5F, 0.5F);
             }
 
-            CBipedAnimation playerAnimation = CBipedAnimation.ANIMATION_DATA.get(entitylivingbaseIn);
             long millis = System.currentTimeMillis();
-            if (playerAnimation != null && playerAnimation.handItemSwap != null && playerAnimation.handItemSwap.getRelativePosition(millis).values[0] < 0)
+            CPath handItemSwap = null;
+            for (CBipedAnimation animation : CBipedAnimation.ANIMATION_DATA.getOrDefault(entitylivingbaseIn, new ArrayList<>()))
+            {
+                if (animation.handItemSwap != null) handItemSwap = animation.handItemSwap;
+            }
+            if (handItemSwap != null && handItemSwap.getRelativePosition(millis).values[0] < 0)
             {
                 renderHeldItem(entitylivingbaseIn, itemstack, ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, EnumHandSide.RIGHT, millis);
                 renderHeldItem(entitylivingbaseIn, itemstack1, ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, EnumHandSide.LEFT, millis);
@@ -69,56 +76,55 @@ public class LayerHeldItemEdit extends LayerHeldItem
         GlStateManager.translate((float) (flag ? -1 : 1) / 16.0F, 0.125F, -0.625F);
 
 
-        CBipedAnimation playerAnimation = CBipedAnimation.ANIMATION_DATA.get(entity);
-        if (playerAnimation != null)
+        for (CBipedAnimation animation : CBipedAnimation.ANIMATION_DATA.getOrDefault(entity, new ArrayList<>()))
         {
             if (handSide == EnumHandSide.LEFT)
             {
-                if (playerAnimation.leftItem.xScalePath != null)
+                if (animation.leftItem.xScalePath != null)
                 {
-                    leftItemScale = new float[]{(float) playerAnimation.leftItem.xScalePath.getRelativePosition(millis).values[0], 1, 1};
+                    leftItemScale = new float[]{(float) animation.leftItem.xScalePath.getRelativePosition(millis).values[0], 1, 1};
                 }
-                if (playerAnimation.leftItem.yScalePath != null)
+                if (animation.leftItem.yScalePath != null)
                 {
-                    if (leftItemScale == null) leftItemScale = new float[]{1, (float) playerAnimation.leftItem.yScalePath.getRelativePosition(millis).values[0], 1};
-                    else leftItemScale[1] = (float) playerAnimation.leftItem.yScalePath.getRelativePosition(millis).values[0];
+                    if (leftItemScale == null) leftItemScale = new float[]{1, (float) animation.leftItem.yScalePath.getRelativePosition(millis).values[0], 1};
+                    else leftItemScale[1] = (float) animation.leftItem.yScalePath.getRelativePosition(millis).values[0];
                 }
-                if (playerAnimation.leftItem.zScalePath != null)
+                if (animation.leftItem.zScalePath != null)
                 {
-                    if (leftItemScale == null) leftItemScale = new float[]{1, 1, (float) playerAnimation.leftItem.zScalePath.getRelativePosition(millis).values[0]};
-                    else leftItemScale[2] = (float) playerAnimation.leftItem.zScalePath.getRelativePosition(millis).values[0];
+                    if (leftItemScale == null) leftItemScale = new float[]{1, 1, (float) animation.leftItem.zScalePath.getRelativePosition(millis).values[0]};
+                    else leftItemScale[2] = (float) animation.leftItem.zScalePath.getRelativePosition(millis).values[0];
                 }
                 if (leftItemScale != null) GlStateManager.scale(leftItemScale[0], leftItemScale[1], leftItemScale[2]);
 
-                GL11.glTranslatef(playerAnimation.leftItem.xPath == null ? 0 : (float) playerAnimation.leftItem.xPath.getRelativePosition(millis).values[0], playerAnimation.leftItem.yPath == null ? 0 : (float) playerAnimation.leftItem.yPath.getRelativePosition(millis).values[0], playerAnimation.leftItem.zPath == null ? 0 : (float) playerAnimation.leftItem.zPath.getRelativePosition(millis).values[0]);
+                GL11.glTranslatef(animation.leftItem.xPath == null ? 0 : (float) animation.leftItem.xPath.getRelativePosition(millis).values[0], animation.leftItem.yPath == null ? 0 : (float) animation.leftItem.yPath.getRelativePosition(millis).values[0], animation.leftItem.zPath == null ? 0 : (float) animation.leftItem.zPath.getRelativePosition(millis).values[0]);
 
-                if (playerAnimation.leftItem.zRotPath != null) GL11.glRotated(Math.toDegrees(Tools.posMod(playerAnimation.leftItem.zRotPath.getRelativePosition(millis).values[0], Math.PI * 2)), 0, 0, 1);
-                if (playerAnimation.leftItem.yRotPath != null) GL11.glRotated(Math.toDegrees(Tools.posMod(playerAnimation.leftItem.yRotPath.getRelativePosition(millis).values[0], Math.PI * 2)), 0, 1, 0);
-                if (playerAnimation.leftItem.xRotPath != null) GL11.glRotated(Math.toDegrees(Tools.posMod(playerAnimation.leftItem.xRotPath.getRelativePosition(millis).values[0], Math.PI * 2)), 1, 0, 0);
+                if (animation.leftItem.zRotPath != null) GL11.glRotated(Math.toDegrees(Tools.posMod(animation.leftItem.zRotPath.getRelativePosition(millis).values[0], Math.PI * 2)), 0, 0, 1);
+                if (animation.leftItem.yRotPath != null) GL11.glRotated(Math.toDegrees(Tools.posMod(animation.leftItem.yRotPath.getRelativePosition(millis).values[0], Math.PI * 2)), 0, 1, 0);
+                if (animation.leftItem.xRotPath != null) GL11.glRotated(Math.toDegrees(Tools.posMod(animation.leftItem.xRotPath.getRelativePosition(millis).values[0], Math.PI * 2)), 1, 0, 0);
             }
             else
             {
-                if (playerAnimation.rightItem.xScalePath != null)
+                if (animation.rightItem.xScalePath != null)
                 {
-                    rightItemScale = new float[]{(float) playerAnimation.rightItem.xScalePath.getRelativePosition(millis).values[0], 1, 1};
+                    rightItemScale = new float[]{(float) animation.rightItem.xScalePath.getRelativePosition(millis).values[0], 1, 1};
                 }
-                if (playerAnimation.rightItem.yScalePath != null)
+                if (animation.rightItem.yScalePath != null)
                 {
-                    if (rightItemScale == null) rightItemScale = new float[]{1, (float) playerAnimation.rightItem.yScalePath.getRelativePosition(millis).values[0], 1};
-                    else rightItemScale[1] = (float) playerAnimation.rightItem.yScalePath.getRelativePosition(millis).values[0];
+                    if (rightItemScale == null) rightItemScale = new float[]{1, (float) animation.rightItem.yScalePath.getRelativePosition(millis).values[0], 1};
+                    else rightItemScale[1] = (float) animation.rightItem.yScalePath.getRelativePosition(millis).values[0];
                 }
-                if (playerAnimation.rightItem.zScalePath != null)
+                if (animation.rightItem.zScalePath != null)
                 {
-                    if (rightItemScale == null) rightItemScale = new float[]{1, 1, (float) playerAnimation.rightItem.zScalePath.getRelativePosition(millis).values[0]};
-                    else rightItemScale[2] = (float) playerAnimation.rightItem.zScalePath.getRelativePosition(millis).values[0];
+                    if (rightItemScale == null) rightItemScale = new float[]{1, 1, (float) animation.rightItem.zScalePath.getRelativePosition(millis).values[0]};
+                    else rightItemScale[2] = (float) animation.rightItem.zScalePath.getRelativePosition(millis).values[0];
                 }
                 if (rightItemScale != null) GlStateManager.scale(rightItemScale[0], rightItemScale[1], rightItemScale[2]);
 
-                GL11.glTranslatef(playerAnimation.rightItem.xPath == null ? 0 : (float) playerAnimation.rightItem.xPath.getRelativePosition(millis).values[0], playerAnimation.rightItem.yPath == null ? 0 : (float) playerAnimation.rightItem.yPath.getRelativePosition(millis).values[0], playerAnimation.rightItem.zPath == null ? 0 : (float) playerAnimation.rightItem.zPath.getRelativePosition(millis).values[0]);
+                GL11.glTranslatef(animation.rightItem.xPath == null ? 0 : (float) animation.rightItem.xPath.getRelativePosition(millis).values[0], animation.rightItem.yPath == null ? 0 : (float) animation.rightItem.yPath.getRelativePosition(millis).values[0], animation.rightItem.zPath == null ? 0 : (float) animation.rightItem.zPath.getRelativePosition(millis).values[0]);
 
-                if (playerAnimation.rightItem.zRotPath != null) GL11.glRotated(Math.toDegrees(Tools.posMod(playerAnimation.rightItem.zRotPath.getRelativePosition(millis).values[0], Math.PI * 2)), 0, 0, 1);
-                if (playerAnimation.rightItem.yRotPath != null) GL11.glRotated(Math.toDegrees(Tools.posMod(playerAnimation.rightItem.yRotPath.getRelativePosition(millis).values[0], Math.PI * 2)), 0, 1, 0);
-                if (playerAnimation.rightItem.xRotPath != null) GL11.glRotated(Math.toDegrees(Tools.posMod(playerAnimation.rightItem.xRotPath.getRelativePosition(millis).values[0], Math.PI * 2)), 1, 0, 0);
+                if (animation.rightItem.zRotPath != null) GL11.glRotated(Math.toDegrees(Tools.posMod(animation.rightItem.zRotPath.getRelativePosition(millis).values[0], Math.PI * 2)), 0, 0, 1);
+                if (animation.rightItem.yRotPath != null) GL11.glRotated(Math.toDegrees(Tools.posMod(animation.rightItem.yRotPath.getRelativePosition(millis).values[0], Math.PI * 2)), 0, 1, 0);
+                if (animation.rightItem.xRotPath != null) GL11.glRotated(Math.toDegrees(Tools.posMod(animation.rightItem.xRotPath.getRelativePosition(millis).values[0], Math.PI * 2)), 1, 0, 0);
             }
         }
 

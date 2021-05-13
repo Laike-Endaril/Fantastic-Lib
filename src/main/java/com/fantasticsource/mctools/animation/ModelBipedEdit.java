@@ -9,6 +9,8 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.math.MathHelper;
 
+import java.util.ArrayList;
+
 public class ModelBipedEdit extends ModelBiped
 {
     public float[] headScale = null, chestScale = null, leftArmScale = null, rightArmScale = null, leftLegScale = null, rightLegScale = null;
@@ -198,11 +200,9 @@ public class ModelBipedEdit extends ModelBiped
 
 
         //Custom via paths
-        CBipedAnimation playerAnimation = CBipedAnimation.ANIMATION_DATA.get(entityIn);
-        if (playerAnimation != null)
+        long millis = System.currentTimeMillis();
+        for (CBipedAnimation playerAnimation : CBipedAnimation.ANIMATION_DATA.getOrDefault(entityIn, new ArrayList<>()))
         {
-            long millis = System.currentTimeMillis();
-
             if (playerAnimation.head.xPath != null) bipedHead.offsetX = (float) playerAnimation.head.xPath.getRelativePosition(millis).values[0];
             if (playerAnimation.head.yPath != null) bipedHead.offsetY = (float) playerAnimation.head.yPath.getRelativePosition(millis).values[0];
             if (playerAnimation.head.zPath != null) bipedHead.offsetZ = (float) playerAnimation.head.zPath.getRelativePosition(millis).values[0];
@@ -264,99 +264,97 @@ public class ModelBipedEdit extends ModelBiped
     {
         setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, entityIn);
 
-        CBipedAnimation playerAnimation = CBipedAnimation.ANIMATION_DATA.get(entityIn);
-        if (playerAnimation != null)
+        long millis = System.currentTimeMillis();
+        for (CBipedAnimation animation : CBipedAnimation.ANIMATION_DATA.getOrDefault(entityIn, new ArrayList<>()))
         {
-            long millis = System.currentTimeMillis();
-
-            if (playerAnimation.head.xScalePath != null)
+            if (animation.head.xScalePath != null)
             {
-                headScale = new float[]{(float) playerAnimation.head.xScalePath.getRelativePosition(millis).values[0], 1, 1};
+                headScale = new float[]{(float) animation.head.xScalePath.getRelativePosition(millis).values[0], 1, 1};
             }
-            if (playerAnimation.head.yScalePath != null)
+            if (animation.head.yScalePath != null)
             {
-                if (headScale == null) headScale = new float[]{1, (float) playerAnimation.head.yScalePath.getRelativePosition(millis).values[0], 1};
-                else headScale[1] = (float) playerAnimation.head.yScalePath.getRelativePosition(millis).values[0];
+                if (headScale == null) headScale = new float[]{1, (float) animation.head.yScalePath.getRelativePosition(millis).values[0], 1};
+                else headScale[1] = (float) animation.head.yScalePath.getRelativePosition(millis).values[0];
             }
-            if (playerAnimation.head.zScalePath != null)
+            if (animation.head.zScalePath != null)
             {
-                if (headScale == null) headScale = new float[]{1, 1, (float) playerAnimation.head.zScalePath.getRelativePosition(millis).values[0]};
-                else headScale[2] = (float) playerAnimation.head.zScalePath.getRelativePosition(millis).values[0];
+                if (headScale == null) headScale = new float[]{1, 1, (float) animation.head.zScalePath.getRelativePosition(millis).values[0]};
+                else headScale[2] = (float) animation.head.zScalePath.getRelativePosition(millis).values[0];
             }
 
-            if (playerAnimation.chest.xScalePath != null)
+            if (animation.chest.xScalePath != null)
             {
-                chestScale = new float[]{(float) playerAnimation.chest.xScalePath.getRelativePosition(millis).values[0], 1, 1};
+                chestScale = new float[]{(float) animation.chest.xScalePath.getRelativePosition(millis).values[0], 1, 1};
             }
-            if (playerAnimation.chest.yScalePath != null)
+            if (animation.chest.yScalePath != null)
             {
-                if (chestScale == null) chestScale = new float[]{1, (float) playerAnimation.chest.yScalePath.getRelativePosition(millis).values[0], 1};
-                else chestScale[1] = (float) playerAnimation.chest.yScalePath.getRelativePosition(millis).values[0];
+                if (chestScale == null) chestScale = new float[]{1, (float) animation.chest.yScalePath.getRelativePosition(millis).values[0], 1};
+                else chestScale[1] = (float) animation.chest.yScalePath.getRelativePosition(millis).values[0];
             }
-            if (playerAnimation.chest.zScalePath != null)
+            if (animation.chest.zScalePath != null)
             {
-                if (chestScale == null) chestScale = new float[]{1, 1, (float) playerAnimation.chest.zScalePath.getRelativePosition(millis).values[0]};
-                else chestScale[2] = (float) playerAnimation.chest.zScalePath.getRelativePosition(millis).values[0];
-            }
-
-            if (playerAnimation.leftArm.xScalePath != null)
-            {
-                leftArmScale = new float[]{(float) playerAnimation.leftArm.xScalePath.getRelativePosition(millis).values[0], 1, 1};
-            }
-            if (playerAnimation.leftArm.yScalePath != null)
-            {
-                if (leftArmScale == null) leftArmScale = new float[]{1, (float) playerAnimation.leftArm.yScalePath.getRelativePosition(millis).values[0], 1};
-                else leftArmScale[1] = (float) playerAnimation.leftArm.yScalePath.getRelativePosition(millis).values[0];
-            }
-            if (playerAnimation.leftArm.zScalePath != null)
-            {
-                if (leftArmScale == null) leftArmScale = new float[]{1, 1, (float) playerAnimation.leftArm.zScalePath.getRelativePosition(millis).values[0]};
-                else leftArmScale[2] = (float) playerAnimation.leftArm.zScalePath.getRelativePosition(millis).values[0];
+                if (chestScale == null) chestScale = new float[]{1, 1, (float) animation.chest.zScalePath.getRelativePosition(millis).values[0]};
+                else chestScale[2] = (float) animation.chest.zScalePath.getRelativePosition(millis).values[0];
             }
 
-            if (playerAnimation.rightArm.xScalePath != null)
+            if (animation.leftArm.xScalePath != null)
             {
-                rightArmScale = new float[]{(float) playerAnimation.rightArm.xScalePath.getRelativePosition(millis).values[0], 1, 1};
+                leftArmScale = new float[]{(float) animation.leftArm.xScalePath.getRelativePosition(millis).values[0], 1, 1};
             }
-            if (playerAnimation.rightArm.yScalePath != null)
+            if (animation.leftArm.yScalePath != null)
             {
-                if (rightArmScale == null) rightArmScale = new float[]{1, (float) playerAnimation.rightArm.yScalePath.getRelativePosition(millis).values[0], 1};
-                else rightArmScale[1] = (float) playerAnimation.rightArm.yScalePath.getRelativePosition(millis).values[0];
+                if (leftArmScale == null) leftArmScale = new float[]{1, (float) animation.leftArm.yScalePath.getRelativePosition(millis).values[0], 1};
+                else leftArmScale[1] = (float) animation.leftArm.yScalePath.getRelativePosition(millis).values[0];
             }
-            if (playerAnimation.rightArm.zScalePath != null)
+            if (animation.leftArm.zScalePath != null)
             {
-                if (rightArmScale == null) rightArmScale = new float[]{1, 1, (float) playerAnimation.rightArm.zScalePath.getRelativePosition(millis).values[0]};
-                else rightArmScale[2] = (float) playerAnimation.rightArm.zScalePath.getRelativePosition(millis).values[0];
-            }
-
-            if (playerAnimation.leftLeg.xScalePath != null)
-            {
-                leftLegScale = new float[]{(float) playerAnimation.leftLeg.xScalePath.getRelativePosition(millis).values[0], 1, 1};
-            }
-            if (playerAnimation.leftLeg.yScalePath != null)
-            {
-                if (leftLegScale == null) leftLegScale = new float[]{1, (float) playerAnimation.leftLeg.yScalePath.getRelativePosition(millis).values[0], 1};
-                else leftLegScale[1] = (float) playerAnimation.leftLeg.yScalePath.getRelativePosition(millis).values[0];
-            }
-            if (playerAnimation.leftLeg.zScalePath != null)
-            {
-                if (leftLegScale == null) leftLegScale = new float[]{1, 1, (float) playerAnimation.leftLeg.zScalePath.getRelativePosition(millis).values[0]};
-                else leftLegScale[2] = (float) playerAnimation.leftLeg.zScalePath.getRelativePosition(millis).values[0];
+                if (leftArmScale == null) leftArmScale = new float[]{1, 1, (float) animation.leftArm.zScalePath.getRelativePosition(millis).values[0]};
+                else leftArmScale[2] = (float) animation.leftArm.zScalePath.getRelativePosition(millis).values[0];
             }
 
-            if (playerAnimation.rightLeg.xScalePath != null)
+            if (animation.rightArm.xScalePath != null)
             {
-                rightLegScale = new float[]{(float) playerAnimation.rightLeg.xScalePath.getRelativePosition(millis).values[0], 1, 1};
+                rightArmScale = new float[]{(float) animation.rightArm.xScalePath.getRelativePosition(millis).values[0], 1, 1};
             }
-            if (playerAnimation.rightLeg.yScalePath != null)
+            if (animation.rightArm.yScalePath != null)
             {
-                if (rightLegScale == null) rightLegScale = new float[]{1, (float) playerAnimation.rightLeg.yScalePath.getRelativePosition(millis).values[0], 1};
-                else rightLegScale[1] = (float) playerAnimation.rightLeg.yScalePath.getRelativePosition(millis).values[0];
+                if (rightArmScale == null) rightArmScale = new float[]{1, (float) animation.rightArm.yScalePath.getRelativePosition(millis).values[0], 1};
+                else rightArmScale[1] = (float) animation.rightArm.yScalePath.getRelativePosition(millis).values[0];
             }
-            if (playerAnimation.rightLeg.zScalePath != null)
+            if (animation.rightArm.zScalePath != null)
             {
-                if (rightLegScale == null) rightLegScale = new float[]{1, 1, (float) playerAnimation.rightLeg.zScalePath.getRelativePosition(millis).values[0]};
-                else rightLegScale[2] = (float) playerAnimation.rightLeg.zScalePath.getRelativePosition(millis).values[0];
+                if (rightArmScale == null) rightArmScale = new float[]{1, 1, (float) animation.rightArm.zScalePath.getRelativePosition(millis).values[0]};
+                else rightArmScale[2] = (float) animation.rightArm.zScalePath.getRelativePosition(millis).values[0];
+            }
+
+            if (animation.leftLeg.xScalePath != null)
+            {
+                leftLegScale = new float[]{(float) animation.leftLeg.xScalePath.getRelativePosition(millis).values[0], 1, 1};
+            }
+            if (animation.leftLeg.yScalePath != null)
+            {
+                if (leftLegScale == null) leftLegScale = new float[]{1, (float) animation.leftLeg.yScalePath.getRelativePosition(millis).values[0], 1};
+                else leftLegScale[1] = (float) animation.leftLeg.yScalePath.getRelativePosition(millis).values[0];
+            }
+            if (animation.leftLeg.zScalePath != null)
+            {
+                if (leftLegScale == null) leftLegScale = new float[]{1, 1, (float) animation.leftLeg.zScalePath.getRelativePosition(millis).values[0]};
+                else leftLegScale[2] = (float) animation.leftLeg.zScalePath.getRelativePosition(millis).values[0];
+            }
+
+            if (animation.rightLeg.xScalePath != null)
+            {
+                rightLegScale = new float[]{(float) animation.rightLeg.xScalePath.getRelativePosition(millis).values[0], 1, 1};
+            }
+            if (animation.rightLeg.yScalePath != null)
+            {
+                if (rightLegScale == null) rightLegScale = new float[]{1, (float) animation.rightLeg.yScalePath.getRelativePosition(millis).values[0], 1};
+                else rightLegScale[1] = (float) animation.rightLeg.yScalePath.getRelativePosition(millis).values[0];
+            }
+            if (animation.rightLeg.zScalePath != null)
+            {
+                if (rightLegScale == null) rightLegScale = new float[]{1, 1, (float) animation.rightLeg.zScalePath.getRelativePosition(millis).values[0]};
+                else rightLegScale[2] = (float) animation.rightLeg.zScalePath.getRelativePosition(millis).values[0];
             }
         }
 
