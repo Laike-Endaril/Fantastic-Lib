@@ -20,8 +20,8 @@ public class PathedParticle extends Particle
     public boolean useBlockLight = false;
     public double xScale3D = 1, yScale3D = 1, zScale3D = 1;
 
-    protected CPath.PathData basePath, rgbPath = null, hsvPath = null, alphaPath = null, scale3DPath = null;
-    protected ArrayList<CPath.PathData> morePaths = new ArrayList<>();
+    protected CPath.CPathData basePath, rgbPath = null, hsvPath = null, alphaPath = null, scale3DPath = null;
+    protected ArrayList<CPath.CPathData> morePaths = new ArrayList<>();
 
     public PathedParticle(CPath basePath, CPath... morePaths)
     {
@@ -32,7 +32,7 @@ public class PathedParticle extends Particle
     {
         super(Minecraft.getMinecraft().world, Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
 
-        this.basePath = new CPath.PathData(basePath);
+        this.basePath = new CPath.CPathData(basePath);
         for (CPath path : morePaths) applyPath(path);
         VectorN pos = currentPos();
         setPosition(pos.values[0], pos.values[1], pos.values[2]);
@@ -50,7 +50,7 @@ public class PathedParticle extends Particle
 
     public PathedParticle applyPath(CPath path)
     {
-        morePaths.add(new CPath.PathData(path));
+        morePaths.add(new CPath.CPathData(path));
         return this;
     }
 
@@ -62,25 +62,25 @@ public class PathedParticle extends Particle
 
     public PathedParticle rgbPath(CPath path)
     {
-        rgbPath = new CPath.PathData(path);
+        rgbPath = new CPath.CPathData(path);
         return this;
     }
 
     public PathedParticle hsvPath(CPath path)
     {
-        hsvPath = new CPath.PathData(path);
+        hsvPath = new CPath.CPathData(path);
         return this;
     }
 
     public PathedParticle alphaPath(CPath path)
     {
-        alphaPath = new CPath.PathData(path);
+        alphaPath = new CPath.CPathData(path);
         return this;
     }
 
     public PathedParticle scale3DPath(CPath path)
     {
-        scale3DPath = new CPath.PathData(path);
+        scale3DPath = new CPath.CPathData(path);
         return this;
     }
 
@@ -131,7 +131,7 @@ public class PathedParticle extends Particle
     protected VectorN currentPos()
     {
         VectorN pos = basePath.getRelativePosition(), pathPos;
-        for (CPath.PathData data : morePaths)
+        for (CPath.CPathData data : morePaths)
         {
             pathPos = data.getRelativePosition();
             if (pathPos == null) return null;

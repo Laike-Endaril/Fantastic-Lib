@@ -2,6 +2,8 @@ package com.fantasticsource.tools.component.path;
 
 import com.fantasticsource.mctools.component.NBTSerializableComponent;
 import com.fantasticsource.tools.component.CInt;
+import com.fantasticsource.tools.component.CLong;
+import com.fantasticsource.tools.component.Component;
 import com.fantasticsource.tools.datastructures.VectorN;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTBase;
@@ -192,17 +194,21 @@ public class CPath extends NBTSerializableComponent
         }
     }
 
-    public static class PathData
+    public static class CPathData extends Component
     {
-        public CPath path;
-        public long startMillis;
+        public CPath path = null;
+        public long startMillis = 0;
 
-        public PathData(CPath path)
+        public CPathData()
+        {
+        }
+
+        public CPathData(CPath path)
         {
             this(path, System.currentTimeMillis());
         }
 
-        public PathData(CPath path, long startMillis)
+        public CPathData(CPath path, long startMillis)
         {
             this.path = path;
             this.startMillis = startMillis;
@@ -211,6 +217,43 @@ public class CPath extends NBTSerializableComponent
         public VectorN getRelativePosition()
         {
             return path.getRelativePosition(System.currentTimeMillis() - startMillis);
+        }
+
+
+        @Override
+        public CPathData write(ByteBuf buf)
+        {
+            writeMarkedOrNull(buf, path);
+            buf.writeLong(startMillis);
+
+            return this;
+        }
+
+        @Override
+        public CPathData read(ByteBuf buf)
+        {
+            path = (CPath) readMarkedOrNull(buf);
+            startMillis = buf.readLong();
+
+            return this;
+        }
+
+        @Override
+        public CPathData save(OutputStream stream)
+        {
+            saveMarkedOrNull(stream, path);
+            new CLong().set(startMillis).save(stream);
+
+            return this;
+        }
+
+        @Override
+        public CPathData load(InputStream stream)
+        {
+            path = (CPath) loadMarkedOrNull(stream);
+            startMillis = new CLong().load(stream).value;
+
+            return this;
         }
     }
 
