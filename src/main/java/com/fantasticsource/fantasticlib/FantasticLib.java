@@ -219,36 +219,29 @@ public class FantasticLib
 
 
 //    @SubscribeEvent
-//    public static void staffSpinTest(EntityJoinWorldEvent event)
+//    public static void animationTest(EntityJoinWorldEvent event)
 //    {
-//        //Based on the dual-lightsaber skin in AW; a vanilla sword would not match up correctly unless you added an offset constant path to items
 //        Entity entity = event.getEntity();
 //        if (!(entity instanceof EntityPlayer)) return;
-//
-//
+//        //Staff spin based on the dual-lightsaber skin in AW; a vanilla sword would not match up correctly unless you added an offset constant path to items
 //        //Standard hand-swap code
 //        CBipedAnimation.setLeftItemYScalePath(entity, new CPathConstant(new VectorN(-1)));
-//
 //
 //        //Staff spin arms
 //        CBipedAnimation.setRightArmZRotPath(entity, new CPathConstant(new VectorN(Math.PI * 0.5)));
 //        CBipedAnimation.setRightArmYRotPath(entity, new CPathConstant(new VectorN(0)));
 //        CBipedAnimation.setRightArmXRotPath(entity, new CPathSinuous(new CPathConstant(new VectorN(Math.PI * 0.7)), 0.5));
-//
-//        CBipedAnimation.setLeftArmZRotPath(entity, new CPathConstant(new VectorN(Math.PI * 1.5)));
+//        CBipedAnimation.setLeftArmZRotPath(entity, new CPathConstant(new VectorN(-Math.PI * 0.5)));
 //        CBipedAnimation.setLeftArmYRotPath(entity, new CPathConstant(new VectorN(0)));
 //        CBipedAnimation.setLeftArmXRotPath(entity, new CPathSinuous(new CPathConstant(new VectorN(Math.PI * 0.7)), 0.5));
-//
 //
 //        //Staff spin hand swap
 //        CPath sine = new CPathSinuous(new CPathConstant(new VectorN(1)), 0.5, 0.75);
 //        CBipedAnimation.setHandItemSwapPath(entity, sine);
 //
-//
 //        //Staff spin item rotation correction
 //        CBipedAnimation.setRightItemXRotPath(entity, new CPathSinuous(new CPathConstant(new VectorN(Math.PI * 0.2)), 0.5));
 //        CBipedAnimation.setLeftItemXRotPath(entity, new CPathSinuous(new CPathConstant(new VectorN(Math.PI * 0.2)), 0.5, 0.5));
-//
 //
 //        //Actual staff spin
 //        CBipedAnimation.setRightItemZRotPath(entity, new CPathLinear(new VectorN(Math.PI * 2)).add(new CPathConstant(new VectorN(Math.PI))));

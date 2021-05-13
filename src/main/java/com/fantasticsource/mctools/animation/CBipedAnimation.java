@@ -65,6 +65,80 @@ public class CBipedAnimation extends Component
     }
 
 
+    public static void applyAnimation(Entity entity, CBipedAnimation animation)
+    {
+        if (animation.handItemSwap != null) ANIMATION_DATA.computeIfAbsent(entity, o -> new CBipedAnimation()).handItemSwap = animation.handItemSwap;
+
+        applyAnimation(entity, animation.head, 0);
+        applyAnimation(entity, animation.chest, 1);
+        applyAnimation(entity, animation.rightArm, 2);
+        applyAnimation(entity, animation.leftArm, 3);
+        applyAnimation(entity, animation.rightLeg, 4);
+        applyAnimation(entity, animation.leftLeg, 5);
+        applyAnimation(entity, animation.rightItem, 6);
+        applyAnimation(entity, animation.leftItem, 7);
+    }
+
+    public static void applyAnimation(Entity entity, CModelRendererAnimation animation, int bodyPart)
+    {
+        CModelRendererAnimation entityAnimation = null;
+
+        switch (bodyPart)
+        {
+            case 0:
+                //Head
+                entityAnimation = ANIMATION_DATA.computeIfAbsent(entity, o -> new CBipedAnimation()).head;
+                break;
+
+            case 1:
+                //Chest
+                entityAnimation = ANIMATION_DATA.computeIfAbsent(entity, o -> new CBipedAnimation()).chest;
+                break;
+
+            case 2:
+                //Main arm
+                entityAnimation = ANIMATION_DATA.computeIfAbsent(entity, o -> new CBipedAnimation()).rightArm;
+                break;
+
+            case 3:
+                //Off arm
+                entityAnimation = ANIMATION_DATA.computeIfAbsent(entity, o -> new CBipedAnimation()).leftArm;
+                break;
+
+            case 4:
+                //Main leg
+                entityAnimation = ANIMATION_DATA.computeIfAbsent(entity, o -> new CBipedAnimation()).rightLeg;
+                break;
+
+            case 5:
+                //Off leg
+                entityAnimation = ANIMATION_DATA.computeIfAbsent(entity, o -> new CBipedAnimation()).leftLeg;
+                break;
+
+            case 6:
+                //Main item
+                entityAnimation = ANIMATION_DATA.computeIfAbsent(entity, o -> new CBipedAnimation()).rightItem;
+                break;
+
+            case 7:
+                //Off item
+                entityAnimation = ANIMATION_DATA.computeIfAbsent(entity, o -> new CBipedAnimation()).leftItem;
+                break;
+        }
+
+
+        if (animation.xPath != null) entityAnimation.xPath = animation.xPath;
+        if (animation.yPath != null) entityAnimation.yPath = animation.yPath;
+        if (animation.zPath != null) entityAnimation.zPath = animation.zPath;
+        if (animation.xRotPath != null) entityAnimation.xRotPath = animation.xRotPath;
+        if (animation.yRotPath != null) entityAnimation.yRotPath = animation.yRotPath;
+        if (animation.zRotPath != null) entityAnimation.zRotPath = animation.zRotPath;
+        if (animation.xScalePath != null) entityAnimation.xScalePath = animation.xScalePath;
+        if (animation.yScalePath != null) entityAnimation.yScalePath = animation.yScalePath;
+        if (animation.zScalePath != null) entityAnimation.zScalePath = animation.zScalePath;
+    }
+
+
     public static void setHeadXPath(Entity entity, CPath path)
     {
         ANIMATION_DATA.computeIfAbsent(entity, o -> new CBipedAnimation()).head.xPath = path;
