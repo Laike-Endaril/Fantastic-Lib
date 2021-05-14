@@ -219,6 +219,11 @@ public class CPath extends NBTSerializableComponent
             return path.getRelativePosition(System.currentTimeMillis() - startMillis);
         }
 
+        public VectorN getRelativePosition(long millis)
+        {
+            return path.getRelativePosition(millis - startMillis);
+        }
+
 
         @Override
         public CPathData write(ByteBuf buf)

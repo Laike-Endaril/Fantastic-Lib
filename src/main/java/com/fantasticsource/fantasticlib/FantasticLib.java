@@ -14,13 +14,20 @@ import com.fantasticsource.mctools.gui.screen.TestGUI;
 import com.fantasticsource.mctools.nbtcap.NBTCap;
 import com.fantasticsource.mctools.nbtcap.NBTCapStorage;
 import com.fantasticsource.tools.ReflectionTool;
+import com.fantasticsource.tools.component.path.CPathConstant;
+import com.fantasticsource.tools.component.path.CPathLinear;
+import com.fantasticsource.tools.component.path.CPathSinuous;
 import com.fantasticsource.tools.datastructures.ColorImmutable;
+import com.fantasticsource.tools.datastructures.VectorN;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
@@ -36,7 +43,7 @@ public class FantasticLib
     public static final String MODID = "fantasticlib";
     public static final String DOMAIN = "flib"; //Referenced in some other mods
     public static final String NAME = "Fantastic Lib";
-    public static final String VERSION = "1.12.2.044zzzy";
+    public static final String VERSION = "1.12.2.044zzzz";
 
 
     public static long serverStartTime = -1;
@@ -189,7 +196,7 @@ public class FantasticLib
 ////    vSpiralIn = new CPathSinuous(x1PerSec.copy().add(pXNeg3), 0.5).add(new CPathSinuous(y1PerSec.copy().add(pYNeg3), 0.5, 0.25));
 //
 //    @SubscribeEvent
-//    public static void test(TickEvent.ClientTickEvent event)
+//    public static void particleTest(TickEvent.ClientTickEvent event)
 //    {
 //        if (event.phase != TickEvent.Phase.END) return;
 //
@@ -218,33 +225,40 @@ public class FantasticLib
 //    }
 
 
-//    @SubscribeEvent
-//    public static void animationTest(EntityJoinWorldEvent event)
-//    {
-//        Entity entity = event.getEntity();
-//        if (!(entity instanceof EntityPlayer)) return;
-//        //Staff spin based on the dual-lightsaber skin in AW; a vanilla sword would not match up correctly unless you added an offset constant path to items
-//        //Standard hand-swap code
-//        CBipedAnimation.setLeftItemYScalePath(entity, new CPathConstant(new VectorN(-1)));
-//
-//        //Staff spin arms
-//        CBipedAnimation.setRightArmZRotPath(entity, new CPathConstant(new VectorN(Math.PI * 0.5)));
-//        CBipedAnimation.setRightArmYRotPath(entity, new CPathConstant(new VectorN(0)));
-//        CBipedAnimation.setRightArmXRotPath(entity, new CPathSinuous(new CPathConstant(new VectorN(Math.PI * 0.7)), 0.5));
-//        CBipedAnimation.setLeftArmZRotPath(entity, new CPathConstant(new VectorN(-Math.PI * 0.5)));
-//        CBipedAnimation.setLeftArmYRotPath(entity, new CPathConstant(new VectorN(0)));
-//        CBipedAnimation.setLeftArmXRotPath(entity, new CPathSinuous(new CPathConstant(new VectorN(Math.PI * 0.7)), 0.5));
-//
-//        //Staff spin hand swap
-//        CPath sine = new CPathSinuous(new CPathConstant(new VectorN(1)), 0.5, 0.75);
-//        CBipedAnimation.setHandItemSwapPath(entity, sine);
-//
-//        //Staff spin item rotation correction
-//        CBipedAnimation.setRightItemXRotPath(entity, new CPathSinuous(new CPathConstant(new VectorN(Math.PI * 0.2)), 0.5));
-//        CBipedAnimation.setLeftItemXRotPath(entity, new CPathSinuous(new CPathConstant(new VectorN(Math.PI * 0.2)), 0.5, 0.5));
-//
-//        //Actual staff spin
-//        CBipedAnimation.setRightItemZRotPath(entity, new CPathLinear(new VectorN(Math.PI * 2)).add(new CPathConstant(new VectorN(Math.PI))));
-//        CBipedAnimation.setLeftItemZRotPath(entity, new CPathLinear(new VectorN(-Math.PI * 2)).add(new CPathConstant(new VectorN(Math.PI))));
-//    }
+    //Staff spin based on the dual-lightsaber skin in AW; a vanilla sword would not match up correctly unless you added an offset constant path to items
+    static CBipedAnimation staffSpin = new CBipedAnimation();
+
+    static
+    {
+        //Standard hand-swap code
+        staffSpin.leftItem.yScalePath.path = new CPathConstant(new VectorN(-1));
+
+        //Staff spin arms
+        staffSpin.rightArm.zRotPath.path = new CPathConstant(new VectorN(Math.PI * 0.5));
+        staffSpin.rightArm.yRotPath.path = new CPathConstant(new VectorN(0));
+        staffSpin.rightArm.xRotPath.path = new CPathSinuous(new CPathConstant(new VectorN(Math.PI * 0.7)), 0.5);
+        staffSpin.leftArm.zRotPath.path = new CPathConstant(new VectorN(-Math.PI * 0.5));
+        staffSpin.leftArm.yRotPath.path = new CPathConstant(new VectorN(0));
+        staffSpin.leftArm.xRotPath.path = new CPathSinuous(new CPathConstant(new VectorN(Math.PI * 0.7)), 0.5);
+
+        //Staff spin hand swap
+        staffSpin.handItemSwap.path = new CPathSinuous(new CPathConstant(new VectorN(1)), 0.5, 0.75);
+
+        //Staff spin item rotation correction
+        staffSpin.rightItem.xRotPath.path = new CPathSinuous(new CPathConstant(new VectorN(Math.PI * 0.2)), 0.5);
+        staffSpin.leftItem.xRotPath.path = new CPathSinuous(new CPathConstant(new VectorN(Math.PI * 0.2)), 0.5, 0.5);
+
+        //Actual staff spin
+        staffSpin.rightItem.zRotPath.path = new CPathLinear(new VectorN(Math.PI * 2)).add(new CPathConstant(new VectorN(Math.PI)));
+        staffSpin.leftItem.zRotPath.path = new CPathLinear(new VectorN(-Math.PI * 2)).add(new CPathConstant(new VectorN(Math.PI)));
+    }
+
+    @SubscribeEvent
+    public static void animationTest(EntityJoinWorldEvent event)
+    {
+        Entity entity = event.getEntity();
+        if (!(entity instanceof EntityPlayer)) return;
+
+        CBipedAnimation.addAnimation(entity, staffSpin);
+    }
 }

@@ -1,9 +1,11 @@
 package com.fantasticsource.mctools;
 
+import com.fantasticsource.mctools.animation.CBipedAnimation;
 import com.fantasticsource.mctools.betterattributes.BetterAttribute;
 import com.fantasticsource.mctools.component.CResourceLocation;
 import com.fantasticsource.mctools.controlintercept.ControlEvent;
 import com.fantasticsource.mctools.sound.SimpleSound;
+import com.fantasticsource.tools.component.CUUID;
 import com.fantasticsource.tools.component.Component;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -23,6 +25,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.UUID;
+
 import static com.fantasticsource.fantasticlib.FantasticLib.MODID;
 
 public class Network
@@ -37,6 +41,8 @@ public class Network
         WRAPPER.registerMessage(GenericComponentPacketHandler.class, GenericComponentPacket.class, discriminator++, Side.CLIENT);
         WRAPPER.registerMessage(RemoveEntityImmediatePacketHandler.class, RemoveEntityImmediatePacket.class, discriminator++, Side.CLIENT);
         WRAPPER.registerMessage(BetterAttributePacketHandler.class, BetterAttributePacket.class, discriminator++, Side.CLIENT);
+        WRAPPER.registerMessage(AddBipedAnimationsPacketHandler.class, AddBipedAnimationsPacket.class, discriminator++, Side.CLIENT);
+        WRAPPER.registerMessage(RemoveBipedAnimationPacketHandler.class, RemoveBipedAnimationPacket.class, discriminator++, Side.CLIENT);
     }
 
 
@@ -378,6 +384,122 @@ public class Network
                 attribute.setBaseAmount(entity, packet.base);
                 MCTools.getOrGenerateSubCompound(compound, "attributes").setDouble(attribute.name, packet.total);
                 attribute.setCurrentAmount(entity, packet.current);
+            });
+            return null;
+        }
+    }
+
+
+    public static class AddBipedAnimationsPacket implements IMessage
+    {
+        int entityID;
+        CBipedAnimation[] animations;
+        long serverSystemMillis;
+
+        public AddBipedAnimationsPacket()
+        {
+            //Required
+        }
+
+        public AddBipedAnimationsPacket(Entity entity, CBipedAnimation[] animations)
+        {
+            entityID = entity.getEntityId();
+            this.animations = animations;
+        }
+
+        @Override
+        public void toBytes(ByteBuf buf)
+        {
+            buf.writeInt(entityID);
+            buf.writeInt(animations.length);
+            for (CBipedAnimation animation : animations) animation.write(buf);
+            buf.writeLong(System.currentTimeMillis());
+        }
+
+        @Override
+        public void fromBytes(ByteBuf buf)
+        {
+            entityID = buf.readInt();
+            animations = new CBipedAnimation[buf.readInt()];
+            for (int i = 0; i < animations.length; i++) animations[i] = new CBipedAnimation().read(buf);
+            serverSystemMillis = buf.readLong();
+        }
+    }
+
+    public static class AddBipedAnimationsPacketHandler implements IMessageHandler<AddBipedAnimationsPacket, IMessage>
+    {
+        @Override
+        @SideOnly(Side.CLIENT)
+        public IMessage onMessage(AddBipedAnimationsPacket packet, MessageContext ctx)
+        {
+            Minecraft mc = Minecraft.getMinecraft();
+            mc.addScheduledTask(() ->
+            {
+                if (mc.world == null) return;
+
+                Entity entity = mc.world.getEntityByID(packet.entityID);
+                if (entity == null) return;
+
+
+                long offsetMillis = System.currentTimeMillis() - packet.serverSystemMillis;
+                for (CBipedAnimation animation : packet.animations)
+                {
+                    animation.startTime += offsetMillis;
+                    CBipedAnimation.addAnimation(entity, animation);
+                }
+            });
+            return null;
+        }
+    }
+
+
+    public static class RemoveBipedAnimationPacket implements IMessage
+    {
+        int entityID;
+        UUID animationID;
+
+        public RemoveBipedAnimationPacket()
+        {
+            //Required
+        }
+
+        public RemoveBipedAnimationPacket(Entity entity, CBipedAnimation animation)
+        {
+            entityID = entity.getEntityId();
+            animationID = animation.id;
+        }
+
+        @Override
+        public void toBytes(ByteBuf buf)
+        {
+            buf.writeInt(entityID);
+            new CUUID().set(animationID).write(buf);
+        }
+
+        @Override
+        public void fromBytes(ByteBuf buf)
+        {
+            entityID = buf.readInt();
+            animationID = new CUUID().read(buf).value;
+        }
+    }
+
+    public static class RemoveBipedAnimationPacketHandler implements IMessageHandler<RemoveBipedAnimationPacket, IMessage>
+    {
+        @Override
+        @SideOnly(Side.CLIENT)
+        public IMessage onMessage(RemoveBipedAnimationPacket packet, MessageContext ctx)
+        {
+            Minecraft mc = Minecraft.getMinecraft();
+            mc.addScheduledTask(() ->
+            {
+                if (mc.world == null) return;
+
+                Entity entity = mc.world.getEntityByID(packet.entityID);
+                if (entity == null) return;
+
+
+                CBipedAnimation.removeAnimations(entity, packet.animationID);
             });
             return null;
         }

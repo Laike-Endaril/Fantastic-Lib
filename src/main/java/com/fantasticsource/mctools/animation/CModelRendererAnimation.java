@@ -9,7 +9,13 @@ import java.io.OutputStream;
 
 public class CModelRendererAnimation extends Component
 {
-    public CPath xPath = null, yPath = null, zPath = null, xRotPath = null, yRotPath = null, zRotPath = null, xScalePath = null, yScalePath = null, zScalePath = null;
+    public CPath.CPathData xPath = new CPath.CPathData(), yPath = new CPath.CPathData(), zPath = new CPath.CPathData(), xRotPath = new CPath.CPathData(), yRotPath = new CPath.CPathData(), zRotPath = new CPath.CPathData(), xScalePath = new CPath.CPathData(), yScalePath = new CPath.CPathData(), zScalePath = new CPath.CPathData();
+
+
+    public CPath.CPathData[] getAllData()
+    {
+        return new CPath.CPathData[]{xPath, yPath, zPath, xRotPath, yRotPath, zRotPath, xScalePath, yScalePath, zScalePath};
+    }
 
 
     @Override
@@ -31,15 +37,15 @@ public class CModelRendererAnimation extends Component
     @Override
     public CModelRendererAnimation read(ByteBuf buf)
     {
-        xPath = (CPath) readMarkedOrNull(buf);
-        yPath = (CPath) readMarkedOrNull(buf);
-        zPath = (CPath) readMarkedOrNull(buf);
-        xRotPath = (CPath) readMarkedOrNull(buf);
-        yRotPath = (CPath) readMarkedOrNull(buf);
-        zRotPath = (CPath) readMarkedOrNull(buf);
-        xScalePath = (CPath) readMarkedOrNull(buf);
-        yScalePath = (CPath) readMarkedOrNull(buf);
-        zScalePath = (CPath) readMarkedOrNull(buf);
+        xPath = (CPath.CPathData) readMarkedOrNull(buf);
+        yPath = (CPath.CPathData) readMarkedOrNull(buf);
+        zPath = (CPath.CPathData) readMarkedOrNull(buf);
+        xRotPath = (CPath.CPathData) readMarkedOrNull(buf);
+        yRotPath = (CPath.CPathData) readMarkedOrNull(buf);
+        zRotPath = (CPath.CPathData) readMarkedOrNull(buf);
+        xScalePath = (CPath.CPathData) readMarkedOrNull(buf);
+        yScalePath = (CPath.CPathData) readMarkedOrNull(buf);
+        zScalePath = (CPath.CPathData) readMarkedOrNull(buf);
 
         return this;
     }
@@ -63,15 +69,15 @@ public class CModelRendererAnimation extends Component
     @Override
     public CModelRendererAnimation load(InputStream stream)
     {
-        xPath = (CPath) loadMarkedOrNull(stream);
-        yPath = (CPath) loadMarkedOrNull(stream);
-        zPath = (CPath) loadMarkedOrNull(stream);
-        xRotPath = (CPath) loadMarkedOrNull(stream);
-        yRotPath = (CPath) loadMarkedOrNull(stream);
-        zRotPath = (CPath) loadMarkedOrNull(stream);
-        xScalePath = (CPath) loadMarkedOrNull(stream);
-        yScalePath = (CPath) loadMarkedOrNull(stream);
-        zScalePath = (CPath) loadMarkedOrNull(stream);
+        xPath = (CPath.CPathData) loadMarkedOrNull(stream);
+        yPath = (CPath.CPathData) loadMarkedOrNull(stream);
+        zPath = (CPath.CPathData) loadMarkedOrNull(stream);
+        xRotPath = (CPath.CPathData) loadMarkedOrNull(stream);
+        yRotPath = (CPath.CPathData) loadMarkedOrNull(stream);
+        zRotPath = (CPath.CPathData) loadMarkedOrNull(stream);
+        xScalePath = (CPath.CPathData) loadMarkedOrNull(stream);
+        yScalePath = (CPath.CPathData) loadMarkedOrNull(stream);
+        zScalePath = (CPath.CPathData) loadMarkedOrNull(stream);
 
         return this;
     }
