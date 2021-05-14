@@ -14,20 +14,13 @@ import com.fantasticsource.mctools.gui.screen.TestGUI;
 import com.fantasticsource.mctools.nbtcap.NBTCap;
 import com.fantasticsource.mctools.nbtcap.NBTCapStorage;
 import com.fantasticsource.tools.ReflectionTool;
-import com.fantasticsource.tools.component.path.CPathConstant;
-import com.fantasticsource.tools.component.path.CPathLinear;
-import com.fantasticsource.tools.component.path.CPathSinuous;
 import com.fantasticsource.tools.datastructures.ColorImmutable;
-import com.fantasticsource.tools.datastructures.VectorN;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
@@ -226,39 +219,39 @@ public class FantasticLib
 
 
     //Staff spin based on the dual-lightsaber skin in AW; a vanilla sword would not match up correctly unless you added an offset constant path to items
-    static CBipedAnimation staffSpin = new CBipedAnimation();
-
-    static
-    {
-        //Standard hand-swap code
-        staffSpin.leftItem.yScalePath.path = new CPathConstant(new VectorN(-1));
-
-        //Staff spin arms
-        staffSpin.rightArm.zRotPath.path = new CPathConstant(new VectorN(Math.PI * 0.5));
-        staffSpin.rightArm.yRotPath.path = new CPathConstant(new VectorN(0));
-        staffSpin.rightArm.xRotPath.path = new CPathSinuous(new CPathConstant(new VectorN(Math.PI * 0.7)), 0.5);
-        staffSpin.leftArm.zRotPath.path = new CPathConstant(new VectorN(-Math.PI * 0.5));
-        staffSpin.leftArm.yRotPath.path = new CPathConstant(new VectorN(0));
-        staffSpin.leftArm.xRotPath.path = new CPathSinuous(new CPathConstant(new VectorN(Math.PI * 0.7)), 0.5);
-
-        //Staff spin hand swap
-        staffSpin.handItemSwap.path = new CPathSinuous(new CPathConstant(new VectorN(1)), 0.5, 0.75);
-
-        //Staff spin item rotation correction
-        staffSpin.rightItem.xRotPath.path = new CPathSinuous(new CPathConstant(new VectorN(Math.PI * 0.2)), 0.5);
-        staffSpin.leftItem.xRotPath.path = new CPathSinuous(new CPathConstant(new VectorN(Math.PI * 0.2)), 0.5, 0.5);
-
-        //Actual staff spin
-        staffSpin.rightItem.zRotPath.path = new CPathLinear(new VectorN(Math.PI * 2)).add(new CPathConstant(new VectorN(Math.PI)));
-        staffSpin.leftItem.zRotPath.path = new CPathLinear(new VectorN(-Math.PI * 2)).add(new CPathConstant(new VectorN(Math.PI)));
-    }
-
-    @SubscribeEvent
-    public static void animationTest(EntityJoinWorldEvent event)
-    {
-        Entity entity = event.getEntity();
-        if (!(entity instanceof EntityPlayer)) return;
-
-        CBipedAnimation.addAnimation(entity, staffSpin);
-    }
+//    static CBipedAnimation staffSpin = new CBipedAnimation();
+//
+//    static
+//    {
+//        //Standard hand-swap code
+//        staffSpin.leftItem.yScalePath.path = new CPathConstant(new VectorN(-1));
+//
+//        //Staff spin arms
+//        staffSpin.rightArm.zRotPath.path = new CPathConstant(new VectorN(Math.PI * 0.5));
+//        staffSpin.rightArm.yRotPath.path = new CPathConstant(new VectorN(0));
+//        staffSpin.rightArm.xRotPath.path = new CPathSinuous(new CPathConstant(new VectorN(Math.PI * 0.7)), 0.5);
+//        staffSpin.leftArm.zRotPath.path = new CPathConstant(new VectorN(-Math.PI * 0.5));
+//        staffSpin.leftArm.yRotPath.path = new CPathConstant(new VectorN(0));
+//        staffSpin.leftArm.xRotPath.path = new CPathSinuous(new CPathConstant(new VectorN(Math.PI * 0.7)), 0.5);
+//
+//        //Staff spin hand swap
+//        staffSpin.handItemSwap.path = new CPathSinuous(new CPathConstant(new VectorN(1)), 0.5, 0.75);
+//
+//        //Staff spin item rotation correction
+//        staffSpin.rightItem.xRotPath.path = new CPathSinuous(new CPathConstant(new VectorN(Math.PI * 0.2)), 0.5);
+//        staffSpin.leftItem.xRotPath.path = new CPathSinuous(new CPathConstant(new VectorN(Math.PI * 0.2)), 0.5, 0.5);
+//
+//        //Actual staff spin
+//        staffSpin.rightItem.zRotPath.path = new CPathLinear(new VectorN(Math.PI * 2)).add(new CPathConstant(new VectorN(Math.PI)));
+//        staffSpin.leftItem.zRotPath.path = new CPathLinear(new VectorN(-Math.PI * 2)).add(new CPathConstant(new VectorN(Math.PI)));
+//    }
+//
+//    @SubscribeEvent
+//    public static void animationTest(EntityJoinWorldEvent event)
+//    {
+//        Entity entity = event.getEntity();
+//        if (!(entity instanceof EntityPlayer)) return;
+//
+//        CBipedAnimation.addAnimation(entity, staffSpin);
+//    }
 }
