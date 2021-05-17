@@ -1,6 +1,7 @@
 package com.fantasticsource.tools.component.path;
 
 import com.fantasticsource.mctools.component.NBTSerializableComponent;
+import com.fantasticsource.tools.component.CDouble;
 import com.fantasticsource.tools.component.CInt;
 import com.fantasticsource.tools.component.CLong;
 import com.fantasticsource.tools.component.Component;
@@ -198,6 +199,7 @@ public class CPath extends NBTSerializableComponent
     {
         public CPath path = null;
         public long startMillis = 0;
+        public double rate = 1;
 
         public CPathData()
         {
@@ -221,7 +223,7 @@ public class CPath extends NBTSerializableComponent
 
         public VectorN getRelativePosition(long millis)
         {
-            return path.getRelativePosition(millis - startMillis);
+            return path.getRelativePosition((long) (millis * rate - startMillis));
         }
 
 
@@ -230,6 +232,7 @@ public class CPath extends NBTSerializableComponent
         {
             writeMarkedOrNull(buf, path);
             buf.writeLong(startMillis);
+            buf.writeDouble(rate);
 
             return this;
         }
@@ -239,6 +242,7 @@ public class CPath extends NBTSerializableComponent
         {
             path = (CPath) readMarkedOrNull(buf);
             startMillis = buf.readLong();
+            rate = buf.readDouble();
 
             return this;
         }
@@ -248,6 +252,7 @@ public class CPath extends NBTSerializableComponent
         {
             saveMarkedOrNull(stream, path);
             new CLong().set(startMillis).save(stream);
+            new CDouble().set(rate).save(stream);
 
             return this;
         }
@@ -257,6 +262,7 @@ public class CPath extends NBTSerializableComponent
         {
             path = (CPath) loadMarkedOrNull(stream);
             startMillis = new CLong().load(stream).value;
+            rate = new CDouble().load(stream).value;
 
             return this;
         }
