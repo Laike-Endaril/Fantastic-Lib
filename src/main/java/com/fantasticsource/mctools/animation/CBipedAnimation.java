@@ -136,6 +136,20 @@ public class CBipedAnimation extends Component
         return result;
     }
 
+    public CBipedAnimation setAllRates(double rate)
+    {
+        head.setAllRates(rate);
+        chest.setAllRates(rate);
+        leftArm.setAllRates(rate);
+        rightArm.setAllRates(rate);
+        leftLeg.setAllRates(rate);
+        rightLeg.setAllRates(rate);
+        leftItem.setAllRates(rate);
+        rightItem.setAllRates(rate);
+
+        return this;
+    }
+
 
     @Override
     public CBipedAnimation write(ByteBuf buf)

@@ -17,6 +17,21 @@ public class CModelRendererAnimation extends Component
         return new CPath.CPathData[]{xPath, yPath, zPath, xRotPath, yRotPath, zRotPath, xScalePath, yScalePath, zScalePath};
     }
 
+    public CModelRendererAnimation setAllRates(double rate)
+    {
+        if (xPath != null) xPath.rate = rate;
+        if (yPath != null) yPath.rate = rate;
+        if (zPath != null) zPath.rate = rate;
+        if (xRotPath != null) xRotPath.rate = rate;
+        if (yRotPath != null) yRotPath.rate = rate;
+        if (zRotPath != null) zRotPath.rate = rate;
+        if (xScalePath != null) xScalePath.rate = rate;
+        if (yScalePath != null) yScalePath.rate = rate;
+        if (zScalePath != null) zScalePath.rate = rate;
+
+        return this;
+    }
+
 
     @Override
     public CModelRendererAnimation write(ByteBuf buf)
