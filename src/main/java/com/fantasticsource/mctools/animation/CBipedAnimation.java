@@ -25,6 +25,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -37,12 +38,10 @@ import java.util.*;
 
 public class CBipedAnimation extends Component
 {
-    public static final Field
-            RENDER_LIVING_BASE_MAIN_MODEL_FIELD = ReflectionTool.getField(RenderLivingBase.class, "field_77045_g", "mainModel"),
-            RENDER_LIVING_BASE_LAYER_RENDERERS_FIELD = ReflectionTool.getField(RenderLivingBase.class, "field_177097_h", "layerRenderers"),
-            LAYER_ARMOR_BASE_MODEL_LEGGINGS_FIELD = ReflectionTool.getField(LayerArmorBase.class, "field_177189_c", "modelLeggings"),
-            LAYER_ARMOR_BASE_MODEL_ARMOR_FIELD = ReflectionTool.getField(LayerArmorBase.class, "field_177186_d", "modelArmor"),
-            LAYER_HELD_ITEM_LIVING_ENTITY_RENDERER_FIELD = ReflectionTool.getField(LayerHeldItem.class, "field_177206_a", "livingEntityRenderer");
+    public static Field RENDER_LIVING_BASE_LAYER_RENDERERS_FIELD;
+    public static Field LAYER_ARMOR_BASE_MODEL_LEGGINGS_FIELD;
+    public static Field LAYER_ARMOR_BASE_MODEL_ARMOR_FIELD;
+    public static Field LAYER_HELD_ITEM_LIVING_ENTITY_RENDERER_FIELD;
 
 
     public static final HashMap<Entity, ArrayList<CBipedAnimation>> ANIMATION_DATA = new HashMap<>();
@@ -229,30 +228,40 @@ public class CBipedAnimation extends Component
 
     public static void init(FMLPostInitializationEvent event)
     {
-        ClientTickTimer.schedule(1, () ->
+        MinecraftForge.EVENT_BUS.register(CBipedAnimation.class);
+
+        if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
         {
-            RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
-            Map<String, RenderPlayer> map = renderManager.getSkinMap();
-            ReflectionTool.set(RENDER_LIVING_BASE_MAIN_MODEL_FIELD, map.get("default"), new ModelPlayerEdit(0, false));
-            ReflectionTool.set(RENDER_LIVING_BASE_MAIN_MODEL_FIELD, map.get("slim"), new ModelPlayerEdit(0, true));
-
-            for (Render<? extends Entity> render : renderManager.entityRenderMap.values())
+            ClientTickTimer.schedule(1, () ->
             {
-                if (!(render instanceof RenderLivingBase)) continue;
+                RENDER_LIVING_BASE_LAYER_RENDERERS_FIELD = ReflectionTool.getField(RenderLivingBase.class, "field_177097_h", "layerRenderers");
+                LAYER_ARMOR_BASE_MODEL_LEGGINGS_FIELD = ReflectionTool.getField(LayerArmorBase.class, "field_177189_c", "modelLeggings");
+                LAYER_ARMOR_BASE_MODEL_ARMOR_FIELD = ReflectionTool.getField(LayerArmorBase.class, "field_177186_d", "modelArmor");
+                LAYER_HELD_ITEM_LIVING_ENTITY_RENDERER_FIELD = ReflectionTool.getField(LayerHeldItem.class, "field_177206_a", "livingEntityRenderer");
 
-                ModelBase oldModel = ((RenderLivingBase) render).getMainModel();
-                if (oldModel.getClass() == ModelPlayer.class)
-                {
-                    ReflectionTool.set(RENDER_LIVING_BASE_MAIN_MODEL_FIELD, render, new ModelPlayerEdit((ModelPlayer) oldModel));
-                }
-                else if (oldModel.getClass() == ModelBiped.class)
-                {
-                    ReflectionTool.set(RENDER_LIVING_BASE_MAIN_MODEL_FIELD, render, new ModelBipedEdit((ModelBiped) oldModel));
-                }
-            }
+                Field renderLivingBaseMainModelField = ReflectionTool.getField(RenderLivingBase.class, "field_77045_g", "mainModel");
+                RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
+                Map<String, RenderPlayer> map = renderManager.getSkinMap();
+                ReflectionTool.set(renderLivingBaseMainModelField, map.get("default"), new ModelPlayerEdit(0, false));
+                ReflectionTool.set(renderLivingBaseMainModelField, map.get("slim"), new ModelPlayerEdit(0, true));
 
-            MinecraftForge.EVENT_BUS.register(CBipedAnimation.class);
-        });
+                for (Render<? extends Entity> render : renderManager.entityRenderMap.values())
+                {
+                    if (!(render instanceof RenderLivingBase)) continue;
+
+                    ModelBase oldModel = ((RenderLivingBase) render).getMainModel();
+                    if (oldModel.getClass() == ModelPlayer.class)
+                    {
+                        ReflectionTool.set(renderLivingBaseMainModelField, render, new ModelPlayerEdit((ModelPlayer) oldModel));
+                    }
+                    else if (oldModel.getClass() == ModelBiped.class)
+                    {
+                        ReflectionTool.set(renderLivingBaseMainModelField, render, new ModelBipedEdit((ModelBiped) oldModel));
+                    }
+                }
+
+            });
+        }
     }
 
     @SubscribeEvent
