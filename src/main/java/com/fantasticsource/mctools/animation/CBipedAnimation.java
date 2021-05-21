@@ -150,6 +150,21 @@ public class CBipedAnimation extends Component
         return this;
     }
 
+    public CBipedAnimation setAllStartTimes(long time)
+    {
+        startTime = time;
+        head.setAllStartTimes(time);
+        chest.setAllStartTimes(time);
+        leftArm.setAllStartTimes(time);
+        rightArm.setAllStartTimes(time);
+        leftLeg.setAllStartTimes(time);
+        rightLeg.setAllStartTimes(time);
+        leftItem.setAllStartTimes(time);
+        rightItem.setAllStartTimes(time);
+
+        return this;
+    }
+
 
     @Override
     public CBipedAnimation write(ByteBuf buf)

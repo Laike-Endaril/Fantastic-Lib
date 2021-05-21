@@ -32,6 +32,21 @@ public class CModelRendererAnimation extends Component
         return this;
     }
 
+    public CModelRendererAnimation setAllStartTimes(long time)
+    {
+        if (xPath != null) xPath.startMillis = time;
+        if (yPath != null) yPath.startMillis = time;
+        if (zPath != null) zPath.startMillis = time;
+        if (xRotPath != null) xRotPath.startMillis = time;
+        if (yRotPath != null) yRotPath.startMillis = time;
+        if (zRotPath != null) zRotPath.startMillis = time;
+        if (xScalePath != null) xScalePath.startMillis = time;
+        if (yScalePath != null) yScalePath.startMillis = time;
+        if (zScalePath != null) zScalePath.startMillis = time;
+
+        return this;
+    }
+
 
     @Override
     public CModelRendererAnimation write(ByteBuf buf)
