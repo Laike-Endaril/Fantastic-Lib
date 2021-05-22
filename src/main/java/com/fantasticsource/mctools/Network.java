@@ -445,6 +445,7 @@ public class Network
                 for (CBipedAnimation animation : packet.animations)
                 {
                     animation.startTime += offsetMillis;
+                    animation.setAllStartTimes(animation.startTime);
                     CBipedAnimation.addAnimation(entity, animation);
                 }
             });

@@ -1,6 +1,7 @@
 package com.fantasticsource.mctools.animation;
 
 import com.fantasticsource.mctools.ClientTickTimer;
+import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.Network;
 import com.fantasticsource.tools.ReflectionTool;
 import com.fantasticsource.tools.component.CLong;
@@ -102,8 +103,10 @@ public class CBipedAnimation extends Component
     public static void addAnimation(Entity entity, CBipedAnimation animation)
     {
         ANIMATION_DATA.computeIfAbsent(entity, o -> new ArrayList<>()).add(animation);
-        ArrayList<CBipedAnimation> list = new ArrayList<>();
-        if (!entity.world.isRemote) Network.WRAPPER.sendToAllTracking(new Network.AddBipedAnimationsPacket(entity, new CBipedAnimation[]{animation}), entity);
+        if (!entity.world.isRemote)
+        {
+            MCTools.sendToAllTracking(Network.WRAPPER, new Network.AddBipedAnimationsPacket(entity, new CBipedAnimation[]{animation}), entity);
+        }
     }
 
     public static void removeAnimation(Entity entity, CBipedAnimation animation)
@@ -112,7 +115,7 @@ public class CBipedAnimation extends Component
         if (list != null)
         {
             list.remove(animation);
-            if (!entity.world.isRemote) Network.WRAPPER.sendToAllTracking(new Network.RemoveBipedAnimationPacket(entity, animation), entity);
+            if (!entity.world.isRemote) MCTools.sendToAllTracking(Network.WRAPPER, new Network.RemoveBipedAnimationPacket(entity, animation), entity);
         }
     }
 

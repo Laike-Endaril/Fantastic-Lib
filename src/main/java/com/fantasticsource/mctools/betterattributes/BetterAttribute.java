@@ -240,7 +240,7 @@ public class BetterAttribute
         {
             if (syncOtherEntityDataToClient)
             {
-                Network.WRAPPER.sendToAllTracking(new Network.BetterAttributePacket(entity, this), entity);
+                MCTools.sendToAllTracking(Network.WRAPPER, new Network.BetterAttributePacket(entity, this), entity);
             }
             else if (syncClientEntityDataToClient && entity instanceof EntityPlayerMP)
             {

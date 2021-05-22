@@ -250,7 +250,7 @@ public class FantasticLib
 //    public static void animationTest(EntityJoinWorldEvent event)
 //    {
 //        Entity entity = event.getEntity();
-//        if (!(entity instanceof EntityPlayer)) return;
+//        if (!(entity instanceof EntityPlayerMP)) return;
 //
 //        CBipedAnimation.addAnimation(entity, staffSpin);
 //    }

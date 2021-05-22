@@ -49,6 +49,8 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
@@ -95,6 +97,12 @@ public class MCTools
     }
 
 
+    public static void sendToAllTracking(SimpleNetworkWrapper wrapper, IMessage packet, Entity entity)
+    {
+        if (entity instanceof EntityPlayerMP) wrapper.sendTo(packet, (EntityPlayerMP) entity);
+        wrapper.sendToAllTracking(packet, entity);
+    }
+
     public static void removeEntityImmediate(Entity entity)
     {
         entity.setDead();
@@ -103,7 +111,7 @@ public class MCTools
         if (world == null) return;
 
 
-        if (!world.isRemote) Network.WRAPPER.sendToAllTracking(new Network.RemoveEntityImmediatePacket(entity), entity);
+        if (!world.isRemote) sendToAllTracking(Network.WRAPPER, new Network.RemoveEntityImmediatePacket(entity), entity);
 
         int chunkX = entity.chunkCoordX;
         int chunkZ = entity.chunkCoordZ;
