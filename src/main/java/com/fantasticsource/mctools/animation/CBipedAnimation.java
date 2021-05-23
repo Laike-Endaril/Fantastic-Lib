@@ -89,7 +89,13 @@ public class CBipedAnimation extends Component
             int i = 0;
             for (CPath.CPathData data : animation.getAllData())
             {
-                if (data.path != null) resultData[i].path = data.path;
+                if (data.path != null)
+                {
+                    CPath.CPathData data2 = resultData[i];
+                    data2.path = data.path;
+                    data2.startMillis = data.startMillis;
+                    data2.rate = data.rate;
+                }
                 i++;
             }
         }

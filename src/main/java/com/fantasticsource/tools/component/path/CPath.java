@@ -218,12 +218,12 @@ public class CPath extends NBTSerializableComponent
 
         public VectorN getRelativePosition()
         {
-            return path.getRelativePosition(System.currentTimeMillis() - startMillis);
+            return getRelativePosition(System.currentTimeMillis());
         }
 
         public VectorN getRelativePosition(long millis)
         {
-            return path.getRelativePosition((long) (millis * rate - startMillis));
+            return path.getRelativePosition((long) ((double) (millis - startMillis) * rate));
         }
 
 
