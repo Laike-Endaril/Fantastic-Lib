@@ -36,7 +36,7 @@ public class FantasticLib
     public static final String MODID = "fantasticlib";
     public static final String DOMAIN = "flib"; //Referenced in some other mods
     public static final String NAME = "Fantastic Lib";
-    public static final String VERSION = "1.12.2.044zzzze";
+    public static final String VERSION = "1.12.2.044zzzzf";
 
 
     public static long serverStartTime = -1;
@@ -253,5 +253,43 @@ public class FantasticLib
 //        if (!(entity instanceof EntityPlayerMP)) return;
 //
 //        CBipedAnimation.addAnimation(entity, staffSpin);
+//    }
+
+
+    //Swing animation
+//    static CBipedAnimation swing = new CBipedAnimation();
+//
+//    static
+//    {
+//        swing.duration = 500;
+//        swing.bodyFacesLookDirection = true;
+//
+//        swing.leftArm.zRotPath.path = new CPathConstant(new VectorN(Math.PI * 0.25));
+//        swing.leftArm.yRotPath.path = new CPathConstant(new VectorN(0));
+//        swing.leftArm.xRotPath.path = new CPathConstant(new VectorN(Math.PI * 1.75)).add(
+//                new CPathSinuous(new CPathConstant(new VectorN(0.5)), 1, -0.25)
+//                        .add(new CPathConstant(new VectorN(0.5)))
+//                        .power(new CPathConstant(new VectorN(4)))
+//                        .mult(new CPathConstant(new VectorN(-Math.PI)))
+//        );
+//
+//        swing.leftItem.zRotPath.path = new CPathConstant(new VectorN(Math.PI));
+//        swing.leftItem.xRotPath.path = new CPathConstant(new VectorN(Math.PI * -0.15)).add(
+//                new CPathSinuous(new CPathConstant(new VectorN(0.5)), 1, -0.25)
+//                        .add(new CPathConstant(new VectorN(0.5)))
+//                        .power(new CPathConstant(new VectorN(4)))
+//                        .mult(new CPathConstant(new VectorN(Math.PI * -0.6)))
+//        );
+//    }
+//
+//    @SubscribeEvent
+//    public static void swordSwingTest(PlayerInteractEvent.RightClickItem event)
+//    {
+//        Entity entity = event.getEntity();
+//        if (!(entity instanceof EntityPlayerMP)) return;
+//
+//        CBipedAnimation animation = (CBipedAnimation) swing.copy();
+//        animation.setAllStartTimes(System.currentTimeMillis());
+//        CBipedAnimation.addAnimation(entity, animation);
 //    }
 }

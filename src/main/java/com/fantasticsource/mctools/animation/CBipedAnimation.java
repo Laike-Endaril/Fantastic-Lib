@@ -4,6 +4,7 @@ import com.fantasticsource.mctools.ClientTickTimer;
 import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.Network;
 import com.fantasticsource.tools.ReflectionTool;
+import com.fantasticsource.tools.component.CBoolean;
 import com.fantasticsource.tools.component.CLong;
 import com.fantasticsource.tools.component.CUUID;
 import com.fantasticsource.tools.component.Component;
@@ -22,6 +23,7 @@ import net.minecraft.client.renderer.entity.layers.LayerBipedArmor;
 import net.minecraft.client.renderer.entity.layers.LayerHeldItem;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -52,6 +54,7 @@ public class CBipedAnimation extends Component
     public long startTime = 0, duration = Long.MIN_VALUE; //Means infinite duration
     public CModelRendererAnimation head, chest, leftArm, rightArm, leftLeg, rightLeg, leftItem, rightItem;
     public CPath.CPathData handItemSwap = new CPath.CPathData(); //Renders items in hands swapped when the current value < 0
+    public boolean bodyFacesLookDirection = false;
 
 
     public CBipedAnimation()
@@ -194,6 +197,8 @@ public class CBipedAnimation extends Component
         leftItem.write(buf);
         rightItem.write(buf);
 
+        buf.writeBoolean(bodyFacesLookDirection);
+
         return this;
     }
 
@@ -216,6 +221,8 @@ public class CBipedAnimation extends Component
         leftItem.read(buf);
         rightItem.read(buf);
 
+        bodyFacesLookDirection = buf.readBoolean();
+
         return this;
     }
 
@@ -236,6 +243,8 @@ public class CBipedAnimation extends Component
         rightLeg.save(stream);
         leftItem.save(stream);
         rightItem.save(stream);
+
+        new CBoolean().set(bodyFacesLookDirection).save(stream);
 
         return this;
     }
@@ -259,6 +268,8 @@ public class CBipedAnimation extends Component
         rightLeg.load(stream);
         leftItem.load(stream);
         rightItem.load(stream);
+
+        bodyFacesLookDirection = new CBoolean().load(stream).value;
 
         return this;
     }
@@ -325,6 +336,20 @@ public class CBipedAnimation extends Component
             else if (layer.getClass() == LayerHeldItem.class)
             {
                 layers.set(i, new LayerHeldItemEdit((RenderLivingBase<?>) ReflectionTool.get(LAYER_HELD_ITEM_LIVING_ENTITY_RENDERER_FIELD, layer)));
+            }
+        }
+
+        EntityLivingBase entity = event.getEntity();
+        ArrayList<CBipedAnimation> animations = ANIMATION_DATA.get(entity);
+        if (animations != null)
+        {
+            for (CBipedAnimation animation : animations)
+            {
+                if (animation.bodyFacesLookDirection)
+                {
+                    entity.setRenderYawOffset(entity.rotationYawHead);
+                    break;
+                }
             }
         }
     }
