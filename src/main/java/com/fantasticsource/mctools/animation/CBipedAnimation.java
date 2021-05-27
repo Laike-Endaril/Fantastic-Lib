@@ -4,10 +4,7 @@ import com.fantasticsource.mctools.ClientTickTimer;
 import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.Network;
 import com.fantasticsource.tools.ReflectionTool;
-import com.fantasticsource.tools.component.CBoolean;
-import com.fantasticsource.tools.component.CLong;
-import com.fantasticsource.tools.component.CUUID;
-import com.fantasticsource.tools.component.Component;
+import com.fantasticsource.tools.component.*;
 import com.fantasticsource.tools.component.path.CPath;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -51,7 +48,8 @@ public class CBipedAnimation extends Component
 
 
     public UUID id = UUID.randomUUID();
-    public long startTime = 0, duration = Long.MIN_VALUE; //Means infinite duration
+    public long startTime = 0, pauseTime = -1, duration = Long.MIN_VALUE; //Means infinite duration
+    double rate = 1;
     public CModelRendererAnimation head, chest, leftArm, rightArm, leftLeg, rightLeg, leftItem, rightItem;
     public CPath.CPathData handItemSwap = new CPath.CPathData(); //Renders items in hands swapped when the current value < 0
     public boolean bodyFacesLookDirection = false;
@@ -77,16 +75,32 @@ public class CBipedAnimation extends Component
 
     public static CBipedAnimation getCurrent(Entity entity)
     {
+        //For the "current" (combined) animation, fields and methods related to times, rates, and pausing should not be used, because they may differ between parts of combined animation
+        //Instead, they can be used in individual animations gotten from the main static map-of-lists (before getting the combined animation if changing data)
         CBipedAnimation result = new CBipedAnimation();
         CPath.CPathData[] resultData = result.getAllData();
         ArrayList<CBipedAnimation> toRemove = new ArrayList<>();
         ArrayList<CBipedAnimation> animations = ANIMATION_DATA.getOrDefault(entity, new ArrayList<>());
         for (CBipedAnimation animation : animations)
         {
-            if (animation.duration != Long.MIN_VALUE && System.currentTimeMillis() - animation.startTime > animation.duration)
+            if (animation.duration != Long.MIN_VALUE)
             {
-                toRemove.add(animation);
-                continue;
+                if (animation.pauseTime > -1)
+                {
+                    if ((animation.pauseTime - animation.startTime) * animation.rate > animation.duration)
+                    {
+                        toRemove.add(animation);
+                        continue;
+                    }
+                }
+                else
+                {
+                    if ((System.currentTimeMillis() - animation.startTime) * animation.rate > animation.duration)
+                    {
+                        toRemove.add(animation);
+                        continue;
+                    }
+                }
             }
 
             int i = 0;
@@ -96,7 +110,7 @@ public class CBipedAnimation extends Component
                 {
                     CPath.CPathData data2 = resultData[i];
                     data2.path = data.path;
-                    data2.startMillis = data.startMillis;
+                    data2.startTime = data.startTime;
                     data2.rate = data.rate;
                 }
                 i++;
@@ -150,30 +164,43 @@ public class CBipedAnimation extends Component
 
     public CBipedAnimation setAllRates(double rate)
     {
-        head.setAllRates(rate);
-        chest.setAllRates(rate);
-        leftArm.setAllRates(rate);
-        rightArm.setAllRates(rate);
-        leftLeg.setAllRates(rate);
-        rightLeg.setAllRates(rate);
-        leftItem.setAllRates(rate);
-        rightItem.setAllRates(rate);
-
+        this.rate = rate;
+        for (CPath.CPathData data : getAllData()) data.rate = rate;
         return this;
     }
 
     public CBipedAnimation setAllStartTimes(long time)
     {
         startTime = time;
-        head.setAllStartTimes(time);
-        chest.setAllStartTimes(time);
-        leftArm.setAllStartTimes(time);
-        rightArm.setAllStartTimes(time);
-        leftLeg.setAllStartTimes(time);
-        rightLeg.setAllStartTimes(time);
-        leftItem.setAllStartTimes(time);
-        rightItem.setAllStartTimes(time);
+        for (CPath.CPathData data : getAllData()) data.startTime = time;
+        return this;
+    }
 
+    public CBipedAnimation pauseAll()
+    {
+        return pauseAll(System.currentTimeMillis());
+    }
+
+    public CBipedAnimation pauseAll(long time)
+    {
+        pauseTime = time;
+        for (CPath.CPathData data : getAllData()) data.pause(time);
+        return this;
+    }
+
+    public CBipedAnimation unpauseAll()
+    {
+        return unpauseAll(System.currentTimeMillis());
+    }
+
+    public CBipedAnimation unpauseAll(long time)
+    {
+        if (pauseTime > -1)
+        {
+            startTime += time - pauseTime;
+            pauseTime = -1;
+        }
+        for (CPath.CPathData data : getAllData()) data.unpause(time);
         return this;
     }
 
@@ -183,7 +210,10 @@ public class CBipedAnimation extends Component
     {
         new CUUID().set(id).write(buf);
 
+        buf.writeDouble(rate);
+
         buf.writeLong(startTime);
+        buf.writeLong(pauseTime);
         buf.writeLong(duration);
 
         writeMarkedOrNull(buf, handItemSwap);
@@ -207,7 +237,10 @@ public class CBipedAnimation extends Component
     {
         id = new CUUID().read(buf).value;
 
+        rate = buf.readDouble();
+
         startTime = buf.readLong();
+        pauseTime = buf.readLong();
         duration = buf.readLong();
 
         handItemSwap = (CPath.CPathData) readMarkedOrNull(buf);
@@ -231,7 +264,9 @@ public class CBipedAnimation extends Component
     {
         new CUUID().set(id).save(stream);
 
-        new CLong().set(startTime).save(stream).set(duration).save(stream);
+        new CDouble().set(rate).save(stream);
+
+        new CLong().set(startTime).save(stream).set(pauseTime).save(stream).set(duration).save(stream);
 
         saveMarkedOrNull(stream, handItemSwap);
 
@@ -254,8 +289,11 @@ public class CBipedAnimation extends Component
     {
         id = new CUUID().load(stream).value;
 
+        rate = new CDouble().load(stream).value;
+
         CLong cl = new CLong();
         startTime = cl.load(stream).value;
+        pauseTime = cl.load(stream).value;
         duration = cl.load(stream).value;
 
         handItemSwap = (CPath.CPathData) loadMarkedOrNull(stream);

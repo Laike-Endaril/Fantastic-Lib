@@ -17,50 +17,11 @@ public class CModelRendererAnimation extends Component
         return new CPath.CPathData[]{xPath, yPath, zPath, xRotPath, yRotPath, zRotPath, xScalePath, yScalePath, zScalePath};
     }
 
-    public CModelRendererAnimation setAllRates(double rate)
-    {
-        if (xPath != null) xPath.rate = rate;
-        if (yPath != null) yPath.rate = rate;
-        if (zPath != null) zPath.rate = rate;
-        if (xRotPath != null) xRotPath.rate = rate;
-        if (yRotPath != null) yRotPath.rate = rate;
-        if (zRotPath != null) zRotPath.rate = rate;
-        if (xScalePath != null) xScalePath.rate = rate;
-        if (yScalePath != null) yScalePath.rate = rate;
-        if (zScalePath != null) zScalePath.rate = rate;
-
-        return this;
-    }
-
-    public CModelRendererAnimation setAllStartTimes(long time)
-    {
-        if (xPath != null) xPath.startMillis = time;
-        if (yPath != null) yPath.startMillis = time;
-        if (zPath != null) zPath.startMillis = time;
-        if (xRotPath != null) xRotPath.startMillis = time;
-        if (yRotPath != null) yRotPath.startMillis = time;
-        if (zRotPath != null) zRotPath.startMillis = time;
-        if (xScalePath != null) xScalePath.startMillis = time;
-        if (yScalePath != null) yScalePath.startMillis = time;
-        if (zScalePath != null) zScalePath.startMillis = time;
-
-        return this;
-    }
-
 
     @Override
     public CModelRendererAnimation write(ByteBuf buf)
     {
-        writeMarkedOrNull(buf, xPath);
-        writeMarkedOrNull(buf, yPath);
-        writeMarkedOrNull(buf, zPath);
-        writeMarkedOrNull(buf, xRotPath);
-        writeMarkedOrNull(buf, yRotPath);
-        writeMarkedOrNull(buf, zRotPath);
-        writeMarkedOrNull(buf, xScalePath);
-        writeMarkedOrNull(buf, yScalePath);
-        writeMarkedOrNull(buf, zScalePath);
-
+        for (CPath.CPathData data : getAllData()) writeMarkedOrNull(buf, data);
         return this;
     }
 
@@ -83,16 +44,7 @@ public class CModelRendererAnimation extends Component
     @Override
     public CModelRendererAnimation save(OutputStream stream)
     {
-        saveMarkedOrNull(stream, xPath);
-        saveMarkedOrNull(stream, yPath);
-        saveMarkedOrNull(stream, zPath);
-        saveMarkedOrNull(stream, xRotPath);
-        saveMarkedOrNull(stream, yRotPath);
-        saveMarkedOrNull(stream, zRotPath);
-        saveMarkedOrNull(stream, xScalePath);
-        saveMarkedOrNull(stream, yScalePath);
-        saveMarkedOrNull(stream, zScalePath);
-
+        for (CPath.CPathData data : getAllData()) saveMarkedOrNull(stream, data);
         return this;
     }
 

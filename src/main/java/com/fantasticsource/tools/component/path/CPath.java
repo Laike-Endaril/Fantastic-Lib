@@ -109,9 +109,9 @@ public class CPath extends NBTSerializableComponent
         return result;
     }
 
-    public final VectorN getPosition(long timeMillis, VectorN origin)
+    public final VectorN getPosition(long time, VectorN origin)
     {
-        VectorN relative = getRelativePosition(timeMillis);
+        VectorN relative = getRelativePosition(time);
         if (relative == null) return null;
 
         return origin.copy().add(relative);
@@ -198,7 +198,7 @@ public class CPath extends NBTSerializableComponent
     public static class CPathData extends Component
     {
         public CPath path = null;
-        public long startMillis = 0;
+        public long startTime = 0, pauseTime = -1;
         public double rate = 1;
 
         public CPathData()
@@ -210,10 +210,10 @@ public class CPath extends NBTSerializableComponent
             this(path, System.currentTimeMillis());
         }
 
-        public CPathData(CPath path, long startMillis)
+        public CPathData(CPath path, long startTime)
         {
             this.path = path;
-            this.startMillis = startMillis;
+            this.startTime = startTime;
         }
 
         public VectorN getRelativePosition()
@@ -221,9 +221,37 @@ public class CPath extends NBTSerializableComponent
             return getRelativePosition(System.currentTimeMillis());
         }
 
-        public VectorN getRelativePosition(long millis)
+        public VectorN getRelativePosition(long time)
         {
-            return path.getRelativePosition((long) ((double) (millis - startMillis) * rate));
+            if (pauseTime > -1) return path.getRelativePosition((long) ((double) (pauseTime - startTime) * rate));
+            return path.getRelativePosition((long) ((double) (time - startTime) * rate));
+        }
+
+
+        public CPathData pause()
+        {
+            return pause(System.currentTimeMillis());
+        }
+
+        public CPathData pause(long time)
+        {
+            pauseTime = time;
+            return this;
+        }
+
+        public CPathData unpause()
+        {
+            return unpause(System.currentTimeMillis());
+        }
+
+        public CPathData unpause(long time)
+        {
+            if (pauseTime > -1)
+            {
+                startTime += time - pauseTime;
+                pauseTime = -1;
+            }
+            return this;
         }
 
 
@@ -231,7 +259,8 @@ public class CPath extends NBTSerializableComponent
         public CPathData write(ByteBuf buf)
         {
             writeMarkedOrNull(buf, path);
-            buf.writeLong(startMillis);
+            buf.writeLong(startTime);
+            buf.writeLong(pauseTime);
             buf.writeDouble(rate);
 
             return this;
@@ -241,7 +270,8 @@ public class CPath extends NBTSerializableComponent
         public CPathData read(ByteBuf buf)
         {
             path = (CPath) readMarkedOrNull(buf);
-            startMillis = buf.readLong();
+            startTime = buf.readLong();
+            pauseTime = buf.readLong();
             rate = buf.readDouble();
 
             return this;
@@ -251,7 +281,7 @@ public class CPath extends NBTSerializableComponent
         public CPathData save(OutputStream stream)
         {
             saveMarkedOrNull(stream, path);
-            new CLong().set(startMillis).save(stream);
+            new CLong().set(startTime).save(stream).set(pauseTime).save(stream);
             new CDouble().set(rate).save(stream);
 
             return this;
@@ -260,8 +290,11 @@ public class CPath extends NBTSerializableComponent
         @Override
         public CPathData load(InputStream stream)
         {
+            CLong cl = new CLong();
+
             path = (CPath) loadMarkedOrNull(stream);
-            startMillis = new CLong().load(stream).value;
+            startTime = cl.load(stream).value;
+            pauseTime = cl.load(stream).value;
             rate = new CDouble().load(stream).value;
 
             return this;
