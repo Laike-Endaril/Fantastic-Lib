@@ -7,6 +7,7 @@ import com.fantasticsource.mctools.controlintercept.ControlEvent;
 import com.fantasticsource.mctools.sound.SimpleSound;
 import com.fantasticsource.tools.component.CUUID;
 import com.fantasticsource.tools.component.Component;
+import com.fantasticsource.tools.component.path.CPath;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
@@ -43,6 +44,7 @@ public class Network
         WRAPPER.registerMessage(BetterAttributePacketHandler.class, BetterAttributePacket.class, discriminator++, Side.CLIENT);
         WRAPPER.registerMessage(AddBipedAnimationsPacketHandler.class, AddBipedAnimationsPacket.class, discriminator++, Side.CLIENT);
         WRAPPER.registerMessage(RemoveBipedAnimationPacketHandler.class, RemoveBipedAnimationPacket.class, discriminator++, Side.CLIENT);
+        WRAPPER.registerMessage(UpdateBipedAnimationsPacketHandler.class, UpdateBipedAnimationsPacket.class, discriminator++, Side.CLIENT);
     }
 
 
@@ -446,6 +448,10 @@ public class Network
                 {
                     animation.startTime += offsetMillis;
                     animation.setAllStartTimes(animation.startTime);
+
+                    if (animation.pauseTime > -1) animation.pauseTime += offsetMillis;
+                    for (CPath.CPathData data : animation.getAllData()) if (data.pauseTime > -1) data.pauseTime += offsetMillis;
+
                     CBipedAnimation.addAnimation(entity, animation);
                 }
             });
@@ -501,6 +507,74 @@ public class Network
 
 
                 CBipedAnimation.removeAnimations(entity, packet.animationID);
+            });
+            return null;
+        }
+    }
+
+
+    public static class UpdateBipedAnimationsPacket implements IMessage
+    {
+        int entityID;
+        CBipedAnimation[] animations;
+        long serverSystemMillis;
+
+        public UpdateBipedAnimationsPacket()
+        {
+            //Required
+        }
+
+        public UpdateBipedAnimationsPacket(Entity entity, CBipedAnimation[] animations)
+        {
+            entityID = entity.getEntityId();
+            this.animations = animations;
+        }
+
+        @Override
+        public void toBytes(ByteBuf buf)
+        {
+            buf.writeInt(entityID);
+            buf.writeInt(animations.length);
+            for (CBipedAnimation animation : animations) animation.write(buf);
+            buf.writeLong(System.currentTimeMillis());
+        }
+
+        @Override
+        public void fromBytes(ByteBuf buf)
+        {
+            entityID = buf.readInt();
+            animations = new CBipedAnimation[buf.readInt()];
+            for (int i = 0; i < animations.length; i++) animations[i] = new CBipedAnimation().read(buf);
+            serverSystemMillis = buf.readLong();
+        }
+    }
+
+    public static class UpdateBipedAnimationsPacketHandler implements IMessageHandler<UpdateBipedAnimationsPacket, IMessage>
+    {
+        @Override
+        @SideOnly(Side.CLIENT)
+        public IMessage onMessage(UpdateBipedAnimationsPacket packet, MessageContext ctx)
+        {
+            Minecraft mc = Minecraft.getMinecraft();
+            mc.addScheduledTask(() ->
+            {
+                if (mc.world == null) return;
+
+                Entity entity = mc.world.getEntityByID(packet.entityID);
+                if (entity == null) return;
+
+
+                long offsetMillis = System.currentTimeMillis() - packet.serverSystemMillis;
+                for (CBipedAnimation animation : packet.animations)
+                {
+                    animation.startTime += offsetMillis;
+                    animation.setAllStartTimes(animation.startTime);
+
+                    if (animation.pauseTime > -1) animation.pauseTime += offsetMillis;
+                    for (CPath.CPathData data : animation.getAllData()) if (data.pauseTime > -1) data.pauseTime += offsetMillis;
+
+                    if (CBipedAnimation.removeAnimations(entity, animation.id)) CBipedAnimation.addAnimation(entity, animation);
+                }
             });
             return null;
         }

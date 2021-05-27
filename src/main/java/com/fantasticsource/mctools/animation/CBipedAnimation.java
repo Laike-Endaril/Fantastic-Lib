@@ -31,6 +31,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nullable;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
@@ -48,7 +49,7 @@ public class CBipedAnimation extends Component
 
 
     public UUID id = UUID.randomUUID();
-    public long startTime = 0, pauseTime = -1, duration = Long.MIN_VALUE; //Means infinite duration
+    public long startTime = 0, pauseTime = -1, pauseAt = Long.MIN_VALUE, removeAt = Long.MIN_VALUE; //Long.MIN_VALUE means never
     double rate = 1;
     public CModelRendererAnimation head, chest, leftArm, rightArm, leftLeg, rightLeg, leftItem, rightItem;
     public CPath.CPathData handItemSwap = new CPath.CPathData(); //Renders items in hands swapped when the current value < 0
@@ -83,11 +84,19 @@ public class CBipedAnimation extends Component
         ArrayList<CBipedAnimation> animations = ANIMATION_DATA.getOrDefault(entity, new ArrayList<>());
         for (CBipedAnimation animation : animations)
         {
-            if (animation.duration != Long.MIN_VALUE)
+            //Auto-pause
+            if (animation.pauseAt != Long.MIN_VALUE && animation.pauseTime == -1)
+            {
+                long offset = System.currentTimeMillis() - animation.startTime;
+                if (offset >= animation.pauseAt) animation.pauseAllInternal(System.currentTimeMillis() - offset);
+            }
+
+            //Auto-end
+            if (animation.removeAt != Long.MIN_VALUE)
             {
                 if (animation.pauseTime > -1)
                 {
-                    if ((animation.pauseTime - animation.startTime) * animation.rate > animation.duration)
+                    if ((animation.pauseTime - animation.startTime) * animation.rate > animation.removeAt)
                     {
                         toRemove.add(animation);
                         continue;
@@ -95,7 +104,7 @@ public class CBipedAnimation extends Component
                 }
                 else
                 {
-                    if ((System.currentTimeMillis() - animation.startTime) * animation.rate > animation.duration)
+                    if ((System.currentTimeMillis() - animation.startTime) * animation.rate > animation.removeAt)
                     {
                         toRemove.add(animation);
                         continue;
@@ -103,6 +112,7 @@ public class CBipedAnimation extends Component
                 }
             }
 
+            //Combine
             int i = 0;
             for (CPath.CPathData data : animation.getAllData())
             {
@@ -117,6 +127,7 @@ public class CBipedAnimation extends Component
             }
         }
 
+        //Remove ended animations
         animations.removeAll(toRemove);
 
         return result;
@@ -143,10 +154,14 @@ public class CBipedAnimation extends Component
     }
 
     @SideOnly(Side.CLIENT)
-    public static void removeAnimations(Entity entity, UUID id)
+    public static boolean removeAnimations(Entity entity, UUID id)
     {
         ArrayList<CBipedAnimation> list = ANIMATION_DATA.get(entity);
-        if (list != null) list.removeIf(animation -> animation.id.equals(id));
+        if (list == null) return false;
+
+        int size = list.size();
+        list.removeIf(animation -> animation.id.equals(id));
+        return list.size() != size;
     }
 
 
@@ -176,24 +191,34 @@ public class CBipedAnimation extends Component
         return this;
     }
 
-    public CBipedAnimation pauseAll()
+    public CBipedAnimation pauseAll(@Nullable Entity entity)
     {
-        return pauseAll(System.currentTimeMillis());
+        return pauseAll(entity, System.currentTimeMillis());
     }
 
-    public CBipedAnimation pauseAll(long time)
+    public CBipedAnimation pauseAll(@Nullable Entity entity, long time)
+    {
+        pauseAllInternal(time);
+        if (entity != null && !entity.world.isRemote)
+        {
+            MCTools.sendToAllTracking(Network.WRAPPER, new Network.UpdateBipedAnimationsPacket(entity, new CBipedAnimation[]{this}), entity);
+        }
+        return this;
+    }
+
+    protected CBipedAnimation pauseAllInternal(long time)
     {
         pauseTime = time;
         for (CPath.CPathData data : getAllData()) data.pause(time);
         return this;
     }
 
-    public CBipedAnimation unpauseAll()
+    public CBipedAnimation unpauseAll(@Nullable Entity entity)
     {
-        return unpauseAll(System.currentTimeMillis());
+        return unpauseAll(entity, System.currentTimeMillis());
     }
 
-    public CBipedAnimation unpauseAll(long time)
+    public CBipedAnimation unpauseAll(@Nullable Entity entity, long time)
     {
         if (pauseTime > -1)
         {
@@ -214,7 +239,8 @@ public class CBipedAnimation extends Component
 
         buf.writeLong(startTime);
         buf.writeLong(pauseTime);
-        buf.writeLong(duration);
+        buf.writeLong(pauseAt);
+        buf.writeLong(removeAt);
 
         writeMarkedOrNull(buf, handItemSwap);
 
@@ -241,7 +267,8 @@ public class CBipedAnimation extends Component
 
         startTime = buf.readLong();
         pauseTime = buf.readLong();
-        duration = buf.readLong();
+        pauseAt = buf.readLong();
+        removeAt = buf.readLong();
 
         handItemSwap = (CPath.CPathData) readMarkedOrNull(buf);
 
@@ -266,7 +293,7 @@ public class CBipedAnimation extends Component
 
         new CDouble().set(rate).save(stream);
 
-        new CLong().set(startTime).save(stream).set(pauseTime).save(stream).set(duration).save(stream);
+        new CLong().set(startTime).save(stream).set(pauseTime).save(stream).set(pauseAt).save(stream).set(removeAt).save(stream);
 
         saveMarkedOrNull(stream, handItemSwap);
 
@@ -294,7 +321,8 @@ public class CBipedAnimation extends Component
         CLong cl = new CLong();
         startTime = cl.load(stream).value;
         pauseTime = cl.load(stream).value;
-        duration = cl.load(stream).value;
+        pauseAt = cl.load(stream).value;
+        removeAt = cl.load(stream).value;
 
         handItemSwap = (CPath.CPathData) loadMarkedOrNull(stream);
 
