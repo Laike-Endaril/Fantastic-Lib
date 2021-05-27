@@ -87,7 +87,7 @@ public class CBipedAnimation extends Component
             //Auto-pause
             if (animation.pauseAt != Long.MIN_VALUE && animation.pauseTime == -1)
             {
-                long offset = System.currentTimeMillis() - animation.startTime;
+                long offset = (long) ((System.currentTimeMillis() - animation.startTime) * animation.rate);
                 if (offset >= animation.pauseAt) animation.pauseAllInternal(System.currentTimeMillis() - offset);
             }
 
