@@ -121,6 +121,7 @@ public class CBipedAnimation extends Component
                     CPath.CPathData data2 = resultData[i];
                     data2.path = data.path;
                     data2.startTime = data.startTime;
+                    data2.pauseTime = data.pauseTime;
                     data2.rate = data.rate;
                 }
                 i++;
