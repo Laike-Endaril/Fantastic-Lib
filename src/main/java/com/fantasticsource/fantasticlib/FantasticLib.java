@@ -256,39 +256,38 @@ public class FantasticLib
 //    }
 
 
-    //Swing animation
-//    static CBipedAnimation swing = new CBipedAnimation();
+    //Animation test
+//    static CBipedAnimation animation = new CBipedAnimation();
 //
 //    static
 //    {
-//        swing.duration = 500;
-//        swing.bodyFacesLookDirection = true;
+//        animation.removeAt = 500;
+//        animation.bodyFacesLookDirection = true;
 //
-//        swing.leftArm.zRotPath.path = new CPathConstant(new VectorN(Math.PI * 0.25));
-//        swing.leftArm.yRotPath.path = new CPathConstant(new VectorN(0));
-//        swing.leftArm.xRotPath.path = new CPathConstant(new VectorN(Math.PI * 1.75)).add(
+//        animation.rightLeg.zRotPath.path = new CPathConstant(new VectorN(Math.PI * 0.15));
+//        animation.rightLeg.yRotPath.path = new CPathSinuous(new CPathConstant(new VectorN(0.5)), 1, -0.25)
+//                .add(new CPathConstant(new VectorN(0.5)))
+//                .power(new CPathConstant(new VectorN(8)))
+//                .mult(new CPathConstant(new VectorN(Math.PI * -0.05)));
+//        animation.rightLeg.xRotPath.path = new CPathConstant(new VectorN(Math.PI * 0.25)).add(
 //                new CPathSinuous(new CPathConstant(new VectorN(0.5)), 1, -0.25)
 //                        .add(new CPathConstant(new VectorN(0.5)))
-//                        .power(new CPathConstant(new VectorN(4)))
-//                        .mult(new CPathConstant(new VectorN(-Math.PI)))
+//                        .power(new CPathConstant(new VectorN(8)))
+//                        .mult(new CPathConstant(new VectorN(Math.PI * -0.75)))
 //        );
 //
-//        swing.leftItem.zRotPath.path = new CPathConstant(new VectorN(Math.PI));
-//        swing.leftItem.xRotPath.path = new CPathConstant(new VectorN(Math.PI * -0.15)).add(
-//                new CPathSinuous(new CPathConstant(new VectorN(0.5)), 1, -0.25)
-//                        .add(new CPathConstant(new VectorN(0.5)))
-//                        .power(new CPathConstant(new VectorN(4)))
-//                        .mult(new CPathConstant(new VectorN(Math.PI * -0.6)))
-//        );
+//        animation.leftLeg.zRotPath.path = new CPathConstant(new VectorN(0));
+//        animation.leftLeg.yRotPath.path = new CPathConstant(new VectorN(0));
+//        animation.leftLeg.xRotPath.path = new CPathConstant(new VectorN(0));
 //    }
 //
 //    @SubscribeEvent
-//    public static void swordSwingTest(PlayerInteractEvent.RightClickItem event)
+//    public static void animationTest(PlayerInteractEvent.RightClickItem event)
 //    {
 //        Entity entity = event.getEntity();
 //        if (!(entity instanceof EntityPlayerMP)) return;
 //
-//        CBipedAnimation animation = (CBipedAnimation) swing.copy();
+//        CBipedAnimation animation = (CBipedAnimation) FantasticLib.animation.copy();
 //        animation.setAllStartTimes(System.currentTimeMillis());
 //        CBipedAnimation.addAnimation(entity, animation);
 //    }

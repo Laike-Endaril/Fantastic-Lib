@@ -246,6 +246,7 @@ public class BetterAttributeMod extends NBTSerializableComponent
     {
         functions.add(d ->
         {
+            if (BetterAttribute.DEBUG_MODS) System.out.println(TextFormatting.LIGHT_PURPLE + mod.name + ": " + mod.priority + ", " + mod.operation + ", " + mod.amount + ", " + mod.betterAttributeName + ", " + mod.parentAttributeName);
             BetterAttribute parent = BetterAttribute.BETTER_ATTRIBUTES.get(mod.parentAttributeName);
             switch (mod.operation)
             {

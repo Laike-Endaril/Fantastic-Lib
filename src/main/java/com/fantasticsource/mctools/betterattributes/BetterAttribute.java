@@ -32,6 +32,8 @@ import static com.fantasticsource.fantasticlib.FantasticLib.MODID;
 
 public class BetterAttribute
 {
+    public static final boolean DEBUG_MODS = false;
+
     public static final HashMap<String, BetterAttribute> BETTER_ATTRIBUTES = new HashMap<>();
     public static final Field
             MODIFIABLE_ATTRIBUTE_INSTANCE_NEEDS_UPDATE_FIELD = ReflectionTool.getField(ModifiableAttributeInstance.class, "field_111133_g", "needsUpdate"),
@@ -150,10 +152,13 @@ public class BetterAttribute
         if (!event.functions.isEmpty())
         {
             double[] d = new double[]{result, result};
-            int oldTier = (int) event.functions.peekPriority(), newTier;
+            int oldTier = (int) event.functions.peekPriority(), newTier = 0;
+            if (DEBUG_MODS) System.out.println(TextFormatting.AQUA + getLocalizedName());
             while (!event.functions.isEmpty())
             {
+                if (DEBUG_MODS) System.out.println(TextFormatting.AQUA + "" + oldTier + ": " + d[0] + " ...");
                 if (!event.functions.poll().test(d)) break;
+                if (DEBUG_MODS) System.out.println(TextFormatting.AQUA + "... " + d[0]);
 
                 newTier = (int) event.functions.peekPriority();
                 if (newTier != oldTier)
@@ -162,6 +167,7 @@ public class BetterAttribute
                     oldTier = newTier;
                 }
             }
+            if (DEBUG_MODS) System.out.println(TextFormatting.AQUA + "Final: " + d[0]);
             result = d[0];
         }
 
