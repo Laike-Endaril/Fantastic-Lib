@@ -144,6 +144,17 @@ public class CBipedAnimation extends Component
         }
     }
 
+    public static void updateAnimation(Entity entity, CBipedAnimation animation)
+    {
+        if (entity.world.isRemote) throw new IllegalStateException("This method should not be called on the client side!");
+
+        ArrayList<CBipedAnimation> list = ANIMATION_DATA.get(entity);
+        if (list != null && list.remove(animation))
+        {
+            MCTools.sendToAllTracking(Network.WRAPPER, new Network.UpdateBipedAnimationsPacket(entity, animation), entity);
+        }
+    }
+
     public static void removeAnimation(Entity entity, CBipedAnimation animation)
     {
         ArrayList<CBipedAnimation> list = ANIMATION_DATA.get(entity);

@@ -403,7 +403,7 @@ public class Network
             //Required
         }
 
-        public AddBipedAnimationsPacket(Entity entity, CBipedAnimation[] animations)
+        public AddBipedAnimationsPacket(Entity entity, CBipedAnimation... animations)
         {
             entityID = entity.getEntityId();
             this.animations = animations;
@@ -524,7 +524,7 @@ public class Network
             //Required
         }
 
-        public UpdateBipedAnimationsPacket(Entity entity, CBipedAnimation[] animations)
+        public UpdateBipedAnimationsPacket(Entity entity, CBipedAnimation... animations)
         {
             entityID = entity.getEntityId();
             this.animations = animations;
