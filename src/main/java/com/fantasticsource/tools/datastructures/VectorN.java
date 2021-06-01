@@ -54,7 +54,7 @@ public class VectorN
 
     public VectorN add(double... values)
     {
-        for (int i = 0; i < this.values.length; i++)
+        for (int i = 0; i < this.values.length && i < values.length; i++)
         {
             this.values[i] += values[i];
         }
@@ -65,7 +65,7 @@ public class VectorN
     {
         for (VectorN vector : vectors)
         {
-            for (int i = 0; i < values.length; i++)
+            for (int i = 0; i < values.length && i < vector.values.length; i++)
             {
                 values[i] += vector.values[i];
             }
@@ -76,7 +76,7 @@ public class VectorN
 
     public VectorN subtract(double... values)
     {
-        for (int i = 0; i < this.values.length; i++)
+        for (int i = 0; i < this.values.length && i < values.length; i++)
         {
             this.values[i] -= values[i];
         }
@@ -87,7 +87,7 @@ public class VectorN
     {
         for (VectorN vector : vectors)
         {
-            for (int i = 0; i < values.length; i++)
+            for (int i = 0; i < values.length && i < vector.values.length; i++)
             {
                 values[i] -= vector.values[i];
             }
@@ -98,7 +98,7 @@ public class VectorN
 
     public VectorN multiply(double... values)
     {
-        for (int i = 0; i < this.values.length; i++)
+        for (int i = 0; i < this.values.length && i < values.length; i++)
         {
             this.values[i] *= values[i];
         }
@@ -109,7 +109,7 @@ public class VectorN
     {
         for (VectorN vector : vectors)
         {
-            for (int i = 0; i < values.length; i++)
+            for (int i = 0; i < values.length && i < vector.values.length; i++)
             {
                 values[i] *= vector.values[i];
             }
@@ -120,7 +120,7 @@ public class VectorN
 
     public VectorN divide(double... values)
     {
-        for (int i = 0; i < this.values.length; i++)
+        for (int i = 0; i < this.values.length && i < values.length; i++)
         {
             this.values[i] /= values[i];
         }
@@ -131,7 +131,7 @@ public class VectorN
     {
         for (VectorN vector : vectors)
         {
-            for (int i = 0; i < values.length; i++)
+            for (int i = 0; i < values.length && i < vector.values.length; i++)
             {
                 values[i] /= vector.values[i];
             }
@@ -142,7 +142,7 @@ public class VectorN
 
     public VectorN power(double... values)
     {
-        for (int i = 0; i < this.values.length; i++)
+        for (int i = 0; i < this.values.length && i < values.length; i++)
         {
             this.values[i] = Math.pow(this.values[i], values[i]);
         }
@@ -153,7 +153,7 @@ public class VectorN
     {
         for (VectorN vector : vectors)
         {
-            for (int i = 0; i < values.length; i++)
+            for (int i = 0; i < values.length && i < vector.values.length; i++)
             {
                 values[i] = Math.pow(values[i], vector.values[i]);
             }
@@ -164,7 +164,7 @@ public class VectorN
 
     public VectorN mod(double... values)
     {
-        for (int i = 0; i < this.values.length; i++)
+        for (int i = 0; i < this.values.length && i < values.length; i++)
         {
             this.values[i] = this.values[i] % values[i];
         }
@@ -175,7 +175,7 @@ public class VectorN
     {
         for (VectorN vector : vectors)
         {
-            for (int i = 0; i < values.length; i++)
+            for (int i = 0; i < values.length && i < vector.values.length; i++)
             {
                 values[i] = values[i] % vector.values[i];
             }
@@ -186,7 +186,7 @@ public class VectorN
 
     public VectorN posMod(double... values)
     {
-        for (int i = 0; i < this.values.length; i++)
+        for (int i = 0; i < this.values.length && i < values.length; i++)
         {
             this.values[i] = Tools.posMod(this.values[i], values[i]);
         }
@@ -197,7 +197,7 @@ public class VectorN
     {
         for (VectorN vector : vectors)
         {
-            for (int i = 0; i < values.length; i++)
+            for (int i = 0; i < values.length && i < vector.values.length; i++)
             {
                 values[i] = Tools.posMod(values[i], vector.values[i]);
             }
@@ -208,7 +208,7 @@ public class VectorN
 
     public VectorN lowLimit(double... values)
     {
-        for (int i = 0; i < this.values.length; i++)
+        for (int i = 0; i < this.values.length && i < values.length; i++)
         {
             this.values[i] = Tools.max(this.values[i], values[i]);
         }
@@ -219,7 +219,7 @@ public class VectorN
     {
         for (VectorN vector : vectors)
         {
-            for (int i = 0; i < values.length; i++)
+            for (int i = 0; i < values.length && i < vector.values.length; i++)
             {
                 values[i] = Tools.max(values[i], vector.values[i]);
             }
@@ -230,7 +230,7 @@ public class VectorN
 
     public VectorN highLimit(double... values)
     {
-        for (int i = 0; i < this.values.length; i++)
+        for (int i = 0; i < this.values.length && i < values.length; i++)
         {
             this.values[i] = Tools.min(this.values[i], values[i]);
         }
@@ -241,7 +241,7 @@ public class VectorN
     {
         for (VectorN vector : vectors)
         {
-            for (int i = 0; i < values.length; i++)
+            for (int i = 0; i < values.length && i < vector.values.length; i++)
             {
                 values[i] = Tools.min(values[i], vector.values[i]);
             }
