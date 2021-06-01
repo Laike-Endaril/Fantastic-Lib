@@ -207,7 +207,17 @@ public class MCTools
 
     public static ArrayList<World> validWorlds()
     {
-        return new ArrayList<>(DIMENSION_MANAGER_WORLDS.values());
+        ArrayList<World> result = new ArrayList<>(DIMENSION_MANAGER_WORLDS.values());
+        if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) addClientWorld(result);
+        return result;
+    }
+
+
+    @SideOnly(Side.CLIENT)
+    protected static void addClientWorld(ArrayList<World> worlds)
+    {
+        World world = Minecraft.getMinecraft().world;
+        if (world != null && !worlds.contains(world)) worlds.add(world);
     }
 
     public static boolean entityIsValid(Entity entity)
