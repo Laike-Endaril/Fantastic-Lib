@@ -377,6 +377,8 @@ public class CBipedAnimation extends Component
                     if (!(render instanceof RenderLivingBase)) continue;
 
                     ModelBase oldModel = ((RenderLivingBase) render).getMainModel();
+                    if (oldModel == null) continue;
+
                     if (oldModel.getClass() == ModelPlayer.class)
                     {
                         ReflectionTool.set(renderLivingBaseMainModelField, render, new ModelPlayerEdit((ModelPlayer) oldModel));
