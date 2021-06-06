@@ -3,8 +3,6 @@ package com.fantasticsource.fantasticlib;
 import com.fantasticsource.fantasticlib.api.INBTCap;
 import com.fantasticsource.fantasticlib.config.FantasticConfig;
 import com.fantasticsource.mctools.*;
-import com.fantasticsource.mctools.animation.CBipedAnimation;
-import com.fantasticsource.mctools.animation.ModelPlayerEdit;
 import com.fantasticsource.mctools.betterattributes.BetterAttributeMod;
 import com.fantasticsource.mctools.data.CModpackDataHandler;
 import com.fantasticsource.mctools.data.CWorldDataHandler;
@@ -62,7 +60,6 @@ public class FantasticLib
             if (FantasticConfig.entityRenderFixer) MinecraftForge.EVENT_BUS.register(EntityRenderFixer.class);
             MinecraftForge.EVENT_BUS.register(TooltipFixer.class);
             MinecraftForge.EVENT_BUS.register(TooltipAlterer.class);
-            MinecraftForge.EVENT_BUS.register(ModelPlayerEdit.class);
 
             if (DEV_ENV) MinecraftForge.EVENT_BUS.register(TestGUI.class);
         }
@@ -108,8 +105,6 @@ public class FantasticLib
         Compat.baubles = (Loader.isModLoaded("baubles"));
         Compat.tiamatinventory = (Loader.isModLoaded("tiamatinventory"));
         ImprovedRayTracing.reloadConfigs();
-
-        if (event.getSide() == Side.CLIENT) CBipedAnimation.init(event);
 
         DataFiles.output();
     }
@@ -219,6 +214,7 @@ public class FantasticLib
 
 
     //Staff spin based on the dual-lightsaber skin in AW; a vanilla sword would not match up correctly unless you added an offset constant path to items
+    //Requires running of CBipedAnimation.init()
 //    static CBipedAnimation staffSpin = new CBipedAnimation();
 //
 //    static
@@ -257,6 +253,7 @@ public class FantasticLib
 
 
     //Animation test
+    //Requires running of CBipedAnimation.init()
 //    static CBipedAnimation animation = new CBipedAnimation();
 //
 //    static
