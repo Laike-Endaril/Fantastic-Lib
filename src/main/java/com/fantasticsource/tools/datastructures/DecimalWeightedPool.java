@@ -55,4 +55,18 @@ public class DecimalWeightedPool<T>
 
         throw new IllegalStateException();
     }
+
+    public T getRandom(double normalizedDecimal)
+    {
+        if (totalWeight == 0) return null;
+
+        double index = totalWeight * normalizedDecimal;
+        for (Map.Entry<T, Double> entry : pool.entrySet())
+        {
+            if (index < entry.getValue()) return entry.getKey();
+            index -= entry.getValue();
+        }
+
+        throw new IllegalStateException();
+    }
 }

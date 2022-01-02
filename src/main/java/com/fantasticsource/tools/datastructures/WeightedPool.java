@@ -55,4 +55,18 @@ public class WeightedPool<T>
 
         throw new IllegalStateException();
     }
+
+    public T getRandom(double normalizedDecimal)
+    {
+        if (totalWeight == 0) return null;
+
+        int index = (int) (totalWeight * normalizedDecimal);
+        for (Map.Entry<T, Integer> entry : pool.entrySet())
+        {
+            if (index < entry.getValue()) return entry.getKey();
+            index -= entry.getValue();
+        }
+
+        throw new IllegalStateException();
+    }
 }
