@@ -49,7 +49,7 @@ public abstract class GUIScreen extends GuiScreen
     public ItemStack tooltipStack = null;
     public final ArrayList<Runnable> onClosedActions = new ArrayList<>();
     public final double textScale;
-    public boolean drawStack = true;
+    public boolean drawStack = true, closeIfStackedOn = false;
     public int pxWidth, pxHeight;
     public float xPixel, yPixel;
     private ArrayList<Integer> mouseButtons = new ArrayList<>();
@@ -128,7 +128,7 @@ public abstract class GUIScreen extends GuiScreen
     public void showStacked()
     {
         GuiScreen current = Minecraft.getMinecraft().currentScreen;
-        if (current instanceof GUIScreen) SCREEN_STACK.push(new ScreenEntry((GUIScreen) current, mouseX, mouseY));
+        if (!(current instanceof GUIScreen) || !((GUIScreen) current).closeIfStackedOn) SCREEN_STACK.push(new ScreenEntry(current, mouseX, mouseY));
 
         ignoreClosure = true;
         Minecraft.getMinecraft().displayGuiScreen(this);
@@ -138,23 +138,17 @@ public abstract class GUIScreen extends GuiScreen
 
     public static void show(GUIScreen screen)
     {
-        if (Minecraft.getMinecraft().currentScreen instanceof GUIScreen) showStacked(screen);
-        else showUnstacked(screen);
+        screen.show();
     }
 
     public static void showUnstacked(GUIScreen screen)
     {
-        Minecraft.getMinecraft().displayGuiScreen(screen);
+        screen.showUnstacked();
     }
 
     public static void showStacked(GUIScreen screen)
     {
-        GuiScreen current = Minecraft.getMinecraft().currentScreen;
-        if (current instanceof GUIScreen) SCREEN_STACK.push(new ScreenEntry((GUIScreen) current, mouseX, mouseY));
-
-        ignoreClosure = true;
-        Minecraft.getMinecraft().displayGuiScreen(screen);
-        ignoreClosure = false;
+        screen.showStacked();
     }
 
 
@@ -184,9 +178,16 @@ public abstract class GUIScreen extends GuiScreen
 
             for (ScreenEntry entry : SCREEN_STACK)
             {
-                GUIScreen.mouseX = entry.mouseX;
-                GUIScreen.mouseY = entry.mouseY;
-                entry.screen.draw();
+                if (entry.screen instanceof GUIScreen)
+                {
+                    GUIScreen.mouseX = entry.mouseX;
+                    GUIScreen.mouseY = entry.mouseY;
+                    ((GUIScreen) entry.screen).draw();
+                }
+                else
+                {
+                    entry.screen.drawScreen((int) (Display.getWidth() * entry.mouseX), (int) (Display.getHeight() * entry.mouseY), partialTicks);
+                }
             }
 
             GUIScreen.mouseX = mX;
@@ -363,7 +364,7 @@ public abstract class GUIScreen extends GuiScreen
 
         if (SCREEN_STACK.size() > 0)
         {
-            GUIScreen screen = SCREEN_STACK.pop().screen;
+            GuiScreen screen = SCREEN_STACK.pop().screen;
             mc.displayGuiScreen(screen);
             screen.onResize(Minecraft.getMinecraft(), width, height);
         }
@@ -384,10 +385,10 @@ public abstract class GUIScreen extends GuiScreen
 
     public static class ScreenEntry
     {
-        public final GUIScreen screen;
+        public final GuiScreen screen;
         public final double mouseX, mouseY;
 
-        public ScreenEntry(GUIScreen screen, double mouseX, double mouseY)
+        public ScreenEntry(GuiScreen screen, double mouseX, double mouseY)
         {
             this.screen = screen;
             this.mouseX = mouseX;
