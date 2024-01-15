@@ -237,6 +237,7 @@ public class ReflectionTool
     {
         try
         {
+            method.setAccessible(true);
             return method.invoke(object, args);
         }
         catch (IllegalAccessException | InvocationTargetException e)
