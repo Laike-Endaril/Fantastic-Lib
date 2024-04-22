@@ -102,6 +102,18 @@ public class MCTools
 
 
     @SideOnly(Side.CLIENT)
+    public static void removeKeybindings(String... keyDescriptions)
+    {
+        for (String keyDescription : keyDescriptions) removeKeybinding(keyDescription);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void removeKeybindings(KeyBinding... keyBindings)
+    {
+        for (KeyBinding keyBinding : keyBindings) removeKeybinding(keyBinding);
+    }
+
+    @SideOnly(Side.CLIENT)
     public static void removeKeybinding(String keyDescription)
     {
         GameSettings gameSettings = Minecraft.getMinecraft().gameSettings;
@@ -136,6 +148,7 @@ public class MCTools
         }
         if (removeCategory) KeyBinding.getKeybinds().remove(keyBinding.getKeyCategory());
     }
+
 
     public static void sendToAllTracking(SimpleNetworkWrapper wrapper, IMessage packet, Entity entity)
     {
