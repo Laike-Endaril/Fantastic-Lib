@@ -102,6 +102,23 @@ public class MCTools
 
 
     @SideOnly(Side.CLIENT)
+    public static void removeKeybinding(String keyDescription)
+    {
+        GameSettings gameSettings = Minecraft.getMinecraft().gameSettings;
+
+        for (KeyBinding keyBinding : gameSettings.keyBindings)
+        {
+            if (keyBinding.getKeyDescription().equals(keyDescription))
+            {
+                removeKeybinding(keyBinding);
+                return;
+            }
+        }
+
+        System.err.println(TextFormatting.RED + "Could not remove non-existing keybind: " + keyDescription + " (does not exist or was already removed; check config/fantasticlib/reference/keybinds.txt for keybind names)");
+    }
+
+    @SideOnly(Side.CLIENT)
     public static void removeKeybinding(KeyBinding keyBinding)
     {
         GameSettings gameSettings = Minecraft.getMinecraft().gameSettings;
