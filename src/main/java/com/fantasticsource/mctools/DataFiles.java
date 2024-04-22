@@ -3,16 +3,23 @@ package com.fantasticsource.mctools;
 import com.fantasticsource.fantasticlib.FantasticLib;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.oredict.OreDictionary;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 
 public class DataFiles
 {
@@ -102,6 +109,28 @@ public class DataFiles
             writer = new BufferedWriter(new FileWriter(new File(referenceDir + "slottings.txt")));
             for (String string : Slottings.availableSlottings()) writer.write(string + "\r\n");
             writer.close();
+
+            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+            {
+                //Preserves ordering shown in keybind settings menu in-game
+                LinkedHashSet<String> keybindCategories = new LinkedHashSet<>();
+                KeyBinding[] keyBindings = ArrayUtils.clone(Minecraft.getMinecraft().gameSettings.keyBindings);
+                Arrays.sort(keyBindings);
+                for (KeyBinding keyBinding : keyBindings) keybindCategories.add(keyBinding.getKeyCategory());
+
+                writer = new BufferedWriter(new FileWriter(new File(referenceDir + "keybinds.txt")));
+                for (String keybindCategory : keybindCategories)
+                {
+                    writer.write(keybindCategory + "\r\n");
+
+                    for (KeyBinding keyBinding : keyBindings)
+                    {
+                        if (keyBinding.getKeyCategory().equals(keybindCategory)) writer.write(keyBinding.getKeyDescription() + "\r\n");
+                    }
+                    writer.write("\r\n");
+                }
+                writer.close();
+            }
         }
         catch (IOException e)
         {
