@@ -16,6 +16,8 @@ import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.resources.LanguageManager;
 import net.minecraft.client.resources.Locale;
+import net.minecraft.client.settings.GameSettings;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -37,6 +39,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.*;
+import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
@@ -55,6 +58,7 @@ import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.NotImplementedException;
 
 import java.io.BufferedReader;
@@ -96,6 +100,25 @@ public class MCTools
         }
     }
 
+
+    @SideOnly(Side.CLIENT)
+    public static void removeKeybinding(KeyBinding keyBinding)
+    {
+        GameSettings gameSettings = Minecraft.getMinecraft().gameSettings;
+        keyBinding.setKeyModifierAndCode(KeyModifier.NONE, 0);
+        gameSettings.keyBindings = ArrayUtils.remove(gameSettings.keyBindings, Tools.indexOf(Minecraft.getMinecraft().gameSettings.keyBindings, keyBinding));
+
+        boolean removeCategory = true;
+        for (KeyBinding otherKeybinding : gameSettings.keyBindings)
+        {
+            if (otherKeybinding.getKeyCategory().equals(keyBinding.getKeyCategory()))
+            {
+                removeCategory = false;
+                break;
+            }
+        }
+        if (removeCategory) KeyBinding.getKeybinds().remove(keyBinding.getKeyCategory());
+    }
 
     public static void sendToAllTracking(SimpleNetworkWrapper wrapper, IMessage packet, Entity entity)
     {
