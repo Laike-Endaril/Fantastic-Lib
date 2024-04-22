@@ -102,27 +102,36 @@ public class MCTools
 
 
     @SideOnly(Side.CLIENT)
-    public static void removeKeybindings(String... keyDescriptions)
+    public static void removeKeybindCategory(String keybindCategory)
     {
-        for (String keyDescription : keyDescriptions) removeKeybinding(keyDescription);
+        for (KeyBinding keybind : Minecraft.getMinecraft().gameSettings.keyBindings)
+        {
+            if (keybind.getKeyCategory().equals(keybindCategory)) removeKeybind(keybind);
+        }
     }
 
     @SideOnly(Side.CLIENT)
-    public static void removeKeybindings(KeyBinding... keyBindings)
+    public static void removeKeybinds(String... keyDescriptions)
     {
-        for (KeyBinding keyBinding : keyBindings) removeKeybinding(keyBinding);
+        for (String keyDescription : keyDescriptions) removeKeybind(keyDescription);
     }
 
     @SideOnly(Side.CLIENT)
-    public static void removeKeybinding(String keyDescription)
+    public static void removeKeybinds(KeyBinding... keybinds)
+    {
+        for (KeyBinding keybind : keybinds) removeKeybind(keybind);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void removeKeybind(String keyDescription)
     {
         GameSettings gameSettings = Minecraft.getMinecraft().gameSettings;
 
-        for (KeyBinding keyBinding : gameSettings.keyBindings)
+        for (KeyBinding keybind : gameSettings.keyBindings)
         {
-            if (keyBinding.getKeyDescription().equals(keyDescription))
+            if (keybind.getKeyDescription().equals(keyDescription))
             {
-                removeKeybinding(keyBinding);
+                removeKeybind(keybind);
                 return;
             }
         }
@@ -131,22 +140,22 @@ public class MCTools
     }
 
     @SideOnly(Side.CLIENT)
-    public static void removeKeybinding(KeyBinding keyBinding)
+    public static void removeKeybind(KeyBinding keybind)
     {
         GameSettings gameSettings = Minecraft.getMinecraft().gameSettings;
-        keyBinding.setKeyModifierAndCode(KeyModifier.NONE, 0);
-        gameSettings.keyBindings = ArrayUtils.remove(gameSettings.keyBindings, Tools.indexOf(Minecraft.getMinecraft().gameSettings.keyBindings, keyBinding));
+        keybind.setKeyModifierAndCode(KeyModifier.NONE, 0);
+        gameSettings.keyBindings = ArrayUtils.remove(gameSettings.keyBindings, Tools.indexOf(Minecraft.getMinecraft().gameSettings.keyBindings, keybind));
 
         boolean removeCategory = true;
-        for (KeyBinding otherKeybinding : gameSettings.keyBindings)
+        for (KeyBinding otherKeybind : gameSettings.keyBindings)
         {
-            if (otherKeybinding.getKeyCategory().equals(keyBinding.getKeyCategory()))
+            if (otherKeybind.getKeyCategory().equals(keybind.getKeyCategory()))
             {
                 removeCategory = false;
                 break;
             }
         }
-        if (removeCategory) KeyBinding.getKeybinds().remove(keyBinding.getKeyCategory());
+        if (removeCategory) KeyBinding.getKeybinds().remove(keybind.getKeyCategory());
     }
 
 
