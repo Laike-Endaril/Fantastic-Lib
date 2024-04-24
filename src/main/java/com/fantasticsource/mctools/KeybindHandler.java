@@ -1,11 +1,21 @@
 package com.fantasticsource.mctools;
 
+import net.minecraft.client.settings.KeyBinding;
+
 public class KeybindHandler
 {
+    private final KeyBinding keyBinding;
     private boolean wasActive = false;
 
-    public boolean wasJustPressed(boolean isActive)
+    public KeybindHandler(KeyBinding keyBinding)
     {
+        this.keyBinding = keyBinding;
+    }
+
+    public boolean wasJustPressed()
+    {
+        boolean isActive = keyBinding.isKeyDown();
+
         if (wasActive)
         {
             wasActive = isActive;
@@ -14,5 +24,10 @@ public class KeybindHandler
 
         wasActive = isActive;
         return isActive;
+    }
+
+    public boolean isActive()
+    {
+        return keyBinding.isKeyDown();
     }
 }
