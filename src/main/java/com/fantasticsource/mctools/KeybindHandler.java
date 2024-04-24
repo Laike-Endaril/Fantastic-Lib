@@ -4,7 +4,7 @@ import net.minecraft.client.settings.KeyBinding;
 
 public class KeybindHandler
 {
-    private final KeyBinding keyBinding;
+    public final KeyBinding keyBinding;
     private boolean wasActive = false;
 
     public KeybindHandler(KeyBinding keyBinding)
