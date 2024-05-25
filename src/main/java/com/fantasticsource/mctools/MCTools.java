@@ -52,6 +52,8 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
+import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.eventhandler.IEventListener;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.EntityEntry;
@@ -156,6 +158,25 @@ public class MCTools
             }
         }
         if (removeCategory) KeyBinding.getKeybinds().remove(keybind.getKeyCategory());
+    }
+
+
+    public static ArrayList<IEventListener> getListeners(Event event)
+    {
+        ArrayList<IEventListener> list = new ArrayList<>();
+        int i2 = 0;
+        while (true)
+        {
+            try
+            {
+                list.addAll(Arrays.asList(event.getListenerList().getListeners(i2++)));
+            }
+            catch (Exception e)
+            {
+                break;
+            }
+        }
+        return list;
     }
 
 
