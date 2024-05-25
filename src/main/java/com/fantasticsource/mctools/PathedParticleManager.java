@@ -2,6 +2,7 @@ package com.fantasticsource.mctools;
 
 import com.fantasticsource.tools.datastructures.Pair;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -68,6 +69,12 @@ public class PathedParticleManager
         renderer.bindTexture(PARTICLE_TEXTURES);
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
+
+        Particle.interpPosX = entityIn.lastTickPosX + (entityIn.posX - entityIn.lastTickPosX) * partialTick;
+        Particle.interpPosY = entityIn.lastTickPosY + (entityIn.posY - entityIn.lastTickPosY) * partialTick;
+        Particle.interpPosZ = entityIn.lastTickPosZ + (entityIn.posZ - entityIn.lastTickPosZ) * partialTick;
+        Particle.cameraViewDir = entityIn.getLook(partialTick);
+
         for (Map.Entry<Pair<GlStateManager.SourceFactor, GlStateManager.DestFactor>, ArrayList<PathedParticle>> entry : particles.entrySet())
         {
             GlStateManager.blendFunc(entry.getKey().getKey(), entry.getKey().getValue());

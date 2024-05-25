@@ -15,7 +15,8 @@ import java.util.ArrayList;
 
 public class PathedParticle extends Particle
 {
-    protected boolean readyToRender = false;
+    public static long renderMillis;
+
     public double u1 = 32d / 128, v1 = 16d / 128, u2 = 64d / 128, v2 = 48d / 128;
     public boolean useBlockLight = false;
     public double xScale3D = 1, yScale3D = 1, zScale3D = 1;
@@ -32,15 +33,10 @@ public class PathedParticle extends Particle
     {
         super(Minecraft.getMinecraft().world, Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
 
-        this.basePath = new CPath.CPathData(basePath);
+        this.basePath = new CPath.CPathData(basePath, 0);
         for (CPath path : morePaths) applyPath(path);
-        VectorN pos = currentPos();
-        setPosition(pos.values[0], pos.values[1], pos.values[2]);
-        prevPosX = posX;
-        prevPosY = posY;
-        prevPosZ = posZ;
 
-        particleMaxAge = 60;
+        particleMaxAge = 20;
         particleScale = 1;
         canCollide = false;
 
@@ -50,7 +46,7 @@ public class PathedParticle extends Particle
 
     public PathedParticle applyPath(CPath path)
     {
-        morePaths.add(new CPath.CPathData(path));
+        morePaths.add(new CPath.CPathData(path, 0));
         return this;
     }
 
@@ -62,25 +58,25 @@ public class PathedParticle extends Particle
 
     public PathedParticle rgbPath(CPath path)
     {
-        rgbPath = new CPath.CPathData(path);
+        rgbPath = new CPath.CPathData(path, 0);
         return this;
     }
 
     public PathedParticle hsvPath(CPath path)
     {
-        hsvPath = new CPath.CPathData(path);
+        hsvPath = new CPath.CPathData(path, 0);
         return this;
     }
 
     public PathedParticle alphaPath(CPath path)
     {
-        alphaPath = new CPath.CPathData(path);
+        alphaPath = new CPath.CPathData(path, 0);
         return this;
     }
 
     public PathedParticle scale3DPath(CPath path)
     {
-        scale3DPath = new CPath.CPathData(path);
+        scale3DPath = new CPath.CPathData(path, 0);
         return this;
     }
 
@@ -88,52 +84,17 @@ public class PathedParticle extends Particle
     @Override
     public void onUpdate()
     {
-        if (particleAge++ > particleMaxAge) setExpired();
-
-        prevPosX = posX;
-        prevPosY = posY;
-        prevPosZ = posZ;
-
-        VectorN pos = currentPos();
-        if (pos == null)
-        {
-            setExpired();
-            return;
-        }
-
-        setPosition(pos.values[0], pos.values[1], pos.values[2]);
-
-        if (rgbPath != null)
-        {
-            VectorN rgb = rgbPath.getRelativePosition();
-            setRBGColorF((float) rgb.values[0], (float) rgb.values[1], (float) rgb.values[2]);
-        }
-        else if (hsvPath != null)
-        {
-            VectorN hsv = hsvPath.getRelativePosition();
-            Color c = new Color(0).setColorHSV((float) hsv.values[0], (float) hsv.values[1], (float) hsv.values[2]);
-            setRBGColorF(c.rf(), c.gf(), c.bf());
-        }
-
-        if (alphaPath != null) setAlphaF((float) alphaPath.getRelativePosition().values[0]);
-
-        if (scale3DPath != null)
-        {
-            VectorN scalar = scale3DPath.getRelativePosition();
-            xScale3D = scalar.values[0];
-            yScale3D = scalar.values[1];
-            zScale3D = scalar.values[2];
-        }
-
-        readyToRender = true;
+        particleAge++;
     }
 
     protected VectorN currentPos()
     {
-        VectorN pos = basePath.getRelativePosition(), pathPos;
+        VectorN pos = basePath.getRelativePosition(renderMillis), pathPos;
+        if (pos == null) return null;
+
         for (CPath.CPathData data : morePaths)
         {
-            pathPos = data.getRelativePosition();
+            pathPos = data.getRelativePosition(renderMillis);
             if (pathPos == null) return null;
 
             pos.add(pathPos);
@@ -151,12 +112,37 @@ public class PathedParticle extends Particle
     @Override
     public void renderParticle(BufferBuilder buffer, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ)
     {
-        if (!readyToRender) return;
+        //Normalize all path progress over the course of the particle lifetime
+        renderMillis = (long) ((particleAge * 50 + partialTicks * 50) * 20 / particleMaxAge);
+        if (renderMillis > 1000)
+        {
+            setExpired();
+            return;
+        }
 
-        double x = prevPosX + (posX - prevPosX) * partialTicks - interpPosX;
-        double y = prevPosY + (posY - prevPosY) * partialTicks - interpPosY;
-        double z = prevPosZ + (posZ - prevPosZ) * partialTicks - interpPosZ;
+
+        VectorN pos = currentPos();
+        if (pos == null)
+        {
+            setExpired();
+            return;
+        }
+        setPosition(pos.values[0], pos.values[1], pos.values[2]);
+
+
+        double x = posX - interpPosX;
+        double y = posY - interpPosY;
+        double z = posZ - interpPosZ;
         double scale = particleScale / 2;
+
+        if (scale3DPath != null)
+        {
+            VectorN scalar = scale3DPath.getRelativePosition(renderMillis);
+            xScale3D = scalar.values[0];
+            yScale3D = scalar.values[1];
+            zScale3D = scalar.values[2];
+        }
+
         Vec3d[] vecs = new Vec3d[]
                 {
                         new Vec3d((-rotationX - rotationXY) * xScale3D, -rotationZ * yScale3D, (-rotationYZ - rotationXZ) * zScale3D).scale(scale),
@@ -185,6 +171,20 @@ public class PathedParticle extends Particle
         int lightmapX = lightmapIndex >> 16 & 65535;
         int lightmapY = lightmapIndex & 65535;
 
+
+        if (rgbPath != null)
+        {
+            VectorN rgb = rgbPath.getRelativePosition(renderMillis);
+            setRBGColorF((float) rgb.values[0], (float) rgb.values[1], (float) rgb.values[2]);
+        }
+        else if (hsvPath != null)
+        {
+            VectorN hsv = hsvPath.getRelativePosition(renderMillis);
+            Color c = new Color(0).setColorHSV((float) hsv.values[0], (float) hsv.values[1], (float) hsv.values[2]);
+            setRBGColorF(c.rf(), c.gf(), c.bf());
+        }
+
+        if (alphaPath != null) setAlphaF((float) alphaPath.getRelativePosition(renderMillis).values[0]);
 
         buffer.pos(x + vecs[0].x, y + vecs[0].y, z + vecs[0].z).tex(u2, v2).color(particleRed, particleGreen, particleBlue, particleAlpha).lightmap(lightmapX, lightmapY).endVertex();
         buffer.pos(x + vecs[1].x, y + vecs[1].y, z + vecs[1].z).tex(u2, v1).color(particleRed, particleGreen, particleBlue, particleAlpha).lightmap(lightmapX, lightmapY).endVertex();

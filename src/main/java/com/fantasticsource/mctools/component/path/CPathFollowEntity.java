@@ -5,9 +5,12 @@ import com.fantasticsource.tools.component.CInt;
 import com.fantasticsource.tools.component.path.CPath;
 import com.fantasticsource.tools.datastructures.VectorN;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -32,6 +35,11 @@ public class CPathFollowEntity extends CPath
     {
         if (entity == null) return null;
 
+        if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+        {
+            double partialTick = Minecraft.getMinecraft().getRenderPartialTicks();
+            return new VectorN(entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * partialTick, entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * partialTick, entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * partialTick);
+        }
         return new VectorN(entity.posX, entity.posY, entity.posZ);
     }
 
