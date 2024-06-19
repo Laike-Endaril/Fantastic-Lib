@@ -9,6 +9,8 @@ import java.lang.reflect.Modifier;
 
 public class ReflectionTool
 {
+    public static final IllegalArgumentException ILLEGAL_ARGUMENT_EXCEPTION = new IllegalArgumentException();
+
     public static Field getField(Class classType, String... possibleFieldnames)
     {
         return getField(false, classType, possibleFieldnames);
@@ -138,26 +140,9 @@ public class ReflectionTool
     }
 
 
-    public static Object getInstance(String fullClassPathAndName, Object... constructorArgs)
-    {
-        return getInstance(fullClassPathAndName, 0, constructorArgs);
-    }
-
     public static Object getInstance(String fullClassPathAndName, int constructorIndex, Object... constructorArgs)
     {
-        try
-        {
-            return getClassByName(fullClassPathAndName).getConstructors()[constructorIndex].newInstance(constructorArgs);
-        }
-        catch (InstantiationException | IllegalAccessException | InvocationTargetException e)
-        {
-            return null;
-        }
-    }
-
-    public static Object getInstance(Class cls, Object... constructorArgs)
-    {
-        return getInstance(cls, 0, constructorArgs);
+        return getInstance(getClassByName(fullClassPathAndName), constructorIndex, constructorArgs);
     }
 
     public static Object getInstance(Class cls, int constructorIndex, Object... constructorArgs)
@@ -168,7 +153,7 @@ public class ReflectionTool
         }
         catch (InstantiationException | IllegalAccessException | InvocationTargetException e)
         {
-            return null;
+            throw ILLEGAL_ARGUMENT_EXCEPTION;
         }
     }
 
