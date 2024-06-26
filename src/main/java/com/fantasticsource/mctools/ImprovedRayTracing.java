@@ -16,6 +16,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import javax.annotation.Nonnull;
@@ -619,6 +620,12 @@ public class ImprovedRayTracing
     @Nonnull
     public static RayTraceResult rayTraceBlocks(World world, Vec3d vecStart, Vec3d vecEnd, int maxBlocks, boolean collideOnAllSolids)
     {
+        return rayTraceBlocks(world, vecStart, vecEnd, maxBlocks, collideOnAllSolids, false);
+    }
+
+    @Nonnull
+    public static RayTraceResult rayTraceBlocks(World world, Vec3d vecStart, Vec3d vecEnd, int maxBlocks, boolean collideOnAllSolids, boolean collideOnAllFluids)
+    {
         world.profiler.startSection("Fantastic Lib: Improved Raytrace");
 
 
@@ -638,15 +645,30 @@ public class ImprovedRayTracing
             return new FixedRayTraceResult(null, null, null, pos);
         }
         IBlockState state = world.getBlockState(pos);
-        if ((collideOnAllSolids || !canSeeThrough(state)) && state.getCollisionBoundingBox(world, pos) != Block.NULL_AABB)
+        if (state.getCollisionBoundingBox(world, pos) != Block.NULL_AABB)
         {
-            result = state.collisionRayTrace(world, pos, vecStart, vecEnd);
-            if (result != null)
+            if (collideOnAllFluids && (state.getBlock() instanceof IFluidBlock || state.getMaterial().isLiquid()))
             {
-                world.profiler.endSection();
-                return result;
+                result = state.collisionRayTrace(world, pos, vecStart, vecEnd);
+                if (result != null)
+                {
+                    world.profiler.endSection();
+                    return result;
+                }
+            }
+
+
+            if (collideOnAllSolids || !canSeeThrough(state))
+            {
+                result = state.collisionRayTrace(world, pos, vecStart, vecEnd);
+                if (result != null)
+                {
+                    world.profiler.endSection();
+                    return result;
+                }
             }
         }
+
 
         //End if this was the last block
         if (pos.getX() == endPos.getX() && pos.getY() == endPos.getY() && pos.getZ() == endPos.getZ())
@@ -727,13 +749,27 @@ public class ImprovedRayTracing
                 return new FixedRayTraceResult(null, null, null, pos);
             }
             state = world.getBlockState(pos);
-            if ((collideOnAllSolids || !canSeeThrough(state)) && state.getCollisionBoundingBox(world, pos) != Block.NULL_AABB)
+            if (state.getCollisionBoundingBox(world, pos) != Block.NULL_AABB)
             {
-                result = state.collisionRayTrace(world, pos, vecStart, vecEnd);
-                if (result != null)
+                if (collideOnAllFluids && (state.getBlock() instanceof IFluidBlock || state.getMaterial().isLiquid()))
                 {
-                    world.profiler.endSection();
-                    return result;
+                    result = state.collisionRayTrace(world, pos, vecStart, vecEnd);
+                    if (result != null)
+                    {
+                        world.profiler.endSection();
+                        return result;
+                    }
+                }
+
+
+                if (collideOnAllSolids || !canSeeThrough(state))
+                {
+                    result = state.collisionRayTrace(world, pos, vecStart, vecEnd);
+                    if (result != null)
+                    {
+                        world.profiler.endSection();
+                        return result;
+                    }
                 }
             }
 
