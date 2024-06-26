@@ -595,8 +595,14 @@ public class ImprovedRayTracing
     @Nonnull
     public static RayTraceResult rayTraceBlocks(Entity fromEyesOf, double maxDistance, int maxBlocks, boolean collideOnAllSolids)
     {
+        return rayTraceBlocks(fromEyesOf, maxDistance, maxBlocks, collideOnAllSolids, false);
+    }
+
+    @Nonnull
+    public static RayTraceResult rayTraceBlocks(Entity fromEyesOf, double maxDistance, int maxBlocks, boolean collideOnAllSolids, boolean collideOnAllFluids)
+    {
         Vec3d eyes = fromEyesOf.getPositionVector().addVector(0, fromEyesOf.getEyeHeight(), 0);
-        return rayTraceBlocks(fromEyesOf.world, eyes, eyes.add(fromEyesOf.getLookVec().scale(maxDistance)), maxBlocks, collideOnAllSolids);
+        return rayTraceBlocks(fromEyesOf.world, eyes, eyes.add(fromEyesOf.getLookVec().scale(maxDistance)), maxBlocks, collideOnAllSolids, collideOnAllFluids);
     }
 
     @Nonnull
