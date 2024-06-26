@@ -11,6 +11,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -651,27 +652,23 @@ public class ImprovedRayTracing
             return new FixedRayTraceResult(null, null, null, pos);
         }
         IBlockState state = world.getBlockState(pos);
-        if (state.getCollisionBoundingBox(world, pos) != Block.NULL_AABB)
+        if (collideOnAllFluids && (state.getBlock() instanceof IFluidBlock || state.getMaterial().isLiquid()))
         {
-            if (collideOnAllFluids && (state.getBlock() instanceof IFluidBlock || state.getMaterial().isLiquid()))
+            result = state.collisionRayTrace(world, pos, vecStart, vecEnd);
+            if (result == null) result = rayTraceWithinBlock(pos, vecStart, vecEnd, Block.FULL_BLOCK_AABB);
+            if (result != null)
             {
-                result = state.collisionRayTrace(world, pos, vecStart, vecEnd);
-                if (result != null)
-                {
-                    world.profiler.endSection();
-                    return result;
-                }
+                world.profiler.endSection();
+                return result;
             }
-
-
-            if (collideOnAllSolids || !canSeeThrough(state))
+        }
+        if (state.getCollisionBoundingBox(world, pos) != Block.NULL_AABB && collideOnAllSolids || !canSeeThrough(state))
+        {
+            result = state.collisionRayTrace(world, pos, vecStart, vecEnd);
+            if (result != null)
             {
-                result = state.collisionRayTrace(world, pos, vecStart, vecEnd);
-                if (result != null)
-                {
-                    world.profiler.endSection();
-                    return result;
-                }
+                world.profiler.endSection();
+                return result;
             }
         }
 
@@ -755,27 +752,23 @@ public class ImprovedRayTracing
                 return new FixedRayTraceResult(null, null, null, pos);
             }
             state = world.getBlockState(pos);
-            if (state.getCollisionBoundingBox(world, pos) != Block.NULL_AABB)
+            if (collideOnAllFluids && (state.getBlock() instanceof IFluidBlock || state.getMaterial().isLiquid()))
             {
-                if (collideOnAllFluids && (state.getBlock() instanceof IFluidBlock || state.getMaterial().isLiquid()))
+                result = state.collisionRayTrace(world, pos, vecStart, vecEnd);
+                if (result == null) result = rayTraceWithinBlock(pos, vecStart, vecEnd, Block.FULL_BLOCK_AABB);
+                if (result != null)
                 {
-                    result = state.collisionRayTrace(world, pos, vecStart, vecEnd);
-                    if (result != null)
-                    {
-                        world.profiler.endSection();
-                        return result;
-                    }
+                    world.profiler.endSection();
+                    return result;
                 }
-
-
-                if (collideOnAllSolids || !canSeeThrough(state))
+            }
+            if (state.getCollisionBoundingBox(world, pos) != Block.NULL_AABB && collideOnAllSolids || !canSeeThrough(state))
+            {
+                result = state.collisionRayTrace(world, pos, vecStart, vecEnd);
+                if (result != null)
                 {
-                    result = state.collisionRayTrace(world, pos, vecStart, vecEnd);
-                    if (result != null)
-                    {
-                        world.profiler.endSection();
-                        return result;
-                    }
+                    world.profiler.endSection();
+                    return result;
                 }
             }
 
@@ -885,6 +878,15 @@ public class ImprovedRayTracing
 
         return false;
     }
+
+
+    public static RayTraceResult rayTraceWithinBlock(BlockPos pos, Vec3d start, Vec3d end, AxisAlignedBB boundingBox)
+    {
+        double x = pos.getX(), y = pos.getY(), z = pos.getZ();
+        RayTraceResult raytraceresult = boundingBox.calculateIntercept(start.subtract(x, y, z), end.subtract(x, y, z));
+        return raytraceresult == null ? null : new RayTraceResult(raytraceresult.hitVec.addVector(x, y, z), raytraceresult.sideHit, pos);
+    }
+
 
     public static class FixedRayTraceResult extends RayTraceResult
     {
