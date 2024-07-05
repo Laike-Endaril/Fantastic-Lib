@@ -7,6 +7,8 @@ import com.fantasticsource.tools.component.Component;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -32,7 +34,7 @@ public class CFantasticPotionEffect extends Component
         buf.writeBoolean(value.getIsAmbient());
         buf.writeBoolean(value.doesShowParticles());
 
-        buf.writeBoolean(value.getIsPotionDurationMax());
+        buf.writeBoolean(value.getDuration() >= 32767);
 
         CItemStack cstack = new CItemStack();
         List<ItemStack> cures = value.getCurativeItems();
@@ -50,7 +52,7 @@ public class CFantasticPotionEffect extends Component
     {
         value = new FantasticPotionEffect(Potion.REGISTRY.getObject(new CResourceLocation().read(buf).value), buf.readInt(), buf.readInt(), buf.readBoolean(), buf.readBoolean());
 
-        value.setPotionDurationMax(buf.readBoolean());
+        if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) value.setPotionDurationMax(buf.readBoolean());
 
         CItemStack cstack = new CItemStack();
         ArrayList<ItemStack> cures = new ArrayList<>();
