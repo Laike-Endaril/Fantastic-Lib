@@ -859,17 +859,17 @@ public class MCTools
 
     public static void playSimpleSoundForAll(ResourceLocation rl, int dimension, double x, double y, double z)
     {
-        playSimpleSoundForSpecific(rl, dimension, x, y, z, FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers().toArray(new EntityPlayerMP[0]));
+        playSimpleSoundForAll(rl, dimension, x, y, z, 16);
     }
 
     public static void playSimpleSoundForAll(ResourceLocation rl, int dimension, double x, double y, double z, double maxDistance)
     {
-        playSimpleSoundForSpecific(rl, dimension, x, y, z, maxDistance, FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers().toArray(new EntityPlayerMP[0]));
+        playSimpleSoundForAll(rl, dimension, x, y, z, maxDistance, 2, 1, 1);
     }
 
     public static void playSimpleSoundForAll(ResourceLocation rl, int dimension, double x, double y, double z, double maxDistance, int attenuationType, float volume, float pitch)
     {
-        playSimpleSoundForSpecific(rl, dimension, x, y, z, maxDistance, attenuationType, volume, pitch, FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers().toArray(new EntityPlayerMP[0]));
+        playSimpleSoundForAll(rl, dimension, x, y, z, maxDistance, attenuationType, volume, pitch, SoundCategory.MASTER);
     }
 
     public static void playSimpleSoundForAll(ResourceLocation rl, int dimension, double x, double y, double z, double maxDistance, int attenuationType, float volume, float pitch, SoundCategory soundCategory)
@@ -880,7 +880,7 @@ public class MCTools
 
     public static void playSimpleSoundForSpecific(ResourceLocation rl, EntityPlayerMP... players)
     {
-        for (EntityPlayerMP player : players) Network.WRAPPER.sendTo(new Network.PlaySimpleSoundPacket(rl), player);
+        playSimpleSoundForSpecific(rl, null, players);
     }
 
     public static void playSimpleSoundForSpecific(ResourceLocation rl, Entity following, EntityPlayerMP... players)
@@ -890,34 +890,26 @@ public class MCTools
 
     public static void playSimpleSoundForSpecific(ResourceLocation rl, Entity following, double maxDistance, EntityPlayerMP... players)
     {
-        double maxDistSquared = maxDistance * maxDistance;
-        Vec3d pos = following == null ? null : new Vec3d(following.posX, following.posY, following.posZ);
-
-        for (EntityPlayerMP player : players)
-        {
-            if (following == null || (player.dimension == following.dimension && player.getPositionVector().squareDistanceTo(pos) < maxDistSquared))
-            {
-                Network.WRAPPER.sendTo(new Network.PlaySimpleSoundPacket(rl, following), player);
-            }
-        }
+        playSimpleSoundForSpecific(rl, following, maxDistance, 2, 1, 1, players);
     }
 
     public static void playSimpleSoundForSpecific(ResourceLocation rl, Entity following, double maxDistance, int attenuationType, float volume, float pitch, EntityPlayerMP... players)
     {
-        double maxDistSquared = maxDistance * maxDistance;
-        Vec3d pos = new Vec3d(following.posX, following.posY, following.posZ);
-
-        for (EntityPlayerMP player : players)
-        {
-            if (player.dimension == following.dimension && player.getPositionVector().squareDistanceTo(pos) < maxDistSquared)
-            {
-                Network.WRAPPER.sendTo(new Network.PlaySimpleSoundPacket(rl, following, attenuationType, volume, pitch), player);
-            }
-        }
+        playSimpleSoundForSpecific(rl, following, maxDistance, attenuationType, volume, pitch, SoundCategory.HOSTILE, players);
     }
 
     public static void playSimpleSoundForSpecific(ResourceLocation rl, Entity following, double maxDistance, int attenuationType, float volume, float pitch, SoundCategory soundCategory, EntityPlayerMP... players)
     {
+        if (following == null)
+        {
+            for (EntityPlayerMP player : players)
+            {
+                Network.WRAPPER.sendTo(new Network.PlaySimpleSoundPacket(rl, player, attenuationType, volume, pitch, soundCategory), player);
+            }
+            return;
+        }
+
+
         double maxDistSquared = maxDistance * maxDistance;
         Vec3d pos = new Vec3d(following.posX, following.posY, following.posZ);
 
@@ -937,30 +929,12 @@ public class MCTools
 
     public static void playSimpleSoundForSpecific(ResourceLocation rl, int dimension, double x, double y, double z, double maxDistance, EntityPlayerMP... players)
     {
-        double maxDistSquared = maxDistance * maxDistance;
-        Vec3d pos = new Vec3d(x, y, z);
-
-        for (EntityPlayerMP player : players)
-        {
-            if (player.dimension == dimension && player.getPositionVector().squareDistanceTo(pos) < maxDistSquared)
-            {
-                Network.WRAPPER.sendTo(new Network.PlaySimpleSoundPacket(rl, (float) x, (float) y, (float) z), player);
-            }
-        }
+        playSimpleSoundForSpecific(rl, dimension, x, y, z, maxDistance, 2, 1, 1, players);
     }
 
     public static void playSimpleSoundForSpecific(ResourceLocation rl, int dimension, double x, double y, double z, double maxDistance, int attenuationType, float volume, float pitch, EntityPlayerMP... players)
     {
-        double maxDistSquared = maxDistance * maxDistance;
-        Vec3d pos = new Vec3d(x, y, z);
-
-        for (EntityPlayerMP player : players)
-        {
-            if (player.dimension == dimension && player.getPositionVector().squareDistanceTo(pos) < maxDistSquared)
-            {
-                Network.WRAPPER.sendTo(new Network.PlaySimpleSoundPacket(rl, (float) x, (float) y, (float) z, attenuationType, volume, pitch), player);
-            }
-        }
+        playSimpleSoundForSpecific(rl, dimension, x, y, z, maxDistance, attenuationType, volume, pitch, SoundCategory.MASTER, players);
     }
 
     public static void playSimpleSoundForSpecific(ResourceLocation rl, int dimension, double x, double y, double z, double maxDistance, int attenuationType, float volume, float pitch, SoundCategory soundCategory, EntityPlayerMP... players)

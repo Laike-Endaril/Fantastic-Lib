@@ -62,21 +62,6 @@ public class Network
             //Required
         }
 
-        public PlaySimpleSoundPacket(ResourceLocation rl)
-        {
-            this(rl, null);
-        }
-
-        public PlaySimpleSoundPacket(ResourceLocation rl, Entity following)
-        {
-            this(rl, following, 2, 1, 1);
-        }
-
-        public PlaySimpleSoundPacket(ResourceLocation rl, Entity following, int attenuationType, float volume, float pitch)
-        {
-            this(rl, following, attenuationType, volume, pitch, SoundCategory.MASTER);
-        }
-
         public PlaySimpleSoundPacket(ResourceLocation rl, Entity following, int attenuationType, float volume, float pitch, SoundCategory soundCategory)
         {
             x = null;
@@ -89,16 +74,6 @@ public class Network
             this.volume = volume;
             this.pitch = pitch;
             this.soundCategory = soundCategory;
-        }
-
-        public PlaySimpleSoundPacket(ResourceLocation rl, float x, float y, float z)
-        {
-            this(rl, x, y, z, 2, 1, 1);
-        }
-
-        public PlaySimpleSoundPacket(ResourceLocation rl, float x, float y, float z, int attenuationType, float volume, float pitch)
-        {
-            this(rl, x, y, z, attenuationType, volume, pitch, SoundCategory.MASTER);
         }
 
         public PlaySimpleSoundPacket(ResourceLocation rl, float x, float y, float z, int attenuationType, float volume, float pitch, SoundCategory soundCategory)
