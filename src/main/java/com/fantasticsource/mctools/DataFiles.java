@@ -6,6 +6,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.storage.loot.LootTableList;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
@@ -100,6 +101,10 @@ public class DataFiles
 
             writer = new BufferedWriter(new FileWriter(new File(referenceDir + "villager_professions.txt")));
             for (ResourceLocation resourceLocation : ForgeRegistries.VILLAGER_PROFESSIONS.getKeys()) writer.write(resourceLocation.toString() + "\r\n");
+            writer.close();
+
+            writer = new BufferedWriter(new FileWriter(new File(referenceDir + "loot_tables.txt")));
+            for (ResourceLocation resourceLocation : LootTableList.getAll()) writer.write(resourceLocation.toString() + "\r\n");
             writer.close();
 
             writer = new BufferedWriter(new FileWriter(new File(referenceDir + "oredict.txt")));
