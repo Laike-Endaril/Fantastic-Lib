@@ -128,7 +128,10 @@ public abstract class GUIScreen extends GuiScreen
     public void showStacked()
     {
         GuiScreen current = Minecraft.getMinecraft().currentScreen;
-        if (!(current instanceof GUIScreen) || !((GUIScreen) current).closeIfStackedOn) SCREEN_STACK.push(new ScreenEntry(current, mouseX, mouseY));
+        if (current != null)
+        {
+            if (!(current instanceof GUIScreen) || !((GUIScreen) current).closeIfStackedOn) SCREEN_STACK.push(new ScreenEntry(current, mouseX, mouseY));
+        }
 
         ignoreClosure = true;
         Minecraft.getMinecraft().displayGuiScreen(this);

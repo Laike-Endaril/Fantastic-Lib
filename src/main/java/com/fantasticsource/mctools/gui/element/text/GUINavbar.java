@@ -50,14 +50,14 @@ public class GUINavbar extends GUITextButton
 
     private static String genText(GUIScreen screen)
     {
-        StringBuilder result = new StringBuilder();
+        StringBuilder result = null;
         for (GUIScreen.ScreenEntry entry : GUIScreen.SCREEN_STACK)
         {
-            if (result.toString().equals("")) result = new StringBuilder(entry.screen instanceof GUIScreen ? ((GUIScreen) entry.screen).title() : entry.screen.getClass().getSimpleName());
+            if (result == null) result = new StringBuilder(entry.screen instanceof GUIScreen ? ((GUIScreen) entry.screen).title() : entry.screen.getClass().getSimpleName());
             else result.append(" > ").append(entry.screen instanceof GUIScreen ? ((GUIScreen) entry.screen).title() : entry.screen.getClass().getSimpleName());
         }
 
-        if (result.toString().equals("")) return screen.title();
+        if (result == null) return screen.title();
         return result.append(" > ").append(screen.title()).toString();
     }
 
