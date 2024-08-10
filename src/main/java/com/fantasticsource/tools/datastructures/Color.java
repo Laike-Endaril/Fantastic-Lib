@@ -559,6 +559,12 @@ public class Color
         return Tools.min(Tools.max(rf * 0.3f + gf * 0.59f + bf * 0.11f, 0), 1);
     }
 
+    public Color getHighContrastColor()
+    {
+        if (lf() < 0.5) return Color.WHITE.copy();
+        return Color.BLACK.copy();
+    }
+
 
     @Override
     public boolean equals(Object obj)
