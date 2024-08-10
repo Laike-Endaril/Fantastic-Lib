@@ -561,8 +561,8 @@ public class Color
 
     public Color getHighContrastColor()
     {
-        if (lf() < 0.5) return Color.WHITE.copy();
-        return Color.BLACK.copy();
+        if (lf() < 0.5) return Color.WHITE;
+        return Color.BLACK;
     }
 
 
