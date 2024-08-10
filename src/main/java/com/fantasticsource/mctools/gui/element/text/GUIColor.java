@@ -63,6 +63,8 @@ public class GUIColor extends GUIText
         hoverColor = GUIScreen.getHoverColor(this.value).setA(255);
         activeColor = this.value.copy().setA(255);
 
+        for (Runnable action : onEditActions) action.run();
+
         return this;
     }
 }
