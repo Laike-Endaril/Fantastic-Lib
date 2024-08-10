@@ -408,6 +408,9 @@ public class Color
         return hex();
     }
 
+
+    //HSV
+
     public int h()
     {
         return min(max((int) (255 * hf()), 0), 255);
@@ -461,7 +464,7 @@ public class Color
 
     public Color setHF(float hf)
     {
-        return setColorHSV(min(max(hf, 0), 1), sf(), vf(), af);
+        return setColorHSV(hf, sf(), vf(), af);
     }
 
     public Color setS(int s)
@@ -471,7 +474,7 @@ public class Color
 
     public Color setSF(float sf)
     {
-        return setColorHSV(hf(), min(max(sf, 0), 1), vf(), af);
+        return setColorHSV(hf(), sf, vf(), af);
     }
 
     public Color setV(int v)
@@ -481,7 +484,7 @@ public class Color
 
     public Color setVF(float vf)
     {
-        return setColorHSV(hf(), sf(), min(max(vf, 0), 1), af);
+        return setColorHSV(hf(), sf(), vf, af);
     }
 
     public Color setColorHSV(int h, int s, int v)
@@ -542,6 +545,20 @@ public class Color
                 throw new IllegalStateException("This should never happen");
         }
     }
+
+
+    //HSL
+
+    public int l()
+    {
+        return (int) (lf() * 255);
+    }
+
+    public float lf()
+    {
+        return Tools.min(Tools.max(rf * 0.3f + gf * 0.59f + bf * 0.11f, 0), 1);
+    }
+
 
     @Override
     public boolean equals(Object obj)
