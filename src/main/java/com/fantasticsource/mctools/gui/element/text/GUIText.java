@@ -128,6 +128,8 @@ public class GUIText extends GUIElement
         this.text = text;
         screen.root.recalc(0);
 
+        for (Runnable action : onEditActions) action.run();
+
         return this;
     }
 
