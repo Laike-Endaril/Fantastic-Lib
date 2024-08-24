@@ -63,12 +63,24 @@ public class Render
 
 
     @SubscribeEvent(priority = EventPriority.HIGHEST, receiveCanceled = true)
-    public static void drawHUD(RenderGameOverlayEvent.Pre event)
+    public static void drawHUDPre(RenderGameOverlayEvent.Pre event)
     {
         if (event.getType() == RenderGameOverlayEvent.ElementType.HOTBAR)
         {
             GlStateManager.pushMatrix();
             MinecraftForge.EVENT_BUS.post(new RenderHUDEvent(event));
+            GlStateManager.popMatrix();
+        }
+        GlStateManager.color(1, 1, 1, 1);
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
+    public static void drawHUDPost(RenderGameOverlayEvent.Post event)
+    {
+        if (event.getType() == RenderGameOverlayEvent.ElementType.POTION_ICONS)
+        {
+            GlStateManager.pushMatrix();
+            MinecraftForge.EVENT_BUS.post(new RenderHUDPostEvent(event));
             GlStateManager.popMatrix();
         }
         GlStateManager.color(1, 1, 1, 1);
@@ -364,6 +376,64 @@ public class Render
         }
 
         public RenderGameOverlayEvent.Pre getParentEvent()
+        {
+            return parentEvent;
+        }
+
+        public void setScalingMode(byte scalingMode) throws IllegalAccessException
+        {
+            if (this.scalingMode == scalingMode) return;
+
+            double xRatio = width, yRatio = height;
+
+            switch (scalingMode)
+            {
+                case SCALING_FULL:
+                    width = Render.getStoredViewportWidth();
+                    height = Render.getStoredViewportHeight();
+                    break;
+
+                case SCALING_MC_GUI:
+                    width = sr.getScaledWidth();
+                    height = sr.getScaledHeight();
+                    break;
+
+                default:
+                    return;
+            }
+
+            this.scalingMode = scalingMode;
+
+            xRatio /= width;
+            yRatio /= height;
+
+            GlStateManager.scale(xRatio, yRatio, 1);
+        }
+
+        public int getWidth()
+        {
+            return width;
+        }
+
+        public int getHeight()
+        {
+            return height;
+        }
+    }
+
+    public static class RenderHUDPostEvent extends Event
+    {
+        RenderGameOverlayEvent.Post parentEvent;
+        byte scalingMode = SCALING_MC_GUI;
+        ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
+        int width = sr.getScaledWidth(), height = sr.getScaledHeight();
+
+        public RenderHUDPostEvent(RenderGameOverlayEvent.Post parentEvent)
+        {
+            this.parentEvent = parentEvent;
+        }
+
+        public RenderGameOverlayEvent.Post getParentEvent()
         {
             return parentEvent;
         }
