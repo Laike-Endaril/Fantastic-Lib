@@ -1,6 +1,7 @@
 package com.fantasticsource.mctools.gui.element.text;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
+import com.fantasticsource.mctools.gui.element.other.GUIGradient;
 import com.fantasticsource.mctools.gui.element.other.GUIGradientBorder;
 import com.fantasticsource.mctools.gui.element.view.GUIAutocroppedView;
 import com.fantasticsource.tools.datastructures.Color;
@@ -44,10 +45,10 @@ public class GUITextButton extends GUIAutocroppedView
     {
         super(screen, DEFAULT_PADDING, new GUIGradientBorder(screen, 1, 1, DEFAULT_PADDING / (1 + DEFAULT_PADDING) / 2, getIdleColor(border), getIdleColor(center), getHoverColor(border), getHoverColor(center), border, center));
 
-        this.internalText = new GUIText(screen, text, getIdleColor(border), getHoverColor(border), border, scale);
-        add(this.internalText);
-        linkMouseActivity(this.internalText);
-        linkMouseActivity(this.background);
+        internalText = new GUIText(screen, text, getIdleColor(border), getHoverColor(border), border, scale);
+        add(internalText);
+        linkMouseActivity(internalText);
+        linkMouseActivity(background);
 
         recalc(0);
     }
@@ -82,10 +83,10 @@ public class GUITextButton extends GUIAutocroppedView
     {
         super(screen, x, y, DEFAULT_PADDING, new GUIGradientBorder(screen, 1, 1, DEFAULT_PADDING / (1 + DEFAULT_PADDING) / 2, getIdleColor(border), getIdleColor(center), getHoverColor(border), getHoverColor(center), border, center));
 
-        this.internalText = new GUIText(screen, text, getIdleColor(border), getHoverColor(border), border, scale);
-        add(this.internalText);
-        linkMouseActivity(this.internalText);
-        linkMouseActivity(this.background);
+        internalText = new GUIText(screen, text, getIdleColor(border), getHoverColor(border), border, scale);
+        add(internalText);
+        linkMouseActivity(internalText);
+        linkMouseActivity(background);
 
         recalc(0);
     }
@@ -94,5 +95,16 @@ public class GUITextButton extends GUIAutocroppedView
     public String toString()
     {
         return internalText.text;
+    }
+
+
+    public void setColor(Color color)
+    {
+        setColor(color, getIdleColor(color).setAF(color.af() * 0.4f));
+    }
+
+    public void setColor(Color border, Color center)
+    {
+        ((GUIGradientBorder) background).setColors(getIdleColor(border), getIdleColor(center), getHoverColor(border), getHoverColor(center), border, center);
     }
 }
