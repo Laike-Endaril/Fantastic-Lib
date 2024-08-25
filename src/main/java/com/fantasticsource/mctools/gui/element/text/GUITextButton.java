@@ -106,5 +106,6 @@ public class GUITextButton extends GUIAutocroppedView
     public void setColor(Color border, Color center)
     {
         ((GUIGradientBorder) background).setColors(getIdleColor(border), getIdleColor(center), getHoverColor(border), getHoverColor(center), border, center);
+        internalText.setColor(border);
     }
 }
