@@ -92,7 +92,12 @@ public class GUIHorizontalSlider extends GUIGradientBorder
 
     public void setAmount(double amount)
     {
+        setAmount(amount, true);
+    }
+
+    public void setAmount(double amount, boolean runEditActions)
+    {
         this.amount = amount;
-        runEditActions();
+        if (runEditActions) runEditActions();
     }
 }

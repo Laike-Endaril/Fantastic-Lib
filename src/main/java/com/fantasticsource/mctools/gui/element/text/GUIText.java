@@ -121,6 +121,11 @@ public class GUIText extends GUIElement
 
     public GUIText setText(String text)
     {
+        return setText(text, true);
+    }
+
+    public GUIText setText(String text, boolean runActions)
+    {
         if (text.equals(this.text)) return this;
 
 
@@ -128,7 +133,7 @@ public class GUIText extends GUIElement
         this.text = text;
         screen.root.recalc(0);
 
-        runEditActions();
+        if (runActions) runEditActions();
 
         return this;
     }

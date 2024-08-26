@@ -56,6 +56,11 @@ public class GUIColor extends GUIText
 
     public GUIColor setValue(Color value)
     {
+        return setValue(value, true);
+    }
+
+    public GUIColor setValue(Color value, boolean runActions)
+    {
         this.value = value == null ? new Color(0) : value;
         text = this.value.hex8();
 
@@ -63,7 +68,7 @@ public class GUIColor extends GUIText
         hoverColor = GUIScreen.getHoverColor(this.value).setA(255);
         activeColor = this.value.copy().setA(255);
 
-        runEditActions();
+        if (runActions) runEditActions();
 
         return this;
     }

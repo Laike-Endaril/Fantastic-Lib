@@ -61,7 +61,12 @@ public class GUILabeledTextInput extends GUIAutocroppedView
 
     public GUILabeledTextInput setInput(String text)
     {
-        input.setText(text);
+        return setInput(text, true);
+    }
+
+    public GUILabeledTextInput setInput(String text, boolean runActions)
+    {
+        input.setText(text, runActions);
         return this;
     }
 
