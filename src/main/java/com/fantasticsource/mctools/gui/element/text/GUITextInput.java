@@ -934,10 +934,7 @@ public class GUITextInput extends GUIText
 
         screen.root.recalc(0);
 
-        if (!text.equals(oldText))
-        {
-            for (Runnable action : onEditActions) action.run();
-        }
+        if (!text.equals(oldText)) runEditActions();
     }
 
     @Override

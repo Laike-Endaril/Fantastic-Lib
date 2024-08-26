@@ -35,6 +35,7 @@ public class GUIElement
     AP_X_0_TOP_TO_BOTTOM = 10,
             AP_Y_0_LEFT_TO_RIGHT = 11;
 
+    public boolean runningClick = false, runningRecalc = false, runningEdit = false;
     public final ArrayList<Runnable>
             onClickActions = new ArrayList<>(),
             onRecalcActions = new ArrayList<>(),
@@ -246,7 +247,7 @@ public class GUIElement
 
     public void click()
     {
-        for (Runnable action : onClickActions) action.run();
+        runClickActions();
     }
 
     public GUIElement addClickActions(Runnable... actions)
@@ -416,7 +417,7 @@ public class GUIElement
 
     public final void postRecalc()
     {
-        for (Runnable action : onRecalcActions) action.run();
+        runRecalcActions();
     }
 
     public GUIElement addAll(GUIElement... elements)
@@ -731,5 +732,33 @@ public class GUIElement
         {
             child.keyTyped(typedChar, keyCode);
         }
+    }
+
+
+    public void runClickActions()
+    {
+        if (runningClick) return;
+
+        runningClick = true;
+        for (Runnable action : onClickActions) action.run();
+        runningClick = false;
+    }
+
+    public void runRecalcActions()
+    {
+        if (runningRecalc) return;
+
+        runningRecalc = true;
+        for (Runnable action : onRecalcActions) action.run();
+        runningRecalc = false;
+    }
+
+    public void runEditActions()
+    {
+        if (runningEdit) return;
+
+        runningEdit = true;
+        for (Runnable action : onEditActions) action.run();
+        runningEdit = false;
     }
 }

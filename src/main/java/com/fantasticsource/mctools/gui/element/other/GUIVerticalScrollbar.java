@@ -56,6 +56,8 @@ public class GUIVerticalScrollbar extends GUIGradientBorder
                 if (scrollView.progress < 0) scrollView.progress = 0;
             }
         }
+
+        runEditActions();
     }
 
     @Override
@@ -69,6 +71,8 @@ public class GUIVerticalScrollbar extends GUIGradientBorder
             scrollView.progress = Tools.min(Tools.max((mouseY() - absoluteY() - slider.absoluteHeight() * 0.5) / (absoluteHeight() - slider.absoluteHeight()), 0), 1);
         }
 
+        runEditActions();
+
         return result;
     }
 
@@ -80,5 +84,7 @@ public class GUIVerticalScrollbar extends GUIGradientBorder
             if (scrollView.progress == -1) setActive(false);
             else scrollView.progress = Tools.min(Tools.max((mouseY() - absoluteY() - slider.absoluteHeight() * 0.5) / (absoluteHeight() - slider.absoluteHeight()), 0), 1);
         }
+
+        runEditActions();
     }
 }

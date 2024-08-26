@@ -5,6 +5,7 @@ import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIDarkenedBackground;
 import com.fantasticsource.mctools.gui.element.other.GUIGradient;
 import com.fantasticsource.mctools.gui.element.other.GUIGradientBorder;
+import com.fantasticsource.mctools.gui.element.other.GUIHorizontalSlider;
 import com.fantasticsource.mctools.gui.element.text.*;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterColor;
 import com.fantasticsource.mctools.gui.element.text.filter.FilterInt;
@@ -56,6 +57,17 @@ public class ColorSelectionGUI extends GUIScreen
                 bf = new GUILabeledTextInput(this, "Blue (0-1): ", "" + color.bf(), filter0to1),
                 af = new GUILabeledTextInput(this, "Alpha (0-1): ", "" + color.af(), filter0to1);
 
+        GUIHorizontalSlider
+                rSlider = new GUIHorizontalSlider(this, 1, 0.03, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK),
+                gSlider = new GUIHorizontalSlider(this, 1, 0.03, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK),
+                bSlider = new GUIHorizontalSlider(this, 1, 0.03, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK),
+                aSlider = new GUIHorizontalSlider(this, 1, 0.03, Color.GRAY, Color.BLANK, Color.WHITE, Color.BLANK);
+
+        rSlider.setAmount(color.rf());
+        gSlider.setAmount(color.gf());
+        bSlider.setAmount(color.bf());
+        aSlider.setAmount(color.af());
+
         GUIGradient preview = new GUIGradient(this, 1, 0.3, color);
 
         GUITextButton
@@ -89,10 +101,38 @@ public class ColorSelectionGUI extends GUIScreen
                 preview.setColor(color);
                 hex.setInput(color.hex8());
                 dec.setInput("" + color.color());
+                rSlider.setAmount(color.rf());
                 rf.setInput("" + color.rf());
             }
         });
-        left.add(new GUIElement(this, 1, 0));
+        left.add(rSlider);
+        rSlider.addEditActions(() ->
+        {
+            double amount = rSlider.getAmount();
+            if (amount >= 0 && amount <= 1)
+            {
+                color.setRF((float) amount);
+                preview.setColor(color);
+                hex.setInput(color.hex8());
+                dec.setInput("" + color.color());
+                r.setInput("" + color.r());
+                rf.setInput("" + color.rf());
+            }
+        });
+        left.add(rf);
+        rf.input.addEditActions(() ->
+        {
+            if (rf.input.isActive() && rf.input.valid())
+            {
+                color.setRF(filter0to1.parse(rf.input.getText()));
+                preview.setColor(color);
+                hex.setInput(color.hex8());
+                dec.setInput("" + color.color());
+                r.setInput("" + color.r());
+                rSlider.setAmount(color.rf());
+            }
+        });
+        left.add(new GUITextSpacer(this, 1, 2));
         left.add(g);
         g.input.addEditActions(() ->
         {
@@ -102,10 +142,38 @@ public class ColorSelectionGUI extends GUIScreen
                 preview.setColor(color);
                 hex.setInput(color.hex8());
                 dec.setInput("" + color.color());
+                gSlider.setAmount(color.gf());
                 gf.setInput("" + color.gf());
             }
         });
-        left.add(new GUIElement(this, 1, 0));
+        left.add(gSlider);
+        gSlider.addEditActions(() ->
+        {
+            double amount = gSlider.getAmount();
+            if (amount >= 0 && amount <= 1)
+            {
+                color.setGF((float) amount);
+                preview.setColor(color);
+                hex.setInput(color.hex8());
+                dec.setInput("" + color.color());
+                g.setInput("" + color.g());
+                gf.setInput("" + color.gf());
+            }
+        });
+        left.add(gf);
+        gf.input.addEditActions(() ->
+        {
+            if (gf.input.isActive() && gf.input.valid())
+            {
+                color.setGF(filter0to1.parse(gf.input.getText()));
+                preview.setColor(color);
+                hex.setInput(color.hex8());
+                dec.setInput("" + color.color());
+                g.setInput("" + color.g());
+                gSlider.setAmount(color.gf());
+            }
+        });
+        left.add(new GUITextSpacer(this, 1, 2));
         left.add(b);
         b.input.addEditActions(() ->
         {
@@ -115,10 +183,38 @@ public class ColorSelectionGUI extends GUIScreen
                 preview.setColor(color);
                 hex.setInput(color.hex8());
                 dec.setInput("" + color.color());
+                bSlider.setAmount(color.bf());
                 bf.setInput("" + color.bf());
             }
         });
-        left.add(new GUIElement(this, 1, 0));
+        left.add(bSlider);
+        bSlider.addEditActions(() ->
+        {
+            double amount = bSlider.getAmount();
+            if (amount >= 0 && amount <= 1)
+            {
+                color.setBF((float) amount);
+                preview.setColor(color);
+                hex.setInput(color.hex8());
+                dec.setInput("" + color.color());
+                b.setInput("" + color.b());
+                bf.setInput("" + color.bf());
+            }
+        });
+        left.add(bf);
+        bf.input.addEditActions(() ->
+        {
+            if (bf.input.isActive() && bf.input.valid())
+            {
+                color.setBF(filter0to1.parse(bf.input.getText()));
+                preview.setColor(color);
+                hex.setInput(color.hex8());
+                dec.setInput("" + color.color());
+                b.setInput("" + color.b());
+                bSlider.setAmount(color.bf());
+            }
+        });
+        left.add(new GUITextSpacer(this, 1, 2));
         left.add(a);
         a.input.addEditActions(() ->
         {
@@ -128,7 +224,35 @@ public class ColorSelectionGUI extends GUIScreen
                 preview.setColor(color);
                 hex.setInput(color.hex8());
                 dec.setInput("" + color.color());
+                aSlider.setAmount(color.af());
                 af.setInput("" + color.af());
+            }
+        });
+        left.add(aSlider);
+        aSlider.addEditActions(() ->
+        {
+            double amount = aSlider.getAmount();
+            if (amount >= 0 && amount <= 1)
+            {
+                color.setAF((float) amount);
+                preview.setColor(color);
+                hex.setInput(color.hex8());
+                dec.setInput("" + color.color());
+                a.setInput("" + color.a());
+                af.setInput("" + color.af());
+            }
+        });
+        left.add(af);
+        af.input.addEditActions(() ->
+        {
+            if (af.input.isActive() && af.input.valid())
+            {
+                color.setAF(filter0to1.parse(af.input.getText()));
+                preview.setColor(color);
+                hex.setInput(color.hex8());
+                dec.setInput("" + color.color());
+                a.setInput("" + color.a());
+                aSlider.setAmount(color.af());
             }
         });
 
@@ -178,57 +302,6 @@ public class ColorSelectionGUI extends GUIScreen
 
         //Right
         right.add(new GUITextSpacer(this));
-        right.add(rf);
-        rf.input.addEditActions(() ->
-        {
-            if (rf.input.isActive() && rf.input.valid())
-            {
-                color.setRF(filter0to1.parse(rf.input.getText()));
-                preview.setColor(color);
-                hex.setInput(color.hex8());
-                dec.setInput("" + color.color());
-                r.setInput("" + color.r());
-            }
-        });
-        right.add(new GUIElement(this, 1, 0));
-        right.add(gf);
-        gf.input.addEditActions(() ->
-        {
-            if (gf.input.isActive() && gf.input.valid())
-            {
-                color.setGF(filter0to1.parse(gf.input.getText()));
-                preview.setColor(color);
-                hex.setInput(color.hex8());
-                dec.setInput("" + color.color());
-                g.setInput("" + color.g());
-            }
-        });
-        right.add(new GUIElement(this, 1, 0));
-        right.add(bf);
-        bf.input.addEditActions(() ->
-        {
-            if (bf.input.isActive() && bf.input.valid())
-            {
-                color.setBF(filter0to1.parse(bf.input.getText()));
-                preview.setColor(color);
-                hex.setInput(color.hex8());
-                dec.setInput("" + color.color());
-                b.setInput("" + color.b());
-            }
-        });
-        right.add(new GUIElement(this, 1, 0));
-        right.add(af);
-        af.input.addEditActions(() ->
-        {
-            if (af.input.isActive() && af.input.valid())
-            {
-                color.setAF(filter0to1.parse(af.input.getText()));
-                preview.setColor(color);
-                hex.setInput(color.hex8());
-                dec.setInput("" + color.color());
-                a.setInput("" + color.a());
-            }
-        });
     }
 
     @Override
