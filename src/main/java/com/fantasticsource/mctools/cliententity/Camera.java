@@ -12,11 +12,8 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.PlayerSPPushOutOfBlocksEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -56,7 +53,7 @@ public class Camera extends ClientEntity
 
     protected boolean active = false;
     protected int mode, originalMode; //0 is first person, 1 is third person, 2 is third person flipped (in front), -1 allows client control via the view mode keybind
-    protected Entity toFollow = null;
+    protected Entity toFollow = null, originalViewEntity = Minecraft.getMinecraft().getRenderViewEntity();
 
 
     protected Camera(World worldIn)
@@ -73,7 +70,7 @@ public class Camera extends ClientEntity
 
     public void activate(Entity toFollow, int mode)
     {
-        activate(toFollow, toFollow.world, toFollow.posX, toFollow.posY + toFollow.getEyeHeight(), toFollow.posZ, toFollow.getRotationYawHead(), toFollow.rotationPitch, mode);
+        activate(toFollow, toFollow.world, toFollow.posX, toFollow.posY, toFollow.posZ, toFollow.getRotationYawHead(), toFollow.rotationPitch, mode);
     }
 
     public void activate(World world, double x, double y, double z, float yaw, float pitch, int mode)
@@ -119,7 +116,8 @@ public class Camera extends ClientEntity
         }
 
 
-        //Set camera
+        //View entity
+        originalViewEntity = Minecraft.getMinecraft().getRenderViewEntity();
         Minecraft.getMinecraft().setRenderViewEntity(camera);
     }
 
@@ -144,8 +142,8 @@ public class Camera extends ClientEntity
             }
 
 
-            //Set camera
-            mc.setRenderViewEntity(mc.player);
+            //View entity
+            mc.setRenderViewEntity(originalViewEntity);
         }
     }
 
@@ -214,7 +212,7 @@ public class Camera extends ClientEntity
 
                 if (dist > 0)
                 {
-                    camera.setPosition(dif.normalize().scale(Tools.min(testDist, dist)).add(start));
+                    camera.setPosition(dif.normalize().scale(Tools.min(testDist, dist)).add(start).subtract(0, entity.getEyeHeight(), 0));
                 }
             }
         }
@@ -246,7 +244,7 @@ public class Camera extends ClientEntity
     @Override
     public float getEyeHeight()
     {
-        return 0;
+        return originalViewEntity.getEyeHeight();
     }
 
 
@@ -283,68 +281,70 @@ public class Camera extends ClientEntity
         }
     }
 
-    @SubscribeEvent
-    public static void preOverlayRender(RenderGameOverlayEvent.Pre event)
-    {
-        if (event.getType() != RenderGameOverlayEvent.ElementType.ALL) return;
-
-        if (getCamera().active)
-        {
-            Minecraft mc = Minecraft.getMinecraft();
-            mc.setRenderViewEntity(mc.player);
-        }
-    }
-
-    @SubscribeEvent
-    public static void postOverlayRender(RenderGameOverlayEvent.Post event)
-    {
-        if (event.getType() != RenderGameOverlayEvent.ElementType.ALL) return;
-
-        if (getCamera().active)
-        {
-            Minecraft mc = Minecraft.getMinecraft();
-            mc.setRenderViewEntity(camera);
-        }
-    }
+    //TODO I had these in order to show the player hotbar, but they mess up the render positions of in-world HUDs...find another solution
+//    @SubscribeEvent
+//    public static void preOverlayRender(RenderGameOverlayEvent.Pre event)
+//    {
+//        if (event.getType() != RenderGameOverlayEvent.ElementType.ALL) return;
+//
+//        if (getCamera().active)
+//        {
+//            Minecraft mc = Minecraft.getMinecraft();
+//            mc.setRenderViewEntity(mc.player);
+//        }
+//    }
+//
+//    @SubscribeEvent
+//    public static void postOverlayRender(RenderGameOverlayEvent.Post event)
+//    {
+//        if (event.getType() != RenderGameOverlayEvent.ElementType.ALL) return;
+//
+//        if (getCamera().active)
+//        {
+//            Minecraft mc = Minecraft.getMinecraft();
+//            mc.setRenderViewEntity(camera);
+//        }
+//    }
 
 
     protected static boolean control1 = false, control2 = false;
 
-    @SubscribeEvent
-    public static void controlFixPre1(PlayerSPPushOutOfBlocksEvent event)
-    {
-        if (!allowControl) return;
-
-        Minecraft mc = Minecraft.getMinecraft();
-        if (getCamera().active && event.getEntityPlayer() == mc.player)
-        {
-            ReflectionTool.set(MINECRAFT_RENDER_VIEW_ENTITY_FIELD, mc, mc.player);
-            control1 = true;
-        }
-    }
-
-    @SubscribeEvent
-    public static void controlFixPre2(TickEvent.PlayerTickEvent event)
-    {
-        if (!allowControl) return;
-
-        Minecraft mc = Minecraft.getMinecraft();
-        if (event.phase == TickEvent.Phase.END && getCamera().active && event.player == mc.player)
-        {
-            ReflectionTool.set(MINECRAFT_RENDER_VIEW_ENTITY_FIELD, mc, mc.player);
-            control2 = true;
-        }
-    }
-
-    @SubscribeEvent
-    public static void controlFixPost(GetCollisionBoxesEvent event)
-    {
-        Minecraft mc = Minecraft.getMinecraft();
-        if ((control1 || control2) && getCamera().active && event.getWorld().isRemote)
-        {
-            control1 = false;
-            control2 = false;
-            ReflectionTool.set(MINECRAFT_RENDER_VIEW_ENTITY_FIELD, mc, camera);
-        }
-    }
+    //TODO I did this to allow player movement while using DS hand mirror, but it causes view to follow player instead of camera sometimes
+//    @SubscribeEvent
+//    public static void controlFixPre1(PlayerSPPushOutOfBlocksEvent event)
+//    {
+//        if (!allowControl) return;
+//
+//        Minecraft mc = Minecraft.getMinecraft();
+//        if (getCamera().active && event.getEntityPlayer() == mc.player)
+//        {
+//            mc.setRenderViewEntity(mc.player);
+//            control1 = true;
+//        }
+//    }
+//
+//    @SubscribeEvent
+//    public static void controlFixPre2(TickEvent.PlayerTickEvent event)
+//    {
+//        if (!allowControl) return;
+//
+//        Minecraft mc = Minecraft.getMinecraft();
+//        if (event.phase == TickEvent.Phase.END && getCamera().active && event.player == mc.player)
+//        {
+//            mc.setRenderViewEntity(mc.player);
+//            control2 = true;
+//        }
+//    }
+//
+//    @SubscribeEvent
+//    public static void controlFixPost(GetCollisionBoxesEvent event)
+//    {
+//        Minecraft mc = Minecraft.getMinecraft();
+//        if ((control1 || control2) && getCamera().active && event.getWorld().isRemote)
+//        {
+//            control1 = false;
+//            control2 = false;
+//            mc.setRenderViewEntity(camera);
+//        }
+//    }
 }
