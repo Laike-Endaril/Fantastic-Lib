@@ -12,8 +12,10 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -47,7 +49,7 @@ public class Camera extends ClientEntity
             PLAYER_RENDER_NEVER = 2;
 
     public static int playerRenderMode = PLAYER_RENDER_IF_THIRD_PERSON;
-    public static boolean allowControl = true;
+    public static boolean allowControl = true, showHotbar = true;
     public static double followOffsetLR = 0;
 
 
@@ -281,30 +283,29 @@ public class Camera extends ClientEntity
         }
     }
 
-    //TODO I had these in order to show the player hotbar, but they mess up the render positions of in-world HUDs...find another solution
-//    @SubscribeEvent
-//    public static void preOverlayRender(RenderGameOverlayEvent.Pre event)
-//    {
-//        if (event.getType() != RenderGameOverlayEvent.ElementType.ALL) return;
-//
-//        if (getCamera().active)
-//        {
-//            Minecraft mc = Minecraft.getMinecraft();
-//            mc.setRenderViewEntity(mc.player);
-//        }
-//    }
-//
-//    @SubscribeEvent
-//    public static void postOverlayRender(RenderGameOverlayEvent.Post event)
-//    {
-//        if (event.getType() != RenderGameOverlayEvent.ElementType.ALL) return;
-//
-//        if (getCamera().active)
-//        {
-//            Minecraft mc = Minecraft.getMinecraft();
-//            mc.setRenderViewEntity(camera);
-//        }
-//    }
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void preOverlayRender(RenderGameOverlayEvent.Pre event)
+    {
+        if (showHotbar == false || event.getType() != RenderGameOverlayEvent.ElementType.HOTBAR) return;
+
+        if (getCamera().active)
+        {
+            Minecraft mc = Minecraft.getMinecraft();
+            mc.setRenderViewEntity(camera.originalViewEntity);
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void postOverlayRender(RenderGameOverlayEvent.Post event)
+    {
+        if (event.getType() != RenderGameOverlayEvent.ElementType.HOTBAR) return;
+
+        if (getCamera().active)
+        {
+            Minecraft mc = Minecraft.getMinecraft();
+            mc.setRenderViewEntity(camera);
+        }
+    }
 
 
     @SubscribeEvent
