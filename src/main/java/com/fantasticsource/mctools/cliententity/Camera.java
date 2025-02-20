@@ -307,44 +307,18 @@ public class Camera extends ClientEntity
 //    }
 
 
-    protected static boolean control1 = false, control2 = false;
+    @SubscribeEvent
+    public static void controlFix(TickEvent.RenderTickEvent event)
+    {
+        if (!allowControl || !camera.active) return;
 
-    //TODO I did this to allow player movement while using DS hand mirror, but it causes view to follow player instead of camera sometimes
-//    @SubscribeEvent
-//    public static void controlFixPre1(PlayerSPPushOutOfBlocksEvent event)
-//    {
-//        if (!allowControl) return;
-//
-//        Minecraft mc = Minecraft.getMinecraft();
-//        if (getCamera().active && event.getEntityPlayer() == mc.player)
-//        {
-//            mc.setRenderViewEntity(mc.player);
-//            control1 = true;
-//        }
-//    }
-//
-//    @SubscribeEvent
-//    public static void controlFixPre2(TickEvent.PlayerTickEvent event)
-//    {
-//        if (!allowControl) return;
-//
-//        Minecraft mc = Minecraft.getMinecraft();
-//        if (event.phase == TickEvent.Phase.END && getCamera().active && event.player == mc.player)
-//        {
-//            mc.setRenderViewEntity(mc.player);
-//            control2 = true;
-//        }
-//    }
-//
-//    @SubscribeEvent
-//    public static void controlFixPost(GetCollisionBoxesEvent event)
-//    {
-//        Minecraft mc = Minecraft.getMinecraft();
-//        if ((control1 || control2) && getCamera().active && event.getWorld().isRemote)
-//        {
-//            control1 = false;
-//            control2 = false;
-//            mc.setRenderViewEntity(camera);
-//        }
-//    }
+        if (event.phase == TickEvent.Phase.START)
+        {
+            Minecraft.getMinecraft().setRenderViewEntity(camera);
+        }
+        else
+        {
+            Minecraft.getMinecraft().setRenderViewEntity(camera.originalViewEntity);
+        }
+    }
 }
