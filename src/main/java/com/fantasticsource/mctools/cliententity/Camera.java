@@ -12,6 +12,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -45,7 +46,7 @@ public class Camera extends ClientEntity
             PLAYER_RENDER_NEVER = 2;
 
     public static int playerRenderMode = PLAYER_RENDER_IF_THIRD_PERSON;
-    public static boolean allowControl = true, showHotbar = true;
+    public static boolean allowControl = true, showHotbar = true, renderFirstPersonHands = true;
     public static double followOffsetLR = 0;
 
 
@@ -317,5 +318,12 @@ public class Camera extends ClientEntity
         {
             Minecraft.getMinecraft().setRenderViewEntity(camera.originalViewEntity);
         }
+    }
+
+
+    @SubscribeEvent
+    public static void renderHand(RenderHandEvent event)
+    {
+        if (Camera.getCamera().active && !renderFirstPersonHands) event.setCanceled(true);
     }
 }
