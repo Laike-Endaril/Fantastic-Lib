@@ -1,7 +1,6 @@
 package com.fantasticsource.mctools.cliententity;
 
 import com.fantasticsource.mctools.ImprovedRayTracing;
-import com.fantasticsource.tools.ReflectionTool;
 import com.fantasticsource.tools.Smoothing;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.TrigLookupTable;
@@ -21,13 +20,10 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.lang.reflect.Field;
-
 @SideOnly(Side.CLIENT)
 public class Camera extends ClientEntity
 {
     protected static final double OFFSET_COLLISION_BUFFER_DIRECT = 0.2, OFFSET_COLLISION_BUFFER_FORWARD = 0.2;
-    protected static final Field MINECRAFT_RENDER_VIEW_ENTITY_FIELD = ReflectionTool.getField(Minecraft.class, "field_175622_Z", "renderViewEntity");
 
     static
     {
