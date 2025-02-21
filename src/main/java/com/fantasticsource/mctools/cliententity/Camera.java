@@ -298,7 +298,7 @@ public class Camera extends ClientEntity
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void postOverlayRender(RenderGameOverlayEvent.Post event)
     {
-        if (event.getType() != RenderGameOverlayEvent.ElementType.HOTBAR) return;
+        if (event.getType() != RenderGameOverlayEvent.ElementType.ALL) return;
 
         if (getCamera().active)
         {
