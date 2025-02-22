@@ -25,6 +25,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class Camera extends ClientEntity
 {
+    protected static final double CAMERA_PADDING = 0.25;
     protected static final double OFFSET_COLLISION_BUFFER_DIRECT = 0.2, OFFSET_COLLISION_BUFFER_FORWARD = 0.2;
 
     static
@@ -161,6 +162,8 @@ public class Camera extends ClientEntity
     @Override
     public void onEntityUpdate()
     {
+        camera.posY += camera.getEyeHeight();
+
         GameSettings gs = Minecraft.getMinecraft().gameSettings;
         switch (controlMode)
         {
@@ -176,20 +179,102 @@ public class Camera extends ClientEntity
                 if (gs.keyBindBack.isKeyDown()) motionVec.values[2] -= 1;
                 if (gs.keyBindRight.isKeyDown()) motionVec.values[0] += 1;
                 if (gs.keyBindLeft.isKeyDown()) motionVec.values[0] -= 1;
+                if (gs.keyBindJump.isKeyDown()) motionVec.values[1] += 1;
+                if (gs.keyBindSneak.isKeyDown()) motionVec.values[1] -= 1;
 
                 motionVec.rotate(new VectorN(0, 1, 0), Tools.degtorad(camera.rotationYaw)).setMagnitude(gs.keyBindSprint.isKeyDown() ? 1.5 : 0.5);
-                if (gs.keyBindJump.isKeyDown()) motionVec.values[1] += gs.keyBindSprint.isKeyDown() ? 1.5 : 0.5;
-                if (gs.keyBindSneak.isKeyDown()) motionVec.values[1] -= gs.keyBindSprint.isKeyDown() ? 1.5 : 0.5;
+                motionVec.values[0] = -motionVec.values[0];
 
                 camera.prevPosX = camera.posX;
                 camera.prevPosY = camera.posY;
                 camera.prevPosZ = camera.posZ;
-                camera.posX -= motionVec.values[0];
-                camera.posY += motionVec.values[1];
-                camera.posZ += motionVec.values[2];
+
+                RayTraceResult result = ImprovedRayTracing.rayTraceBlocks(camera.world, camera.getPositionVector(), camera.getPositionVector().addVector(motionVec.values[0], motionVec.values[1], motionVec.values[2]), true);
+                double change;
+                while (result.typeOfHit == RayTraceResult.Type.BLOCK)
+                {
+                    if (result.hitVec.equals(camera.getPositionVector())) break;
+
+                    switch (result.sideHit)
+                    {
+                        case WEST:
+                            if (Math.abs(motionVec.values[0]) < CAMERA_PADDING) motionVec.values[0] = 0;
+                            else
+                            {
+                                change = result.hitVec.x - camera.posX - CAMERA_PADDING;
+                                motionVec.scale(1 - change / motionVec.values[0]);
+                                motionVec.values[0] = 0;
+                                camera.posX += change;
+                            }
+                            break;
+
+                        case EAST:
+                            if (Math.abs(motionVec.values[0]) < CAMERA_PADDING) motionVec.values[0] = 0;
+                            else
+                            {
+                                change = result.hitVec.x - camera.posX + CAMERA_PADDING;
+                                motionVec.scale(1 - change / motionVec.values[0]);
+                                motionVec.values[0] = 0;
+                                camera.posX += change;
+                            }
+                            break;
+
+                        case DOWN:
+                            if (Math.abs(motionVec.values[1]) < CAMERA_PADDING) motionVec.values[1] = 0;
+                            else
+                            {
+                                change = result.hitVec.y - camera.posY - CAMERA_PADDING;
+                                motionVec.scale(1 - change / motionVec.values[1]);
+                                motionVec.values[1] = 0;
+                                camera.posY += change;
+                            }
+                            break;
+
+                        case UP:
+                            if (Math.abs(motionVec.values[1]) < CAMERA_PADDING) motionVec.values[1] = 0;
+                            else
+                            {
+                                change = result.hitVec.y - camera.posY + CAMERA_PADDING;
+                                motionVec.scale(1 - change / motionVec.values[1]);
+                                motionVec.values[1] = 0;
+                                camera.posY += change;
+                            }
+                            break;
+
+                        case NORTH:
+                            if (Math.abs(motionVec.values[2]) < CAMERA_PADDING) motionVec.values[2] = 0;
+                            else
+                            {
+                                change = result.hitVec.z - camera.posZ - CAMERA_PADDING;
+                                motionVec.scale(1 - change / motionVec.values[2]);
+                                motionVec.values[2] = 0;
+                                camera.posZ += change;
+                            }
+                            break;
+
+                        case SOUTH:
+                            if (Math.abs(motionVec.values[2]) < CAMERA_PADDING) motionVec.values[2] = 0;
+                            else
+                            {
+                                change = result.hitVec.z - camera.posZ + CAMERA_PADDING;
+                                motionVec.scale(1 - change / motionVec.values[2]);
+                                motionVec.values[2] = 0;
+                                camera.posZ += change;
+                            }
+                            break;
+                    }
+
+                    result = ImprovedRayTracing.rayTraceBlocks(camera.world, camera.getPositionVector(), camera.getPositionVector().addVector(motionVec.values[0], motionVec.values[1], motionVec.values[2]), true);
+                }
+
+                camera.posX = result.hitVec.x;
+                camera.posY = result.hitVec.y;
+                camera.posZ = result.hitVec.z;
 
                 break;
         }
+
+        camera.posY -= camera.getEyeHeight();
     }
 
     @SubscribeEvent
