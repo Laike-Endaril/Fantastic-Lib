@@ -3,6 +3,7 @@ package com.fantasticsource.tools.datastructures;
 import com.fantasticsource.lwjgl.Quaternion;
 import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.tools.Tools;
+import com.fantasticsource.tools.TrigLookupTable;
 
 public class VectorN
 {
@@ -20,6 +21,26 @@ public class VectorN
     {
         return new VectorN(values);
     }
+
+
+    public boolean isPoint()
+    {
+        for (double value : values) if (value != 0) return false;
+        return true;
+    }
+
+    public boolean isAllZeroes()
+    {
+        return isPoint();
+    }
+
+    public int zeros()
+    {
+        int count = 0;
+        for (double value : values) if (value == 0) count++;
+        return count;
+    }
+
 
     public double getMagnitude()
     {
@@ -43,12 +64,25 @@ public class VectorN
         return this;
     }
 
+    public VectorN reverse()
+    {
+        return scale(-1);
+    }
+
 
     public VectorN setMagnitude(double magnitude)
     {
-        double ratio = magnitude / getMagnitude();
+        double m = getMagnitude();
+        if (m == 0) return this;
+
+        double ratio = magnitude / m;
         for (int i = 0; i < values.length; i++) values[i] = values[i] * ratio;
         return this;
+    }
+
+    public VectorN normalize()
+    {
+        return setMagnitude(1);
     }
 
 
@@ -250,6 +284,22 @@ public class VectorN
     }
 
 
+    public double dotProduct(VectorN vector)
+    {
+        return dotProduct(vector.values);
+    }
+
+    public double dotProduct(double... values)
+    {
+        double result = 0;
+        for (int i = 0; i < this.values.length && i < values.length; i++)
+        {
+            result += values[i] * this.values[i];
+        }
+        return result;
+    }
+
+
     public VectorN round()
     {
         for (int i = 0; i < values.length; i++)
@@ -277,6 +327,42 @@ public class VectorN
         return this;
     }
 
+    public VectorN abs()
+    {
+        for (int i = 0; i < values.length; i++)
+        {
+            values[i] = Math.abs(values[i]);
+        }
+        return this;
+    }
+
+
+    public double squareDistanceTo(VectorN other)
+    {
+        return squareDistanceTo(other.values);
+    }
+
+    public double squareDistanceTo(double... values)
+    {
+        if (this.values.length != values.length) return Double.NaN;
+        double sumOfSquares = 0;
+        for (int i = 0; i < values.length; i++)
+        {
+            sumOfSquares += (values[i] - this.values[i]) * (values[i] - this.values[i]);
+        }
+        return sumOfSquares;
+    }
+
+    public double distanceTo(VectorN other)
+    {
+        return distanceTo(other.values);
+    }
+
+    public double distanceTo(double... values)
+    {
+        return Math.sqrt(squareDistanceTo(values));
+    }
+
 
     /**
      * Only doing 3D cross product for now...I don't see myself using the alternatives
@@ -294,6 +380,35 @@ public class VectorN
     }
 
 
+    public double angleBetween(double... values)
+    {
+        return angleBetween(new VectorN(values));
+    }
+
+    public double angleBetween(VectorN other)
+    {
+        if (isPoint() || other.isPoint()) return Double.NaN;
+
+        VectorN v1, v2;
+        if (values.length == other.values.length)
+        {
+            v1 = copy();
+            v2 = other.copy();
+        }
+        else
+        {
+            int n = Tools.min(values.length, other.values.length);
+            v1 = new VectorN();
+            v1.values = new double[Tools.min(this.values.length, other.values.length)];
+            System.arraycopy(this.values, 0, v1.values, 0, n);
+            v2 = new VectorN();
+            v2.values = new double[Tools.min(this.values.length, other.values.length)];
+            System.arraycopy(other.values, 0, v2.values, 0, n);
+        }
+        return TrigLookupTable.TRIG_TABLE_1024.arccos(v1.normalize().dotProduct(v2.normalize()));
+    }
+
+
     /**
      * Only doing 3D rotations for now
      */
@@ -306,6 +421,24 @@ public class VectorN
         return this;
     }
 
+
+    @Override
+    public boolean equals(Object other)
+    {
+        if (this == other) return true;
+        if (!(other instanceof VectorN && ((VectorN) other).values.length == values.length)) return false;
+        for (int i = 0; i < values.length; i++) if (values[i] != ((VectorN) other).values[i]) return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        if (values.length == 0) return 0;
+        int result = Double.hashCode(values[0]);
+        for (int i = 1; i < values.length; i++) result ^= Double.hashCode(values[i]);
+        return result;
+    }
 
     @Override
     public String toString()
