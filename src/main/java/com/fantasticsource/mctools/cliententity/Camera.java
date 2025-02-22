@@ -4,6 +4,7 @@ import com.fantasticsource.mctools.ImprovedRayTracing;
 import com.fantasticsource.tools.Smoothing;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.TrigLookupTable;
+import com.fantasticsource.tools.datastructures.VectorN;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.Entity;
@@ -43,16 +44,18 @@ public class Camera extends ClientEntity
     public static final int
             PLAYER_RENDER_IF_THIRD_PERSON = 0,
             PLAYER_RENDER_ALWAYS = 1,
-            PLAYER_RENDER_NEVER = 2;
+            PLAYER_RENDER_NEVER = 2,
+            CONTROL_PLAYER = 0,
+            CONTROL_CAMERA_CREATIVE = 1;
 
-    public static int playerRenderMode = PLAYER_RENDER_IF_THIRD_PERSON;
-    public static boolean allowControl = true, showHotbar = true, renderFirstPersonHands = true;
+    public static int playerRenderMode = PLAYER_RENDER_IF_THIRD_PERSON, controlMode = CONTROL_PLAYER;
+    public static boolean showHotbar = true, renderFirstPersonHands = true;
     public static double followOffsetLR = 0;
+    public Entity toFollow = null, originalViewEntity = Minecraft.getMinecraft().getRenderViewEntity();
 
 
     protected boolean active = false;
     protected int mode, originalMode; //0 is first person, 1 is third person, 2 is third person flipped (in front), -1 allows client control via the view mode keybind
-    protected Entity toFollow = null, originalViewEntity = Minecraft.getMinecraft().getRenderViewEntity();
 
 
     protected Camera(World worldIn)
@@ -158,6 +161,35 @@ public class Camera extends ClientEntity
     @Override
     public void onEntityUpdate()
     {
+        GameSettings gs = Minecraft.getMinecraft().gameSettings;
+        switch (controlMode)
+        {
+            case CONTROL_CAMERA_CREATIVE:
+                camera.prevRotationYaw = camera.rotationYaw;
+                camera.prevRotationPitch = camera.rotationPitch;
+                camera.setRotationYawHead(camera.originalViewEntity.getRotationYawHead());
+                camera.rotationYaw = camera.originalViewEntity.rotationYaw;
+                camera.rotationPitch = camera.originalViewEntity.rotationPitch;
+
+                VectorN motionVec = new VectorN(0, 0, 0);
+                if (gs.keyBindForward.isKeyDown()) motionVec.values[2] += 1;
+                if (gs.keyBindBack.isKeyDown()) motionVec.values[2] -= 1;
+                if (gs.keyBindRight.isKeyDown()) motionVec.values[0] += 1;
+                if (gs.keyBindLeft.isKeyDown()) motionVec.values[0] -= 1;
+
+                motionVec.rotate(new VectorN(0, 1, 0), Tools.degtorad(camera.rotationYaw)).setMagnitude(gs.keyBindSprint.isKeyDown() ? 1.5 : 0.5);
+                if (gs.keyBindJump.isKeyDown()) motionVec.values[1] += gs.keyBindSprint.isKeyDown() ? 1.5 : 0.5;
+                if (gs.keyBindSneak.isKeyDown()) motionVec.values[1] -= gs.keyBindSprint.isKeyDown() ? 1.5 : 0.5;
+
+                camera.prevPosX = camera.posX;
+                camera.prevPosY = camera.posY;
+                camera.prevPosZ = camera.posZ;
+                camera.posX -= motionVec.values[0];
+                camera.posY += motionVec.values[1];
+                camera.posZ += motionVec.values[2];
+
+                break;
+        }
     }
 
     @SubscribeEvent
@@ -308,7 +340,7 @@ public class Camera extends ClientEntity
     @SubscribeEvent
     public static void controlFix(TickEvent.RenderTickEvent event)
     {
-        if (!allowControl || !camera.active) return;
+        if (controlMode != CONTROL_PLAYER || !camera.active) return;
 
         if (event.phase == TickEvent.Phase.START)
         {
