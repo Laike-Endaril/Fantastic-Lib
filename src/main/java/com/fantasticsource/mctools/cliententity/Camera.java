@@ -25,8 +25,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class Camera extends ClientEntity
 {
-    protected static final double CAMERA_PADDING = 0.25, CAMERA_HORIZONTAL_DISTANCE_LIMIT = 64;
-    protected static final double OFFSET_COLLISION_BUFFER_DIRECT = 0.2, OFFSET_COLLISION_BUFFER_FORWARD = 0.2;
+    public static final double CAMERA_PADDING = 0.25, CAMERA_HORIZONTAL_DISTANCE_LIMIT = 64;
+    public static final double OFFSET_COLLISION_BUFFER_DIRECT = 0.2, OFFSET_COLLISION_BUFFER_FORWARD = 0.2;
 
     static
     {
