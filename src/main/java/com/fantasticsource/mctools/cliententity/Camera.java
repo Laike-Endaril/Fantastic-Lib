@@ -162,6 +162,9 @@ public class Camera extends ClientEntity
     @Override
     public void onEntityUpdate()
     {
+        height = controlMode == CONTROL_PLAYER ? originalViewEntity.height : (float) (CAMERA_PADDING * 2);
+
+
         posY += getEyeHeight();
 
         GameSettings gs = Minecraft.getMinecraft().gameSettings;
@@ -415,7 +418,7 @@ public class Camera extends ClientEntity
     @Override
     public float getEyeHeight()
     {
-        return originalViewEntity.getEyeHeight();
+        return controlMode == CONTROL_PLAYER ? originalViewEntity.getEyeHeight() : (float) CAMERA_PADDING;
     }
 
 
