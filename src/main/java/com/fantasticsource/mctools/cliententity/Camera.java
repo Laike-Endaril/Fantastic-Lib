@@ -168,6 +168,7 @@ public class Camera extends ClientEntity
         switch (controlMode)
         {
             case CONTROL_CAMERA_CREATIVE:
+            {
                 camera.prevRotationYaw = camera.rotationYaw;
                 camera.prevRotationPitch = camera.rotationPitch;
                 camera.setRotationYawHead(camera.originalViewEntity.getRotationYawHead());
@@ -191,6 +192,7 @@ public class Camera extends ClientEntity
 
                 RayTraceResult result = ImprovedRayTracing.rayTraceBlocks(camera.world, camera.getPositionVector(), camera.getPositionVector().addVector(motionVec.values[0], motionVec.values[1], motionVec.values[2]), true);
                 double change;
+                boolean x = false, y = false, z = false;
                 while (result.typeOfHit == RayTraceResult.Type.BLOCK)
                 {
                     if (result.hitVec.equals(camera.getPositionVector())) break;
@@ -198,6 +200,7 @@ public class Camera extends ClientEntity
                     switch (result.sideHit)
                     {
                         case WEST:
+                            x = true;
                             if (Math.abs(motionVec.values[0]) < CAMERA_PADDING) motionVec.values[0] = 0;
                             else
                             {
@@ -209,6 +212,7 @@ public class Camera extends ClientEntity
                             break;
 
                         case EAST:
+                            x = true;
                             if (Math.abs(motionVec.values[0]) < CAMERA_PADDING) motionVec.values[0] = 0;
                             else
                             {
@@ -220,6 +224,7 @@ public class Camera extends ClientEntity
                             break;
 
                         case DOWN:
+                            y = true;
                             if (Math.abs(motionVec.values[1]) < CAMERA_PADDING) motionVec.values[1] = 0;
                             else
                             {
@@ -231,6 +236,7 @@ public class Camera extends ClientEntity
                             break;
 
                         case UP:
+                            y = true;
                             if (Math.abs(motionVec.values[1]) < CAMERA_PADDING) motionVec.values[1] = 0;
                             else
                             {
@@ -242,6 +248,7 @@ public class Camera extends ClientEntity
                             break;
 
                         case NORTH:
+                            z = true;
                             if (Math.abs(motionVec.values[2]) < CAMERA_PADDING) motionVec.values[2] = 0;
                             else
                             {
@@ -253,6 +260,7 @@ public class Camera extends ClientEntity
                             break;
 
                         case SOUTH:
+                            z = true;
                             if (Math.abs(motionVec.values[2]) < CAMERA_PADDING) motionVec.values[2] = 0;
                             else
                             {
@@ -271,7 +279,37 @@ public class Camera extends ClientEntity
                 camera.posY = result.hitVec.y;
                 camera.posZ = result.hitVec.z;
 
-                break;
+                if (!x)
+                {
+                    result = ImprovedRayTracing.rayTraceBlocks(camera.world, camera.getPositionVector(), camera.getPositionVector().addVector(motionVec.values[0], 0, 0), CAMERA_PADDING, true);
+                    if (result.typeOfHit == RayTraceResult.Type.BLOCK)
+                    {
+                        if (motionVec.values[0] > 0) camera.posX = result.hitVec.x - CAMERA_PADDING;
+                        else camera.posX = result.hitVec.x + CAMERA_PADDING;
+                    }
+                }
+
+                if (!y)
+                {
+                    result = ImprovedRayTracing.rayTraceBlocks(camera.world, camera.getPositionVector(), camera.getPositionVector().addVector(0, motionVec.values[1], 0), CAMERA_PADDING, true);
+                    if (result.typeOfHit == RayTraceResult.Type.BLOCK)
+                    {
+                        if (motionVec.values[1] > 0) camera.posY = result.hitVec.y - CAMERA_PADDING;
+                        else camera.posY = result.hitVec.y + CAMERA_PADDING;
+                    }
+                }
+
+                if (!z)
+                {
+                    result = ImprovedRayTracing.rayTraceBlocks(camera.world, camera.getPositionVector(), camera.getPositionVector().addVector(0, 0, motionVec.values[2]), CAMERA_PADDING, true);
+                    if (result.typeOfHit == RayTraceResult.Type.BLOCK)
+                    {
+                        if (motionVec.values[2] > 0) camera.posZ = result.hitVec.z - CAMERA_PADDING;
+                        else camera.posZ = result.hitVec.z + CAMERA_PADDING;
+                    }
+                }
+            }
+            break;
         }
 
         camera.posY -= camera.getEyeHeight();
