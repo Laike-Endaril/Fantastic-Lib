@@ -9,6 +9,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class ClientEntity extends Entity
 {
+    public float rotationYawHead;
+
     public ClientEntity(World worldIn)
     {
         super(worldIn);
@@ -18,6 +20,18 @@ public class ClientEntity extends Entity
     @Override
     protected void entityInit()
     {
+    }
+
+    @Override
+    public void setRotationYawHead(float rotationYawHead)
+    {
+        this.rotationYawHead = rotationYawHead;
+    }
+
+    @Override
+    public float getRotationYawHead()
+    {
+        return rotationYawHead;
     }
 
     @Override
