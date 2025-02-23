@@ -25,7 +25,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class Camera extends ClientEntity
 {
-    protected static final double CAMERA_PADDING = 0.25;
+    protected static final double CAMERA_PADDING = 0.25, CAMERA_HORIZONTAL_DISTANCE_LIMIT = 64;
     protected static final double OFFSET_COLLISION_BUFFER_DIRECT = 0.2, OFFSET_COLLISION_BUFFER_FORWARD = 0.2;
 
     static
@@ -162,18 +162,18 @@ public class Camera extends ClientEntity
     @Override
     public void onEntityUpdate()
     {
-        camera.posY += camera.getEyeHeight();
+        posY += getEyeHeight();
 
         GameSettings gs = Minecraft.getMinecraft().gameSettings;
         switch (controlMode)
         {
             case CONTROL_CAMERA_CREATIVE:
             {
-                camera.prevRotationYaw = camera.rotationYaw;
-                camera.prevRotationPitch = camera.rotationPitch;
-                camera.setRotationYawHead(camera.originalViewEntity.getRotationYawHead());
-                camera.rotationYaw = camera.originalViewEntity.rotationYaw;
-                camera.rotationPitch = camera.originalViewEntity.rotationPitch;
+                prevRotationYaw = rotationYaw;
+                prevRotationPitch = rotationPitch;
+                setRotationYawHead(originalViewEntity.getRotationYawHead());
+                rotationYaw = originalViewEntity.rotationYaw;
+                rotationPitch = originalViewEntity.rotationPitch;
 
                 VectorN motionVec = new VectorN(0, 0, 0);
                 if (gs.keyBindForward.isKeyDown()) motionVec.values[2] += 1;
@@ -183,19 +183,19 @@ public class Camera extends ClientEntity
                 if (gs.keyBindJump.isKeyDown()) motionVec.values[1] += 1;
                 if (gs.keyBindSneak.isKeyDown()) motionVec.values[1] -= 1;
 
-                motionVec.rotate(new VectorN(0, 1, 0), Tools.degtorad(camera.rotationYaw)).setMagnitude(gs.keyBindSprint.isKeyDown() ? 1.5 : 0.5);
+                motionVec.rotate(new VectorN(0, 1, 0), Tools.degtorad(rotationYaw)).setMagnitude(gs.keyBindSprint.isKeyDown() ? 1.5 : 0.5);
                 motionVec.values[0] = -motionVec.values[0];
 
-                camera.prevPosX = camera.posX;
-                camera.prevPosY = camera.posY;
-                camera.prevPosZ = camera.posZ;
+                prevPosX = posX;
+                prevPosY = posY;
+                prevPosZ = posZ;
 
-                RayTraceResult result = ImprovedRayTracing.rayTraceBlocks(camera.world, camera.getPositionVector(), camera.getPositionVector().addVector(motionVec.values[0], motionVec.values[1], motionVec.values[2]), true);
+                RayTraceResult result = ImprovedRayTracing.rayTraceBlocks(world, getPositionVector(), getPositionVector().addVector(motionVec.values[0], motionVec.values[1], motionVec.values[2]), true);
                 double change;
                 boolean x = false, y = false, z = false;
                 while (result.typeOfHit == RayTraceResult.Type.BLOCK)
                 {
-                    if (result.hitVec.equals(camera.getPositionVector())) break;
+                    if (result.hitVec.equals(getPositionVector())) break;
 
                     switch (result.sideHit)
                     {
@@ -204,10 +204,10 @@ public class Camera extends ClientEntity
                             if (Math.abs(motionVec.values[0]) < CAMERA_PADDING) motionVec.values[0] = 0;
                             else
                             {
-                                change = result.hitVec.x - camera.posX - CAMERA_PADDING;
+                                change = result.hitVec.x - posX - CAMERA_PADDING;
                                 motionVec.scale(1 - change / motionVec.values[0]);
                                 motionVec.values[0] = 0;
-                                camera.posX += change;
+                                posX += change;
                             }
                             break;
 
@@ -216,10 +216,10 @@ public class Camera extends ClientEntity
                             if (Math.abs(motionVec.values[0]) < CAMERA_PADDING) motionVec.values[0] = 0;
                             else
                             {
-                                change = result.hitVec.x - camera.posX + CAMERA_PADDING;
+                                change = result.hitVec.x - posX + CAMERA_PADDING;
                                 motionVec.scale(1 - change / motionVec.values[0]);
                                 motionVec.values[0] = 0;
-                                camera.posX += change;
+                                posX += change;
                             }
                             break;
 
@@ -228,10 +228,10 @@ public class Camera extends ClientEntity
                             if (Math.abs(motionVec.values[1]) < CAMERA_PADDING) motionVec.values[1] = 0;
                             else
                             {
-                                change = result.hitVec.y - camera.posY - CAMERA_PADDING;
+                                change = result.hitVec.y - posY - CAMERA_PADDING;
                                 motionVec.scale(1 - change / motionVec.values[1]);
                                 motionVec.values[1] = 0;
-                                camera.posY += change;
+                                posY += change;
                             }
                             break;
 
@@ -240,10 +240,10 @@ public class Camera extends ClientEntity
                             if (Math.abs(motionVec.values[1]) < CAMERA_PADDING) motionVec.values[1] = 0;
                             else
                             {
-                                change = result.hitVec.y - camera.posY + CAMERA_PADDING;
+                                change = result.hitVec.y - posY + CAMERA_PADDING;
                                 motionVec.scale(1 - change / motionVec.values[1]);
                                 motionVec.values[1] = 0;
-                                camera.posY += change;
+                                posY += change;
                             }
                             break;
 
@@ -252,10 +252,10 @@ public class Camera extends ClientEntity
                             if (Math.abs(motionVec.values[2]) < CAMERA_PADDING) motionVec.values[2] = 0;
                             else
                             {
-                                change = result.hitVec.z - camera.posZ - CAMERA_PADDING;
+                                change = result.hitVec.z - posZ - CAMERA_PADDING;
                                 motionVec.scale(1 - change / motionVec.values[2]);
                                 motionVec.values[2] = 0;
-                                camera.posZ += change;
+                                posZ += change;
                             }
                             break;
 
@@ -264,55 +264,72 @@ public class Camera extends ClientEntity
                             if (Math.abs(motionVec.values[2]) < CAMERA_PADDING) motionVec.values[2] = 0;
                             else
                             {
-                                change = result.hitVec.z - camera.posZ + CAMERA_PADDING;
+                                change = result.hitVec.z - posZ + CAMERA_PADDING;
                                 motionVec.scale(1 - change / motionVec.values[2]);
                                 motionVec.values[2] = 0;
-                                camera.posZ += change;
+                                posZ += change;
                             }
                             break;
                     }
 
-                    result = ImprovedRayTracing.rayTraceBlocks(camera.world, camera.getPositionVector(), camera.getPositionVector().addVector(motionVec.values[0], motionVec.values[1], motionVec.values[2]), true);
+                    result = ImprovedRayTracing.rayTraceBlocks(world, getPositionVector(), getPositionVector().addVector(motionVec.values[0], motionVec.values[1], motionVec.values[2]), true);
                 }
 
-                camera.posX = result.hitVec.x;
-                camera.posY = result.hitVec.y;
-                camera.posZ = result.hitVec.z;
+                posX = result.hitVec.x;
+                posY = result.hitVec.y;
+                posZ = result.hitVec.z;
 
                 if (!x)
                 {
-                    result = ImprovedRayTracing.rayTraceBlocks(camera.world, camera.getPositionVector(), camera.getPositionVector().addVector(motionVec.values[0], 0, 0), CAMERA_PADDING, true);
+                    result = ImprovedRayTracing.rayTraceBlocks(world, getPositionVector(), getPositionVector().addVector(motionVec.values[0], 0, 0), CAMERA_PADDING, true);
                     if (result.typeOfHit == RayTraceResult.Type.BLOCK)
                     {
-                        if (motionVec.values[0] > 0) camera.posX = result.hitVec.x - CAMERA_PADDING;
-                        else camera.posX = result.hitVec.x + CAMERA_PADDING;
+                        if (motionVec.values[0] > 0) posX = result.hitVec.x - CAMERA_PADDING;
+                        else posX = result.hitVec.x + CAMERA_PADDING;
                     }
                 }
 
                 if (!y)
                 {
-                    result = ImprovedRayTracing.rayTraceBlocks(camera.world, camera.getPositionVector(), camera.getPositionVector().addVector(0, motionVec.values[1], 0), CAMERA_PADDING, true);
+                    result = ImprovedRayTracing.rayTraceBlocks(world, getPositionVector(), getPositionVector().addVector(0, motionVec.values[1], 0), CAMERA_PADDING, true);
                     if (result.typeOfHit == RayTraceResult.Type.BLOCK)
                     {
-                        if (motionVec.values[1] > 0) camera.posY = result.hitVec.y - CAMERA_PADDING;
-                        else camera.posY = result.hitVec.y + CAMERA_PADDING;
+                        if (motionVec.values[1] > 0) posY = result.hitVec.y - CAMERA_PADDING;
+                        else posY = result.hitVec.y + CAMERA_PADDING;
                     }
                 }
 
                 if (!z)
                 {
-                    result = ImprovedRayTracing.rayTraceBlocks(camera.world, camera.getPositionVector(), camera.getPositionVector().addVector(0, 0, motionVec.values[2]), CAMERA_PADDING, true);
+                    result = ImprovedRayTracing.rayTraceBlocks(world, getPositionVector(), getPositionVector().addVector(0, 0, motionVec.values[2]), CAMERA_PADDING, true);
                     if (result.typeOfHit == RayTraceResult.Type.BLOCK)
                     {
-                        if (motionVec.values[2] > 0) camera.posZ = result.hitVec.z - CAMERA_PADDING;
-                        else camera.posZ = result.hitVec.z + CAMERA_PADDING;
+                        if (motionVec.values[2] > 0) posZ = result.hitVec.z - CAMERA_PADDING;
+                        else posZ = result.hitVec.z + CAMERA_PADDING;
                     }
+                }
+
+                if (posX < originalViewEntity.posX)
+                {
+                    if (posX < originalViewEntity.posX - CAMERA_HORIZONTAL_DISTANCE_LIMIT) posX = originalViewEntity.posX - CAMERA_HORIZONTAL_DISTANCE_LIMIT;
+                }
+                else
+                {
+                    if (posX > originalViewEntity.posX + CAMERA_HORIZONTAL_DISTANCE_LIMIT) posX = originalViewEntity.posX + CAMERA_HORIZONTAL_DISTANCE_LIMIT;
+                }
+                if (posZ < originalViewEntity.posZ)
+                {
+                    if (posZ < originalViewEntity.posZ - CAMERA_HORIZONTAL_DISTANCE_LIMIT) posZ = originalViewEntity.posZ - CAMERA_HORIZONTAL_DISTANCE_LIMIT;
+                }
+                else
+                {
+                    if (posZ > originalViewEntity.posZ + CAMERA_HORIZONTAL_DISTANCE_LIMIT) posZ = originalViewEntity.posZ + CAMERA_HORIZONTAL_DISTANCE_LIMIT;
                 }
             }
             break;
         }
 
-        camera.posY -= camera.getEyeHeight();
+        posY -= getEyeHeight();
     }
 
     @SubscribeEvent
@@ -438,21 +455,30 @@ public class Camera extends ClientEntity
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void preOverlayRender(RenderGameOverlayEvent.Pre event)
     {
-        if (showHotbar == false || event.getType() != RenderGameOverlayEvent.ElementType.HOTBAR) return;
+        if (!camera.active) return;
 
-        if (getCamera().active)
+
+        if (event.getType() == RenderGameOverlayEvent.ElementType.HOTBAR)
         {
-            Minecraft mc = Minecraft.getMinecraft();
-            mc.setRenderViewEntity(camera.originalViewEntity);
+            if (showHotbar && camera.active)
+            {
+                Minecraft mc = Minecraft.getMinecraft();
+                mc.setRenderViewEntity(camera.originalViewEntity);
+            }
+        }
+        else if (event.getType() == RenderGameOverlayEvent.ElementType.EXPERIENCE)
+        {
+            event.setCanceled(true);
         }
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void postOverlayRender(RenderGameOverlayEvent.Post event)
     {
-        if (event.getType() != RenderGameOverlayEvent.ElementType.ALL) return;
+        if (!camera.active) return;
 
-        if (getCamera().active)
+
+        if (event.getType() == RenderGameOverlayEvent.ElementType.ALL)
         {
             Minecraft mc = Minecraft.getMinecraft();
             mc.setRenderViewEntity(camera);
