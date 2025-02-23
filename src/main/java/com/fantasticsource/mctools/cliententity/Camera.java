@@ -162,6 +162,13 @@ public class Camera extends ClientEntity
     @Override
     public void onEntityUpdate()
     {
+        prevRotationYaw = rotationYaw;
+        prevRotationPitch = rotationPitch;
+        setRotationYawHead(originalViewEntity.getRotationYawHead());
+        rotationYaw = originalViewEntity.rotationYaw;
+        rotationPitch = originalViewEntity.rotationPitch;
+
+
         height = controlMode == CONTROL_PLAYER ? originalViewEntity.height : (float) (CAMERA_PADDING * 2);
 
 
@@ -172,12 +179,6 @@ public class Camera extends ClientEntity
         {
             case CONTROL_CAMERA_CREATIVE:
             {
-                prevRotationYaw = rotationYaw;
-                prevRotationPitch = rotationPitch;
-                setRotationYawHead(originalViewEntity.getRotationYawHead());
-                rotationYaw = originalViewEntity.rotationYaw;
-                rotationPitch = originalViewEntity.rotationPitch;
-
                 VectorN motionVec = new VectorN(0, 0, 0);
                 if (gs.keyBindForward.isKeyDown()) motionVec.values[2] += 1;
                 if (gs.keyBindBack.isKeyDown()) motionVec.values[2] -= 1;
