@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class TooltipAlterer
 {
-    @SubscribeEvent(priority = EventPriority.LOWEST)
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void renderTooltipPre(RenderTooltipEvent.Pre event)
     {
         double scale = FantasticConfig.tooltipScaling;
@@ -17,7 +17,7 @@ public class TooltipAlterer
         GlStateManager.scale(scale, scale, scale);
     }
 
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void renderTooltipPost(RenderTooltipEvent.PostText event)
     {
         GlStateManager.popMatrix();
