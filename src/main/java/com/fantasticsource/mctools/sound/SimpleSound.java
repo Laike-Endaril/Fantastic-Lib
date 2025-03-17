@@ -31,17 +31,17 @@ public class SimpleSound implements ISound
 
     public SimpleSound(ResourceLocation rl, SoundCategory category)
     {
-        this(rl, category, 0);
+        this(rl, category, -1);
     }
 
     public SimpleSound(ResourceLocation rl, SoundCategory category, @Nonnull Entity following)
     {
-        this(rl, category, 0, following);
+        this(rl, category, -1, following);
     }
 
     public SimpleSound(ResourceLocation rl, SoundCategory category, float x, float y, float z)
     {
-        this(rl, category, 0, x, y, z);
+        this(rl, category, -1, x, y, z);
     }
 
     public SimpleSound(ResourceLocation rl, SoundCategory category, int repeatDelay)
@@ -60,7 +60,7 @@ public class SimpleSound implements ISound
         this.repeatDelay = repeatDelay;
         this.following = following;
 
-        repeat = repeatDelay > 0;
+        repeat = repeatDelay > -1;
     }
 
     public SimpleSound(ResourceLocation rl, SoundCategory category, int repeatDelay, float x, float y, float z)
