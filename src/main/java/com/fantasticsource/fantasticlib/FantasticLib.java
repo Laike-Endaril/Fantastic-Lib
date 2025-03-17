@@ -252,7 +252,7 @@ public class FantasticLib
 //    }
 
 
-    //Animation test
+    //Animation tests
     //Requires running of CBipedAnimation.init()
 //    static CBipedAnimation animation = new CBipedAnimation();
 //
