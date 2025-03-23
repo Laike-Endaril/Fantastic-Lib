@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class TooltipAlterer
 {
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    @SubscribeEvent(priority = EventPriority.HIGHEST, receiveCanceled = true)
     public static void renderTooltipPre(RenderTooltipEvent.Pre event)
     {
         double scale = FantasticConfig.tooltipScaling;
