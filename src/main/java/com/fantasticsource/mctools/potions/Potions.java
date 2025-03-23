@@ -98,6 +98,7 @@ public class Potions
             return null;
         }
 
+
         potionString = potionString.replaceFirst(regString, "").replaceFirst("[.]", "").trim();
         String[] tokens = potionString.equals("") ? new String[0] : potionString.split(Pattern.quote("."));
         if (tokens.length > 3)
