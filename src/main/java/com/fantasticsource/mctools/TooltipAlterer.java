@@ -10,7 +10,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TooltipAlterer
+public class TooltipAlterer 
 {
     public static boolean busy = false;
 
