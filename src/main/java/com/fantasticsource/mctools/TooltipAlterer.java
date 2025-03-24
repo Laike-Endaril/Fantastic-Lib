@@ -10,7 +10,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TooltipAlterer 
+public class TooltipAlterer
 {
     public static boolean busy = false;
 
@@ -69,7 +69,7 @@ public class TooltipAlterer
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void renderTooltipPost(RenderTooltipEvent.PostText event)
+    public static void renderTooltipPostText(RenderTooltipEvent.PostText event)
     {
         GlStateManager.popMatrix();
     }
