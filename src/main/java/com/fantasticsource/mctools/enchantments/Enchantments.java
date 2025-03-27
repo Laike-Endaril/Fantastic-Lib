@@ -7,7 +7,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -26,7 +26,7 @@ public class Enchantments
      * 3: Add, with limits of 0 -> max level; can be used to subtract levels if level is negative
      * 4: Add, without limits; can be used to subtract levels if level is negative
      */
-    public static HashMap<Pair<Enchantment, Integer>, Integer> parseEnchantments(String enchantmentList)
+    public static LinkedHashMap<Pair<Enchantment, Integer>, Integer> parseEnchantments(String enchantmentList)
     {
         String[] enchantments = enchantmentList.split("&");
         for (int i = 0; i < enchantments.length; i++) enchantments[i] = enchantments[i].trim();
@@ -36,9 +36,9 @@ public class Enchantments
     /**
      * Syntax for each is registryname.level
      */
-    public static HashMap<Pair<Enchantment, Integer>, Integer> parseEnchantments(String[] enchantmentList)
+    public static LinkedHashMap<Pair<Enchantment, Integer>, Integer> parseEnchantments(String[] enchantmentList)
     {
-        HashMap<Pair<Enchantment, Integer>, Integer> result = new HashMap<>();
+        LinkedHashMap<Pair<Enchantment, Integer>, Integer> result = new LinkedHashMap<>();
 
         Pair<Pair<Enchantment, Integer>, Integer> enchantment;
         for (String string : enchantmentList)
