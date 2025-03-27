@@ -19,6 +19,7 @@ fantasticlib.error.potionIntrvNotNumber=Interval for potion is not a number: %s
 
 fantasticlib.error.tooManyEnchantmentArgs=Too many arguments for enchantment effect (should be max of 3): %s
 fantasticlib.error.enchantmentNotFound=ResourceLocation for enchantment not found: %s
+fantasticlib.error.enchantmentModeNotNumber=Mode for enchantment is not a number: %s
 fantasticlib.error.enchantmentLevelNotNumber=Level for enchantment is not a number: %s
 
 fantasticlib.error.playerEntityNotFound=Could not find player entity: %s

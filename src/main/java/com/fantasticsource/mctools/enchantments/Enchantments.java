@@ -14,9 +14,19 @@ import java.util.regex.Pattern;
 public class Enchantments
 {
     /**
-     * Syntax is registryname.level & registryname.level & registryname.level...
+     * Syntax is registryname.mode.level & registryname.mode.level & registryname.mode.level...
+     * If mode is omitted, it defaults to 0
+     * If level is omitted, it defaults to 1
+     * If there is exactly one number, it is assumed to be level, not mode
+     * <p>
+     * Suggested numbering of modes:
+     * 0: Vanilla enchantment behavior (note: vanilla does limit to max level when combining, even if an enchantment book is higher than max)
+     * 1: Vanilla enchantment behavior, but without limits
+     * 2: Overwrite level directly when applied instead of combining in any way
+     * 3: Add, with limits of 0 -> max level; can be used to subtract levels if level is negative
+     * 4: Add, without limits; can be used to subtract levels if level is negative
      */
-    public static HashMap<Enchantment, Integer> parseEnchantments(String enchantmentList)
+    public static HashMap<Pair<Enchantment, Integer>, Integer> parseEnchantments(String enchantmentList)
     {
         String[] enchantments = enchantmentList.split("&");
         for (int i = 0; i < enchantments.length; i++) enchantments[i] = enchantments[i].trim();
@@ -26,11 +36,11 @@ public class Enchantments
     /**
      * Syntax for each is registryname.level
      */
-    public static HashMap<Enchantment, Integer> parseEnchantments(String[] enchantmentList)
+    public static HashMap<Pair<Enchantment, Integer>, Integer> parseEnchantments(String[] enchantmentList)
     {
-        HashMap<Enchantment, Integer> result = new HashMap<>();
+        HashMap<Pair<Enchantment, Integer>, Integer> result = new HashMap<>();
 
-        Pair<Enchantment, Integer> enchantment;
+        Pair<Pair<Enchantment, Integer>, Integer> enchantment;
         for (String string : enchantmentList)
         {
             enchantment = parseEnchantment(string);
@@ -44,10 +54,11 @@ public class Enchantments
     /**
      * Syntax is registryname.level
      */
-    public static Pair<Enchantment, Integer> parseEnchantment(String enchantmentString)
+    public static Pair<Pair<Enchantment, Integer>, Integer> parseEnchantment(String enchantmentString)
     {
         enchantmentString = enchantmentString.trim();
         if (enchantmentString.equals("")) return null;
+
 
         if (!enchantmentString.contains(":")) enchantmentString = "minecraft:" + enchantmentString;
 
@@ -75,22 +86,53 @@ public class Enchantments
 
         enchantmentString = enchantmentString.replaceFirst(regString, "").replaceFirst("[.]", "").trim();
         String[] tokens = enchantmentString.equals("") ? new String[0] : enchantmentString.split(Pattern.quote("."));
-        if (tokens.length > 1)
+        if (tokens.length > 2)
         {
             System.err.println(I18n.translateToLocalFormatted(FantasticLib.MODID + ".error.tooManyEnchantmentArgs", enchantmentString));
             return null;
         }
 
+
+        int mode = 0;
         int level = 1;
-        if (tokens.length > 0)
+
+        if (tokens.length > 1)
         {
-            String levelStr = tokens[0].trim();
-            if (levelStr.equals("*")) level = enchantment.getMaxLevel();
+            try
+            {
+                mode = Integer.parseInt(tokens[0].trim());
+            }
+            catch (NumberFormatException e)
+            {
+                System.err.println(I18n.translateToLocalFormatted(FantasticLib.MODID + ".error.enchantmentModeNotNumber", enchantmentString));
+                return null;
+            }
+
+
+            String s = tokens[1].trim();
+            if (s.equals("*")) level = enchantment.getMaxLevel();
             else
             {
                 try
                 {
-                    level = Integer.parseInt(tokens[0].trim());
+                    level = Integer.parseInt(s);
+                }
+                catch (NumberFormatException e)
+                {
+                    System.err.println(I18n.translateToLocalFormatted(FantasticLib.MODID + ".error.enchantmentLevelNotNumber", enchantmentString));
+                    return null;
+                }
+            }
+        }
+        else if (tokens.length > 0)
+        {
+            String s = tokens[0].trim();
+            if (s.equals("*")) level = enchantment.getMaxLevel();
+            else
+            {
+                try
+                {
+                    level = Integer.parseInt(s);
                 }
                 catch (NumberFormatException e)
                 {
@@ -100,6 +142,6 @@ public class Enchantments
             }
         }
 
-        return new Pair<>(enchantment, level);
+        return new Pair<>(new Pair<>(enchantment, mode), level);
     }
 }
