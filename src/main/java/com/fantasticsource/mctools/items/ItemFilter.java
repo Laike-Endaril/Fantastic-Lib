@@ -144,12 +144,12 @@ public class ItemFilter
                 Block block = ForgeRegistries.BLOCKS.containsKey(resourceLocation) ? ForgeRegistries.BLOCKS.getValue(resourceLocation) : null;
                 if (block != null) result.itemStack = new ItemStack(block, 1, meta);
             }
+        }
 
-            if (result.itemStack == null)
-            {
-                if (!suppressItemMissingError) System.err.println(I18n.translateToLocalFormatted(FantasticLib.MODID + ".error.itemForFilterNotFound", token));
-                return null;
-            }
+        if (result.itemStack == null)
+        {
+            if (!suppressItemMissingError) System.err.println(I18n.translateToLocalFormatted(FantasticLib.MODID + ".error.itemForFilterNotFound", token));
+            return null;
         }
 
 
