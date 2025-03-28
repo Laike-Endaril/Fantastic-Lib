@@ -180,6 +180,22 @@ public class MCTools
     }
 
 
+    public static void syncInventory(EntityPlayerMP player)
+    {
+        if (!player.isCreative())
+        {
+            player.sendAllContents(player.inventoryContainer, player.inventoryContainer.getInventory());
+            player.inventoryContainer.detectAndSendChanges();
+
+            if (player.openContainer != null && player.openContainer != player.inventoryContainer)
+            {
+                player.sendAllContents(player.openContainer, player.openContainer.getInventory());
+                player.openContainer.detectAndSendChanges();
+            }
+        }
+    }
+
+
     public static void sendToAllTracking(SimpleNetworkWrapper wrapper, IMessage packet, Entity entity)
     {
         if (entity instanceof EntityPlayerMP) wrapper.sendTo(packet, (EntityPlayerMP) entity);
