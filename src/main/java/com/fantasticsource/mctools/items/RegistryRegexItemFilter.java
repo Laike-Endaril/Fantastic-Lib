@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 
 public class RegistryRegexItemFilter
 {
-    public String registryRegex;
+    public String domainRegex, itemRegex, metaRegex;
     public LinkedHashMap<String, String> tagsRequired = new LinkedHashMap<>();
     public LinkedHashMap<String, String> tagsDisallowed = new LinkedHashMap<>();
 
@@ -27,9 +27,11 @@ public class RegistryRegexItemFilter
     {
     }
 
-    public RegistryRegexItemFilter(String registryRegex, LinkedHashMap<String, String> tagsRequired, LinkedHashMap<String, String> tagsDisallowed)
+    public RegistryRegexItemFilter(String domainRegex, String itemRegex, String metaRegex, LinkedHashMap<String, String> tagsRequired, LinkedHashMap<String, String> tagsDisallowed)
     {
-        this.registryRegex = registryRegex;
+        this.domainRegex = domainRegex;
+        this.itemRegex = itemRegex;
+        this.metaRegex = metaRegex;
         this.tagsRequired = tagsRequired;
         this.tagsDisallowed = tagsDisallowed;
     }
@@ -38,7 +40,8 @@ public class RegistryRegexItemFilter
     /**
      * Syntax is domain:item:meta > nbtkey1 = nbtvalue1 & nbtkey2 = nbtvalue2
      * All of these are optional except item
-     * For domain, item, and meta, regex can be used
+     * For domain, item, and meta, regex can be used, but each missing token is set to default
+     * Ie. to match all items, it is .*:.*:.* not just .* (which would only match all vanilla items with 0 meta)
      * <p>
      * Each nbt value requires a key, but not necessarily a value (if no value is specified, it just checks if the key exists)
      * Each NBT entry can be negated by starting it with a !
@@ -70,7 +73,24 @@ public class RegistryRegexItemFilter
 
 
         //Registry regex
-        result.registryRegex = registryAndNBT[0].trim();
+        String[] regexTokens = registryAndNBT[0].trim().split(":");
+        if (regexTokens.length == 0 || regexTokens.length > 3)
+        {
+            System.err.println(I18n.translateToLocalFormatted(FantasticLib.MODID + ".error.badItemName", registryAndNBT[0].trim()));
+            return null;
+        }
+        if (regexTokens.length > 1)
+        {
+            result.domainRegex = regexTokens[0].trim();
+            result.itemRegex = regexTokens[1].trim();
+            result.metaRegex = regexTokens.length > 2 ? regexTokens[2].trim() : "0";
+        }
+        else
+        {
+            result.domainRegex = "minecraft";
+            result.itemRegex = regexTokens[0].trim();
+            result.metaRegex = "0";
+        }
 
 
         //NBT
@@ -118,8 +138,8 @@ public class RegistryRegexItemFilter
     public boolean matches(ItemStack stack)
     {
         //Domain, item, and meta
-        String domainNameMeta = stack.getItem().getRegistryName() + ":" + stack.getMetadata();
-        if (!Pattern.matches(registryRegex, domainNameMeta)) return false;
+        ResourceLocation resourceLocation = stack.getItem().getRegistryName();
+        if (!Pattern.matches(domainRegex, resourceLocation.getResourceDomain()) || !Pattern.matches(itemRegex, resourceLocation.getResourcePath()) || !Pattern.matches(metaRegex, "" + stack.getMetadata())) return false;
 
 
         //Disallowed NBT
@@ -213,7 +233,7 @@ public class RegistryRegexItemFilter
         if (obj.getClass() != getClass()) return obj.equals(this);
 
         RegistryRegexItemFilter other = (RegistryRegexItemFilter) obj;
-        if (!registryRegex.equals(other.registryRegex)) return false;
+        if (!domainRegex.equals(other.domainRegex) || !itemRegex.equals(other.itemRegex) || !metaRegex.equals(other.metaRegex)) return false;
 
         if (tagsRequired.size() != other.tagsRequired.size()) return false;
         if (tagsDisallowed.size() != other.tagsDisallowed.size()) return false;
