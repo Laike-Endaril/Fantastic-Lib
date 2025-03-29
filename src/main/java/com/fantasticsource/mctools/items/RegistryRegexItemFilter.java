@@ -9,11 +9,9 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.oredict.OreDictionary;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class RegistryRegexItemFilter
@@ -21,6 +19,8 @@ public class RegistryRegexItemFilter
     public String domainRegex, itemRegex, metaRegex;
     public LinkedHashMap<String, String> tagsRequired = new LinkedHashMap<>();
     public LinkedHashMap<String, String> tagsDisallowed = new LinkedHashMap<>();
+    public int lastCacheOreDictSize = 0;
+    public ArrayList<Integer> matchingOredictIDs = new ArrayList<>();
 
 
     public RegistryRegexItemFilter()
@@ -139,7 +139,33 @@ public class RegistryRegexItemFilter
     {
         //Domain, item, and meta
         ResourceLocation resourceLocation = stack.getItem().getRegistryName();
-        if (!Pattern.matches(domainRegex, resourceLocation.getResourceDomain()) || !Pattern.matches(itemRegex, resourceLocation.getResourcePath()) || !Pattern.matches(metaRegex, "" + stack.getMetadata())) return false;
+        if (!Pattern.matches(metaRegex, "" + stack.getMetadata())) return false; //Quickest check first
+        if (!Pattern.matches(domainRegex, resourceLocation.getResourceDomain()) || !Pattern.matches(itemRegex, resourceLocation.getResourcePath()))
+        {
+            //Oredict checks
+            if (!stack.isEmpty() && Pattern.matches(domainRegex, "ore"))
+            {
+                //Add any missing oreDict IDs to cache
+                String[] oreDictNames = OreDictionary.getOreNames();
+                for (int i = lastCacheOreDictSize; i < oreDictNames.length; i++)
+                {
+                    if (Pattern.matches(itemRegex, oreDictNames[i])) matchingOredictIDs.add(i);
+                }
+
+                //Check matching oreDict entries
+                boolean found = false;
+                for (int oreDictID : OreDictionary.getOreIDs(stack))
+                {
+                    if (matchingOredictIDs.contains(oreDictID))
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) return false;
+            }
+            else return false;
+        }
 
 
         //Disallowed NBT
