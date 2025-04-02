@@ -1,5 +1,6 @@
 package com.fantasticsource.mctools.potions;
 
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionType;
@@ -46,6 +47,17 @@ public class BetterPotionType extends PotionType
         POTION_TYPES_TO_ADD.add(this);
 
         init();
+    }
+
+    public BetterPotionType getLongDurationVersion()
+    {
+        PotionEffect[] potionEffects = getEffects().toArray(new PotionEffect[0]);
+        for (int i = 0; i < potionEffects.length; i++)
+        {
+            PotionEffect old = potionEffects[i];
+            potionEffects[i] = new FantasticPotionEffect(old.getPotion(), old.getDuration() * 8 / 3, old.getAmplifier(), old.getIsAmbient(), old.doesShowParticles());
+        }
+        return new BetterPotionType(getRegistryName().getResourceDomain(), "long_" + getRegistryName().getResourcePath(), this, new ItemStack(Items.REDSTONE), potionEffects);
     }
 
 
