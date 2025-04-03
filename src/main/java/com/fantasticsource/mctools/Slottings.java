@@ -6,8 +6,7 @@ import com.fantasticsource.tools.Tools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.LinkedHashMap;
@@ -131,6 +130,7 @@ public class Slottings
         if (item.isValidArmor(stack, EntityEquipmentSlot.CHEST, player)) return "Chest";
         if (item.isValidArmor(stack, EntityEquipmentSlot.LEGS, player)) return "Legs";
         if (item.isValidArmor(stack, EntityEquipmentSlot.FEET, player)) return "Feet";
+        if (item instanceof ItemSword || item instanceof ItemAxe || item instanceof ItemTool || item.getToolClasses(stack).size() > 0 || item.getItemUseAction(stack) != EnumAction.NONE) return "Hand";
 
         return "None";
     }

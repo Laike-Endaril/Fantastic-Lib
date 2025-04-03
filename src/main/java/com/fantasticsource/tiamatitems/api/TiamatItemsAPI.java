@@ -1,31 +1,14 @@
 package com.fantasticsource.tiamatitems.api;
 
+import com.fantasticsource.tools.ReflectionTool;
 import net.minecraft.item.ItemStack;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 public class TiamatItemsAPI
 {
-    private static ITiamatItemsNatives tiamatItemsAPIMethods = null;
-
-    static
-    {
-        try
-        {
-            for (Field field : Class.forName("com.fantasticsource.tiamatitems.apinatives.TiamatItemsNatives").getDeclaredFields())
-            {
-                if (field.getName().equals("NATIVES"))
-                {
-                    tiamatItemsAPIMethods = (ITiamatItemsNatives) field.get(null);
-                }
-            }
-        }
-        catch (ClassNotFoundException | IllegalAccessException e)
-        {
-            e.printStackTrace();
-        }
-    }
+    private static Class tiamatItemsAPI = ReflectionTool.getClassByName("com.fantasticsource.tiamatitems.apinatives.TiamatItemsNatives");
+    private static ITiamatItemsNatives tiamatItemsAPIMethods = tiamatItemsAPI == null ? null : (ITiamatItemsNatives) ReflectionTool.get(tiamatItemsAPI, "NATIVES", null);
 
 
     public static boolean isUsable(ItemStack stack)
