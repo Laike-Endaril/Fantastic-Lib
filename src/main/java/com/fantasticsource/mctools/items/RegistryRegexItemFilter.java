@@ -40,6 +40,7 @@ public class RegistryRegexItemFilter
     /**
      * Syntax is domain:item:meta > nbtkey1 = nbtvalue1 & nbtkey2 = nbtvalue2
      * All of these are optional except item
+     * Supports oredict
      * For domain, item, and meta, regex can be used, but each missing token is set to default
      * Ie. to match all items, it is .*:.*:.* not just .* (which would only match all vanilla items with 0 meta)
      * <p>
