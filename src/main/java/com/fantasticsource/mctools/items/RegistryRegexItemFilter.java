@@ -139,8 +139,9 @@ public class RegistryRegexItemFilter
     public boolean matches(ItemStack stack)
     {
         //Domain, item, and meta
-        ResourceLocation resourceLocation = stack.getItem().getRegistryName();
         if (!Pattern.matches(metaRegex, "" + stack.getMetadata())) return false; //Quickest check first
+
+        ResourceLocation resourceLocation = stack.getItem().getRegistryName();
         if (!Pattern.matches(domainRegex, resourceLocation.getResourceDomain()) || !Pattern.matches(itemRegex, resourceLocation.getResourcePath()))
         {
             //Oredict checks
