@@ -54,15 +54,18 @@ public class PathedParticleManager
         particles.values().removeIf(ArrayList::isEmpty);
     }
 
-    public static void render(Entity entityIn, float partialTick)
+    public static void render(float partialTick)
     {
         if (particles.size() == 0) return;
 
-        float f1 = MathHelper.cos(entityIn.rotationYaw * 0.017453292f);
-        float f2 = MathHelper.sin(entityIn.rotationYaw * 0.017453292f);
-        float f3 = -f2 * MathHelper.sin(entityIn.rotationPitch * 0.017453292f);
-        float f4 = f1 * MathHelper.sin(entityIn.rotationPitch * 0.017453292f);
-        float f5 = MathHelper.cos(entityIn.rotationPitch * 0.017453292f);
+
+        Entity renderEntity = Minecraft.getMinecraft().getRenderViewEntity();
+
+        float f1 = MathHelper.cos(renderEntity.rotationYaw * 0.017453292f);
+        float f2 = MathHelper.sin(renderEntity.rotationYaw * 0.017453292f);
+        float f3 = -f2 * MathHelper.sin(renderEntity.rotationPitch * 0.017453292f);
+        float f4 = f1 * MathHelper.sin(renderEntity.rotationPitch * 0.017453292f);
+        float f5 = MathHelper.cos(renderEntity.rotationPitch * 0.017453292f);
 
         GlStateManager.depthMask(false);
         GlStateManager.enableBlend();
@@ -70,10 +73,10 @@ public class PathedParticleManager
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
 
-        Particle.interpPosX = entityIn.lastTickPosX + (entityIn.posX - entityIn.lastTickPosX) * partialTick;
-        Particle.interpPosY = entityIn.lastTickPosY + (entityIn.posY - entityIn.lastTickPosY) * partialTick;
-        Particle.interpPosZ = entityIn.lastTickPosZ + (entityIn.posZ - entityIn.lastTickPosZ) * partialTick;
-        Particle.cameraViewDir = entityIn.getLook(partialTick);
+        Particle.interpPosX = renderEntity.lastTickPosX + (renderEntity.posX - renderEntity.lastTickPosX) * partialTick;
+        Particle.interpPosY = renderEntity.lastTickPosY + (renderEntity.posY - renderEntity.lastTickPosY) * partialTick;
+        Particle.interpPosZ = renderEntity.lastTickPosZ + (renderEntity.posZ - renderEntity.lastTickPosZ) * partialTick;
+        Particle.cameraViewDir = renderEntity.getLook(partialTick);
 
         for (Map.Entry<Pair<GlStateManager.SourceFactor, GlStateManager.DestFactor>, ArrayList<PathedParticle>> entry : particles.entrySet())
         {
@@ -81,7 +84,7 @@ public class PathedParticleManager
             bufferbuilder.begin(7, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
             for (PathedParticle particle : entry.getValue())
             {
-                particle.renderParticle(bufferbuilder, entityIn, partialTick, f1, f5, f2, f3, f4);
+                particle.renderParticle(bufferbuilder, renderEntity, partialTick, f1, f5, f2, f3, f4);
             }
             tessellator.draw();
         }
@@ -108,7 +111,7 @@ public class PathedParticleManager
     public static void renderLast(RenderWorldLastEvent event)
     {
         profiler.startSection("FLib: Pathed Particles Render");
-        render(Minecraft.getMinecraft().getRenderViewEntity(), event.getPartialTicks());
+        render(event.getPartialTicks());
         profiler.endSection();
     }
 }
