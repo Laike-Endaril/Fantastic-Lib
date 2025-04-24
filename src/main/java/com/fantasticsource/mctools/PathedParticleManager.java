@@ -61,11 +61,21 @@ public class PathedParticleManager
 
         Entity renderEntity = Minecraft.getMinecraft().getRenderViewEntity();
 
-        float f1 = MathHelper.cos(renderEntity.rotationYaw * 0.017453292f);
-        float f2 = MathHelper.sin(renderEntity.rotationYaw * 0.017453292f);
-        float f3 = -f2 * MathHelper.sin(renderEntity.rotationPitch * 0.017453292f);
-        float f4 = f1 * MathHelper.sin(renderEntity.rotationPitch * 0.017453292f);
-        float f5 = MathHelper.cos(renderEntity.rotationPitch * 0.017453292f);
+        float yawRadians = renderEntity.rotationYaw, pitchRadians = renderEntity.rotationPitch;
+        if (Minecraft.getMinecraft().gameSettings.thirdPersonView == 2)
+        {
+            yawRadians += 180;
+            if (yawRadians > 180) yawRadians -= 360;
+            pitchRadians = -pitchRadians;
+        }
+        yawRadians *= 0.017453292f;
+        pitchRadians *= 0.017453292f;
+
+        float f1 = MathHelper.cos(yawRadians);
+        float f2 = MathHelper.sin(yawRadians);
+        float f3 = -f2 * MathHelper.sin(pitchRadians);
+        float f4 = f1 * MathHelper.sin(pitchRadians);
+        float f5 = MathHelper.cos(pitchRadians);
 
         GlStateManager.depthMask(false);
         GlStateManager.enableBlend();
