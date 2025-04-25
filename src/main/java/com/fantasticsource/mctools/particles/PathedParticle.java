@@ -159,8 +159,8 @@ public class PathedParticle extends Particle
 
 
         int lightmapIndex = getBrightnessForRender(partialTicks);
-        int lightmapX = lightmapIndex >> 16 & 65535;
-        int lightmapY = lightmapIndex & 65535;
+        int skyLight = lightmapIndex >> 16 & 65535;
+        int blockLight = lightmapIndex & 65535;
 
 
         if (rgbPath != null)
@@ -177,9 +177,9 @@ public class PathedParticle extends Particle
 
         if (alphaPath != null) setAlphaF((float) alphaPath.getRelativePosition(renderMillis).values[0]);
 
-        buffer.pos(x + vecs[0].x, y + vecs[0].y, z + vecs[0].z).tex(u2, v2).color(particleRed, particleGreen, particleBlue, particleAlpha).lightmap(lightmapX, lightmapY).endVertex();
-        buffer.pos(x + vecs[1].x, y + vecs[1].y, z + vecs[1].z).tex(u2, v1).color(particleRed, particleGreen, particleBlue, particleAlpha).lightmap(lightmapX, lightmapY).endVertex();
-        buffer.pos(x + vecs[2].x, y + vecs[2].y, z + vecs[2].z).tex(u1, v1).color(particleRed, particleGreen, particleBlue, particleAlpha).lightmap(lightmapX, lightmapY).endVertex();
-        buffer.pos(x + vecs[3].x, y + vecs[3].y, z + vecs[3].z).tex(u1, v2).color(particleRed, particleGreen, particleBlue, particleAlpha).lightmap(lightmapX, lightmapY).endVertex();
+        buffer.pos(x + vecs[0].x, y + vecs[0].y, z + vecs[0].z).tex(u2, v2).color(particleRed, particleGreen, particleBlue, particleAlpha).lightmap(skyLight, blockLight).endVertex();
+        buffer.pos(x + vecs[1].x, y + vecs[1].y, z + vecs[1].z).tex(u2, v1).color(particleRed, particleGreen, particleBlue, particleAlpha).lightmap(skyLight, blockLight).endVertex();
+        buffer.pos(x + vecs[2].x, y + vecs[2].y, z + vecs[2].z).tex(u1, v1).color(particleRed, particleGreen, particleBlue, particleAlpha).lightmap(skyLight, blockLight).endVertex();
+        buffer.pos(x + vecs[3].x, y + vecs[3].y, z + vecs[3].z).tex(u1, v2).color(particleRed, particleGreen, particleBlue, particleAlpha).lightmap(skyLight, blockLight).endVertex();
     }
 }

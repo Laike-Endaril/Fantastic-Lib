@@ -90,7 +90,7 @@ public class PathedParticleManager
 
         GlStateManager.depthMask(false);
         GlStateManager.enableBlend();
-        GlStateManager.enableLighting();
+        RenderHelper.disableStandardItemLighting();
 
         PathedParticleSharedRenderData data;
         for (Map.Entry<PathedParticleSharedRenderData, ArrayList<PathedParticle>> entry : particles.entrySet())
@@ -98,16 +98,8 @@ public class PathedParticleManager
             data = entry.getKey();
             GlStateManager.blendFunc(data.sourceFactor, data.destFactor);
             renderer.bindTexture(data.texture);
-            if (data.useBlockLight)
-            {
-                Minecraft.getMinecraft().entityRenderer.enableLightmap();
-                RenderHelper.enableStandardItemLighting();
-            }
-            else
-            {
-                Minecraft.getMinecraft().entityRenderer.disableLightmap();
-                RenderHelper.disableStandardItemLighting();
-            }
+            if (data.useBlockLight) Minecraft.getMinecraft().entityRenderer.enableLightmap();
+            else Minecraft.getMinecraft().entityRenderer.disableLightmap();
 
             bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
             for (PathedParticle particle : entry.getValue())
