@@ -1,4 +1,4 @@
-package com.fantasticsource.mctools;
+package com.fantasticsource.mctools.particles;
 
 import com.fantasticsource.tools.component.path.CPath;
 import com.fantasticsource.tools.datastructures.Color;
@@ -6,7 +6,6 @@ import com.fantasticsource.tools.datastructures.VectorN;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -17,6 +16,8 @@ public class PathedParticle extends Particle
 {
     public static long renderMillis;
 
+    public final PathedParticleSharedRenderData sharedRenderData;
+
     public double u1 = 32d / 128, v1 = 16d / 128, u2 = 64d / 128, v2 = 48d / 128;
     public boolean useBlockLight = false;
     public double xScale3D = 1, yScale3D = 1, zScale3D = 1;
@@ -24,14 +25,12 @@ public class PathedParticle extends Particle
     protected CPath.CPathData basePath, rgbPath = null, hsvPath = null, alphaPath = null, scale3DPath = null;
     protected ArrayList<CPath.CPathData> morePaths = new ArrayList<>();
 
-    public PathedParticle(CPath basePath, CPath... morePaths)
-    {
-        this(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, basePath, morePaths);
-    }
 
-    public PathedParticle(GlStateManager.SourceFactor sourceBlend, GlStateManager.DestFactor destBlend, CPath basePath, CPath... morePaths)
+    public PathedParticle(PathedParticleSharedRenderData sharedRenderData, CPath basePath, CPath... morePaths)
     {
         super(Minecraft.getMinecraft().world, Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
+
+        this.sharedRenderData = sharedRenderData;
 
         this.basePath = new CPath.CPathData(basePath, 0);
         for (CPath path : morePaths) applyPath(path);
@@ -40,9 +39,15 @@ public class PathedParticle extends Particle
         particleScale = 1;
         canCollide = false;
 
-        PathedParticleManager.add(this, sourceBlend, destBlend);
+        PathedParticleManager.add(this);
     }
 
+
+    @Override
+    public int getFXLayer()
+    {
+        return -1;
+    }
 
     public PathedParticle applyPath(CPath path)
     {
