@@ -20,7 +20,6 @@ public class PathedParticle extends Particle
 
     public double u1 = 32d / 128, v1 = 16d / 128, u2 = 64d / 128, v2 = 48d / 128;
     public boolean useBlockLight = false;
-    public double xScale3D = 1, yScale3D = 1, zScale3D = 1;
 
     protected CPath.CPathData basePath, rgbPath = null, hsvPath = null, alphaPath = null, scale3DPath = null;
     protected ArrayList<CPath.CPathData> morePaths = new ArrayList<>();
@@ -140,6 +139,7 @@ public class PathedParticle extends Particle
         double z = posZ - interpPosZ;
         double scale = particleScale / 2;
 
+        double xScale3D = 1, yScale3D = 1, zScale3D = 1;
         if (scale3DPath != null)
         {
             VectorN scalar = scale3DPath.getRelativePosition(renderMillis);
