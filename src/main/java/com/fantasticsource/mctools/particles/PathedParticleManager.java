@@ -1,10 +1,10 @@
 package com.fantasticsource.mctools.particles;
 
-import com.fantasticsource.tools.datastructures.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -22,8 +22,6 @@ import org.lwjgl.opengl.GL11;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import static com.fantasticsource.mctools.particles.PathedParticleSharedRenderData.PARTICLE_TEXTURE_ATLAS;
 
 @SideOnly(Side.CLIENT)
 public class PathedParticleManager
@@ -92,6 +90,7 @@ public class PathedParticleManager
 
         GlStateManager.depthMask(false);
         GlStateManager.enableBlend();
+        GlStateManager.enableLighting();
 
         PathedParticleSharedRenderData data;
         for (Map.Entry<PathedParticleSharedRenderData, ArrayList<PathedParticle>> entry : particles.entrySet())
@@ -99,6 +98,16 @@ public class PathedParticleManager
             data = entry.getKey();
             GlStateManager.blendFunc(data.sourceFactor, data.destFactor);
             renderer.bindTexture(data.texture);
+            if (data.useBlockLight)
+            {
+                Minecraft.getMinecraft().entityRenderer.enableLightmap();
+                RenderHelper.enableStandardItemLighting();
+            }
+            else
+            {
+                Minecraft.getMinecraft().entityRenderer.disableLightmap();
+                RenderHelper.disableStandardItemLighting();
+            }
 
             bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
             for (PathedParticle particle : entry.getValue())
@@ -109,6 +118,7 @@ public class PathedParticleManager
         }
 
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        Minecraft.getMinecraft().entityRenderer.disableLightmap();
         GlStateManager.disableBlend();
         GlStateManager.depthMask(true);
     }

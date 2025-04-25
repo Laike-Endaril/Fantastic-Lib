@@ -19,7 +19,6 @@ public class PathedParticle extends Particle
     public final PathedParticleSharedRenderData sharedRenderData;
 
     public double u1 = 32d / 128, v1 = 16d / 128, u2 = 64d / 128, v2 = 48d / 128;
-    public boolean useBlockLight = false;
 
     protected CPath.CPathData basePath, rgbPath = null, hsvPath = null, alphaPath = null, scale3DPath = null;
     protected ArrayList<CPath.CPathData> morePaths = new ArrayList<>();
@@ -51,12 +50,6 @@ public class PathedParticle extends Particle
     public PathedParticle applyPath(CPath path)
     {
         morePaths.add(new CPath.CPathData(path, 0));
-        return this;
-    }
-
-    public PathedParticle useBlockLight(boolean useBlockLight)
-    {
-        this.useBlockLight = useBlockLight;
         return this;
     }
 
@@ -104,13 +97,6 @@ public class PathedParticle extends Particle
             pos.add(pathPos);
         }
         return pos;
-    }
-
-    @Override
-    public int getBrightnessForRender(float p_189214_1_)
-    {
-        if (useBlockLight) return super.getBrightnessForRender(p_189214_1_);
-        return 15728880;
     }
 
     @Override
