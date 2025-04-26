@@ -80,18 +80,43 @@ public class RegistryRegexItemFilter
             System.err.println(I18n.translateToLocalFormatted(FantasticLib.MODID + ".error.badItemName", registryAndNBT[0].trim()));
             return null;
         }
-        if (regexTokens.length > 1)
+        if (regexTokens.length == 1)
         {
-            result.domainRegex = regexTokens[0].trim();
-            result.itemRegex = regexTokens[1].trim();
-            result.metaRegex = regexTokens.length > 2 ? regexTokens[2].trim() : "0";
+            result.domainRegex = ".*";
+            result.itemRegex = regexTokens[0].trim();
+            result.metaRegex = ".*";
+        }
+        else if (regexTokens.length == 2)
+        {
+            if (Pattern.matches(".*[a-zA-Z].*", regexTokens[1]))
+            {
+                result.domainRegex = regexTokens[0];
+                result.itemRegex = regexTokens[1];
+                result.metaRegex = ".*";
+            }
+            else if (Pattern.matches(".*[0-9].*", regexTokens[1]))
+            {
+                result.domainRegex = ".*";
+                result.itemRegex = regexTokens[0];
+                result.metaRegex = regexTokens[1];
+            }
+            else
+            {
+                result.domainRegex = regexTokens[0];
+                result.itemRegex = regexTokens[1];
+                result.metaRegex = ".*";
+            }
         }
         else
         {
-            result.domainRegex = "minecraft";
-            result.itemRegex = regexTokens[0].trim();
-            result.metaRegex = "0";
+            result.domainRegex = regexTokens[0].trim();
+            result.itemRegex = regexTokens[1].trim();
+            result.metaRegex = regexTokens[2].trim();
         }
+
+        if (result.domainRegex.equals("")) result.domainRegex = ".*";
+        if (result.itemRegex.equals("")) result.itemRegex = ".*";
+        if (result.metaRegex.equals("")) result.metaRegex = ".*";
 
 
         //NBT

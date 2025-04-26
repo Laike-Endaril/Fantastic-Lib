@@ -52,18 +52,44 @@ public class RegistryRegexBlockFilter
             System.err.println(I18n.translateToLocalFormatted(FantasticLib.MODID + ".error.badBlockName", blockStateString.trim()));
             return null;
         }
-        if (regexTokens.length > 1)
-        {
-            result.domainRegex = regexTokens[0].trim();
-            result.blockRegex = regexTokens[1].trim();
-            result.metaRegex = regexTokens.length > 2 ? regexTokens[2].trim() : "0";
-        }
-        else
+        if (regexTokens.length == 1)
         {
             result.domainRegex = "minecraft";
             result.blockRegex = regexTokens[0].trim();
             result.metaRegex = "0";
         }
+        else if (regexTokens.length == 2)
+        {
+            if (Pattern.matches(".*[a-zA-Z].*", regexTokens[1]))
+            {
+                result.domainRegex = regexTokens[0];
+                result.blockRegex = regexTokens[1];
+                result.metaRegex = ".*";
+            }
+            else if (Pattern.matches(".*[0-9].*", regexTokens[1]))
+            {
+                result.domainRegex = ".*";
+                result.blockRegex = regexTokens[0];
+                result.metaRegex = regexTokens[1];
+            }
+            else
+            {
+                result.domainRegex = regexTokens[0];
+                result.blockRegex = regexTokens[1];
+                result.metaRegex = ".*";
+            }
+        }
+        else
+        {
+            result.domainRegex = regexTokens[0].trim();
+            result.blockRegex = regexTokens[1].trim();
+            result.metaRegex = regexTokens[2].trim();
+        }
+
+        if (result.domainRegex.equals("")) result.domainRegex = ".*";
+        if (result.blockRegex.equals("")) result.blockRegex = ".*";
+        if (result.metaRegex.equals("")) result.metaRegex = ".*";
+
 
         return result;
     }
