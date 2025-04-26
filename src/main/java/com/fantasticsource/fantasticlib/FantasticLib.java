@@ -253,16 +253,7 @@ public class FantasticLib
 //        if (particleRenderData == null) particleRenderData = new PathedParticleSharedRenderData(false, GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, "minecraft:textures/particle/particles.png");
 //        PathedParticle particle = new PathedParticle(particleRenderData, basePath, addedPath);
 //
-////        if (spriteData == null) spriteData = new SpriteMetaData(128, 128, 32, 16, 64, 48);
-//        if (spriteData == null) spriteData = new SpriteMetaData(128, 128,
-//                0, 64, 8, 72,
-//                8, 64, 16, 72,
-//                16, 64, 24, 72,
-//                24, 64, 32, 72,
-//                32, 64, 40, 72,
-//                40, 64, 48, 72,
-//                48, 64, 56, 72,
-//                56, 64, 64, 72);
+//        if (spriteData == null) spriteData = new SpriteMetaData(128, 128, 0, 64, 8, 72, false, 8);
 //        particle.spriteMetaData = spriteData;
 //
 //        particle.setMaxAge(lifespan);

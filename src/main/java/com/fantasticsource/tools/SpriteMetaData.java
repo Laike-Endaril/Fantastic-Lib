@@ -10,6 +10,49 @@ public class SpriteMetaData
     {
     }
 
+    public SpriteMetaData(int textureTotalWidth, int textureTotalHeight, int firstFrameX1, int firstFrameY1, int firstFrameX2, int firstFrameY2, boolean spriteFramesProgressVertically, int frameCount)
+    {
+        frames.add(new FrameMetaData((double) firstFrameX1 / textureTotalWidth, (double) firstFrameY1 / textureTotalHeight, (double) firstFrameX2 / textureTotalWidth, (double) firstFrameY2 / textureTotalHeight));
+
+        int w = firstFrameX2 - firstFrameX1;
+        int h = firstFrameY2 - firstFrameY1;
+        for (int i = 1; i < frameCount; i++)
+        {
+            if (spriteFramesProgressVertically)
+            {
+                if (firstFrameY2 == textureTotalHeight)
+                {
+                    firstFrameX1 += w;
+                    firstFrameX2 += w;
+                    firstFrameY1 = 0;
+                    firstFrameY2 = firstFrameY1 + h;
+                }
+                else
+                {
+                    firstFrameY1 += h;
+                    firstFrameY2 += h;
+                }
+            }
+            else
+            {
+                if (firstFrameX2 == textureTotalWidth)
+                {
+                    firstFrameY1 += h;
+                    firstFrameY2 += h;
+                    firstFrameX1 = 0;
+                    firstFrameX2 = firstFrameX1 + w;
+                }
+                else
+                {
+                    firstFrameX1 += w;
+                    firstFrameX2 += w;
+                }
+            }
+
+            frames.add(new FrameMetaData((double) firstFrameX1 / textureTotalWidth, (double) firstFrameY1 / textureTotalHeight, (double) firstFrameX2 / textureTotalWidth, (double) firstFrameY2 / textureTotalHeight));
+        }
+    }
+
     public SpriteMetaData(int textureTotalWidth, int textureTotalHeight, int... framePixelValues)
     {
         if (framePixelValues.length == 0) throw new IllegalArgumentException("You must specify values for at least one frame");
