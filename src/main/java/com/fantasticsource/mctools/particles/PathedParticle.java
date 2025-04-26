@@ -18,8 +18,6 @@ public class PathedParticle extends Particle
 
     public final PathedParticleSharedRenderData sharedRenderData;
 
-    public double u1 = 32d / 128, v1 = 16d / 128, u2 = 64d / 128, v2 = 48d / 128;
-
     protected CPath.CPathData basePath, rgbPath = null, hsvPath = null, alphaPath = null, scale3DPath = null;
     protected ArrayList<CPath.CPathData> morePaths = new ArrayList<>();
 
@@ -176,6 +174,22 @@ public class PathedParticle extends Particle
         }
 
         if (alphaPath != null) setAlphaF((float) alphaPath.getRelativePosition(renderMillis).values[0]);
+
+        double u1, v1, u2, v2;
+        if (sharedRenderData.sprite == null)
+        {
+            u1 = sharedRenderData.u1;
+            v1 = sharedRenderData.v1;
+            u2 = sharedRenderData.u2;
+            v2 = sharedRenderData.v2;
+        }
+        else
+        {
+            u1 = sharedRenderData.sprite.getMinU();
+            v1 = sharedRenderData.sprite.getMinV();
+            u2 = sharedRenderData.sprite.getMaxU();
+            v2 = sharedRenderData.sprite.getMaxV();
+        }
 
         buffer.pos(x + vecs[0].x, y + vecs[0].y, z + vecs[0].z).tex(u2, v2).color(particleRed, particleGreen, particleBlue, particleAlpha).lightmap(skyLight, blockLight).endVertex();
         buffer.pos(x + vecs[1].x, y + vecs[1].y, z + vecs[1].z).tex(u2, v1).color(particleRed, particleGreen, particleBlue, particleAlpha).lightmap(skyLight, blockLight).endVertex();
