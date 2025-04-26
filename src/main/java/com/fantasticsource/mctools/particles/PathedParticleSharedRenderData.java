@@ -1,6 +1,5 @@
 package com.fantasticsource.mctools.particles;
 
-import com.fantasticsource.tools.Tools;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -21,7 +20,6 @@ public class PathedParticleSharedRenderData
 
     //Data that DOES NOT require openGL state change
     public final TextureAtlasSprite sprite;
-    public final double u1, v1, u2, v2;
 
     public PathedParticleSharedRenderData(boolean useBlockLight, GlStateManager.SourceFactor sourceFactor, GlStateManager.DestFactor destFactor, String texture)
     {
@@ -41,27 +39,10 @@ public class PathedParticleSharedRenderData
         if (sprite != null)
         {
             this.texture = BLOCK_TEXTURE_ATLAS;
-            u1 = 0;
-            v1 = 0;
-            u2 = 0;
-            v2 = 0;
-        }
-        else if (texture.startsWith("particle"))
-        {
-            String[] tokens = Tools.fixedSplit(texture, ",");
-            this.texture = PARTICLE_TEXTURE_ATLAS;
-            u1 = Double.parseDouble(tokens[1].trim()) / 128;
-            v1 = Double.parseDouble(tokens[2].trim()) / 128;
-            u2 = Double.parseDouble(tokens[3].trim()) / 128;
-            v2 = Double.parseDouble(tokens[4].trim()) / 128;
         }
         else
         {
             this.texture = new ResourceLocation(texture);
-            u1 = 0;
-            v1 = 0;
-            u2 = 1;
-            v2 = 1;
         }
 
         hash = ((useBlockLight ? 1 : 0) << 31) | (sourceFactor.ordinal() << 27) | (destFactor.ordinal() << 23) | (texture.hashCode() & 0b00000000_01111111_11111111_11111111);

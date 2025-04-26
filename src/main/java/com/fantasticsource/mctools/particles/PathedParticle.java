@@ -1,5 +1,6 @@
 package com.fantasticsource.mctools.particles;
 
+import com.fantasticsource.tools.SpriteMetaData;
 import com.fantasticsource.tools.component.path.CPath;
 import com.fantasticsource.tools.datastructures.Color;
 import com.fantasticsource.tools.datastructures.VectorN;
@@ -18,8 +19,10 @@ public class PathedParticle extends Particle
 
     public final PathedParticleSharedRenderData sharedRenderData;
 
-    protected CPath.CPathData basePath, rgbPath = null, hsvPath = null, alphaPath = null, scale3DPath = null;
+    protected CPath.CPathData basePath, rgbPath = null, hsvPath = null, alphaPath = null, scale3DPath = null, animationPath = null;
     protected ArrayList<CPath.CPathData> morePaths = new ArrayList<>();
+
+    public SpriteMetaData spriteMetaData = null;
 
 
     public PathedParticle(PathedParticleSharedRenderData sharedRenderData, CPath basePath, CPath... morePaths)
@@ -45,11 +48,13 @@ public class PathedParticle extends Particle
         return -1;
     }
 
+
     public PathedParticle applyPath(CPath path)
     {
         morePaths.add(new CPath.CPathData(path, 0));
         return this;
     }
+
 
     public PathedParticle rgbPath(CPath path)
     {
@@ -69,9 +74,17 @@ public class PathedParticle extends Particle
         return this;
     }
 
+
     public PathedParticle scale3DPath(CPath path)
     {
         scale3DPath = new CPath.CPathData(path, 0);
+        return this;
+    }
+
+
+    public PathedParticle animationPath(CPath path)
+    {
+        animationPath = new CPath.CPathData(path);
         return this;
     }
 
@@ -100,13 +113,15 @@ public class PathedParticle extends Particle
     @Override
     public void renderParticle(BufferBuilder buffer, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ)
     {
-        //Normalize all path progress over the course of the particle lifetime
-        renderMillis = (long) ((particleAge * 50 + partialTicks * 50) * 20 / particleMaxAge);
-        if (renderMillis > 1000)
+        if (particleAge >= particleMaxAge)
         {
             setExpired();
             return;
         }
+
+
+        //Normalize all path progress over the course of the particle lifetime
+        renderMillis = (long) ((particleAge * 50 + partialTicks * 50) * 20 / particleMaxAge);
 
 
         VectorN pos = currentPos();
@@ -175,21 +190,40 @@ public class PathedParticle extends Particle
 
         if (alphaPath != null) setAlphaF((float) alphaPath.getRelativePosition(renderMillis).values[0]);
 
+
+        //DO NOT try to change block texture animation (it won't work "correctly"); if someone wants per-particle animation using a block texture, they'll need to reference it as an "other" texture
         double u1, v1, u2, v2;
-        if (sharedRenderData.sprite == null)
+        if (spriteMetaData != null)
         {
-            u1 = sharedRenderData.u1;
-            v1 = sharedRenderData.v1;
-            u2 = sharedRenderData.u2;
-            v2 = sharedRenderData.v2;
+            SpriteMetaData.FrameMetaData frame;
+            if (animationPath != null)
+            {
+                frame = spriteMetaData.frames.get((int) (spriteMetaData.frames.size() * animationPath.getRelativePosition(renderMillis).values[0]));
+            }
+            else
+            {
+                frame = spriteMetaData.frames.get(spriteMetaData.frames.size() * particleAge / particleMaxAge);
+            }
+            u1 = frame.u1;
+            v1 = frame.v1;
+            u2 = frame.u2;
+            v2 = frame.v2;
         }
-        else
+        else if (sharedRenderData.sprite != null)
         {
             u1 = sharedRenderData.sprite.getMinU();
             v1 = sharedRenderData.sprite.getMinV();
             u2 = sharedRenderData.sprite.getMaxU();
             v2 = sharedRenderData.sprite.getMaxV();
         }
+        else
+        {
+            u1 = 0;
+            v1 = 0;
+            u2 = 1;
+            v2 = 1;
+        }
+
 
         buffer.pos(x + vecs[0].x, y + vecs[0].y, z + vecs[0].z).tex(u2, v2).color(particleRed, particleGreen, particleBlue, particleAlpha).lightmap(skyLight, blockLight).endVertex();
         buffer.pos(x + vecs[1].x, y + vecs[1].y, z + vecs[1].z).tex(u2, v1).color(particleRed, particleGreen, particleBlue, particleAlpha).lightmap(skyLight, blockLight).endVertex();

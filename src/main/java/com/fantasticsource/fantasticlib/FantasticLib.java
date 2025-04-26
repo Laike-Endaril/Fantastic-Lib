@@ -149,58 +149,6 @@ public class FantasticLib
     }
 
 
-//    private static VectorN
-//            v1 = new VectorN(1, 1, 1),
-//            vX1 = new VectorN(1, 0, 0),
-//            vY1 = new VectorN(0, 1, 0);
-//
-//    private static CPath
-//            p1 = new CPathConstant(v1),
-//            pX1YZ2 = new CPathConstant(new VectorN(1, 2, 2)),
-//            p3 = new CPathConstant(v1.copy().scale(3)),
-//            p7 = new CPathConstant(v1.copy().scale(7)),
-//            pNeg1 = new CPathConstant(v1.copy().scale(-1)),
-//            pIncreasing = new CPathLinear(new VectorN(0.2, 0.2, 0.2)),
-//            pXIncreasing = new CPathLinear(vX1),
-//            pX1 = new CPathConstant(vX1),
-//            pY1 = new CPathConstant(vY1),
-//            pYNeg1 = new CPathConstant(vY1.copy().scale(-1)),
-//            pOneToInfintesimal = new CPathLinear(v1.copy().scale(5)).add(p1).power(pNeg1),
-//            pNegOneToNegInfintesimal = new CPathLinear(v1.copy().scale(5)).add(p1).power(pNeg1).mult(pNeg1),
-//            pOneToInfintesimalInv = p1.copy().add(pNegOneToNegInfintesimal),
-//            pVSpiralIn = new CPathSinuous(pX1, 0.25).add(new CPathSinuous(pY1, 0.25, 0.25)).mult(pOneToInfintesimal).mult(p3);
-////    vSpiralIn = new CPathSinuous(x1PerSec.copy().add(pXNeg3), 0.5).add(new CPathSinuous(y1PerSec.copy().add(pYNeg3), 0.5, 0.25));
-//
-//    @SubscribeEvent
-//    public static void particleTest(TickEvent.ClientTickEvent event)
-//    {
-//        if (event.phase != TickEvent.Phase.END) return;
-//
-//        EntityPlayer player = Minecraft.getMinecraft().player;
-//        if (player == null) return;
-//
-//        CPath follow = new CPathFollowEntity(player).add(new CPathConstant(new VectorN(0, player.eyeHeight, 0)));
-//
-//        CPath yaw = new CPathEntityYaw(player), pitch = new CPathEntityPitch(player);
-//        CPath directionalSpiral = pVSpiralIn.copy().rotate(pX1, pitch).rotate(pYNeg1, yaw);
-//        CPath look = new CPathEntityLook(player).mult(p7);
-//
-//        if (player.world.isRemote)
-//        {
-//            for (int i = 0; i < 10; i++)
-//            {
-//                double offset = Math.PI * 2 * Math.random();
-//                CPathSinuous path = (CPathSinuous) directionalSpiral.copy();
-//                path.thetaOffset = offset;
-//                ((CPathSinuous) path.transforms.get(0).paths[0]).thetaOffset += offset;
-//                PathedParticle particle = new PathedParticle(follow, path.add(look));
-//                particle.setAlphaF(0.2f);
-//                particle.hsvPath(pXIncreasing.copy().add(new CPathConstant(new VectorN(Math.random(), 1, 1))).mod(pX1YZ2));
-//            }
-//        }
-//    }
-
-
     //Staff spin based on the dual-lightsaber skin in AW; a vanilla sword would not match up correctly unless you added an offset constant path to items
     //Requires running of CBipedAnimation.init()
 //    static CBipedAnimation staffSpin = new CBipedAnimation();
@@ -275,5 +223,80 @@ public class FantasticLib
 //        CBipedAnimation animation = (CBipedAnimation) FantasticLib.animation.copy();
 //        animation.setAllStartTimes(System.currentTimeMillis());
 //        CBipedAnimation.addAnimation(entity, animation);
+//    }
+
+
+//    @SideOnly(Side.CLIENT)
+//    @SubscribeEvent
+//    public static void particleTest(LivingEvent.LivingUpdateEvent event)
+//    {
+//        EntityLivingBase livingBase = event.getEntityLiving();
+//        if (livingBase != Minecraft.getMinecraft().player) return;
+//
+//
+//        particlesTextureTest(livingBase);
+//    }
+//
+//    public static PathedParticleSharedRenderData particleRenderData = null;
+//    public static SpriteMetaData spriteData = null;
+//    public static CPath pathScale = new CPathConstant(new VectorN(0.2, 0.2, 0.2));
+//
+//    public static void particlesTextureTest(EntityLivingBase livingBase)
+//    {
+//        CPath basePath = new CPathFollowEntity(livingBase).add(new CPathConstant(new VectorN(livingBase.width * (-0.3 + Tools.random(0.6)), livingBase.height, livingBase.width * (-0.3 + Tools.random(0.6)))));
+//
+//        int lifespan = 5 + Tools.random(25);
+//
+//        CPath addedPath = new CPathLinear(new VectorN(-0.6 + Tools.random(1.2), 0.4 + Tools.random(1.2f), -0.6 + Tools.random(1.2)));
+//
+//
+//        if (particleRenderData == null) particleRenderData = new PathedParticleSharedRenderData(false, GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, "minecraft:textures/particle/particles.png");
+//        PathedParticle particle = new PathedParticle(particleRenderData, basePath, addedPath);
+//
+////        if (spriteData == null) spriteData = new SpriteMetaData(128, 128, 32, 16, 64, 48);
+//        if (spriteData == null) spriteData = new SpriteMetaData(128, 128,
+//                0, 64, 8, 72,
+//                8, 64, 16, 72,
+//                16, 64, 24, 72,
+//                24, 64, 32, 72,
+//                32, 64, 40, 72,
+//                40, 64, 48, 72,
+//                48, 64, 56, 72,
+//                56, 64, 64, 72);
+//        particle.spriteMetaData = spriteData;
+//
+//        particle.setMaxAge(lifespan);
+//
+//        particle.scale3DPath(pathScale);
+//
+//        particle.alphaPath(new CPathLinear(new VectorN(-10)).add(new CPathConstant(new VectorN(10))).highLimit(new CPathConstant(new VectorN(1, 1, 1))));
+//    }
+//
+//    public static void particlesHeadOnFire(EntityLivingBase livingBase)
+//    {
+//        for (int i = 0; i < 50; i++)
+//        {
+//            CPath basePath = new CPathFollowEntity(livingBase).add(new CPathConstant(new VectorN(livingBase.width * (-0.3 + Tools.random(0.6)), livingBase.height, livingBase.width * (-0.3 + Tools.random(0.6)))));
+//
+//            int lifespan = 5 + Tools.random(25);
+//
+//            CPath addedPath = new CPathLinear(new VectorN(0, 0.4 + Tools.random(1.2f), 0));
+//
+//            PathedParticle particle = new PathedParticle(particleRenderData, basePath, addedPath);
+//            particle.setMaxAge(lifespan);
+//
+//
+//            CPath pathZero = new CPathConstant(new VectorN(0, 0, 0));
+//            CPath pathOne = new CPathConstant(new VectorN(1, 1, 1));
+//
+//            CPath pathRGB = new CPathLinear(new VectorN(-1, -2, -3)).add(pathOne).lowLimit(pathZero);
+//            particle.rgbPath(pathRGB);
+//
+//
+//            particle.alphaPath(new CPathLinear(new VectorN(-1)).add(new CPathConstant(new VectorN(1))));
+//
+//
+//            particle.scale3DPath(new CPathConstant(new VectorN(0.1, 0.1, 0.1)));
+//        }
 //    }
 }
