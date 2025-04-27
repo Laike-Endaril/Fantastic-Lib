@@ -160,10 +160,7 @@ public class PathedParticle
             //Natural death
             if (onDeathParticles[0] != null)
             {
-                age = 0;
                 VectorN pos = currentPos();
-                age = maxAge;
-
                 for (PathedParticle particle : onDeathParticles[0])
                 {
                     particle = particle.createClone();
