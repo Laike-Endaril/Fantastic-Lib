@@ -7,19 +7,22 @@ import com.fantasticsource.tools.datastructures.VectorN;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.entity.Entity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 
 import java.util.ArrayList;
 
-public class PathedParticle extends Particle
+public class PathedParticle
 {
     public static long renderMillis;
 
     public final PathedParticleSharedRenderData sharedRenderData;
 
-    protected CPath.CPathData basePath, rgbPath = null, hsvPath = null, alphaPath = null, scale3DPath = null, animationPath = null;
+    protected int age = 0, maxAge = 20;
+
+    protected CPath.CPathData basePath, rgbPath = null, hsvPath = null, alphaPath = null, scale3DPath = null, rotationPath = null, animationPath = null;
     protected ArrayList<CPath.CPathData> morePaths = new ArrayList<>();
 
     public SpriteMetaData spriteMetaData = null;
@@ -27,25 +30,19 @@ public class PathedParticle extends Particle
 
     public PathedParticle(PathedParticleSharedRenderData sharedRenderData, CPath basePath, CPath... morePaths)
     {
-        super(Minecraft.getMinecraft().world, Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
-
         this.sharedRenderData = sharedRenderData;
 
         this.basePath = new CPath.CPathData(basePath, 0);
         for (CPath path : morePaths) applyPath(path);
 
-        particleMaxAge = 20;
-        particleScale = 1;
-        canCollide = false;
-
         PathedParticleManager.add(this);
     }
 
 
-    @Override
-    public int getFXLayer()
+    public PathedParticle setMaxAge(int maxAge)
     {
-        return -1;
+        this.maxAge = maxAge;
+        return this;
     }
 
 
@@ -82,6 +79,13 @@ public class PathedParticle extends Particle
     }
 
 
+    public PathedParticle rotationPath(CPath path)
+    {
+        rotationPath = new CPath.CPathData(path, 0);
+        return this;
+    }
+
+
     public PathedParticle animationPath(CPath path)
     {
         animationPath = new CPath.CPathData(path);
@@ -89,10 +93,9 @@ public class PathedParticle extends Particle
     }
 
 
-    @Override
     public void onUpdate()
     {
-        particleAge++;
+        age++;
     }
 
     protected VectorN currentPos()
@@ -110,85 +113,89 @@ public class PathedParticle extends Particle
         return pos;
     }
 
-    @Override
-    public void renderParticle(BufferBuilder buffer, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ)
+    public void renderParticle(BufferBuilder buffer, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ)
     {
-        if (particleAge >= particleMaxAge)
-        {
-            setExpired();
-            return;
-        }
+        if (Minecraft.getMinecraft().world == null) age = maxAge;
+        if (age >= maxAge) return;
 
 
         //Normalize all path progress over the course of the particle lifetime
-        renderMillis = (long) ((particleAge * 50 + partialTicks * 50) * 20 / particleMaxAge);
+        renderMillis = (long) ((age * 50 + partialTicks * 50) * 20 / maxAge);
 
 
         VectorN pos = currentPos();
         if (pos == null)
         {
-            setExpired();
+            age = maxAge;
             return;
         }
-        setPosition(pos.values[0], pos.values[1], pos.values[2]);
 
 
-        double x = posX - interpPosX;
-        double y = posY - interpPosY;
-        double z = posZ - interpPosZ;
-        double scale = particleScale / 2;
+        double x = pos.values[0] - Particle.interpPosX;
+        double y = pos.values[1] - Particle.interpPosY;
+        double z = pos.values[2] - Particle.interpPosZ;
 
-        double xScale3D = 1, yScale3D = 1, zScale3D = 1;
+        double xScale3D = 0.05, yScale3D = 0.05, zScale3D = 0.05;
         if (scale3DPath != null)
         {
             VectorN scalar = scale3DPath.getRelativePosition(renderMillis);
-            xScale3D = scalar.values[0];
-            yScale3D = scalar.values[1];
-            zScale3D = scalar.values[2];
+            xScale3D *= scalar.values[0];
+            yScale3D *= scalar.values[1];
+            zScale3D *= scalar.values[2];
         }
 
         Vec3d[] vecs = new Vec3d[]
                 {
-                        new Vec3d((-rotationX - rotationXY) * xScale3D, -rotationZ * yScale3D, (-rotationYZ - rotationXZ) * zScale3D).scale(scale),
-                        new Vec3d((-rotationX + rotationXY) * xScale3D, rotationZ * yScale3D, (-rotationYZ + rotationXZ) * zScale3D).scale(scale),
-                        new Vec3d((rotationX + rotationXY) * xScale3D, rotationZ * yScale3D, (rotationYZ + rotationXZ) * zScale3D).scale(scale),
-                        new Vec3d((rotationX - rotationXY) * xScale3D, -rotationZ * yScale3D, (rotationYZ - rotationXZ) * zScale3D).scale(scale)
+                        new Vec3d((-rotationX - rotationXY) * xScale3D, -rotationZ * yScale3D, (-rotationYZ - rotationXZ) * zScale3D),
+                        new Vec3d((-rotationX + rotationXY) * xScale3D, rotationZ * yScale3D, (-rotationYZ + rotationXZ) * zScale3D),
+                        new Vec3d((rotationX + rotationXY) * xScale3D, rotationZ * yScale3D, (rotationYZ + rotationXZ) * zScale3D),
+                        new Vec3d((rotationX - rotationXY) * xScale3D, -rotationZ * yScale3D, (rotationYZ - rotationXZ) * zScale3D)
                 };
 
-        if (particleAngle != 0)
+        if (rotationPath != null)
         {
-            float theta = (particleAngle + (particleAngle - prevParticleAngle) * partialTicks) * 0.5f;
+            float theta = (float) (rotationPath.getRelativePosition(renderMillis).values[0] * 0.5f);
             float cosTheta = MathHelper.cos(theta);
-            double xx = MathHelper.sin(theta) * cameraViewDir.x;
-            double yy = MathHelper.sin(theta) * cameraViewDir.y;
-            double zz = MathHelper.sin(theta) * cameraViewDir.z;
-            Vec3d vec3d = new Vec3d(xx, yy, zz);
+            Vec3d vec3d = new Vec3d(MathHelper.sin(theta) * Particle.cameraViewDir.x, MathHelper.sin(theta) * Particle.cameraViewDir.y, MathHelper.sin(theta) * Particle.cameraViewDir.z);
 
-            for (int l = 0; l < 4; ++l)
+            for (int i = 0; i < 4; ++i)
             {
-                vecs[l] = vec3d.scale(2 * vecs[l].dotProduct(vec3d)).add(vecs[l].scale(cosTheta * cosTheta - vec3d.dotProduct(vec3d))).add(vec3d.crossProduct(vecs[l]).scale(2 * cosTheta));
+                vecs[i] = vec3d.scale(2 * vecs[i].dotProduct(vec3d)).add(vecs[i].scale(cosTheta * cosTheta - vec3d.dotProduct(vec3d))).add(vec3d.crossProduct(vecs[i]).scale(2 * cosTheta));
             }
         }
 
 
-        int lightmapIndex = getBrightnessForRender(partialTicks);
+        World world = Minecraft.getMinecraft().world;
+        BlockPos blockpos = new BlockPos(x, y, z);
+        int lightmapIndex = world.isBlockLoaded(blockpos) ? world.getCombinedLight(blockpos, 0) : 0;
         int skyLight = lightmapIndex >> 16 & 65535;
         int blockLight = lightmapIndex & 65535;
 
 
+        float r, g, b;
         if (rgbPath != null)
         {
             VectorN rgb = rgbPath.getRelativePosition(renderMillis);
-            setRBGColorF((float) rgb.values[0], (float) rgb.values[1], (float) rgb.values[2]);
+            r = (float) rgb.values[0];
+            g = (float) rgb.values[1];
+            b = (float) rgb.values[2];
         }
         else if (hsvPath != null)
         {
             VectorN hsv = hsvPath.getRelativePosition(renderMillis);
             Color c = new Color(0).setColorHSV((float) hsv.values[0], (float) hsv.values[1], (float) hsv.values[2]);
-            setRBGColorF(c.rf(), c.gf(), c.bf());
+            r = c.rf();
+            g = c.gf();
+            b = c.bf();
+        }
+        else
+        {
+            r = 1;
+            g = 1;
+            b = 1;
         }
 
-        if (alphaPath != null) setAlphaF((float) alphaPath.getRelativePosition(renderMillis).values[0]);
+        float a = alphaPath == null ? 1 : (float) alphaPath.getRelativePosition(renderMillis).values[0];
 
 
         //DO NOT try to change block texture animation (it won't work "correctly"); if someone wants per-particle animation using a block texture, they'll need to reference it as an "other" texture
@@ -202,7 +209,7 @@ public class PathedParticle extends Particle
             }
             else
             {
-                frame = spriteMetaData.frames.get(spriteMetaData.frames.size() * particleAge / particleMaxAge);
+                frame = spriteMetaData.frames.get(spriteMetaData.frames.size() * age / maxAge);
             }
             u1 = frame.u1;
             v1 = frame.v1;
@@ -225,9 +232,9 @@ public class PathedParticle extends Particle
         }
 
 
-        buffer.pos(x + vecs[0].x, y + vecs[0].y, z + vecs[0].z).tex(u2, v2).color(particleRed, particleGreen, particleBlue, particleAlpha).lightmap(skyLight, blockLight).endVertex();
-        buffer.pos(x + vecs[1].x, y + vecs[1].y, z + vecs[1].z).tex(u2, v1).color(particleRed, particleGreen, particleBlue, particleAlpha).lightmap(skyLight, blockLight).endVertex();
-        buffer.pos(x + vecs[2].x, y + vecs[2].y, z + vecs[2].z).tex(u1, v1).color(particleRed, particleGreen, particleBlue, particleAlpha).lightmap(skyLight, blockLight).endVertex();
-        buffer.pos(x + vecs[3].x, y + vecs[3].y, z + vecs[3].z).tex(u1, v2).color(particleRed, particleGreen, particleBlue, particleAlpha).lightmap(skyLight, blockLight).endVertex();
+        buffer.pos(x + vecs[0].x, y + vecs[0].y, z + vecs[0].z).tex(u2, v2).color(r, g, b, a).lightmap(skyLight, blockLight).endVertex();
+        buffer.pos(x + vecs[1].x, y + vecs[1].y, z + vecs[1].z).tex(u2, v1).color(r, g, b, a).lightmap(skyLight, blockLight).endVertex();
+        buffer.pos(x + vecs[2].x, y + vecs[2].y, z + vecs[2].z).tex(u1, v1).color(r, g, b, a).lightmap(skyLight, blockLight).endVertex();
+        buffer.pos(x + vecs[3].x, y + vecs[3].y, z + vecs[3].z).tex(u1, v2).color(r, g, b, a).lightmap(skyLight, blockLight).endVertex();
     }
 }

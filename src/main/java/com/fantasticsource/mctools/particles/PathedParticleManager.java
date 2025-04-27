@@ -49,7 +49,7 @@ public class PathedParticleManager
             list.removeIf(particle ->
             {
                 particle.onUpdate();
-                return !particle.isAlive();
+                return particle.age >= particle.maxAge;
             });
             if (list.size() == 0) particles.remove(entry.getKey());
         }
@@ -104,7 +104,7 @@ public class PathedParticleManager
             bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
             for (PathedParticle particle : entry.getValue())
             {
-                particle.renderParticle(bufferbuilder, renderEntity, partialTick, f1, f5, f2, f3, f4);
+                particle.renderParticle(bufferbuilder, partialTick, f1, f5, f2, f3, f4);
             }
             tessellator.draw();
         }
