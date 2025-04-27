@@ -237,60 +237,22 @@ public class FantasticLib
 //        particlesTextureTest(livingBase);
 //    }
 //
-//    public static PathedParticleSharedRenderData particleRenderData = null;
-//    public static SpriteMetaData spriteData = null;
-//    public static CPath pathScale = new CPathConstant(new VectorN(1, 1, 1));
-//    public static CPath pathRotation = new CPathLinear(new VectorN(Math.PI * 2));
+//    public static PathedParticle particle = null;
 //
 //    public static void particlesTextureTest(EntityLivingBase livingBase)
 //    {
-//        CPath basePath = new CPathConstant(new VectorN(livingBase.posX, livingBase.posY, livingBase.posZ)).add(new CPathConstant(new VectorN(livingBase.width * (-0.3 + Tools.random(0.6)), livingBase.height, livingBase.width * (-0.3 + Tools.random(0.6)))));
-//
-//        int lifespan = 5 + Tools.random(25);
-//
-//        CPath addedPath = new CPathLinear(new VectorN(-0.6 + Tools.random(1.2), 0.4 + Tools.random(1.2f), -0.6 + Tools.random(1.2)));
-//
-//
-//        if (particleRenderData == null) particleRenderData = new PathedParticleSharedRenderData(false, GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, "minecraft:textures/particle/particles.png");
-//        PathedParticle particle = new PathedParticle(particleRenderData, basePath, addedPath);
-//
-//        if (spriteData == null) spriteData = new SpriteMetaData(128, 128, 0, 72, 8, 80, false, 8);
-//        particle.spriteMetaData = spriteData;
-//
-//        particle.setMaxAge(lifespan);
-//
-//        particle.scale3DPath(pathScale);
-//
-//        particle.rotationPath(pathRotation);
-//
-//        particle.alphaPath(new CPathLinear(new VectorN(-10)).add(new CPathConstant(new VectorN(10))).highLimit(new CPathConstant(new VectorN(1, 1, 1))));
-//    }
-//
-//    public static void particlesHeadOnFire(EntityLivingBase livingBase)
-//    {
-//        for (int i = 0; i < 50; i++)
+//        if (particle == null)
 //        {
-//            CPath basePath = new CPathFollowEntity(livingBase).add(new CPathConstant(new VectorN(livingBase.width * (-0.3 + Tools.random(0.6)), livingBase.height, livingBase.width * (-0.3 + Tools.random(0.6)))));
-//
-//            int lifespan = 5 + Tools.random(25);
-//
-//            CPath addedPath = new CPathLinear(new VectorN(0, 0.4 + Tools.random(1.2f), 0));
-//
-//            PathedParticle particle = new PathedParticle(particleRenderData, basePath, addedPath);
-//            particle.setMaxAge(lifespan);
-//
-//
-//            CPath pathZero = new CPathConstant(new VectorN(0, 0, 0));
-//            CPath pathOne = new CPathConstant(new VectorN(1, 1, 1));
-//
-//            CPath pathRGB = new CPathLinear(new VectorN(-1, -2, -3)).add(pathOne).lowLimit(pathZero);
-//            particle.rgbPath(pathRGB);
-//
-//
-//            particle.alphaPath(new CPathLinear(new VectorN(-1)).add(new CPathConstant(new VectorN(1))));
-//
-//
-//            particle.scale3DPath(new CPathConstant(new VectorN(0.1, 0.1, 0.1)));
+//            CPath basePath = new CPathConstant(new VectorN(livingBase.posX, livingBase.posY, livingBase.posZ)).add(new CPathConstant(new VectorN(livingBase.width * (-0.3 + Tools.random(0.6)), livingBase.height, livingBase.width * (-0.3 + Tools.random(0.6)))));
+//            CPath addedPath = new CPathLinear(new VectorN(-0.6 + Tools.random(1.2), 0.4 + Tools.random(1.2f), -0.6 + Tools.random(1.2)));
+//            PathedParticleSharedRenderData particleRenderData = new PathedParticleSharedRenderData(false, GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, "minecraft:textures/particle/particles.png");
+//            particle = new PathedParticle(particleRenderData, basePath, addedPath);
+//            particle.setMaxAge(5 + Tools.random(25));
+//            particle.spriteMetaData = new SpriteMetaData(128, 128, 0, 72, 8, 80, false, 8);
+//            particle.scale3DPath(new CPathConstant(new VectorN(1, 1, 1)));
+//            particle.rotationPath(new CPathLinear(new VectorN(Math.PI * 2)));
+//            particle.alphaPath(new CPathLinear(new VectorN(-10)).add(new CPathConstant(new VectorN(10))).highLimit(new CPathConstant(new VectorN(1, 1, 1))));
 //        }
+//        else particle.clone();
 //    }
 }

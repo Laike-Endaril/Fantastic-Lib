@@ -18,6 +18,7 @@ public class PathedParticle
 {
     public static long renderMillis;
 
+
     public final PathedParticleSharedRenderData sharedRenderData;
 
     protected int age = 0, maxAge = 20;
@@ -36,6 +37,25 @@ public class PathedParticle
         for (CPath path : morePaths) applyPath(path);
 
         PathedParticleManager.add(this);
+    }
+
+
+    public PathedParticle clone()
+    {
+        PathedParticle other = new PathedParticle(sharedRenderData, basePath.path);
+        for (CPath.CPathData data : morePaths) other.applyPath(data.path);
+
+        if (rgbPath != null) other.rgbPath(rgbPath.path);
+        if (hsvPath != null) other.hsvPath(hsvPath.path);
+        if (alphaPath != null) other.alphaPath(alphaPath.path);
+        if (scale3DPath != null) other.scale3DPath(scale3DPath.path);
+        if (rotationPath != null) other.rotationPath(rotationPath.path);
+        if (animationPath != null) other.animationPath(animationPath.path);
+
+        other.maxAge = maxAge;
+        other.spriteMetaData = spriteMetaData;
+
+        return other;
     }
 
 
