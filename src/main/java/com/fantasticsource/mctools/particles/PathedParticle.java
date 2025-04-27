@@ -13,20 +13,25 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class PathedParticle
 {
-    public static long renderMillis;
-
-
+    //Cloned
     public final PathedParticleSharedRenderData sharedRenderData;
 
-    protected int age = 0, maxAge = 20;
+    protected int maxAge = 20;
 
     protected CPath.CPathData basePath, rgbPath = null, hsvPath = null, alphaPath = null, scale3DPath = null, rotationPath = null, animationPath = null;
     protected ArrayList<CPath.CPathData> morePaths = new ArrayList<>();
 
+    protected ArrayList<PathedParticle>[] onDeathParticles = new ArrayList[2];
     public SpriteMetaData spriteMetaData = null;
+
+
+    //Uncloned
+    protected int age = 0;
+    protected VectorN offset = new VectorN(0, 0, 0);
 
 
     public PathedParticle(PathedParticleSharedRenderData sharedRenderData, CPath basePath, CPath... morePaths)
@@ -35,8 +40,6 @@ public class PathedParticle
 
         this.basePath = new CPath.CPathData(basePath, 0);
         for (CPath path : morePaths) applyPath(path);
-
-        PathedParticleManager.add(this);
     }
 
 
@@ -55,7 +58,28 @@ public class PathedParticle
         other.maxAge = maxAge;
         other.spriteMetaData = spriteMetaData;
 
+        if (onDeathParticles[0] != null) other.onDeathParticles[0] = new ArrayList<>(onDeathParticles[0]);
+        if (onDeathParticles[1] != null) other.onDeathParticles[1] = new ArrayList<>(onDeathParticles[1]);
+
         return other;
+    }
+
+
+    public PathedParticle create()
+    {
+        PathedParticleManager.add(this);
+        return this;
+    }
+
+    public PathedParticle createClone()
+    {
+        return clone().create();
+    }
+
+    public PathedParticle kill()
+    {
+        age = maxAge;
+        return this;
     }
 
 
@@ -113,25 +137,64 @@ public class PathedParticle
     }
 
 
+    public PathedParticle addOnDeathParticles(boolean atDeathPosition, PathedParticle... particles)
+    {
+        int index = atDeathPosition ? 0 : 1;
+        ArrayList<PathedParticle> list = onDeathParticles[index];
+        if (list == null)
+        {
+            list = new ArrayList<>();
+            onDeathParticles[index] = list;
+        }
+
+        list.addAll(Arrays.asList(particles));
+
+        return this;
+    }
+
+
     public void onUpdate()
     {
-        age++;
+        if (++age == maxAge)
+        {
+            //Natural death
+            if (onDeathParticles[0] != null)
+            {
+                age = 0;
+                VectorN pos = currentPos();
+                age = maxAge;
+
+                for (PathedParticle particle : onDeathParticles[0])
+                {
+                    particle = particle.createClone();
+                    particle.offset = pos.copy().subtract(particle.currentPos());
+                }
+            }
+            if (onDeathParticles[1] != null)
+            {
+                for (PathedParticle particle : onDeathParticles[1]) particle.createClone();
+            }
+        }
     }
+
 
     protected VectorN currentPos()
     {
-        VectorN pos = basePath.getRelativePosition(renderMillis), pathPos;
+        long tickStartMillis = (long) (age * 1000 / maxAge);
+
+        VectorN pos = basePath.getRelativePosition(tickStartMillis), pathPos;
         if (pos == null) return null;
 
         for (CPath.CPathData data : morePaths)
         {
-            pathPos = data.getRelativePosition(renderMillis);
+            pathPos = data.getRelativePosition(tickStartMillis);
             if (pathPos == null) return null;
 
             pos.add(pathPos);
         }
-        return pos;
+        return pos.add(offset);
     }
+
 
     public void renderParticle(BufferBuilder buffer, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ)
     {
@@ -140,7 +203,7 @@ public class PathedParticle
 
 
         //Normalize all path progress over the course of the particle lifetime
-        renderMillis = (long) ((age * 50 + partialTicks * 50) * 20 / maxAge);
+        long renderMillis = (long) ((age * 50 + partialTicks * 50) * 20 / maxAge);
 
 
         VectorN pos = currentPos();

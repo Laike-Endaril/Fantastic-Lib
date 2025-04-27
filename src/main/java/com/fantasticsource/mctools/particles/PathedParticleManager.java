@@ -30,6 +30,9 @@ public class PathedParticleManager
     protected static final TextureManager renderer = Minecraft.getMinecraft().renderEngine;
     protected static LinkedHashMap<PathedParticleSharedRenderData, ArrayList<PathedParticle>> particles = new LinkedHashMap<>();
 
+    protected static boolean busy = false;
+    protected static ArrayList<PathedParticle> queued = new ArrayList<>();
+
     static
     {
         MinecraftForge.EVENT_BUS.register(PathedParticleManager.class);
@@ -37,11 +40,13 @@ public class PathedParticleManager
 
     public static void add(PathedParticle particle)
     {
-        particles.computeIfAbsent(particle.sharedRenderData, o -> new ArrayList<>()).add(particle);
+        if (busy) queued.add(particle);
+        else particles.computeIfAbsent(particle.sharedRenderData, o -> new ArrayList<>()).add(particle);
     }
 
     public static void update()
     {
+        busy = true;
         ArrayList<PathedParticle> list;
         for (Map.Entry<PathedParticleSharedRenderData, ArrayList<PathedParticle>> entry : particles.entrySet())
         {
@@ -53,6 +58,10 @@ public class PathedParticleManager
             });
             if (list.size() == 0) particles.remove(entry.getKey());
         }
+        busy = false;
+
+        for (PathedParticle particle : queued) add(particle);
+        queued.clear();
     }
 
     public static void render(float partialTick)

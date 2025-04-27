@@ -237,22 +237,34 @@ public class FantasticLib
 //        particlesTextureTest(livingBase);
 //    }
 //
-//    public static PathedParticle particle = null;
+//    public static PathedParticle particle = null, particle2;
 //
 //    public static void particlesTextureTest(EntityLivingBase livingBase)
 //    {
+//        if (ClientTickTimer.currentTick() % 60 != 0) return;
+//
+//
 //        if (particle == null)
 //        {
+//            //TODO figure out why on-death particles aren't correctly spawning at parent particle position when told to do so
+//            //TODO add a way to randomize once, either as (a) new path type(s) or as a path method that sets a flag and alters the initial values of PathData when created?
+//            //TODO add multi-rotation support?  Eg. for leaves spinning on top of water, might want the particle to lay flat on the water surface and spin?
 //            CPath basePath = new CPathConstant(new VectorN(livingBase.posX, livingBase.posY, livingBase.posZ)).add(new CPathConstant(new VectorN(livingBase.width * (-0.3 + Tools.random(0.6)), livingBase.height, livingBase.width * (-0.3 + Tools.random(0.6)))));
 //            CPath addedPath = new CPathLinear(new VectorN(-0.6 + Tools.random(1.2), 0.4 + Tools.random(1.2f), -0.6 + Tools.random(1.2)));
 //            PathedParticleSharedRenderData particleRenderData = new PathedParticleSharedRenderData(false, GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, "minecraft:textures/particle/particles.png");
 //            particle = new PathedParticle(particleRenderData, basePath, addedPath);
-//            particle.setMaxAge(5 + Tools.random(25));
 //            particle.spriteMetaData = new SpriteMetaData(128, 128, 0, 72, 8, 80, false, 8);
 //            particle.scale3DPath(new CPathConstant(new VectorN(1, 1, 1)));
-//            particle.rotationPath(new CPathLinear(new VectorN(Math.PI * 2)));
+//            particle.rotationPath(new CPathLinear(new VectorN(Math.PI * 2 * 2)));
 //            particle.alphaPath(new CPathLinear(new VectorN(-10)).add(new CPathConstant(new VectorN(10))).highLimit(new CPathConstant(new VectorN(1, 1, 1))));
+//
+//
+//            particle2 = particle.clone();
+//
+//
+//            particle.addOnDeathParticles(true, particle2);
 //        }
-//        else particle.clone();
+//
+//        particle.createClone();
 //    }
 }
