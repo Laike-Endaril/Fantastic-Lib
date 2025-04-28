@@ -252,6 +252,7 @@ public class FantasticLib
 //
 //    public static void particlesTextureTest(EntityLivingBase livingBase)
 //    {
+//        //TODO add origin-point support (pull data from spriteMetaData)
 //        //TODO add multi-rotation support?  Eg. for leaves spinning on top of water, might want the particle to lay flat on the water surface and spin?
 //
 //        if (particleFactory == null)
