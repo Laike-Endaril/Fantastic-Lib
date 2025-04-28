@@ -228,43 +228,66 @@ public class FantasticLib
 
 //    @SideOnly(Side.CLIENT)
 //    @SubscribeEvent
-//    public static void particleTest(LivingEvent.LivingUpdateEvent event)
+//    public static void particleTest(TickEvent.ClientTickEvent event)
 //    {
-//        EntityLivingBase livingBase = event.getEntityLiving();
-//        if (livingBase != Minecraft.getMinecraft().player) return;
+//        World world = Minecraft.getMinecraft().world;
+//        if (event.phase != TickEvent.Phase.END || world == null) return;
 //
 //
-//        particlesTextureTest(livingBase);
+//        for (Entity entity : Minecraft.getMinecraft().world.loadedEntityList)
+//        {
+//            if (entity instanceof EntityLivingBase) particlesTextureTest((EntityLivingBase) entity);
+//        }
 //    }
 //
-//    public static PathedParticle particle = null, particle2;
+//    public static PathedParticleSharedRenderData particleRenderData;
+//    public static SpriteMetaData spriteMetaData = new SpriteMetaData(128, 128, 0, 72, 8, 80, false, 8);
+//    public static CPath
+//            scale3DPath = new CPathConstant(new VectorN(1, 1, 1)),
+//            rotationPath = new CPathLinear(new VectorN(Math.PI * 2)),
+//            alphaPath = new CPathLinear(new VectorN(-10)).add(new CPathConstant(new VectorN(10))).highLimit(new CPathConstant(new VectorN(1, 1, 1)));
+//
+//    public static PathedParticleFactory particleFactory = null, particleFactory2;
 //
 //    public static void particlesTextureTest(EntityLivingBase livingBase)
 //    {
-//        if (ClientTickTimer.currentTick() % 60 != 0) return;
+//        //TODO figure out why current particles "look stiff", maybe rotation issue? Integer division somewhere?
+//        //TODO add multi-rotation support?  Eg. for leaves spinning on top of water, might want the particle to lay flat on the water surface and spin?
 //
-//
-//        if (particle == null)
+//        if (particleFactory == null)
 //        {
-//            //TODO figure out why on-death particles aren't correctly spawning at parent particle position when told to do so
-//            //TODO add a way to randomize once, either as (a) new path type(s) or as a path method that sets a flag and alters the initial values of PathData when created?
-//            //TODO add multi-rotation support?  Eg. for leaves spinning on top of water, might want the particle to lay flat on the water surface and spin?
-//            CPath basePath = new CPathConstant(new VectorN(livingBase.posX, livingBase.posY, livingBase.posZ)).add(new CPathConstant(new VectorN(livingBase.width * (-0.3 + Tools.random(0.6)), livingBase.height, livingBase.width * (-0.3 + Tools.random(0.6)))));
-//            CPath addedPath = new CPathLinear(new VectorN(-0.6 + Tools.random(1.2), 0.4 + Tools.random(1.2f), -0.6 + Tools.random(1.2)));
-//            PathedParticleSharedRenderData particleRenderData = new PathedParticleSharedRenderData(false, GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, "minecraft:textures/particle/particles.png");
-//            particle = new PathedParticle(particleRenderData, basePath, addedPath);
-//            particle.spriteMetaData = new SpriteMetaData(128, 128, 0, 72, 8, 80, false, 8);
-//            particle.scale3DPath(new CPathConstant(new VectorN(1, 1, 1)));
-//            particle.rotationPath(new CPathLinear(new VectorN(Math.PI * 2 * 2)));
-//            particle.alphaPath(new CPathLinear(new VectorN(-10)).add(new CPathConstant(new VectorN(10))).highLimit(new CPathConstant(new VectorN(1, 1, 1))));
+//            particleRenderData = new PathedParticleSharedRenderData(false, GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, "minecraft:textures/particle/particles.png");
 //
 //
-//            particle2 = particle.clone();
+//            particleFactory = args ->
+//            {
+//                CPath basePath = new CPathConstant(new VectorN(-0.3 + Tools.random(0.6), 0, -0.3 + Tools.random(0.6)));
+//                basePath.add(new CPathLinear(new VectorN(-0.6 + Tools.random(1.2), 0.4 + Tools.random(1.2f), -0.6 + Tools.random(1.2))));
+//
+//                PathedParticle particle = new PathedParticle(particleRenderData, basePath);
+//                particle.spriteMetaData = spriteMetaData;
+//                particle.scale3DPath(scale3DPath);
+//                particle.rotationPath(rotationPath);
+//                particle.alphaPath(alphaPath);
+//
+//                return particle;
+//            };
 //
 //
-//            particle.addOnDeathParticles(true, particle2);
+//            particleFactory2 = args ->
+//            {
+//                EntityLivingBase livingBase1 = (EntityLivingBase) args[0];
+//
+//                PathedParticle particle = particleFactory.create();
+//
+//                particle.applyPath(new CPathConstant(new VectorN(livingBase1.posX, livingBase1.posY + livingBase1.height, livingBase1.posZ)));
+//
+//                particle.addOnDeathParticles(true, particleFactory);
+//
+//                return particle;
+//            };
 //        }
 //
-//        particle.createClone();
+//        particleFactory2.create(livingBase);
 //    }
 }

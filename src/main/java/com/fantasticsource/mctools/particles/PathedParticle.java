@@ -25,7 +25,7 @@ public class PathedParticle
     protected CPath.CPathData basePath, rgbPath = null, hsvPath = null, alphaPath = null, scale3DPath = null, rotationPath = null, animationPath = null;
     protected ArrayList<CPath.CPathData> morePaths = new ArrayList<>();
 
-    protected ArrayList<PathedParticle>[] onDeathParticles = new ArrayList[2];
+    protected ArrayList<PathedParticleFactory>[] onDeathParticles = new ArrayList[2];
     public SpriteMetaData spriteMetaData = null;
 
 
@@ -40,41 +40,10 @@ public class PathedParticle
 
         this.basePath = new CPath.CPathData(basePath, 0);
         for (CPath path : morePaths) applyPath(path);
-    }
 
-
-    public PathedParticle clone()
-    {
-        PathedParticle other = new PathedParticle(sharedRenderData, basePath.path);
-        for (CPath.CPathData data : morePaths) other.applyPath(data.path);
-
-        if (rgbPath != null) other.rgbPath(rgbPath.path);
-        if (hsvPath != null) other.hsvPath(hsvPath.path);
-        if (alphaPath != null) other.alphaPath(alphaPath.path);
-        if (scale3DPath != null) other.scale3DPath(scale3DPath.path);
-        if (rotationPath != null) other.rotationPath(rotationPath.path);
-        if (animationPath != null) other.animationPath(animationPath.path);
-
-        other.maxAge = maxAge;
-        other.spriteMetaData = spriteMetaData;
-
-        if (onDeathParticles[0] != null) other.onDeathParticles[0] = new ArrayList<>(onDeathParticles[0]);
-        if (onDeathParticles[1] != null) other.onDeathParticles[1] = new ArrayList<>(onDeathParticles[1]);
-
-        return other;
-    }
-
-
-    public PathedParticle create()
-    {
         PathedParticleManager.add(this);
-        return this;
     }
 
-    public PathedParticle createClone()
-    {
-        return clone().create();
-    }
 
     public PathedParticle kill()
     {
@@ -137,17 +106,17 @@ public class PathedParticle
     }
 
 
-    public PathedParticle addOnDeathParticles(boolean atDeathPosition, PathedParticle... particles)
+    public PathedParticle addOnDeathParticles(boolean atDeathPosition, PathedParticleFactory... particleFactories)
     {
         int index = atDeathPosition ? 0 : 1;
-        ArrayList<PathedParticle> list = onDeathParticles[index];
+        ArrayList<PathedParticleFactory> list = onDeathParticles[index];
         if (list == null)
         {
             list = new ArrayList<>();
             onDeathParticles[index] = list;
         }
 
-        list.addAll(Arrays.asList(particles));
+        list.addAll(Arrays.asList(particleFactories));
 
         return this;
     }
@@ -161,15 +130,16 @@ public class PathedParticle
             if (onDeathParticles[0] != null)
             {
                 VectorN pos = currentPos();
-                for (PathedParticle particle : onDeathParticles[0])
+                PathedParticle particle;
+                for (PathedParticleFactory particleFactory : onDeathParticles[0])
                 {
-                    particle = particle.createClone();
+                    particle = particleFactory.create();
                     particle.offset = pos.copy().subtract(particle.currentPos());
                 }
             }
             if (onDeathParticles[1] != null)
             {
-                for (PathedParticle particle : onDeathParticles[1]) particle.createClone();
+                for (PathedParticleFactory particleFactory : onDeathParticles[1]) particleFactory.create();
             }
         }
     }
