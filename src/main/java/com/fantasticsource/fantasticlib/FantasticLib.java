@@ -244,7 +244,7 @@ public class FantasticLib
 //    //    public static SpriteMetaData spriteMetaData = new SpriteMetaData(128, 128, 0, 72, 8, 80, false, 8);
 //    public static SpriteMetaData spriteMetaData = new SpriteMetaData(128, 128, 56, 72, 64, 80);
 //    public static CPath
-//            scale3DPath = new CPathConstant(new VectorN(1, 1, 1)),
+//            scalePath = new CPathLinear(new VectorN(1, 3, 1)),
 //            rotationPath = new CPathLinear(new VectorN(Math.PI * 2)),
 //            alphaPath = new CPathLinear(new VectorN(-10)).add(new CPathConstant(new VectorN(10))).highLimit(new CPathConstant(new VectorN(1, 1, 1)));
 //
@@ -252,8 +252,15 @@ public class FantasticLib
 //
 //    public static void particlesTextureTest(EntityLivingBase livingBase)
 //    {
+//        //TODO add 2D scaling support (in addition to existing 3D scaling support)
+//
 //        //TODO add origin-point support (pull data from spriteMetaData)
-//        //TODO add multi-rotation support?  Eg. for leaves spinning on top of water, might want the particle to lay flat on the water surface and spin?
+//
+//        //TODO add basic physics support?  Stop / kill on collision with block?
+//
+//        //TODO add multi-rotation support?  Eg. for leaves spinning on top of water, or maybe rune particles in spinning rings (flat) or ribbons (vertical) for magic
+//        //TODO is this already possible by using scale instead of rotation (change vertical scale based on player pitch)?
+//        //TODO probably not, in which case the best approach might be to pass in a 2D+ rotation path, and if it's 2D+, skip the normal "face the player" rotation and apply the first 2 path result values as yaw-then-pitch
 //
 //        if (particleFactory == null)
 //        {
@@ -268,7 +275,7 @@ public class FantasticLib
 //                PathedParticle particle = new PathedParticle(particleRenderData, basePath);
 //                particle.setMaxAge(60);
 //                particle.spriteMetaData = spriteMetaData;
-//                particle.scale3DPath(scale3DPath);
+//                particle.scale3DPath(scalePath);
 //                particle.rotationPath(rotationPath);
 //                particle.alphaPath(alphaPath);
 //

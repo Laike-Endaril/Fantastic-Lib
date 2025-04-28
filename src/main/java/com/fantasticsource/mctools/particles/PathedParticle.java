@@ -196,10 +196,10 @@ public class PathedParticle
 
         Vec3d[] vecs = new Vec3d[]
                 {
-                        new Vec3d((-rotationX - rotationXY) * xScale3D, -rotationZ * yScale3D, (-rotationYZ - rotationXZ) * zScale3D),
-                        new Vec3d((-rotationX + rotationXY) * xScale3D, rotationZ * yScale3D, (-rotationYZ + rotationXZ) * zScale3D),
-                        new Vec3d((rotationX + rotationXY) * xScale3D, rotationZ * yScale3D, (rotationYZ + rotationXZ) * zScale3D),
-                        new Vec3d((rotationX - rotationXY) * xScale3D, -rotationZ * yScale3D, (rotationYZ - rotationXZ) * zScale3D)
+                        new Vec3d((-rotationX - rotationXY), -rotationZ, (-rotationYZ - rotationXZ)),
+                        new Vec3d((-rotationX + rotationXY), rotationZ, (-rotationYZ + rotationXZ)),
+                        new Vec3d((rotationX + rotationXY), rotationZ, (rotationYZ + rotationXZ)),
+                        new Vec3d((rotationX - rotationXY), -rotationZ, (rotationYZ - rotationXZ))
                 };
 
         if (rotationPath != null)
@@ -282,9 +282,9 @@ public class PathedParticle
         }
 
 
-        buffer.pos(x + vecs[0].x, y + vecs[0].y, z + vecs[0].z).tex(u2, v2).color(r, g, b, a).lightmap(skyLight, blockLight).endVertex();
-        buffer.pos(x + vecs[1].x, y + vecs[1].y, z + vecs[1].z).tex(u2, v1).color(r, g, b, a).lightmap(skyLight, blockLight).endVertex();
-        buffer.pos(x + vecs[2].x, y + vecs[2].y, z + vecs[2].z).tex(u1, v1).color(r, g, b, a).lightmap(skyLight, blockLight).endVertex();
-        buffer.pos(x + vecs[3].x, y + vecs[3].y, z + vecs[3].z).tex(u1, v2).color(r, g, b, a).lightmap(skyLight, blockLight).endVertex();
+        buffer.pos(x + vecs[0].x * xScale3D, y + vecs[0].y * yScale3D, z + vecs[0].z * zScale3D).tex(u2, v2).color(r, g, b, a).lightmap(skyLight, blockLight).endVertex();
+        buffer.pos(x + vecs[1].x * xScale3D, y + vecs[1].y * yScale3D, z + vecs[1].z * zScale3D).tex(u2, v1).color(r, g, b, a).lightmap(skyLight, blockLight).endVertex();
+        buffer.pos(x + vecs[2].x * xScale3D, y + vecs[2].y * yScale3D, z + vecs[2].z * zScale3D).tex(u1, v1).color(r, g, b, a).lightmap(skyLight, blockLight).endVertex();
+        buffer.pos(x + vecs[3].x * xScale3D, y + vecs[3].y * yScale3D, z + vecs[3].z * zScale3D).tex(u1, v2).color(r, g, b, a).lightmap(skyLight, blockLight).endVertex();
     }
 }
