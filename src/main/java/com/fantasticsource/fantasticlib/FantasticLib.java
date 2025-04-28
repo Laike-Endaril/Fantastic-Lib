@@ -241,7 +241,8 @@ public class FantasticLib
 //    }
 //
 //    public static PathedParticleSharedRenderData particleRenderData;
-//    public static SpriteMetaData spriteMetaData = new SpriteMetaData(128, 128, 0, 72, 8, 80, false, 8);
+//    //    public static SpriteMetaData spriteMetaData = new SpriteMetaData(128, 128, 0, 72, 8, 80, false, 8);
+//    public static SpriteMetaData spriteMetaData = new SpriteMetaData(128, 128, 56, 72, 64, 80);
 //    public static CPath
 //            scale3DPath = new CPathConstant(new VectorN(1, 1, 1)),
 //            rotationPath = new CPathLinear(new VectorN(Math.PI * 2)),
@@ -251,7 +252,6 @@ public class FantasticLib
 //
 //    public static void particlesTextureTest(EntityLivingBase livingBase)
 //    {
-//        //TODO figure out why current particles "look stiff", maybe rotation issue? Integer division somewhere?
 //        //TODO add multi-rotation support?  Eg. for leaves spinning on top of water, might want the particle to lay flat on the water surface and spin?
 //
 //        if (particleFactory == null)
@@ -262,9 +262,10 @@ public class FantasticLib
 //            particleFactory = args ->
 //            {
 //                CPath basePath = new CPathConstant(new VectorN(-0.3 + Tools.random(0.6), 0, -0.3 + Tools.random(0.6)));
-//                basePath.add(new CPathLinear(new VectorN(-0.6 + Tools.random(1.2), 0.4 + Tools.random(1.2f), -0.6 + Tools.random(1.2))));
+//                basePath.add(new CPathLinear(new VectorN(-0.1 + Tools.random(0.2), 0.2 + Tools.random(0.4f), -0.1 + Tools.random(0.2))));
 //
 //                PathedParticle particle = new PathedParticle(particleRenderData, basePath);
+//                particle.setMaxAge(60);
 //                particle.spriteMetaData = spriteMetaData;
 //                particle.scale3DPath(scale3DPath);
 //                particle.rotationPath(rotationPath);
@@ -288,6 +289,6 @@ public class FantasticLib
 //            };
 //        }
 //
-//        particleFactory2.create(livingBase);
+//        if (!Minecraft.getMinecraft().isGamePaused()) particleFactory2.create(livingBase);
 //    }
 }

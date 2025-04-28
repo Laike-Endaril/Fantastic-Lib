@@ -129,12 +129,12 @@ public class PathedParticle
             //Natural death
             if (onDeathParticles[0] != null)
             {
-                VectorN pos = currentPos();
+                VectorN pos = currentPos(0);
                 PathedParticle particle;
                 for (PathedParticleFactory particleFactory : onDeathParticles[0])
                 {
                     particle = particleFactory.create();
-                    particle.offset = pos.copy().subtract(particle.currentPos());
+                    particle.offset = pos.copy().subtract(particle.currentPos(0));
                 }
             }
             if (onDeathParticles[1] != null)
@@ -145,16 +145,16 @@ public class PathedParticle
     }
 
 
-    protected VectorN currentPos()
+    protected VectorN currentPos(float partialTick)
     {
-        long tickStartMillis = (long) (age * 1000 / maxAge);
+        long millis = (long) ((partialTick + age) * 1000 / maxAge);
 
-        VectorN pos = basePath.getRelativePosition(tickStartMillis), pathPos;
+        VectorN pos = basePath.getRelativePosition(millis), pathPos;
         if (pos == null) return null;
 
         for (CPath.CPathData data : morePaths)
         {
-            pathPos = data.getRelativePosition(tickStartMillis);
+            pathPos = data.getRelativePosition(millis);
             if (pathPos == null) return null;
 
             pos.add(pathPos);
@@ -163,17 +163,17 @@ public class PathedParticle
     }
 
 
-    public void renderParticle(BufferBuilder buffer, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ)
+    public void renderParticle(BufferBuilder buffer, float partialTick, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ)
     {
         if (Minecraft.getMinecraft().world == null) age = maxAge;
         if (age >= maxAge) return;
 
 
         //Normalize all path progress over the course of the particle lifetime
-        long renderMillis = (long) ((age * 50 + partialTicks * 50) * 20 / maxAge);
+        long renderMillis = (long) ((partialTick + age) * 1000 / maxAge);
 
 
-        VectorN pos = currentPos();
+        VectorN pos = currentPos(partialTick);
         if (pos == null)
         {
             age = maxAge;
