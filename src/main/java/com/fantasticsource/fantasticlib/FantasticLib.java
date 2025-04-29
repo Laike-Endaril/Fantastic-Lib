@@ -244,7 +244,7 @@ public class FantasticLib
 //    //    public static SpriteMetaData spriteMetaData = new SpriteMetaData(128, 128, 0, 72, 8, 80, false, 8);
 //    public static SpriteMetaData spriteMetaData = new SpriteMetaData(128, 128, 56, 72, 64, 80);
 //    public static CPath
-//            scalePath = new CPathLinear(new VectorN(1, 3, 1)),
+//            scale2DPath = new CPathConstant(new VectorN(1, 3)),
 //            rotationPath = new CPathLinear(new VectorN(Math.PI * 2)),
 //            alphaPath = new CPathLinear(new VectorN(-10)).add(new CPathConstant(new VectorN(10))).highLimit(new CPathConstant(new VectorN(1, 1, 1)));
 //
@@ -252,8 +252,6 @@ public class FantasticLib
 //
 //    public static void particlesTextureTest(EntityLivingBase livingBase)
 //    {
-//        //TODO add 2D scaling support (in addition to existing 3D scaling support)
-//
 //        //TODO add origin-point support (pull data from spriteMetaData)
 //
 //        //TODO add basic physics support?  Stop / kill on collision with block?
@@ -275,7 +273,7 @@ public class FantasticLib
 //                PathedParticle particle = new PathedParticle(particleRenderData, basePath);
 //                particle.setMaxAge(60);
 //                particle.spriteMetaData = spriteMetaData;
-//                particle.scale3DPath(scalePath);
+//                particle.scale2DPath(scale2DPath);
 //                particle.rotationPath(rotationPath);
 //                particle.alphaPath(alphaPath);
 //

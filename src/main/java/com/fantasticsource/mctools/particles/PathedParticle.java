@@ -9,7 +9,6 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -22,7 +21,7 @@ public class PathedParticle
 
     protected int maxAge = 20;
 
-    protected CPath.CPathData basePath, rgbPath = null, hsvPath = null, alphaPath = null, scale3DPath = null, rotationPath = null, animationPath = null;
+    protected CPath.CPathData basePath, rgbPath = null, hsvPath = null, alphaPath = null, scale2DPath = null, scale3DPath = null, rotationPath = null, animationPath = null;
     protected ArrayList<CPath.CPathData> morePaths = new ArrayList<>();
 
     protected ArrayList<PathedParticleFactory>[] onDeathParticles = new ArrayList[2];
@@ -85,8 +84,18 @@ public class PathedParticle
     }
 
 
+    public PathedParticle scale2DPath(CPath path)
+    {
+        if (path.getRelativePosition(0).values.length != 2) throw new IllegalArgumentException("The 2D scale path must be 2D!");
+
+        scale2DPath = new CPath.CPathData(path, 0);
+        return this;
+    }
+
     public PathedParticle scale3DPath(CPath path)
     {
+        if (path.getRelativePosition(0).values.length != 3) throw new IllegalArgumentException("The 3D scale path must be 3D!");
+
         scale3DPath = new CPath.CPathData(path, 0);
         return this;
     }
@@ -163,7 +172,9 @@ public class PathedParticle
     }
 
 
-    public void renderParticle(BufferBuilder buffer, float partialTick, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ)
+    //The letter before "Scale" is the axis scaling will happen on in the original 2D texture
+    //The letter before "Factor" is what coordinate of the normalized rotated scalar vector is factoring into the equation
+    public void renderParticle(BufferBuilder buffer, float partialTick, float xScaleXFactor, float yScaleYFactor, float xScaleZFactor, float yScaleZFactor, float yScaleXFactor)
     {
         if (Minecraft.getMinecraft().world == null) age = maxAge;
         if (age >= maxAge) return;
@@ -194,12 +205,22 @@ public class PathedParticle
             zScale3D *= scalar.values[2];
         }
 
+        if (scale2DPath != null)
+        {
+            VectorN scalar = scale2DPath.getRelativePosition(renderMillis);
+            xScaleXFactor *= scalar.values[0];
+            xScaleZFactor *= scalar.values[0];
+            yScaleYFactor *= scalar.values[1];
+            yScaleXFactor *= scalar.values[1];
+            yScaleZFactor *= scalar.values[1];
+        }
+
         VectorN[] posOffsets = new VectorN[]
                 {
-                        new VectorN((-rotationX - rotationXY), -rotationZ, (-rotationYZ - rotationXZ)),
-                        new VectorN((-rotationX + rotationXY), rotationZ, (-rotationYZ + rotationXZ)),
-                        new VectorN((rotationX + rotationXY), rotationZ, (rotationYZ + rotationXZ)),
-                        new VectorN((rotationX - rotationXY), -rotationZ, (rotationYZ - rotationXZ))
+                        new VectorN((-xScaleXFactor - yScaleZFactor), -yScaleYFactor, (-xScaleZFactor - yScaleXFactor)),
+                        new VectorN((-xScaleXFactor + yScaleZFactor), yScaleYFactor, (-xScaleZFactor + yScaleXFactor)),
+                        new VectorN((xScaleXFactor + yScaleZFactor), yScaleYFactor, (xScaleZFactor + yScaleXFactor)),
+                        new VectorN((xScaleXFactor - yScaleZFactor), -yScaleYFactor, (xScaleZFactor - yScaleXFactor))
                 };
 
         if (rotationPath != null)
@@ -207,11 +228,12 @@ public class PathedParticle
             float theta = (float) (rotationPath.getRelativePosition(renderMillis).values[0] * 0.5f);
             float sinTheta = MathHelper.sin(theta), cosTheta = MathHelper.cos(theta);
             VectorN rotationScalars = new VectorN(sinTheta * Particle.cameraViewDir.x, sinTheta * Particle.cameraViewDir.y, sinTheta * Particle.cameraViewDir.z);
+            double rotScalMagSqr = rotationScalars.getMagnitudeSquared();
 
             for (int i = 0; i < 4; ++i)
             {
                 posOffsets[i] = rotationScalars.copy().scale(2 * posOffsets[i].dotProduct(rotationScalars))
-                        .add(posOffsets[i].copy().scale(cosTheta * cosTheta - rotationScalars.dotProduct(rotationScalars)))
+                        .add(posOffsets[i].copy().scale(cosTheta * cosTheta - rotScalMagSqr))
                         .add(rotationScalars.copy().crossProduct(posOffsets[i]).scale(2 * cosTheta));
             }
         }

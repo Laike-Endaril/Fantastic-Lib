@@ -90,11 +90,15 @@ public class PathedParticleManager
         yawRadians *= 0.017453292f;
         pitchRadians *= 0.017453292f;
 
-        float f1 = MathHelper.cos(yawRadians);
-        float f2 = MathHelper.sin(yawRadians);
-        float f3 = -f2 * MathHelper.sin(pitchRadians);
-        float f4 = f1 * MathHelper.sin(pitchRadians);
-        float f5 = MathHelper.cos(pitchRadians);
+
+        //The letter before "Scale" is the axis scaling will happen on in the original 2D texture
+        //The letter before "Factor" is what coordinate of the normalized rotated scalar vector is factoring into the equation
+        float xScaleXFactor = MathHelper.cos(yawRadians);
+        float xScaleZFactor = MathHelper.sin(yawRadians);
+
+        float yScaleYFactor = MathHelper.cos(pitchRadians);
+        float yScaleXFactor = xScaleXFactor * MathHelper.sin(pitchRadians);
+        float yScaleZFactor = -xScaleZFactor * MathHelper.sin(pitchRadians);
 
 
         GlStateManager.depthMask(false);
@@ -113,7 +117,7 @@ public class PathedParticleManager
             bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
             for (PathedParticle particle : entry.getValue())
             {
-                particle.renderParticle(bufferbuilder, partialTick, f1, f5, f2, f3, f4);
+                particle.renderParticle(bufferbuilder, partialTick, xScaleXFactor, yScaleYFactor, xScaleZFactor, yScaleZFactor, yScaleXFactor);
             }
             tessellator.draw();
         }
