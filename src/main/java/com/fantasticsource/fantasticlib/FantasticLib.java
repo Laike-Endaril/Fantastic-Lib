@@ -258,7 +258,6 @@ public class FantasticLib
 //
 //    public static void particlesTextureTest(EntityLivingBase entityLivingBase)
 //    {
-//        //TODO fix raytracing vertical part of brewing stand
 //        //TODO fix raytracing water surface
 //
 //        //TODO remove all particles when changing worlds
