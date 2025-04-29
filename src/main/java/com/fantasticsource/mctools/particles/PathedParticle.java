@@ -194,23 +194,25 @@ public class PathedParticle
             zScale3D *= scalar.values[2];
         }
 
-        Vec3d[] vecs = new Vec3d[]
+        VectorN[] posOffsets = new VectorN[]
                 {
-                        new Vec3d((-rotationX - rotationXY), -rotationZ, (-rotationYZ - rotationXZ)),
-                        new Vec3d((-rotationX + rotationXY), rotationZ, (-rotationYZ + rotationXZ)),
-                        new Vec3d((rotationX + rotationXY), rotationZ, (rotationYZ + rotationXZ)),
-                        new Vec3d((rotationX - rotationXY), -rotationZ, (rotationYZ - rotationXZ))
+                        new VectorN((-rotationX - rotationXY), -rotationZ, (-rotationYZ - rotationXZ)),
+                        new VectorN((-rotationX + rotationXY), rotationZ, (-rotationYZ + rotationXZ)),
+                        new VectorN((rotationX + rotationXY), rotationZ, (rotationYZ + rotationXZ)),
+                        new VectorN((rotationX - rotationXY), -rotationZ, (rotationYZ - rotationXZ))
                 };
 
         if (rotationPath != null)
         {
             float theta = (float) (rotationPath.getRelativePosition(renderMillis).values[0] * 0.5f);
-            float cosTheta = MathHelper.cos(theta);
-            Vec3d vec3d = new Vec3d(MathHelper.sin(theta) * Particle.cameraViewDir.x, MathHelper.sin(theta) * Particle.cameraViewDir.y, MathHelper.sin(theta) * Particle.cameraViewDir.z);
+            float sinTheta = MathHelper.sin(theta), cosTheta = MathHelper.cos(theta);
+            VectorN rotationScalars = new VectorN(sinTheta * Particle.cameraViewDir.x, sinTheta * Particle.cameraViewDir.y, sinTheta * Particle.cameraViewDir.z);
 
             for (int i = 0; i < 4; ++i)
             {
-                vecs[i] = vec3d.scale(2 * vecs[i].dotProduct(vec3d)).add(vecs[i].scale(cosTheta * cosTheta - vec3d.dotProduct(vec3d))).add(vec3d.crossProduct(vecs[i]).scale(2 * cosTheta));
+                posOffsets[i] = rotationScalars.copy().scale(2 * posOffsets[i].dotProduct(rotationScalars))
+                        .add(posOffsets[i].copy().scale(cosTheta * cosTheta - rotationScalars.dotProduct(rotationScalars)))
+                        .add(rotationScalars.copy().crossProduct(posOffsets[i]).scale(2 * cosTheta));
             }
         }
 
@@ -282,9 +284,9 @@ public class PathedParticle
         }
 
 
-        buffer.pos(x + vecs[0].x * xScale3D, y + vecs[0].y * yScale3D, z + vecs[0].z * zScale3D).tex(u2, v2).color(r, g, b, a).lightmap(skyLight, blockLight).endVertex();
-        buffer.pos(x + vecs[1].x * xScale3D, y + vecs[1].y * yScale3D, z + vecs[1].z * zScale3D).tex(u2, v1).color(r, g, b, a).lightmap(skyLight, blockLight).endVertex();
-        buffer.pos(x + vecs[2].x * xScale3D, y + vecs[2].y * yScale3D, z + vecs[2].z * zScale3D).tex(u1, v1).color(r, g, b, a).lightmap(skyLight, blockLight).endVertex();
-        buffer.pos(x + vecs[3].x * xScale3D, y + vecs[3].y * yScale3D, z + vecs[3].z * zScale3D).tex(u1, v2).color(r, g, b, a).lightmap(skyLight, blockLight).endVertex();
+        buffer.pos(x + posOffsets[0].values[0] * xScale3D, y + posOffsets[0].values[1] * yScale3D, z + posOffsets[0].values[2] * zScale3D).tex(u2, v2).color(r, g, b, a).lightmap(skyLight, blockLight).endVertex();
+        buffer.pos(x + posOffsets[1].values[0] * xScale3D, y + posOffsets[1].values[1] * yScale3D, z + posOffsets[1].values[2] * zScale3D).tex(u2, v1).color(r, g, b, a).lightmap(skyLight, blockLight).endVertex();
+        buffer.pos(x + posOffsets[2].values[0] * xScale3D, y + posOffsets[2].values[1] * yScale3D, z + posOffsets[2].values[2] * zScale3D).tex(u1, v1).color(r, g, b, a).lightmap(skyLight, blockLight).endVertex();
+        buffer.pos(x + posOffsets[3].values[0] * xScale3D, y + posOffsets[3].values[1] * yScale3D, z + posOffsets[3].values[2] * zScale3D).tex(u1, v2).color(r, g, b, a).lightmap(skyLight, blockLight).endVertex();
     }
 }
