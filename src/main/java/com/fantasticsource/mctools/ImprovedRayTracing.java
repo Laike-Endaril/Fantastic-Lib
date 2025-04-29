@@ -381,23 +381,6 @@ public class ImprovedRayTracing
     }
 
 
-    public static boolean isUnobstructed(Entity fromEyesOf, double maxDistance, boolean collideOnAllSolids)
-    {
-        Vec3d eyes = fromEyesOf.getPositionVector().addVector(0, fromEyesOf.getEyeHeight(), 0);
-        return isUnobstructed(fromEyesOf.world, eyes, eyes.add(fromEyesOf.getLookVec().scale(maxDistance)), collideOnAllSolids);
-    }
-
-    public static boolean isUnobstructed(World world, Vec3d vecStart, Vec3d vecEnd, double maxDistance, boolean collideOnAllSolids)
-    {
-        return isUnobstructed(world, vecStart, vecStart.add(vecEnd.subtract(vecStart).normalize().scale(maxDistance)), collideOnAllSolids);
-    }
-
-    public static boolean isUnobstructed(World world, Vec3d vecStart, Vec3d vecEnd, boolean collideOnAllSolids)
-    {
-        return rayTraceBlocks(world, vecStart, vecEnd, collideOnAllSolids).typeOfHit == RayTraceResult.Type.MISS;
-    }
-
-
     @Nonnull
     public static BlockPos[] blocksInRay(Entity fromEyesOf, double maxDistance, boolean collideOnAllSolids)
     {
@@ -587,10 +570,67 @@ public class ImprovedRayTracing
     }
 
 
+    public static boolean isUnobstructed(Entity fromEyesOf, double maxDistance, boolean collideOnAllSolids)
+    {
+        return rayTraceBlocks(fromEyesOf, maxDistance, collideOnAllSolids).typeOfHit == RayTraceResult.Type.MISS;
+    }
+
+    public static boolean isUnobstructed(Entity fromEyesOf, double maxDistance, boolean collideOnAllSolids, boolean collideOnAllFluids)
+    {
+        return rayTraceBlocks(fromEyesOf, maxDistance, collideOnAllSolids, collideOnAllFluids).typeOfHit == RayTraceResult.Type.MISS;
+    }
+
+    public static boolean isUnobstructed(Entity fromEyesOf, double maxDistance, int maxBlocks, boolean collideOnAllSolids)
+    {
+        return rayTraceBlocks(fromEyesOf, maxDistance, maxBlocks, collideOnAllSolids).typeOfHit == RayTraceResult.Type.MISS;
+    }
+
+    public static boolean isUnobstructed(Entity fromEyesOf, double maxDistance, int maxBlocks, boolean collideOnAllSolids, boolean collideOnAllFluids)
+    {
+        return rayTraceBlocks(fromEyesOf, maxDistance, maxBlocks, collideOnAllSolids, collideOnAllFluids).typeOfHit == RayTraceResult.Type.MISS;
+    }
+
+    public static boolean isUnobstructed(World world, Vec3d vecStart, Vec3d vecEnd, double maxDistance, boolean collideOnAllSolids)
+    {
+        return rayTraceBlocks(world, vecStart, vecEnd, maxDistance, collideOnAllSolids).typeOfHit == RayTraceResult.Type.MISS;
+    }
+
+    public static boolean isUnobstructed(World world, Vec3d vecStart, Vec3d vecEnd, double maxDistance, int maxBlocks, boolean collideOnAllSolids)
+    {
+        return rayTraceBlocks(world, vecStart, vecEnd, maxDistance, maxBlocks, collideOnAllSolids).typeOfHit == RayTraceResult.Type.MISS;
+    }
+
+    public static boolean isUnobstructed(World world, Vec3d vecStart, Vec3d vecEnd, boolean collideOnAllSolids)
+    {
+        return rayTraceBlocks(world, vecStart, vecEnd, collideOnAllSolids).typeOfHit == RayTraceResult.Type.MISS;
+    }
+
+    public static boolean isUnobstructed(World world, Vec3d vecStart, Vec3d vecEnd, int maxBlocks, boolean collideOnAllSolids)
+    {
+        return rayTraceBlocks(world, vecStart, vecEnd, maxBlocks, collideOnAllSolids).typeOfHit == RayTraceResult.Type.MISS;
+    }
+
+    public static boolean isUnobstructed(World world, Vec3d vecStart, Vec3d vecEnd, boolean collideOnAllSolids, boolean collideOnAllFluids)
+    {
+        return rayTraceBlocks(world, vecStart, vecEnd, collideOnAllSolids, collideOnAllFluids).typeOfHit == RayTraceResult.Type.MISS;
+    }
+
+    public static boolean isUnobstructed(World world, Vec3d vecStart, Vec3d vecEnd, int maxBlocks, boolean collideOnAllSolids, boolean collideOnAllFluids)
+    {
+        return rayTraceBlocks(world, vecStart, vecEnd, maxBlocks, collideOnAllSolids, collideOnAllFluids).typeOfHit == RayTraceResult.Type.MISS;
+    }
+
+
     @Nonnull
     public static RayTraceResult rayTraceBlocks(Entity fromEyesOf, double maxDistance, boolean collideOnAllSolids)
     {
         return rayTraceBlocks(fromEyesOf, maxDistance, ITERATION_WARNING_THRESHOLD, collideOnAllSolids);
+    }
+
+    @Nonnull
+    public static RayTraceResult rayTraceBlocks(Entity fromEyesOf, double maxDistance, boolean collideOnAllSolids, boolean collideOnAllFluids)
+    {
+        return rayTraceBlocks(fromEyesOf, maxDistance, ITERATION_WARNING_THRESHOLD, collideOnAllSolids, collideOnAllFluids);
     }
 
     @Nonnull
@@ -631,6 +671,12 @@ public class ImprovedRayTracing
     }
 
     @Nonnull
+    public static RayTraceResult rayTraceBlocks(World world, Vec3d vecStart, Vec3d vecEnd, boolean collideOnAllSolids, boolean collideOnAllFluids)
+    {
+        return rayTraceBlocks(world, vecStart, vecEnd, ITERATION_WARNING_THRESHOLD, collideOnAllSolids, collideOnAllFluids);
+    }
+
+    @Nonnull
     public static RayTraceResult rayTraceBlocks(World world, Vec3d vecStart, Vec3d vecEnd, int maxBlocks, boolean collideOnAllSolids, boolean collideOnAllFluids)
     {
         world.profiler.startSection("Fantastic Lib: Improved Raytrace");
@@ -652,23 +698,18 @@ public class ImprovedRayTracing
             return new FixedRayTraceResult(null, null, null, pos);
         }
         IBlockState state = world.getBlockState(pos);
-        if (collideOnAllFluids && (state.getBlock() instanceof IFluidBlock || state.getMaterial().isLiquid()))
+        AxisAlignedBB collisionBox = state.getCollisionBoundingBox(world, pos);
+        if (collisionBox != Block.NULL_AABB)
         {
-            result = state.collisionRayTrace(world, pos, vecStart, vecEnd);
-            if (result == null) result = rayTraceWithinBlock(pos, vecStart, vecEnd, Block.FULL_BLOCK_AABB);
-            if (result != null)
+            if (collideOnAllSolids || (collideOnAllFluids && (state.getBlock() instanceof IFluidBlock || state.getMaterial().isLiquid())) || !canSeeThrough(state))
             {
-                world.profiler.endSection();
-                return result;
-            }
-        }
-        if (state.getCollisionBoundingBox(world, pos) != Block.NULL_AABB && collideOnAllSolids || !canSeeThrough(state))
-        {
-            result = state.collisionRayTrace(world, pos, vecStart, vecEnd);
-            if (result != null)
-            {
-                world.profiler.endSection();
-                return result;
+                result = state.collisionRayTrace(world, pos, vecStart, vecEnd);
+                if (result == null || result.typeOfHit == RayTraceResult.Type.MISS) result = rayTraceWithinBlock(pos, vecStart, vecEnd, collisionBox);
+                if (result != null && result.typeOfHit != RayTraceResult.Type.MISS)
+                {
+                    world.profiler.endSection();
+                    return result;
+                }
             }
         }
 
@@ -752,23 +793,18 @@ public class ImprovedRayTracing
                 return new FixedRayTraceResult(null, null, null, pos);
             }
             state = world.getBlockState(pos);
-            if (collideOnAllFluids && (state.getBlock() instanceof IFluidBlock || state.getMaterial().isLiquid()))
+            collisionBox = state.getCollisionBoundingBox(world, pos);
+            if (collisionBox != Block.NULL_AABB)
             {
-                result = state.collisionRayTrace(world, pos, vecStart, vecEnd);
-                if (result == null) result = rayTraceWithinBlock(pos, vecStart, vecEnd, Block.FULL_BLOCK_AABB);
-                if (result != null)
+                if (collideOnAllSolids || (collideOnAllFluids && (state.getBlock() instanceof IFluidBlock || state.getMaterial().isLiquid())) || !canSeeThrough(state))
                 {
-                    world.profiler.endSection();
-                    return result;
-                }
-            }
-            if (state.getCollisionBoundingBox(world, pos) != Block.NULL_AABB && collideOnAllSolids || !canSeeThrough(state))
-            {
-                result = state.collisionRayTrace(world, pos, vecStart, vecEnd);
-                if (result != null)
-                {
-                    world.profiler.endSection();
-                    return result;
+                    result = state.collisionRayTrace(world, pos, vecStart, vecEnd);
+                    if (result == null || result.typeOfHit == RayTraceResult.Type.MISS) result = rayTraceWithinBlock(pos, vecStart, vecEnd, collisionBox);
+                    if (result != null && result.typeOfHit != RayTraceResult.Type.MISS)
+                    {
+                        world.profiler.endSection();
+                        return result;
+                    }
                 }
             }
 
@@ -883,7 +919,12 @@ public class ImprovedRayTracing
     public static RayTraceResult rayTraceWithinBlock(BlockPos pos, Vec3d start, Vec3d end, AxisAlignedBB boundingBox)
     {
         double x = pos.getX(), y = pos.getY(), z = pos.getZ();
-        RayTraceResult raytraceresult = boundingBox.calculateIntercept(start.subtract(x, y, z), end.subtract(x, y, z));
+        if (boundingBox.contains(start.subtract(x, y, z))) return new RayTraceResult(start, null, pos);
+
+        start = start.subtract(x, y, z);
+        end = end.subtract(x, y, z);
+
+        RayTraceResult raytraceresult = boundingBox.calculateIntercept(start, end);
         return raytraceresult == null ? null : new RayTraceResult(raytraceresult.hitVec.addVector(x, y, z), raytraceresult.sideHit, pos);
     }
 
