@@ -150,14 +150,25 @@ public class PathedParticle
     {
         deathConditions.add(particle ->
         {
+            World world = Minecraft.getMinecraft().world;
+            if (world == null) return true;
+
             double[] from = currentPos(0).values, to = nextPosition(0).values;
-            return !ImprovedRayTracing.isUnobstructed(Minecraft.getMinecraft().world, new Vec3d(from[0], from[1], from[2]), new Vec3d(to[0], to[1], to[2]), true);
+            return !ImprovedRayTracing.isUnobstructed(world, new Vec3d(from[0], from[1], from[2]), new Vec3d(to[0], to[1], to[2]), true);
         });
         return this;
     }
 
-    public PathedParticle dieOnLiquids()
+    public PathedParticle dieOnSolidsAndLiquids()
     {
+        deathConditions.add(particle ->
+        {
+            World world = Minecraft.getMinecraft().world;
+            if (world == null) return true;
+
+            double[] from = currentPos(0).values, to = nextPosition(0).values;
+            return !ImprovedRayTracing.isUnobstructed(world, new Vec3d(from[0], from[1], from[2]), new Vec3d(to[0], to[1], to[2]), true, true);
+        });
         return this;
     }
 

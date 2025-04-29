@@ -258,7 +258,8 @@ public class FantasticLib
 //
 //    public static void particlesTextureTest(EntityLivingBase entityLivingBase)
 //    {
-//        //TODO add contents of dieOnLiquids()
+//        //TODO fix raytracing vertical part of brewing stand
+//        //TODO fix raytracing water surface
 //
 //        //TODO remove all particles when changing worlds
 //
@@ -268,7 +269,7 @@ public class FantasticLib
 //
 //        if (particleFactory == null)
 //        {
-//            particleRenderData = new PathedParticleSharedRenderData(false, GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, "minecraft:textures/particle/particles.png");
+//            particleRenderData = new PathedParticleSharedRenderData(true, GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, "minecraft:textures/particle/particles.png");
 //
 //
 //            particleFactory = args ->
@@ -276,7 +277,7 @@ public class FantasticLib
 //                PathedParticle particle = new PathedParticle(particleRenderData, pathNone);
 //                particle.spriteMetaData = spriteMetaData;
 //
-//                particle.setMaxAge(20 + Tools.random(20));
+//                particle.setMaxAge(200);
 //                particle.alphaPath(pathAlphaLinearFadeout);
 //
 //                if (args != null)
@@ -305,7 +306,7 @@ public class FantasticLib
 //                particle.rotationPath(pathRotation);
 //
 //                //Die when touching ground, and spawn a fading copy of self that holds still
-//                particle.dieOnSolids().dieOnLiquids();
+//                particle.dieOnSolidsAndLiquids();
 //                particle.addOnDeathParticles(true, particleFactory);
 //                return particle;
 //            };
