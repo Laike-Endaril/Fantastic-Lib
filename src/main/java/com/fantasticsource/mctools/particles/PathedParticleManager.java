@@ -13,6 +13,7 @@ import net.minecraft.profiler.Profiler;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -148,5 +149,11 @@ public class PathedParticleManager
         profiler.startSection("FLib: Pathed Particles Render");
         render(event.getPartialTicks());
         profiler.endSection();
+    }
+
+    @SubscribeEvent
+    public static void playerJoinWorld(EntityJoinWorldEvent event)
+    {
+        if (event.getEntity() == Minecraft.getMinecraft().player) particles.clear();
     }
 }
