@@ -241,19 +241,18 @@ public class FantasticLib
 //    }
 //
 //    public static PathedParticleSharedRenderData particleRenderData;
-//    //    public static SpriteMetaData spriteMetaData = new SpriteMetaData(128, 128, 0, 72, 8, 80, false, 8);
-//    public static SpriteMetaData spriteMetaData = new SpriteMetaData(128, 128, 56, 72, 64, 80);
+//    public static SpriteMetaData spriteMetaData = new SpriteMetaData(128, 128, 57, 73, 64, 80);
+//    public static VectorN
+//            v3_1_05_0 = new VectorN(1, 0.5, 0),
+//            v3_0_1_0 = new VectorN(0, 1, 0);
 //    public static CPath
-//            scale2DPath = new CPathConstant(new VectorN(1, 3)),
 //            rotationPath = new CPathLinear(new VectorN(Math.PI * 2)),
 //            alphaPath = new CPathLinear(new VectorN(-10)).add(new CPathConstant(new VectorN(10))).highLimit(new CPathConstant(new VectorN(1, 1, 1)));
 //
 //    public static PathedParticleFactory particleFactory = null, particleFactory2;
 //
-//    public static void particlesTextureTest(EntityLivingBase livingBase)
+//    public static void particlesTextureTest(EntityLivingBase entityLivingBase)
 //    {
-//        //TODO add origin-point support (pull data from spriteMetaData)
-//
 //        //TODO add basic physics support?  Stop / kill on collision with block?
 //
 //        //TODO add multi-rotation support?  Eg. for leaves spinning on top of water, or maybe rune particles in spinning rings (flat) or ribbons (vertical) for magic
@@ -267,34 +266,26 @@ public class FantasticLib
 //
 //            particleFactory = args ->
 //            {
-//                CPath basePath = new CPathConstant(new VectorN(-0.3 + Tools.random(0.6), 0, -0.3 + Tools.random(0.6)));
-//                basePath.add(new CPathLinear(new VectorN(-0.1 + Tools.random(0.2), 0.2 + Tools.random(0.4f), -0.1 + Tools.random(0.2))));
-//
-//                PathedParticle particle = new PathedParticle(particleRenderData, basePath);
-//                particle.setMaxAge(60);
+//                int age = 1000;
+//                PathedParticle particle = new PathedParticle(particleRenderData, new CPathLinear(new VectorN(0, -1d * age / 20, 0)));
+//                particle.setMaxAge(age);
 //                particle.spriteMetaData = spriteMetaData;
-//                particle.scale2DPath(scale2DPath);
 //                particle.rotationPath(rotationPath);
 //                particle.alphaPath(alphaPath);
-//
 //                return particle;
 //            };
 //
 //
 //            particleFactory2 = args ->
 //            {
-//                EntityLivingBase livingBase1 = (EntityLivingBase) args[0];
-//
+//                EntityLivingBase livingBase = (EntityLivingBase) args[0];
 //                PathedParticle particle = particleFactory.create();
-//
-//                particle.applyPath(new CPathConstant(new VectorN(livingBase1.posX, livingBase1.posY + livingBase1.height, livingBase1.posZ)));
-//
-//                particle.addOnDeathParticles(true, particleFactory);
-//
+//                particle.applyPath(new CPathConstant(new VectorN(livingBase.posX, livingBase.posY, livingBase.posZ).add(new VectorN(livingBase.width, livingBase.height, livingBase.width).multiply(v3_1_05_0).rotate(v3_0_1_0, Tools.random(Math.PI * 2)))));
+////                particle.addOnDeathParticles(true, particleFactory);
 //                return particle;
 //            };
 //        }
 //
-//        if (!Minecraft.getMinecraft().isGamePaused()) particleFactory2.create(livingBase);
+//        if (!Minecraft.getMinecraft().isGamePaused()) particleFactory2.create(entityLivingBase);
 //    }
 }

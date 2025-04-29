@@ -7,6 +7,7 @@ import com.fantasticsource.tools.datastructures.VectorN;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -196,6 +197,51 @@ public class PathedParticle
         double y = pos.values[1] - Particle.interpPosY;
         double z = pos.values[2] - Particle.interpPosZ;
 
+
+        //DO NOT try to change block texture animation (it won't work "correctly"); if someone wants per-particle animation using a block texture, they'll need to reference it as an "other" texture
+        double u1, v1, u2, v2, xOrigin, yOrigin;
+        if (spriteMetaData != null)
+        {
+            SpriteMetaData.FrameMetaData frame;
+            if (animationPath != null)
+            {
+                frame = spriteMetaData.frames.get((int) (spriteMetaData.frames.size() * animationPath.getRelativePosition(renderMillis).values[0]));
+            }
+            else
+            {
+                frame = spriteMetaData.frames.get(spriteMetaData.frames.size() * age / maxAge);
+            }
+            u1 = frame.u1;
+            v1 = frame.v1;
+            u2 = frame.u2;
+            v2 = frame.v2;
+
+            xOrigin = frame.relativeOriginX;
+            yOrigin = frame.relativeOriginY;
+        }
+        else
+        {
+            TextureAtlasSprite sprite = sharedRenderData.sprite;
+            if (sprite != null)
+            {
+                u1 = sprite.getMinU();
+                v1 = sprite.getMinV();
+                u2 = sprite.getMaxU();
+                v2 = sprite.getMaxV();
+            }
+            else
+            {
+                u1 = 0;
+                v1 = 0;
+                u2 = 1;
+                v2 = 1;
+            }
+
+            xOrigin = 0.5;
+            yOrigin = 0.5;
+        }
+
+
         double xScale3D = 0.05, yScale3D = 0.05, zScale3D = 0.05;
         if (scale3DPath != null)
         {
@@ -215,12 +261,20 @@ public class PathedParticle
             yScaleZFactor *= scalar.values[1];
         }
 
-        VectorN[] posOffsets = new VectorN[]
+        VectorN[] posOffsets;
+        if (xOrigin == 0.5 && yOrigin == 0.5) posOffsets = new VectorN[]
                 {
-                        new VectorN((-xScaleXFactor - yScaleZFactor), -yScaleYFactor, (-xScaleZFactor - yScaleXFactor)),
-                        new VectorN((-xScaleXFactor + yScaleZFactor), yScaleYFactor, (-xScaleZFactor + yScaleXFactor)),
-                        new VectorN((xScaleXFactor + yScaleZFactor), yScaleYFactor, (xScaleZFactor + yScaleXFactor)),
-                        new VectorN((xScaleXFactor - yScaleZFactor), -yScaleYFactor, (xScaleZFactor - yScaleXFactor))
+                        new VectorN(-xScaleXFactor - yScaleZFactor, -yScaleYFactor, -xScaleZFactor - yScaleXFactor),
+                        new VectorN(-xScaleXFactor + yScaleZFactor, yScaleYFactor, -xScaleZFactor + yScaleXFactor),
+                        new VectorN(xScaleXFactor + yScaleZFactor, yScaleYFactor, xScaleZFactor + yScaleXFactor),
+                        new VectorN(xScaleXFactor - yScaleZFactor, -yScaleYFactor, xScaleZFactor - yScaleXFactor)
+                };
+        else posOffsets = new VectorN[]
+                {
+                        new VectorN(-xScaleXFactor * xOrigin - yScaleZFactor * yOrigin, -yScaleYFactor * yOrigin, -xScaleZFactor * xOrigin - yScaleXFactor * yOrigin),
+                        new VectorN(-xScaleXFactor * xOrigin + yScaleZFactor * (1 - yOrigin), yScaleYFactor * (1 - yOrigin), -xScaleZFactor * xOrigin + yScaleXFactor * (1 - yOrigin)),
+                        new VectorN(xScaleXFactor * (1 - xOrigin) + yScaleZFactor * (1 - yOrigin), yScaleYFactor * (1 - yOrigin), xScaleZFactor * (1 - xOrigin) + yScaleXFactor * (1 - yOrigin)),
+                        new VectorN(xScaleXFactor * (1 - xOrigin) - yScaleZFactor * yOrigin, -yScaleYFactor * yOrigin, xScaleZFactor * (1 - xOrigin) - yScaleXFactor * yOrigin)
                 };
 
         if (rotationPath != null)
@@ -270,40 +324,6 @@ public class PathedParticle
         }
 
         float a = alphaPath == null ? 1 : (float) alphaPath.getRelativePosition(renderMillis).values[0];
-
-
-        //DO NOT try to change block texture animation (it won't work "correctly"); if someone wants per-particle animation using a block texture, they'll need to reference it as an "other" texture
-        double u1, v1, u2, v2;
-        if (spriteMetaData != null)
-        {
-            SpriteMetaData.FrameMetaData frame;
-            if (animationPath != null)
-            {
-                frame = spriteMetaData.frames.get((int) (spriteMetaData.frames.size() * animationPath.getRelativePosition(renderMillis).values[0]));
-            }
-            else
-            {
-                frame = spriteMetaData.frames.get(spriteMetaData.frames.size() * age / maxAge);
-            }
-            u1 = frame.u1;
-            v1 = frame.v1;
-            u2 = frame.u2;
-            v2 = frame.v2;
-        }
-        else if (sharedRenderData.sprite != null)
-        {
-            u1 = sharedRenderData.sprite.getMinU();
-            v1 = sharedRenderData.sprite.getMinV();
-            u2 = sharedRenderData.sprite.getMaxU();
-            v2 = sharedRenderData.sprite.getMaxV();
-        }
-        else
-        {
-            u1 = 0;
-            v1 = 0;
-            u2 = 1;
-            v2 = 1;
-        }
 
 
         buffer.pos(x + posOffsets[0].values[0] * xScale3D, y + posOffsets[0].values[1] * yScale3D, z + posOffsets[0].values[2] * zScale3D).tex(u2, v2).color(r, g, b, a).lightmap(skyLight, blockLight).endVertex();

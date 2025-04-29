@@ -76,13 +76,14 @@ public class SpriteMetaData
     }
 
 
-    public void setNormalizedOriginStatic(double relativeOriginX, double relativeOriginY)
+    public SpriteMetaData setNormalizedOriginStatic(double relativeOriginX, double relativeOriginY)
     {
         for (FrameMetaData frame : frames) frame.setNormalizedOrigin(relativeOriginX, relativeOriginY);
+        return this;
     }
 
 
-    public void setNormalizedOriginDynamic(double... relativeOriginCoordsPerFrame)
+    public SpriteMetaData setNormalizedOriginDynamic(double... relativeOriginCoordsPerFrame)
     {
         if (relativeOriginCoordsPerFrame.length != frames.size() * 2) throw new IllegalArgumentException("Relative X and Y for each frame must be passed in");
 
@@ -90,6 +91,7 @@ public class SpriteMetaData
         {
             frames.get(i).setNormalizedOrigin(relativeOriginCoordsPerFrame[i * 2], relativeOriginCoordsPerFrame[i * 2 + 1]);
         }
+        return this;
     }
 
 
