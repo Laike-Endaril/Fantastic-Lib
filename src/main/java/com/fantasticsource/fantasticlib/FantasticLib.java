@@ -258,7 +258,8 @@ public class FantasticLib
 //
 //    public static void particlesTextureTest(EntityLivingBase entityLivingBase)
 //    {
-//        //TODO fix raytracing water surface
+//        //TODO finish fluid raytracing (actual ray part)
+//
 //
 //        //TODO add multi-rotation support?  Eg. for leaves spinning on top of water, or maybe rune particles in spinning rings (flat) or ribbons (vertical) for magic
 //        //TODO is this already possible by using scale instead of rotation (change vertical scale based on player pitch)?
@@ -309,6 +310,9 @@ public class FantasticLib
 //            };
 //        }
 //
-//        if (!Minecraft.getMinecraft().isGamePaused()) particleFactory2.create(null, entityLivingBase);
+//        if (!Minecraft.getMinecraft().isGamePaused())
+//        {
+//            for (int i = 0; i < 10; i++) particleFactory2.create(null, entityLivingBase);
+//        }
 //    }
 }

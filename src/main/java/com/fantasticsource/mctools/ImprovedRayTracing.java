@@ -4,6 +4,7 @@ import com.fantasticsource.fantasticlib.Compat;
 import com.fantasticsource.fantasticlib.config.FantasticConfig;
 import com.fantasticsource.tools.ReflectionTool;
 import com.fantasticsource.tools.Tools;
+import com.fantasticsource.tools.datastructures.VectorN;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -17,7 +18,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.IFluidBlock;
+import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import javax.annotation.Nonnull;
@@ -324,33 +325,33 @@ public class ImprovedRayTracing
     /**
      * @return Double.NaN if this ray would not collide with the entity, regardless of terrain.  The distance this ray penetrates through the given entity, if it does.  The distance from the edge of the entity to where this ray collided with a block, as a negative value, in all other cases
      */
-    public static double entityPenetration(Entity fromEyesOf, double maxDistance, Entity target, boolean collideOnAllSolids)
+    public static double entityPenetration(Entity fromEyesOf, double maxDistance, Entity target, boolean isPhysicsCheck)
     {
         if (fromEyesOf.world != target.world) return Double.NaN;
 
         Vec3d eyes = fromEyesOf.getPositionVector().addVector(0, fromEyesOf.getEyeHeight(), 0);
-        return entityPenetration(target, eyes, eyes.add(fromEyesOf.getLookVec().scale(maxDistance)), collideOnAllSolids);
+        return entityPenetration(target, eyes, eyes.add(fromEyesOf.getLookVec().scale(maxDistance)), isPhysicsCheck);
     }
 
     /**
      * @return Double.NaN if this ray would not collide with the entity, regardless of terrain.  The distance this ray penetrates through the given entity, if it does.  The distance from the edge of the entity to where this ray collided with a block, as a negative value, in all other cases
      */
-    public static double entityPenetration(Entity target, Vec3d vecStart, Vec3d vecEnd, double maxDistance, boolean collideOnAllSolids)
+    public static double entityPenetration(Entity target, Vec3d vecStart, Vec3d vecEnd, double maxDistance, boolean isPhysicsCheck)
     {
-        return entityPenetration(target, vecStart, vecStart.add(vecEnd.subtract(vecStart).normalize().scale(maxDistance)), collideOnAllSolids);
+        return entityPenetration(target, vecStart, vecStart.add(vecEnd.subtract(vecStart).normalize().scale(maxDistance)), isPhysicsCheck);
     }
 
     /**
      * @return Double.NaN if this ray would not collide with the entity, regardless of terrain.  The distance this ray penetrates through the given entity, if it does.  The distance from the edge of the entity to where this ray collided with a block (including an unloaded block), as a negative value, in all other cases
      */
-    public static double entityPenetration(Entity target, Vec3d vecStart, Vec3d vecEnd, boolean collideOnAllSolids)
+    public static double entityPenetration(Entity target, Vec3d vecStart, Vec3d vecEnd, boolean isPhysicsCheck)
     {
         RayTraceResult entityEnd = rayTraceEntity(target, vecEnd, vecStart);
         if (entityEnd == null || entityEnd.typeOfHit == RayTraceResult.Type.MISS) return Double.NaN;
 
 
         RayTraceResult entityStart = rayTraceEntity(target, vecStart, vecEnd);
-        RayTraceResult blockHit = rayTraceBlocks(target.world, vecStart, entityEnd.hitVec, collideOnAllSolids);
+        RayTraceResult blockHit = rayTraceBlocks(target.world, vecStart, entityEnd.hitVec, isPhysicsCheck);
 
         if (blockHit.typeOfHit == RayTraceResult.Type.MISS)
         {
@@ -382,38 +383,38 @@ public class ImprovedRayTracing
 
 
     @Nonnull
-    public static BlockPos[] blocksInRay(Entity fromEyesOf, double maxDistance, boolean collideOnAllSolids)
+    public static BlockPos[] blocksInRay(Entity fromEyesOf, double maxDistance, boolean isPhysicsCheck)
     {
-        return blocksInRay(fromEyesOf, maxDistance, ITERATION_WARNING_THRESHOLD, collideOnAllSolids);
+        return blocksInRay(fromEyesOf, maxDistance, ITERATION_WARNING_THRESHOLD, isPhysicsCheck);
     }
 
     @Nonnull
-    public static BlockPos[] blocksInRay(Entity fromEyesOf, double maxDistance, int maxBlocks, boolean collideOnAllSolids)
+    public static BlockPos[] blocksInRay(Entity fromEyesOf, double maxDistance, int maxBlocks, boolean isPhysicsCheck)
     {
         Vec3d eyes = fromEyesOf.getPositionVector().addVector(0, fromEyesOf.getEyeHeight(), 0);
-        return blocksInRay(fromEyesOf.world, eyes, eyes.add(fromEyesOf.getLookVec().scale(maxDistance)), maxBlocks, collideOnAllSolids);
+        return blocksInRay(fromEyesOf.world, eyes, eyes.add(fromEyesOf.getLookVec().scale(maxDistance)), maxBlocks, isPhysicsCheck);
     }
 
     @Nonnull
-    public static BlockPos[] blocksInRay(World world, Vec3d vecStart, Vec3d vecEnd, double maxDistance, boolean collideOnAllSolids)
+    public static BlockPos[] blocksInRay(World world, Vec3d vecStart, Vec3d vecEnd, double maxDistance, boolean isPhysicsCheck)
     {
-        return blocksInRay(world, vecStart, vecEnd, maxDistance, ITERATION_WARNING_THRESHOLD, collideOnAllSolids);
+        return blocksInRay(world, vecStart, vecEnd, maxDistance, ITERATION_WARNING_THRESHOLD, isPhysicsCheck);
     }
 
     @Nonnull
-    public static BlockPos[] blocksInRay(World world, Vec3d vecStart, Vec3d vecEnd, double maxDistance, int maxBlocks, boolean collideOnAllSolids)
+    public static BlockPos[] blocksInRay(World world, Vec3d vecStart, Vec3d vecEnd, double maxDistance, int maxBlocks, boolean isPhysicsCheck)
     {
-        return blocksInRay(world, vecStart, vecStart.add(vecEnd.subtract(vecStart).normalize().scale(maxDistance)), maxBlocks, collideOnAllSolids);
+        return blocksInRay(world, vecStart, vecStart.add(vecEnd.subtract(vecStart).normalize().scale(maxDistance)), maxBlocks, isPhysicsCheck);
     }
 
     @Nonnull
-    public static BlockPos[] blocksInRay(World world, Vec3d vecStart, Vec3d vecEnd, boolean collideOnAllSolids)
+    public static BlockPos[] blocksInRay(World world, Vec3d vecStart, Vec3d vecEnd, boolean isPhysicsCheck)
     {
-        return blocksInRay(world, vecStart, vecEnd, ITERATION_WARNING_THRESHOLD, collideOnAllSolids);
+        return blocksInRay(world, vecStart, vecEnd, ITERATION_WARNING_THRESHOLD, isPhysicsCheck);
     }
 
     @Nonnull
-    public static BlockPos[] blocksInRay(World world, Vec3d vecStart, Vec3d vecEnd, int maxBlocks, boolean collideOnAllSolids)
+    public static BlockPos[] blocksInRay(World world, Vec3d vecStart, Vec3d vecEnd, int maxBlocks, boolean isPhysicsCheck)
     {
         world.profiler.startSection("Fantastic Lib: Blocks In Ray");
 
@@ -435,7 +436,7 @@ public class ImprovedRayTracing
             return new BlockPos[0];
         }
         IBlockState state = world.getBlockState(pos);
-        if ((collideOnAllSolids || !canSeeThrough(state)) && state.getCollisionBoundingBox(world, pos) != Block.NULL_AABB)
+        if ((isPhysicsCheck || !canSeeThrough(state)) && state.getCollisionBoundingBox(world, pos) != Block.NULL_AABB)
         {
             result = state.collisionRayTrace(world, pos, vecStart, vecEnd);
             if (result != null)
@@ -531,7 +532,7 @@ public class ImprovedRayTracing
                 return blocks.toArray(new BlockPos[0]);
             }
             state = world.getBlockState(pos);
-            if ((collideOnAllSolids || !canSeeThrough(state)) && state.getCollisionBoundingBox(world, pos) != Block.NULL_AABB)
+            if ((isPhysicsCheck || !canSeeThrough(state)) && state.getCollisionBoundingBox(world, pos) != Block.NULL_AABB)
             {
                 result = state.collisionRayTrace(world, pos, vecStart, vecEnd);
                 if (result != null)
@@ -570,114 +571,114 @@ public class ImprovedRayTracing
     }
 
 
-    public static boolean isUnobstructed(Entity fromEyesOf, double maxDistance, boolean collideOnAllSolids)
+    public static boolean isUnobstructed(Entity fromEyesOf, double maxDistance, boolean isPhysicsCheck)
     {
-        return rayTraceBlocks(fromEyesOf, maxDistance, collideOnAllSolids).typeOfHit == RayTraceResult.Type.MISS;
+        return rayTraceBlocks(fromEyesOf, maxDistance, isPhysicsCheck).typeOfHit == RayTraceResult.Type.MISS;
     }
 
-    public static boolean isUnobstructed(Entity fromEyesOf, double maxDistance, boolean collideOnAllSolids, boolean collideOnAllFluids)
+    public static boolean isUnobstructed(Entity fromEyesOf, double maxDistance, boolean isPhysicsCheck, boolean alsoCheckFluids)
     {
-        return rayTraceBlocks(fromEyesOf, maxDistance, collideOnAllSolids, collideOnAllFluids).typeOfHit == RayTraceResult.Type.MISS;
+        return rayTraceBlocks(fromEyesOf, maxDistance, isPhysicsCheck, alsoCheckFluids).typeOfHit == RayTraceResult.Type.MISS;
     }
 
-    public static boolean isUnobstructed(Entity fromEyesOf, double maxDistance, int maxBlocks, boolean collideOnAllSolids)
+    public static boolean isUnobstructed(Entity fromEyesOf, double maxDistance, int maxBlocks, boolean isPhysicsCheck)
     {
-        return rayTraceBlocks(fromEyesOf, maxDistance, maxBlocks, collideOnAllSolids).typeOfHit == RayTraceResult.Type.MISS;
+        return rayTraceBlocks(fromEyesOf, maxDistance, maxBlocks, isPhysicsCheck).typeOfHit == RayTraceResult.Type.MISS;
     }
 
-    public static boolean isUnobstructed(Entity fromEyesOf, double maxDistance, int maxBlocks, boolean collideOnAllSolids, boolean collideOnAllFluids)
+    public static boolean isUnobstructed(Entity fromEyesOf, double maxDistance, int maxBlocks, boolean isPhysicsCheck, boolean alsoCheckFluids)
     {
-        return rayTraceBlocks(fromEyesOf, maxDistance, maxBlocks, collideOnAllSolids, collideOnAllFluids).typeOfHit == RayTraceResult.Type.MISS;
+        return rayTraceBlocks(fromEyesOf, maxDistance, maxBlocks, isPhysicsCheck, alsoCheckFluids).typeOfHit == RayTraceResult.Type.MISS;
     }
 
-    public static boolean isUnobstructed(World world, Vec3d vecStart, Vec3d vecEnd, double maxDistance, boolean collideOnAllSolids)
+    public static boolean isUnobstructed(World world, Vec3d vecStart, Vec3d vecEnd, double maxDistance, boolean isPhysicsCheck)
     {
-        return rayTraceBlocks(world, vecStart, vecEnd, maxDistance, collideOnAllSolids).typeOfHit == RayTraceResult.Type.MISS;
+        return rayTraceBlocks(world, vecStart, vecEnd, maxDistance, isPhysicsCheck).typeOfHit == RayTraceResult.Type.MISS;
     }
 
-    public static boolean isUnobstructed(World world, Vec3d vecStart, Vec3d vecEnd, double maxDistance, int maxBlocks, boolean collideOnAllSolids)
+    public static boolean isUnobstructed(World world, Vec3d vecStart, Vec3d vecEnd, double maxDistance, int maxBlocks, boolean isPhysicsCheck)
     {
-        return rayTraceBlocks(world, vecStart, vecEnd, maxDistance, maxBlocks, collideOnAllSolids).typeOfHit == RayTraceResult.Type.MISS;
+        return rayTraceBlocks(world, vecStart, vecEnd, maxDistance, maxBlocks, isPhysicsCheck).typeOfHit == RayTraceResult.Type.MISS;
     }
 
-    public static boolean isUnobstructed(World world, Vec3d vecStart, Vec3d vecEnd, boolean collideOnAllSolids)
+    public static boolean isUnobstructed(World world, Vec3d vecStart, Vec3d vecEnd, boolean isPhysicsCheck)
     {
-        return rayTraceBlocks(world, vecStart, vecEnd, collideOnAllSolids).typeOfHit == RayTraceResult.Type.MISS;
+        return rayTraceBlocks(world, vecStart, vecEnd, isPhysicsCheck).typeOfHit == RayTraceResult.Type.MISS;
     }
 
-    public static boolean isUnobstructed(World world, Vec3d vecStart, Vec3d vecEnd, int maxBlocks, boolean collideOnAllSolids)
+    public static boolean isUnobstructed(World world, Vec3d vecStart, Vec3d vecEnd, int maxBlocks, boolean isPhysicsCheck)
     {
-        return rayTraceBlocks(world, vecStart, vecEnd, maxBlocks, collideOnAllSolids).typeOfHit == RayTraceResult.Type.MISS;
+        return rayTraceBlocks(world, vecStart, vecEnd, maxBlocks, isPhysicsCheck).typeOfHit == RayTraceResult.Type.MISS;
     }
 
-    public static boolean isUnobstructed(World world, Vec3d vecStart, Vec3d vecEnd, boolean collideOnAllSolids, boolean collideOnAllFluids)
+    public static boolean isUnobstructed(World world, Vec3d vecStart, Vec3d vecEnd, boolean isPhysicsCheck, boolean alsoCheckFluids)
     {
-        return rayTraceBlocks(world, vecStart, vecEnd, collideOnAllSolids, collideOnAllFluids).typeOfHit == RayTraceResult.Type.MISS;
+        return rayTraceBlocks(world, vecStart, vecEnd, isPhysicsCheck, alsoCheckFluids).typeOfHit == RayTraceResult.Type.MISS;
     }
 
-    public static boolean isUnobstructed(World world, Vec3d vecStart, Vec3d vecEnd, int maxBlocks, boolean collideOnAllSolids, boolean collideOnAllFluids)
+    public static boolean isUnobstructed(World world, Vec3d vecStart, Vec3d vecEnd, int maxBlocks, boolean isPhysicsCheck, boolean alsoCheckFluids)
     {
-        return rayTraceBlocks(world, vecStart, vecEnd, maxBlocks, collideOnAllSolids, collideOnAllFluids).typeOfHit == RayTraceResult.Type.MISS;
+        return rayTraceBlocks(world, vecStart, vecEnd, maxBlocks, isPhysicsCheck, alsoCheckFluids).typeOfHit == RayTraceResult.Type.MISS;
     }
 
 
     @Nonnull
-    public static RayTraceResult rayTraceBlocks(Entity fromEyesOf, double maxDistance, boolean collideOnAllSolids)
+    public static RayTraceResult rayTraceBlocks(Entity fromEyesOf, double maxDistance, boolean isPhysicsCheck)
     {
-        return rayTraceBlocks(fromEyesOf, maxDistance, ITERATION_WARNING_THRESHOLD, collideOnAllSolids);
+        return rayTraceBlocks(fromEyesOf, maxDistance, ITERATION_WARNING_THRESHOLD, isPhysicsCheck);
     }
 
     @Nonnull
-    public static RayTraceResult rayTraceBlocks(Entity fromEyesOf, double maxDistance, boolean collideOnAllSolids, boolean collideOnAllFluids)
+    public static RayTraceResult rayTraceBlocks(Entity fromEyesOf, double maxDistance, boolean isPhysicsCheck, boolean alsoCheckFluids)
     {
-        return rayTraceBlocks(fromEyesOf, maxDistance, ITERATION_WARNING_THRESHOLD, collideOnAllSolids, collideOnAllFluids);
+        return rayTraceBlocks(fromEyesOf, maxDistance, ITERATION_WARNING_THRESHOLD, isPhysicsCheck, alsoCheckFluids);
     }
 
     @Nonnull
-    public static RayTraceResult rayTraceBlocks(Entity fromEyesOf, double maxDistance, int maxBlocks, boolean collideOnAllSolids)
+    public static RayTraceResult rayTraceBlocks(Entity fromEyesOf, double maxDistance, int maxBlocks, boolean isPhysicsCheck)
     {
-        return rayTraceBlocks(fromEyesOf, maxDistance, maxBlocks, collideOnAllSolids, false);
+        return rayTraceBlocks(fromEyesOf, maxDistance, maxBlocks, isPhysicsCheck, false);
     }
 
     @Nonnull
-    public static RayTraceResult rayTraceBlocks(Entity fromEyesOf, double maxDistance, int maxBlocks, boolean collideOnAllSolids, boolean collideOnAllFluids)
+    public static RayTraceResult rayTraceBlocks(Entity fromEyesOf, double maxDistance, int maxBlocks, boolean isPhysicsCheck, boolean alsoCheckFluids)
     {
         Vec3d eyes = fromEyesOf.getPositionVector().addVector(0, fromEyesOf.getEyeHeight(), 0);
-        return rayTraceBlocks(fromEyesOf.world, eyes, eyes.add(fromEyesOf.getLookVec().scale(maxDistance)), maxBlocks, collideOnAllSolids, collideOnAllFluids);
+        return rayTraceBlocks(fromEyesOf.world, eyes, eyes.add(fromEyesOf.getLookVec().scale(maxDistance)), maxBlocks, isPhysicsCheck, alsoCheckFluids);
     }
 
     @Nonnull
-    public static RayTraceResult rayTraceBlocks(World world, Vec3d vecStart, Vec3d vecEnd, double maxDistance, boolean collideOnAllSolids)
+    public static RayTraceResult rayTraceBlocks(World world, Vec3d vecStart, Vec3d vecEnd, double maxDistance, boolean isPhysicsCheck)
     {
-        return rayTraceBlocks(world, vecStart, vecEnd, maxDistance, ITERATION_WARNING_THRESHOLD, collideOnAllSolids);
+        return rayTraceBlocks(world, vecStart, vecEnd, maxDistance, ITERATION_WARNING_THRESHOLD, isPhysicsCheck);
     }
 
     @Nonnull
-    public static RayTraceResult rayTraceBlocks(World world, Vec3d vecStart, Vec3d vecEnd, double maxDistance, int maxBlocks, boolean collideOnAllSolids)
+    public static RayTraceResult rayTraceBlocks(World world, Vec3d vecStart, Vec3d vecEnd, double maxDistance, int maxBlocks, boolean isPhysicsCheck)
     {
-        return rayTraceBlocks(world, vecStart, vecStart.add(vecEnd.subtract(vecStart).normalize().scale(maxDistance)), maxBlocks, collideOnAllSolids);
+        return rayTraceBlocks(world, vecStart, vecStart.add(vecEnd.subtract(vecStart).normalize().scale(maxDistance)), maxBlocks, isPhysicsCheck);
     }
 
     @Nonnull
-    public static RayTraceResult rayTraceBlocks(World world, Vec3d vecStart, Vec3d vecEnd, boolean collideOnAllSolids)
+    public static RayTraceResult rayTraceBlocks(World world, Vec3d vecStart, Vec3d vecEnd, boolean isPhysicsCheck)
     {
-        return rayTraceBlocks(world, vecStart, vecEnd, ITERATION_WARNING_THRESHOLD, collideOnAllSolids);
+        return rayTraceBlocks(world, vecStart, vecEnd, ITERATION_WARNING_THRESHOLD, isPhysicsCheck);
     }
 
     @Nonnull
-    public static RayTraceResult rayTraceBlocks(World world, Vec3d vecStart, Vec3d vecEnd, int maxBlocks, boolean collideOnAllSolids)
+    public static RayTraceResult rayTraceBlocks(World world, Vec3d vecStart, Vec3d vecEnd, int maxBlocks, boolean isPhysicsCheck)
     {
-        return rayTraceBlocks(world, vecStart, vecEnd, maxBlocks, collideOnAllSolids, false);
+        return rayTraceBlocks(world, vecStart, vecEnd, maxBlocks, isPhysicsCheck, false);
     }
 
     @Nonnull
-    public static RayTraceResult rayTraceBlocks(World world, Vec3d vecStart, Vec3d vecEnd, boolean collideOnAllSolids, boolean collideOnAllFluids)
+    public static RayTraceResult rayTraceBlocks(World world, Vec3d vecStart, Vec3d vecEnd, boolean isPhysicsCheck, boolean alsoCheckFluids)
     {
-        return rayTraceBlocks(world, vecStart, vecEnd, ITERATION_WARNING_THRESHOLD, collideOnAllSolids, collideOnAllFluids);
+        return rayTraceBlocks(world, vecStart, vecEnd, ITERATION_WARNING_THRESHOLD, isPhysicsCheck, alsoCheckFluids);
     }
 
     @Nonnull
-    public static RayTraceResult rayTraceBlocks(World world, Vec3d vecStart, Vec3d vecEnd, int maxBlocks, boolean collideOnAllSolids, boolean collideOnAllFluids)
+    public static RayTraceResult rayTraceBlocks(World world, Vec3d vecStart, Vec3d vecEnd, int maxBlocks, boolean isPhysicsCheck, boolean alsoCheckFluids)
     {
         world.profiler.startSection("Fantastic Lib: Improved Raytrace");
 
@@ -698,7 +699,7 @@ public class ImprovedRayTracing
             return new FixedRayTraceResult(null, null, null, pos);
         }
         IBlockState state = world.getBlockState(pos);
-        result = checkState(world, pos, state, vecStart, vecEnd, collideOnAllSolids, collideOnAllFluids);
+        result = checkState(world, pos, state, vecStart, vecEnd, isPhysicsCheck, alsoCheckFluids);
         if (result != null)
         {
             world.profiler.endSection();
@@ -785,7 +786,7 @@ public class ImprovedRayTracing
                 return new FixedRayTraceResult(null, null, null, pos);
             }
             state = world.getBlockState(pos);
-            result = checkState(world, pos, state, vecStart, vecEnd, collideOnAllSolids, collideOnAllFluids);
+            result = checkState(world, pos, state, vecStart, vecEnd, isPhysicsCheck, alsoCheckFluids);
             if (result != null)
             {
                 world.profiler.endSection();
@@ -821,41 +822,54 @@ public class ImprovedRayTracing
     }
 
 
-    public static RayTraceResult checkState(World world, BlockPos pos, IBlockState state, Vec3d vecStart, Vec3d vecEnd, boolean collideOnAllSolids, boolean collideOnAllFluids)
+    public static RayTraceResult checkState(World world, BlockPos pos, IBlockState state, Vec3d vecStart, Vec3d vecEnd, boolean isPhysicsCheck, boolean alsoCheckFluids)
     {
         RayTraceResult result = null;
-        if (collideOnAllSolids || (collideOnAllFluids && (state.getBlock() instanceof IFluidBlock || state.getMaterial().isLiquid())) || !canSeeThrough(state))
+
+        Block block = state.getBlock();
+        if (block instanceof BlockFluidBase || block instanceof BlockLiquid)
         {
-            ArrayList<AxisAlignedBB> boxes = new ArrayList<>();
-            state.addCollisionBoxToList(world, pos, Block.FULL_BLOCK_AABB.offset(pos), boxes, null, true);
-
-            ArrayList<RayTraceResult> results = new ArrayList<>();
-            for (AxisAlignedBB collisionBox : boxes)
+            if (alsoCheckFluids || (!isPhysicsCheck && !canSeeThrough(state)))
             {
-                if (collisionBox != Block.NULL_AABB)
-                {
-                    result = rayTraceWithinBlock(pos, vecStart, vecEnd, collisionBox);
-                    if (result != null) results.add(result);
-                }
+                result = rayTraceWithinFluid(getActualFluidHeights(world, pos, state.getMaterial()), pos, vecStart, vecEnd);
             }
-
-            if (results.size() > 0)
+        }
+        else
+        {
+            if (isPhysicsCheck || !canSeeThrough(state))
             {
-                result = results.get(0);
-                double distSqr, minDistSqr = vecStart.squareDistanceTo(result.hitVec);
-                RayTraceResult r;
-                for (int i = results.size() - 1; i >= 1; i--)
+                ArrayList<AxisAlignedBB> boxes = new ArrayList<>();
+                state.addCollisionBoxToList(world, pos, Block.FULL_BLOCK_AABB.offset(pos), boxes, null, false);
+
+                ArrayList<RayTraceResult> results = new ArrayList<>();
+                for (AxisAlignedBB collisionBox : boxes)
                 {
-                    r = results.get(i);
-                    distSqr = vecStart.squareDistanceTo(r.hitVec);
-                    if (distSqr < minDistSqr)
+                    if (collisionBox != Block.NULL_AABB)
                     {
-                        minDistSqr = distSqr;
-                        result = r;
+                        result = rayTraceWithinNonFluid(pos, vecStart, vecEnd, collisionBox);
+                        if (result != null) results.add(result);
+                    }
+                }
+
+                if (results.size() > 0)
+                {
+                    result = results.get(0);
+                    double distSqr, minDistSqr = vecStart.squareDistanceTo(result.hitVec);
+                    RayTraceResult r;
+                    for (int i = results.size() - 1; i >= 1; i--)
+                    {
+                        r = results.get(i);
+                        distSqr = vecStart.squareDistanceTo(r.hitVec);
+                        if (distSqr < minDistSqr)
+                        {
+                            minDistSqr = distSqr;
+                            result = r;
+                        }
                     }
                 }
             }
         }
+
         return result;
     }
 
@@ -940,11 +954,113 @@ public class ImprovedRayTracing
     }
 
 
-    public static RayTraceResult rayTraceWithinBlock(BlockPos pos, Vec3d start, Vec3d end, AxisAlignedBB boundingBox)
+    public static RayTraceResult rayTraceWithinNonFluid(BlockPos pos, Vec3d start, Vec3d end, AxisAlignedBB boundingBox)
     {
         if (boundingBox.contains(start)) return new RayTraceResult(start, null, pos);
         RayTraceResult raytraceresult = boundingBox.calculateIntercept(start, end);
         return raytraceresult == null ? null : new RayTraceResult(raytraceresult.hitVec, raytraceresult.sideHit, pos);
+    }
+
+
+    public static RayTraceResult rayTraceWithinFluid(float[] actualFluidHeights, BlockPos pos, Vec3d start, Vec3d end)
+    {
+        if (fluidContains(actualFluidHeights, start.subtract(pos.getX(), pos.getY(), pos.getZ()))) return new RayTraceResult(start, null, pos);
+
+
+        //Actual fluid raytrace (technically segment trace) from here down
+        VectorN relativeStart = new VectorN(start.x - pos.getX(), start.y - pos.getY(), start.z - pos.getZ());
+        VectorN relativeEnd = new VectorN(end.x - pos.getX(), end.y - pos.getY(), end.z - pos.getZ());
+
+
+        //SW triangle
+        VectorN sw = new VectorN(0, actualFluidHeights[2], 0);
+        VectorN se = new VectorN(1, actualFluidHeights[3], 0);
+        //TODO WIP
+
+
+        return null;
+    }
+
+    public static boolean fluidContains(float[] actualFluidHeights, Vec3d relativeVec)
+    {
+        //relativeVec is assumed to be inside the cube area when this is called
+
+        //N is -z, W is -x
+
+        //NW-SE is the triangle seamline (the triangles are weighted SW and NE)
+        double nw = actualFluidHeights[0];
+        double se = actualFluidHeights[3];
+        double c = (nw + se) * 0.5;
+        double sw, ne;
+
+        //Seamline is defined by z = x, so SW triangle is z >= x (South is positive)
+        if (relativeVec.z >= relativeVec.x)
+        {
+            //SW triangle
+            sw = actualFluidHeights[2];
+            ne = c + (c - sw);
+        }
+        else
+        {
+            //NE triangle
+            ne = actualFluidHeights[1];
+            sw = c + (c - ne);
+        }
+
+        double n = nw + (ne - nw) * relativeVec.x;
+        double s = sw + (se - sw) * relativeVec.x;
+        return n + (s - n) * relativeVec.z > relativeVec.y;
+    }
+
+    public static float[] getActualFluidHeights(World world, BlockPos pos, Material material)
+    {
+        //NW-SE is the triangle seamline
+        float nw = getFluidHeight(world, pos, material);
+        float ne = getFluidHeight(world, pos.east(), material);
+        float sw = getFluidHeight(world, pos.south(), material);
+        float se = getFluidHeight(world, pos.east().south(), material);
+        return new float[]{nw, ne, sw, se};
+    }
+
+    public static float getFluidHeight(World world, BlockPos pos, Material material)
+    {
+        //Should work for any instance of BlockLiquid or BlockFluidBase
+        int i = 0;
+        float f = 0;
+
+        for (int j = 0; j < 4; j++)
+        {
+            BlockPos blockpos = pos.add(-(j & 1), 0, -(j >> 1 & 1));
+
+            if (world.getBlockState(blockpos.up()).getMaterial() == material) return 1;
+
+            IBlockState other = world.getBlockState(blockpos);
+            Material otherMaterial = other.getMaterial();
+
+            if (otherMaterial != material)
+            {
+                if (!otherMaterial.isSolid())
+                {
+                    f++;
+                    i++;
+                }
+            }
+            else
+            {
+                int k = other.getValue(BlockLiquid.LEVEL); //This should also work for BlockFluidBase
+
+                if (k >= 8 || k == 0)
+                {
+                    f += BlockLiquid.getLiquidHeightPercent(k) * 10;
+                    i += 10;
+                }
+
+                f += BlockLiquid.getLiquidHeightPercent(k);
+                i++;
+            }
+        }
+
+        return 1.0F - f / (float) i;
     }
 
 
