@@ -54,7 +54,7 @@ public class PathedParticleManager
             list.removeIf(particle ->
             {
                 particle.onUpdate();
-                return particle.age >= particle.maxAge;
+                return particle.dead;
             });
             if (list.size() == 0) particles.remove(entry.getKey());
         }

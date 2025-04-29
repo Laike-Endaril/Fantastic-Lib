@@ -243,17 +243,24 @@ public class FantasticLib
 //    public static PathedParticleSharedRenderData particleRenderData;
 //    public static SpriteMetaData spriteMetaData = new SpriteMetaData(128, 128, 57, 73, 64, 80);
 //    public static VectorN
+//            v1_1 = new VectorN(1),
+//            v1_n1 = new VectorN(-1),
+//            v3_0 = new VectorN(0, 0, 0),
 //            v3_1_05_0 = new VectorN(1, 0.5, 0),
 //            v3_0_1_0 = new VectorN(0, 1, 0);
 //    public static CPath
-//            rotationPath = new CPathLinear(new VectorN(Math.PI * 2)),
-//            alphaPath = new CPathLinear(new VectorN(-10)).add(new CPathConstant(new VectorN(10))).highLimit(new CPathConstant(new VectorN(1, 1, 1)));
+//            pathNone = new CPathConstant(v3_0),
+//            pathFalling = new CPathLinear(new VectorN(0, -1d * 1000 / 20, 0)),
+//            pathRotation = new CPathLinear(new VectorN(Math.PI * 2 * 1000 / 20)),
+//            pathAlphaLinearFadeout = new CPathConstant(v1_1).add(new CPathLinear(v1_n1));
 //
 //    public static PathedParticleFactory particleFactory = null, particleFactory2;
 //
 //    public static void particlesTextureTest(EntityLivingBase entityLivingBase)
 //    {
-//        //TODO add basic physics support?  Stop / kill on collision with block?
+//        //TODO add contents of dieOnLiquids()
+//
+//        //TODO remove all particles when changing worlds
 //
 //        //TODO add multi-rotation support?  Eg. for leaves spinning on top of water, or maybe rune particles in spinning rings (flat) or ribbons (vertical) for magic
 //        //TODO is this already possible by using scale instead of rotation (change vertical scale based on player pitch)?
@@ -266,26 +273,44 @@ public class FantasticLib
 //
 //            particleFactory = args ->
 //            {
-//                int age = 1000;
-//                PathedParticle particle = new PathedParticle(particleRenderData, new CPathLinear(new VectorN(0, -1d * age / 20, 0)));
-//                particle.setMaxAge(age);
+//                PathedParticle particle = new PathedParticle(particleRenderData, pathNone);
 //                particle.spriteMetaData = spriteMetaData;
-//                particle.rotationPath(rotationPath);
-//                particle.alphaPath(alphaPath);
+//
+//                particle.setMaxAge(20 + Tools.random(20));
+//                particle.alphaPath(pathAlphaLinearFadeout);
+//
+//                if (args != null)
+//                {
+//                    PathedParticle parent = (PathedParticle) args[0];
+//                    particle.rotationPath(new CPathConstant(new VectorN(parent.rotationPath.getRelativePosition(parent.currentRenderMillis(0)).values[0])));
+//                }
+//
 //                return particle;
 //            };
 //
 //
 //            particleFactory2 = args ->
 //            {
-//                EntityLivingBase livingBase = (EntityLivingBase) args[0];
-//                PathedParticle particle = particleFactory.create();
+//                PathedParticle particle = particleFactory.create(null);
+//                particle.setMaxAge(1000);
+//
+//                //Spawn randomly in ring around player at half player height
+//                EntityLivingBase livingBase = (EntityLivingBase) args[1];
 //                particle.applyPath(new CPathConstant(new VectorN(livingBase.posX, livingBase.posY, livingBase.posZ).add(new VectorN(livingBase.width, livingBase.height, livingBase.width).multiply(v3_1_05_0).rotate(v3_0_1_0, Tools.random(Math.PI * 2)))));
-////                particle.addOnDeathParticles(true, particleFactory);
+//
+//                //Fall at a certain speed
+//                particle.applyPath(pathFalling);
+//
+//                //Rotate at a certain speed
+//                particle.rotationPath(pathRotation);
+//
+//                //Die when touching ground, and spawn a fading copy of self that holds still
+//                particle.dieOnSolids().dieOnLiquids();
+//                particle.addOnDeathParticles(true, particleFactory);
 //                return particle;
 //            };
 //        }
 //
-//        if (!Minecraft.getMinecraft().isGamePaused()) particleFactory2.create(entityLivingBase);
+//        if (!Minecraft.getMinecraft().isGamePaused()) particleFactory2.create(null, entityLivingBase);
 //    }
 }

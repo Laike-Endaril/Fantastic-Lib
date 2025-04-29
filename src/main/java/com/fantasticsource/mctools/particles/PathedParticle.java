@@ -1,5 +1,6 @@
 package com.fantasticsource.mctools.particles;
 
+import com.fantasticsource.mctools.ImprovedRayTracing;
 import com.fantasticsource.tools.SpriteMetaData;
 import com.fantasticsource.tools.component.path.CPath;
 import com.fantasticsource.tools.datastructures.Color;
@@ -10,26 +11,31 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.function.Predicate;
 
 public class PathedParticle
 {
     //Cloned
     public final PathedParticleSharedRenderData sharedRenderData;
 
-    protected int maxAge = 20;
+    public int maxAge = 20;
 
-    protected CPath.CPathData basePath, rgbPath = null, hsvPath = null, alphaPath = null, scale2DPath = null, scale3DPath = null, rotationPath = null, animationPath = null;
-    protected ArrayList<CPath.CPathData> morePaths = new ArrayList<>();
+    public CPath.CPathData basePath, rgbPath = null, hsvPath = null, alphaPath = null, scale2DPath = null, scale3DPath = null, rotationPath = null, animationPath = null;
+    public ArrayList<CPath.CPathData> morePaths = new ArrayList<>();
 
-    protected ArrayList<PathedParticleFactory>[] onDeathParticles = new ArrayList[2];
+    public ArrayList<Predicate<PathedParticle>> deathConditions = new ArrayList<>();
+    public ArrayList<PathedParticleFactory>[] onDeathParticles = new ArrayList[2];
+
     public SpriteMetaData spriteMetaData = null;
 
 
     //Uncloned
+    protected boolean dead = false;
     protected int age = 0;
     protected VectorN offset = new VectorN(0, 0, 0);
 
@@ -45,9 +51,33 @@ public class PathedParticle
     }
 
 
-    public PathedParticle kill()
+    public PathedParticle die()
     {
-        age = maxAge;
+        //Natural death
+        dead = true;
+
+        if (onDeathParticles[0] != null)
+        {
+            VectorN pos = currentPos(0);
+            PathedParticle particle;
+            for (PathedParticleFactory particleFactory : onDeathParticles[0])
+            {
+                particle = particleFactory.create(this);
+                particle.offset = pos.copy().subtract(particle.currentPos(0));
+            }
+        }
+        if (onDeathParticles[1] != null)
+        {
+            for (PathedParticleFactory particleFactory : onDeathParticles[1]) particleFactory.create(this);
+        }
+
+        return this;
+    }
+
+    public PathedParticle delete()
+    {
+        //Deletion, not death; don't call on-death stuff
+        dead = true;
         return this;
     }
 
@@ -116,6 +146,27 @@ public class PathedParticle
     }
 
 
+    public PathedParticle dieOnSolids()
+    {
+        deathConditions.add(particle ->
+        {
+            double[] from = currentPos(0).values, to = nextPosition(0).values;
+            return !ImprovedRayTracing.isUnobstructed(Minecraft.getMinecraft().world, new Vec3d(from[0], from[1], from[2]), new Vec3d(to[0], to[1], to[2]), true);
+        });
+        return this;
+    }
+
+    public PathedParticle dieOnLiquids()
+    {
+        return this;
+    }
+
+    public PathedParticle addDeathConditions(Predicate<PathedParticle>... conditions)
+    {
+        deathConditions.addAll(Arrays.asList(conditions));
+        return this;
+    }
+
     public PathedParticle addOnDeathParticles(boolean atDeathPosition, PathedParticleFactory... particleFactories)
     {
         int index = atDeathPosition ? 0 : 1;
@@ -134,30 +185,44 @@ public class PathedParticle
 
     public void onUpdate()
     {
-        if (++age == maxAge)
+        boolean shouldDie = ++age >= maxAge;
+        for (Predicate<PathedParticle> predicate : deathConditions)
         {
-            //Natural death
-            if (onDeathParticles[0] != null)
-            {
-                VectorN pos = currentPos(0);
-                PathedParticle particle;
-                for (PathedParticleFactory particleFactory : onDeathParticles[0])
-                {
-                    particle = particleFactory.create();
-                    particle.offset = pos.copy().subtract(particle.currentPos(0));
-                }
-            }
-            if (onDeathParticles[1] != null)
-            {
-                for (PathedParticleFactory particleFactory : onDeathParticles[1]) particleFactory.create();
-            }
+            if (predicate.test(this)) shouldDie = true;
         }
+
+        if (shouldDie) die();
     }
 
 
-    protected VectorN currentPos(float partialTick)
+    public long currentRenderMillis(float partialTick)
     {
-        long millis = (long) ((partialTick + age) * 1000 / maxAge);
+        return (long) ((partialTick + age) * 1000 / maxAge);
+    }
+
+
+    public VectorN prevPosition(float partialTick)
+    {
+        return positionAtAge(age - 1, partialTick);
+    }
+
+    public VectorN nextPosition(float partialTick)
+    {
+        return positionAtAge(age + 1, partialTick);
+    }
+
+    public VectorN positionAtAge(int age, float partialTick)
+    {
+        int a = this.age;
+        this.age = age;
+        VectorN result = currentPos(partialTick);
+        this.age = a;
+        return result;
+    }
+
+    public VectorN currentPos(float partialTick)
+    {
+        long millis = currentRenderMillis(partialTick);
 
         VectorN pos = basePath.getRelativePosition(millis), pathPos;
         if (pos == null) return null;
@@ -177,18 +242,18 @@ public class PathedParticle
     //The letter before "Factor" is what coordinate of the normalized rotated scalar vector is factoring into the equation
     public void renderParticle(BufferBuilder buffer, float partialTick, float xScaleXFactor, float yScaleYFactor, float xScaleZFactor, float yScaleZFactor, float yScaleXFactor)
     {
-        if (Minecraft.getMinecraft().world == null) age = maxAge;
-        if (age >= maxAge) return;
+        if (Minecraft.getMinecraft().world == null) dead = true;
+        if (dead) return;
 
 
         //Normalize all path progress over the course of the particle lifetime
-        long renderMillis = (long) ((partialTick + age) * 1000 / maxAge);
+        long renderMillis = currentRenderMillis(partialTick);
 
 
         VectorN pos = currentPos(partialTick);
         if (pos == null)
         {
-            age = maxAge;
+            dead = true;
             return;
         }
 
