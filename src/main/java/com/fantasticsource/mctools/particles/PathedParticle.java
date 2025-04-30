@@ -21,12 +21,6 @@ import java.util.function.Predicate;
 
 public class PathedParticle
 {
-    public static final VectorN
-            X_AXIS = new VectorN(1, 0, 0),
-            Y_AXIS = new VectorN(0, 1, 0),
-            Z_AXIS = new VectorN(0, 0, 1);
-
-
     //Cloned
     public final PathedParticleSharedRenderData sharedRenderData;
 
@@ -411,9 +405,9 @@ public class PathedParticle
             //Manual 3D rotations
             for (VectorN v : posOffsets)
             {
-                v.rotate(Z_AXIS, rotation.values[2]);
-                v.rotate(X_AXIS, rotation.values[1]);
-                v.rotate(Y_AXIS, rotation.values[0]);
+                v.rotate(VectorN.Z_AXIS, rotation.values[2]);
+                v.rotate(VectorN.X_AXIS, rotation.values[1]);
+                v.rotate(VectorN.Y_AXIS, rotation.values[0]);
             }
         }
 

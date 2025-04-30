@@ -7,6 +7,12 @@ import com.fantasticsource.tools.TrigLookupTable;
 
 public class VectorN
 {
+    public static final VectorN
+            X_AXIS = new VectorN(1, 0, 0),
+            Y_AXIS = new VectorN(0, 1, 0),
+            Z_AXIS = new VectorN(0, 0, 1);
+
+
     public double[] values;
 
     public VectorN(double... values)

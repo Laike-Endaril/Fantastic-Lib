@@ -241,27 +241,30 @@ public class FantasticLib
 //    }
 //
 //    public static PathedParticleSharedRenderData particleRenderData;
-//    public static SpriteMetaData spriteMetaData = new SpriteMetaData(128, 128, 57, 73, 64, 80);
+//    public static SpriteMetaData spriteMetaData = SpriteMetaData.VANILLA_RUNES_NON_EMPTY.copy().setNormalizedOriginDynamic(SpriteMetaData.VANILLA_RUNES_NON_EMPTY_OFFSETS);
 //    public static VectorN
 //            v1_1 = new VectorN(1),
-//            v1_n1 = new VectorN(-1),
+//            v1_3 = new VectorN(3),
+//            v1_10 = new VectorN(10),
+//            v1_n3 = new VectorN(-3),
 //            v3_0 = new VectorN(0, 0, 0),
-//            v3_1_05_0 = new VectorN(1, 0.5, 0),
-//            v3_0_1_0 = new VectorN(0, 1, 0),
+//            v3_0_0_1 = new VectorN(0, 0, 1),
 //            v3_GroundOffset = new VectorN(0, 0.001, 0);
 //    public static CPath
+//            pathYAxis = new CPathConstant(VectorN.Y_AXIS),
+//            pathRadius = new CPathConstant(v3_0_0_1),
+//            pathRotation3D = new CPathLinear(new VectorN(-Math.PI * 0.5, 0, 0)),
+//            pathRotation1D = new CPathLinear(new VectorN(-Math.PI * 0.5)),
 //            pathNone = new CPathConstant(v3_0),
-//            pathFalling = new CPathLinear(new VectorN(0, -1d * 1000 / 20, 0)),
-//            pathRotation = new CPathLinear(new VectorN(0, 0, Math.PI * 100)).add(new CPathConstant(new VectorN(0, Math.PI * 0.5, 0))),
-//            pathAlphaLinearFadeout = new CPathConstant(v1_1).add(new CPathLinear(v1_n1));
+//            pathAlpha = new CPathConstant(v1_3).add(new CPathLinear(v1_n3)).highLimit(new CPathLinear(v1_10)).highLimit(new CPathConstant(v1_1));
 //
-//    public static PathedParticleFactory particleFactory = null, particleFactory2;
+//    public static PathedParticleFactory particleFactory = null, runeFactory;
 //
 //    public static void particlesTextureTest(EntityLivingBase entityLivingBase)
 //    {
 //        if (particleFactory == null)
 //        {
-//            particleRenderData = new PathedParticleSharedRenderData(true, GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, "minecraft:textures/particle/particles.png");
+//            particleRenderData = new PathedParticleSharedRenderData(false, GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, "minecraft:textures/particle/particles.png");
 //
 //
 //            particleFactory = args ->
@@ -269,13 +272,14 @@ public class FantasticLib
 //                PathedParticle particle = new PathedParticle(particleRenderData, pathNone);
 //                particle.spriteMetaData = spriteMetaData;
 //
-//                particle.setMaxAge(200);
-//                particle.alphaPath(pathAlphaLinearFadeout);
+//                particle.setMaxAge(100);
 //
 //                if (args != null)
 //                {
 //                    PathedParticle parent = (PathedParticle) args[0];
 //                    particle.applyPath(new CPathConstant(new VectorN(parent.deathPos.x, parent.deathPos.y, parent.deathPos.z).add(v3_GroundOffset)));
+//
+//                    particle.animationPath(parent.animationPath.path);
 //
 //                    particle.rotationPath(new CPathConstant(parent.rotationPath.getRelativePosition(parent.currentRenderMillis(0)).copy()));
 //                }
@@ -284,28 +288,32 @@ public class FantasticLib
 //            };
 //
 //
-//            particleFactory2 = args ->
+//            runeFactory = args ->
 //            {
-//                PathedParticle particle = particleFactory.create(null);
-//                particle.setMaxAge(1000);
-//
-//                //Spawn randomly in ring around player at half player height
 //                EntityLivingBase livingBase = (EntityLivingBase) args[1];
-//                particle.applyPath(new CPathConstant(new VectorN(livingBase.posX, livingBase.posY, livingBase.posZ).add(new VectorN(livingBase.width, livingBase.height, livingBase.width).multiply(v3_1_05_0).rotate(v3_0_1_0, Tools.random(Math.PI * 2)))));
 //
-//                //Fall at a certain speed
-//                particle.applyPath(pathFalling);
+//                double theta = (double) args[2];
+//                PathedParticle particle = new PathedParticle(particleRenderData, pathRadius.copy().rotate(pathYAxis, new CPathConstant(new VectorN((Double) args[2])).add(pathRotation1D)));
+//                particle.applyPath(new CPathFollowEntity(livingBase).add(new CPathConstant(new VectorN(0, livingBase.height * 0.65, 0))));
+//
+//                particle.setMaxAge(50);
+//
+//                particle.spriteMetaData = spriteMetaData;
+//                particle.animationPath(new CPathConstant(new VectorN(Math.random())));
 //
 //                //Rotate at a certain speed
-//                particle.rotationPath(pathRotation);
+//                particle.rotationPath(new CPathConstant(new VectorN(theta, 0, 0)).add(pathRotation3D));
 //
-//                //Die when touching ground, and spawn a fading copy of self that holds still
-//                particle.dieOnSolidsAndLiquids();
-//                particle.addOnDeathParticles(particleFactory);
+//                particle.alphaPath(pathAlpha);
+//
+////                particle.addOnDeathParticles(particleFactory);
 //                return particle;
 //            };
 //        }
 //
-//        if (!Minecraft.getMinecraft().isGamePaused()) particleFactory2.create(null, entityLivingBase);
+//        if (!Minecraft.getMinecraft().isGamePaused() && ClientTickTimer.currentTick() % 3 == 0)
+//        {
+//            for (int i = 0; i < 4; i++) runeFactory.create(null, entityLivingBase, (Math.PI * 0.5 * i));
+//        }
 //    }
 }

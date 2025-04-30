@@ -4,6 +4,14 @@ import java.util.ArrayList;
 
 public class SpriteMetaData
 {
+    public static final SpriteMetaData VANILLA_RUNES = new SpriteMetaData(128, 128, 0, 112, 8, 120, false, 27);
+    public static final SpriteMetaData VANILLA_RUNES_NON_EMPTY = new SpriteMetaData(128, 128, 8, 112, 16, 120, false, 26);
+    public static final SpriteMetaData VANILLA_RUNES_EXTENDED = new SpriteMetaData(128, 128, 0, 112, 8, 120, false, 32);
+    public static final double[] VANILLA_RUNES_OFFSETS = new double[]{0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.1875, 0.5, 0.3125, 0.5, 0.0625, 0.5, 0.0625, 0.5, 0.3125, 0.5, 0.1875, 0.5, 0.3125, 0.5, 0.25, 0.5, 0.25, 0.5, 0.1875, 0.5, 0.3125, 0.5, 0.25, 0.5, 0.125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.1875, 0.5, 0.3125, 0.5};
+    public static final double[] VANILLA_RUNES_NON_EMPTY_OFFSETS = new double[]{0.3125, 0.5, 0.3125, 0.5, 0.125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.1875, 0.5, 0.3125, 0.5, 0.0625, 0.5, 0.0625, 0.5, 0.3125, 0.5, 0.1875, 0.5, 0.3125, 0.5, 0.25, 0.5, 0.25, 0.5, 0.1875, 0.5, 0.3125, 0.5, 0.25, 0.5, 0.125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.1875, 0.5, 0.3125, 0.5};
+    public static final double[] VANILLA_RUNES_EXTENDED_OFFSETS = new double[]{0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.1875, 0.5, 0.3125, 0.5, 0.0625, 0.5, 0.0625, 0.5, 0.3125, 0.5, 0.1875, 0.5, 0.3125, 0.5, 0.25, 0.5, 0.25, 0.5, 0.1875, 0.5, 0.3125, 0.5, 0.25, 0.5, 0.125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.1875, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5};
+
+
     public ArrayList<FrameMetaData> frames = new ArrayList<>();
 
     public SpriteMetaData()
@@ -95,6 +103,14 @@ public class SpriteMetaData
     }
 
 
+    public SpriteMetaData copy()
+    {
+        SpriteMetaData other = new SpriteMetaData();
+        for (FrameMetaData frameMetaData : frames) other.frames.add(frameMetaData.copy());
+        return other;
+    }
+
+
     public static class FrameMetaData
     {
         public double u1, v1, u2, v2, relativeOriginX = 0.5, relativeOriginY = 0.5;
@@ -116,6 +132,14 @@ public class SpriteMetaData
         {
             this.relativeOriginX = relativeOriginX;
             this.relativeOriginY = relativeOriginY;
+        }
+
+        public FrameMetaData copy()
+        {
+            FrameMetaData other = new FrameMetaData(u1, v1, u2, v2);
+            other.relativeOriginX = relativeOriginX;
+            other.relativeOriginY = relativeOriginY;
+            return other;
         }
     }
 }
