@@ -4,7 +4,6 @@ import com.fantasticsource.fantasticlib.Compat;
 import com.fantasticsource.fantasticlib.config.FantasticConfig;
 import com.fantasticsource.tools.ReflectionTool;
 import com.fantasticsource.tools.Tools;
-import com.fantasticsource.tools.datastructures.VectorN;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -965,19 +964,20 @@ public class ImprovedRayTracing
     public static RayTraceResult rayTraceWithinFluid(float[] actualFluidHeights, BlockPos pos, Vec3d start, Vec3d end)
     {
         if (fluidContains(actualFluidHeights, start.subtract(pos.getX(), pos.getY(), pos.getZ()))) return new RayTraceResult(start, null, pos);
+        if (start.equals(end)) return null;
 
 
-        //Actual fluid raytrace (technically segment trace) from here down
-        VectorN relativeStart = new VectorN(start.x - pos.getX(), start.y - pos.getY(), start.z - pos.getZ());
-        VectorN relativeEnd = new VectorN(end.x - pos.getX(), end.y - pos.getY(), end.z - pos.getZ());
+        //For now, I've decided that a full check is not worth the extra computation it would take...
+        //...so I'm going to limit this to a check for the START position (above)...
+        //...and then a check for the END position...
+        if (fluidContains(actualFluidHeights, end.subtract(pos.getX(), pos.getY(), pos.getZ()))) return new RayTraceResult(end, null, pos);
 
+        //...and then a check for the EXIT position (reverse raytrace into full cube, then check if within heightmap)
+        RayTraceResult result = Block.FULL_BLOCK_AABB.offset(pos).calculateIntercept(end, start);
+        if (result == null) return null; //Actually not sure how this can happen, but it does...not going to worry about it right now though since this part is makeshift anyway
 
-        //SW triangle
-        VectorN sw = new VectorN(0, actualFluidHeights[2], 0);
-        VectorN se = new VectorN(1, actualFluidHeights[3], 0);
-        //TODO WIP
-
-
+        end = result.hitVec;
+        if (fluidContains(actualFluidHeights, end.subtract(pos.getX(), pos.getY(), pos.getZ()))) return new RayTraceResult(end, null, pos);
         return null;
     }
 
