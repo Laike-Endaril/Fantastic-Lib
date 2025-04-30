@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -35,7 +36,7 @@ public class PathedParticle
     public ArrayList<CPath.CPathData> morePaths = new ArrayList<>();
 
     public ArrayList<Predicate<PathedParticle>> deathConditions = new ArrayList<>();
-    public ArrayList<PathedParticleFactory>[] onDeathParticles = new ArrayList[2];
+    public ArrayList<PathedParticleFactory> onDeathParticles = null;
 
     public SpriteMetaData spriteMetaData = null;
 
@@ -43,7 +44,7 @@ public class PathedParticle
     //Uncloned
     protected boolean dead = false;
     protected int age = 0;
-    protected VectorN offset = new VectorN(0, 0, 0);
+    public Object[] extraDeathArgs = null;
 
 
     public PathedParticle(PathedParticleSharedRenderData sharedRenderData, CPath basePath, CPath... morePaths)
@@ -62,19 +63,9 @@ public class PathedParticle
         //Natural death
         dead = true;
 
-        if (onDeathParticles[0] != null)
+        if (onDeathParticles != null)
         {
-            VectorN pos = currentPos(0);
-            PathedParticle particle;
-            for (PathedParticleFactory particleFactory : onDeathParticles[0])
-            {
-                particle = particleFactory.create(this);
-                particle.offset = pos.copy().subtract(particle.currentPos(0));
-            }
-        }
-        if (onDeathParticles[1] != null)
-        {
-            for (PathedParticleFactory particleFactory : onDeathParticles[1]) particleFactory.create(this);
+            for (PathedParticleFactory particleFactory : onDeathParticles) particleFactory.create(this, extraDeathArgs);
         }
 
         return this;
@@ -162,8 +153,13 @@ public class PathedParticle
             World world = Minecraft.getMinecraft().world;
             if (world == null) return true;
 
-            double[] from = currentPos(0).values, to = nextPosition(0).values;
-            return !ImprovedRayTracing.isUnobstructed(world, new Vec3d(from[0], from[1], from[2]), new Vec3d(to[0], to[1], to[2]), true);
+            double[] fromVals = currentPos(0).values, toVals = nextPosition(0).values;
+            Vec3d from = new Vec3d(fromVals[0], fromVals[1], fromVals[2]), to = new Vec3d(toVals[0], toVals[1], toVals[2]);
+            RayTraceResult result = ImprovedRayTracing.rayTraceBlocks(world, from, to, true);
+            if (result.typeOfHit == RayTraceResult.Type.MISS) return false;
+
+            extraDeathArgs = new Object[]{result.hitVec};
+            return true;
         });
         return this;
     }
@@ -175,8 +171,13 @@ public class PathedParticle
             World world = Minecraft.getMinecraft().world;
             if (world == null) return true;
 
-            double[] from = currentPos(0).values, to = nextPosition(0).values;
-            return !ImprovedRayTracing.isUnobstructed(world, new Vec3d(from[0], from[1], from[2]), new Vec3d(to[0], to[1], to[2]), true, true);
+            double[] fromVals = currentPos(0).values, toVals = nextPosition(0).values;
+            Vec3d from = new Vec3d(fromVals[0], fromVals[1], fromVals[2]), to = new Vec3d(toVals[0], toVals[1], toVals[2]);
+            RayTraceResult result = ImprovedRayTracing.rayTraceBlocks(world, from, to, true, true);
+            if (result.typeOfHit == RayTraceResult.Type.MISS) return false;
+
+            extraDeathArgs = new Object[]{result.hitVec};
+            return true;
         });
         return this;
     }
@@ -187,18 +188,10 @@ public class PathedParticle
         return this;
     }
 
-    public PathedParticle addOnDeathParticles(boolean atDeathPosition, PathedParticleFactory... particleFactories)
+    public PathedParticle addOnDeathParticles(PathedParticleFactory... particleFactories)
     {
-        int index = atDeathPosition ? 0 : 1;
-        ArrayList<PathedParticleFactory> list = onDeathParticles[index];
-        if (list == null)
-        {
-            list = new ArrayList<>();
-            onDeathParticles[index] = list;
-        }
-
-        list.addAll(Arrays.asList(particleFactories));
-
+        if (onDeathParticles == null) onDeathParticles = new ArrayList<>();
+        onDeathParticles.addAll(Arrays.asList(particleFactories));
         return this;
     }
 
@@ -208,7 +201,11 @@ public class PathedParticle
         boolean shouldDie = ++age >= maxAge;
         for (Predicate<PathedParticle> predicate : deathConditions)
         {
-            if (predicate.test(this)) shouldDie = true;
+            if (predicate.test(this))
+            {
+                shouldDie = true;
+                break;
+            }
         }
 
         if (shouldDie) die();
@@ -254,7 +251,7 @@ public class PathedParticle
 
             pos.add(pathPos);
         }
-        return pos.add(offset);
+        return pos;
     }
 
 
@@ -388,10 +385,10 @@ public class PathedParticle
         {
             posOffsets = new VectorN[]
                     {
-                            new VectorN(-xOrigin, -yOrigin, 0),
-                            new VectorN(-xOrigin, 1 - yOrigin, 0),
-                            new VectorN(1 - xOrigin, 1 - yOrigin, 0),
-                            new VectorN(1 - xOrigin, -yOrigin, 0)
+                            new VectorN(-xOrigin * 2, -yOrigin * 2, 0),
+                            new VectorN(-xOrigin * 2, (1 - yOrigin) * 2, 0),
+                            new VectorN((1 - xOrigin) * 2, (1 - yOrigin) * 2, 0),
+                            new VectorN((1 - xOrigin) * 2, -yOrigin * 2, 0)
                     };
 
             if (scale2DPath != null)

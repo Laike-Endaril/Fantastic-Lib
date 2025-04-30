@@ -247,7 +247,8 @@ public class FantasticLib
 //            v1_n1 = new VectorN(-1),
 //            v3_0 = new VectorN(0, 0, 0),
 //            v3_1_05_0 = new VectorN(1, 0.5, 0),
-//            v3_0_1_0 = new VectorN(0, 1, 0);
+//            v3_0_1_0 = new VectorN(0, 1, 0),
+//            v3_0_001_0 = new VectorN(0, 0.01, 0);
 //    public static CPath
 //            pathNone = new CPathConstant(v3_0),
 //            pathFalling = new CPathLinear(new VectorN(0, -1d * 1000 / 20, 0)),
@@ -274,7 +275,10 @@ public class FantasticLib
 //                if (args != null)
 //                {
 //                    PathedParticle parent = (PathedParticle) args[0];
-//                    particle.rotationPath(new CPathConstant(new VectorN(parent.rotationPath.getRelativePosition(parent.currentRenderMillis(0)).values[0])));
+//                    Vec3d deathPos = (Vec3d) parent.extraDeathArgs[0];
+//                    particle.applyPath(new CPathConstant(new VectorN(deathPos.x, deathPos.y, deathPos.z).add(v3_0_001_0)));
+//
+//                    particle.rotationPath(new CPathConstant(parent.rotationPath.getRelativePosition(parent.currentRenderMillis(0)).copy()));
 //                }
 //
 //                return particle;
@@ -298,7 +302,7 @@ public class FantasticLib
 //
 //                //Die when touching ground, and spawn a fading copy of self that holds still
 //                particle.dieOnSolidsAndLiquids();
-//                particle.addOnDeathParticles(true, particleFactory);
+//                particle.addOnDeathParticles(particleFactory);
 //                return particle;
 //            };
 //        }
