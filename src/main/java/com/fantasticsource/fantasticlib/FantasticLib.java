@@ -252,13 +252,13 @@ public class FantasticLib
 //                    {
 //                        EntityLivingBase livingBase = (EntityLivingBase) args[1];
 //
-//                        PathedParticle particle = new PathedParticle(particleRenderData, pathRadius.copy());
+//                        PathedParticle particle = new PathedParticle(particleRenderData, pathRadius);
 //                        particle.applyPath(new CPathFollowEntity(livingBase).add(new CPathConstant(0, livingBase.getEyeHeight(), 0)));
 //
 //                        particle.setMaxAge(Integer.MAX_VALUE);
 //
 //                        particle.spriteMetaData = spriteMetaData;
-//                        particle.animationPath(new CPathConstant(new VectorN(Math.random())));
+//                        particle.animationPath(new CPathConstant((double) (int) args[2] / spriteMetaData.frames.size()));
 //
 //                        return particle;
 //                    };
@@ -267,7 +267,8 @@ public class FantasticLib
 //
 //                if (!Minecraft.getMinecraft().isGamePaused() && ClientTickTimer.currentTick() % 20 == 0)
 //                {
-//                    runeFactory.create(null, entity);
+//                    PathedParticleManager.clear();
+//                    runeFactory.create(null, entity, (int) ((ClientTickTimer.currentTick() / 20) % 26));
 //                }
 //            }
 //        }

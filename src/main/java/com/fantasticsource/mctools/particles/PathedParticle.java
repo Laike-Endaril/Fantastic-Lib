@@ -127,7 +127,7 @@ public class PathedParticle
     public PathedParticle rotationPath(CPath path)
     {
         int count = path.getRelativePosition(0).values.length;
-        if (count != 1 && count != 3) throw new IllegalArgumentException("Rotation path must be 1D or 3D");
+        if (count != 1 && count != 3) throw new IllegalArgumentException("Rotation path must be 1D (rotation facing player) or 3D (manual rotation; yaw, pitch, roll)");
 
         rotationPath = new CPath.CPathData(path, 0);
         return this;

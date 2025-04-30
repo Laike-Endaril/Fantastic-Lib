@@ -45,6 +45,19 @@ public class PathedParticleManager
         else particles.computeIfAbsent(particle.sharedRenderData, o -> new ArrayList<>()).add(particle);
     }
 
+    public static void remove(PathedParticle particle)
+    {
+        queued.remove(particle);
+        ArrayList<PathedParticle> list = particles.get(particle.sharedRenderData);
+        if (list != null && list.remove(particle) && list.size() == 0) particles.remove(particle.sharedRenderData);
+    }
+
+    public static void clear()
+    {
+        queued.clear();
+        particles.clear();
+    }
+
     public static void update()
     {
         busy = true;
@@ -156,6 +169,6 @@ public class PathedParticleManager
     @SubscribeEvent
     public static void playerJoinWorld(EntityJoinWorldEvent event)
     {
-        if (event.getEntity() == Minecraft.getMinecraft().player) particles.clear();
+        if (event.getEntity() == Minecraft.getMinecraft().player) clear();
     }
 }
