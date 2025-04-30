@@ -251,17 +251,13 @@ public class FantasticLib
 //    public static CPath
 //            pathNone = new CPathConstant(v3_0),
 //            pathFalling = new CPathLinear(new VectorN(0, -1d * 1000 / 20, 0)),
-//            pathRotation = new CPathLinear(new VectorN(Math.PI * 2 * 1000 / 20)),
+//            pathRotation = new CPathLinear(new VectorN(0, 0, Math.PI * 100)).add(new CPathConstant(new VectorN(0, Math.PI * 0.5, 0))),
 //            pathAlphaLinearFadeout = new CPathConstant(v1_1).add(new CPathLinear(v1_n1));
 //
 //    public static PathedParticleFactory particleFactory = null, particleFactory2;
 //
 //    public static void particlesTextureTest(EntityLivingBase entityLivingBase)
 //    {
-//        //TODO add multi-rotation support?  Eg. for leaves spinning on top of water, or maybe rune particles in spinning rings (flat) or ribbons (vertical) for magic
-//        //TODO is this already possible by using scale instead of rotation (change vertical scale based on player pitch)?
-//        //TODO probably not, in which case the best approach might be to pass in a 2D+ rotation path, and if it's 2D+, skip the normal "face the player" rotation and apply the first 2 path result values as yaw-then-pitch
-//
 //        if (particleFactory == null)
 //        {
 //            particleRenderData = new PathedParticleSharedRenderData(true, GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, "minecraft:textures/particle/particles.png");

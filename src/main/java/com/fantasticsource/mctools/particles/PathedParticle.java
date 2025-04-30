@@ -20,6 +20,12 @@ import java.util.function.Predicate;
 
 public class PathedParticle
 {
+    public static final VectorN
+            X_AXIS = new VectorN(1, 0, 0),
+            Y_AXIS = new VectorN(0, 1, 0),
+            Z_AXIS = new VectorN(0, 0, 1);
+
+
     //Cloned
     public final PathedParticleSharedRenderData sharedRenderData;
 
@@ -134,6 +140,9 @@ public class PathedParticle
 
     public PathedParticle rotationPath(CPath path)
     {
+        int count = path.getRelativePosition(0).values.length;
+        if (count != 1 && count != 3) throw new IllegalArgumentException("Rotation path must be 1D or 3D");
+
         rotationPath = new CPath.CPathData(path, 0);
         return this;
     }
@@ -327,44 +336,76 @@ public class PathedParticle
             zScale3D *= scalar.values[2];
         }
 
-        if (scale2DPath != null)
-        {
-            VectorN scalar = scale2DPath.getRelativePosition(renderMillis);
-            xScaleXFactor *= scalar.values[0];
-            xScaleZFactor *= scalar.values[0];
-            yScaleYFactor *= scalar.values[1];
-            yScaleXFactor *= scalar.values[1];
-            yScaleZFactor *= scalar.values[1];
-        }
 
         VectorN[] posOffsets;
-        if (xOrigin == 0.5 && yOrigin == 0.5) posOffsets = new VectorN[]
-                {
-                        new VectorN(-xScaleXFactor - yScaleZFactor, -yScaleYFactor, -xScaleZFactor - yScaleXFactor),
-                        new VectorN(-xScaleXFactor + yScaleZFactor, yScaleYFactor, -xScaleZFactor + yScaleXFactor),
-                        new VectorN(xScaleXFactor + yScaleZFactor, yScaleYFactor, xScaleZFactor + yScaleXFactor),
-                        new VectorN(xScaleXFactor - yScaleZFactor, -yScaleYFactor, xScaleZFactor - yScaleXFactor)
-                };
-        else posOffsets = new VectorN[]
-                {
-                        new VectorN(-xScaleXFactor * xOrigin - yScaleZFactor * yOrigin, -yScaleYFactor * yOrigin, -xScaleZFactor * xOrigin - yScaleXFactor * yOrigin),
-                        new VectorN(-xScaleXFactor * xOrigin + yScaleZFactor * (1 - yOrigin), yScaleYFactor * (1 - yOrigin), -xScaleZFactor * xOrigin + yScaleXFactor * (1 - yOrigin)),
-                        new VectorN(xScaleXFactor * (1 - xOrigin) + yScaleZFactor * (1 - yOrigin), yScaleYFactor * (1 - yOrigin), xScaleZFactor * (1 - xOrigin) + yScaleXFactor * (1 - yOrigin)),
-                        new VectorN(xScaleXFactor * (1 - xOrigin) - yScaleZFactor * yOrigin, -yScaleYFactor * yOrigin, xScaleZFactor * (1 - xOrigin) - yScaleXFactor * yOrigin)
-                };
-
-        if (rotationPath != null)
+        VectorN rotation = null;
+        if (rotationPath != null) rotation = rotationPath.getRelativePosition(renderMillis);
+        if (rotation == null || rotation.values.length == 1)
         {
-            float theta = (float) (rotationPath.getRelativePosition(renderMillis).values[0] * 0.5f);
-            float sinTheta = MathHelper.sin(theta), cosTheta = MathHelper.cos(theta);
-            VectorN rotationScalars = new VectorN(sinTheta * Particle.cameraViewDir.x, sinTheta * Particle.cameraViewDir.y, sinTheta * Particle.cameraViewDir.z);
-            double rotScalMagSqr = rotationScalars.getMagnitudeSquared();
-
-            for (int i = 0; i < 4; ++i)
+            if (scale2DPath != null)
             {
-                posOffsets[i] = rotationScalars.copy().scale(2 * posOffsets[i].dotProduct(rotationScalars))
-                        .add(posOffsets[i].copy().scale(cosTheta * cosTheta - rotScalMagSqr))
-                        .add(rotationScalars.copy().crossProduct(posOffsets[i]).scale(2 * cosTheta));
+                VectorN scalar = scale2DPath.getRelativePosition(renderMillis);
+                xScaleXFactor *= scalar.values[0];
+                xScaleZFactor *= scalar.values[0];
+                yScaleYFactor *= scalar.values[1];
+                yScaleXFactor *= scalar.values[1];
+                yScaleZFactor *= scalar.values[1];
+            }
+
+            if (xOrigin == 0.5 && yOrigin == 0.5) posOffsets = new VectorN[]
+                    {
+                            new VectorN(-xScaleXFactor - yScaleZFactor, -yScaleYFactor, -xScaleZFactor - yScaleXFactor),
+                            new VectorN(-xScaleXFactor + yScaleZFactor, yScaleYFactor, -xScaleZFactor + yScaleXFactor),
+                            new VectorN(xScaleXFactor + yScaleZFactor, yScaleYFactor, xScaleZFactor + yScaleXFactor),
+                            new VectorN(xScaleXFactor - yScaleZFactor, -yScaleYFactor, xScaleZFactor - yScaleXFactor)
+                    };
+            else posOffsets = new VectorN[]
+                    {
+                            new VectorN(-xScaleXFactor * xOrigin - yScaleZFactor * yOrigin, -yScaleYFactor * yOrigin, -xScaleZFactor * xOrigin - yScaleXFactor * yOrigin),
+                            new VectorN(-xScaleXFactor * xOrigin + yScaleZFactor * (1 - yOrigin), yScaleYFactor * (1 - yOrigin), -xScaleZFactor * xOrigin + yScaleXFactor * (1 - yOrigin)),
+                            new VectorN(xScaleXFactor * (1 - xOrigin) + yScaleZFactor * (1 - yOrigin), yScaleYFactor * (1 - yOrigin), xScaleZFactor * (1 - xOrigin) + yScaleXFactor * (1 - yOrigin)),
+                            new VectorN(xScaleXFactor * (1 - xOrigin) - yScaleZFactor * yOrigin, -yScaleYFactor * yOrigin, xScaleZFactor * (1 - xOrigin) - yScaleXFactor * yOrigin)
+                    };
+
+
+            //Manual 1D rotations
+            if (rotation != null)
+            {
+                float theta = (float) (rotation.values[0] * 0.5);
+                float sinTheta = MathHelper.sin(theta), cosTheta = MathHelper.cos(theta);
+                VectorN rotationScalars = new VectorN(sinTheta * Particle.cameraViewDir.x, sinTheta * Particle.cameraViewDir.y, sinTheta * Particle.cameraViewDir.z);
+                double rotScalMagSqr = rotationScalars.getMagnitudeSquared();
+
+                for (int i = 0; i < 4; ++i)
+                {
+                    posOffsets[i] = rotationScalars.copy().scale(2 * posOffsets[i].dotProduct(rotationScalars))
+                            .add(posOffsets[i].copy().scale(cosTheta * cosTheta - rotScalMagSqr))
+                            .add(rotationScalars.copy().crossProduct(posOffsets[i]).scale(2 * cosTheta));
+                }
+            }
+        }
+        else
+        {
+            posOffsets = new VectorN[]
+                    {
+                            new VectorN(-xOrigin, -yOrigin, 0),
+                            new VectorN(-xOrigin, 1 - yOrigin, 0),
+                            new VectorN(1 - xOrigin, 1 - yOrigin, 0),
+                            new VectorN(1 - xOrigin, -yOrigin, 0)
+                    };
+
+            if (scale2DPath != null)
+            {
+                VectorN scalar = scale2DPath.getRelativePosition(renderMillis);
+                for (VectorN v : posOffsets) v.multiply(scalar.values[0], scalar.values[1], 0);
+            }
+
+            //Manual 3D rotations
+            for (VectorN v : posOffsets)
+            {
+                v.rotate(Z_AXIS, rotation.values[2]);
+                v.rotate(X_AXIS, rotation.values[1]);
+                v.rotate(Y_AXIS, rotation.values[0]);
             }
         }
 
