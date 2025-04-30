@@ -54,7 +54,7 @@ public class PathedParticleManager
             list = entry.getValue();
             list.removeIf(particle ->
             {
-                particle.onUpdate();
+                particle.update();
                 return particle.dead;
             });
             if (list.size() == 0) particles.remove(entry.getKey());

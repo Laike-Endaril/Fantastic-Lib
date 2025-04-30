@@ -226,6 +226,12 @@ public class FantasticLib
 //    }
 
 
+//    public static PathedParticleSharedRenderData particleRenderData;
+//    public static SpriteMetaData spriteMetaData = SpriteMetaData.VANILLA_RUNES_NON_EMPTY.copy().setNormalizedOriginDynamic(SpriteMetaData.VANILLA_RUNES_NON_EMPTY_OFFSETS);
+//    public static CPath pathRadius = new CPathConstant(new VectorN(0, 0, 1));
+//
+//    public static PathedParticleFactory particleFactory = null, runeFactory;
+//
 //    @SideOnly(Side.CLIENT)
 //    @SubscribeEvent
 //    public static void particleTest(TickEvent.ClientTickEvent event)
@@ -236,84 +242,34 @@ public class FantasticLib
 //
 //        for (Entity entity : Minecraft.getMinecraft().world.loadedEntityList)
 //        {
-//            if (entity instanceof EntityLivingBase) particlesTextureTest((EntityLivingBase) entity);
-//        }
-//    }
-//
-//    public static PathedParticleSharedRenderData particleRenderData;
-//    public static SpriteMetaData spriteMetaData = SpriteMetaData.VANILLA_RUNES_NON_EMPTY.copy().setNormalizedOriginDynamic(SpriteMetaData.VANILLA_RUNES_NON_EMPTY_OFFSETS);
-//    public static VectorN
-//            v1_1 = new VectorN(1),
-//            v1_3 = new VectorN(3),
-//            v1_10 = new VectorN(10),
-//            v1_n3 = new VectorN(-3),
-//            v3_0 = new VectorN(0, 0, 0),
-//            v3_0_0_1 = new VectorN(0, 0, 1),
-//            v3_GroundOffset = new VectorN(0, 0.001, 0);
-//    public static CPath
-//            pathYAxis = new CPathConstant(VectorN.Y_AXIS),
-//            pathRadius = new CPathConstant(v3_0_0_1),
-//            pathRotation3D = new CPathLinear(new VectorN(-Math.PI * 0.5, 0, 0)),
-//            pathRotation1D = new CPathLinear(new VectorN(-Math.PI * 0.5)),
-//            pathNone = new CPathConstant(v3_0),
-//            pathAlpha = new CPathConstant(v1_3).add(new CPathLinear(v1_n3)).highLimit(new CPathLinear(v1_10)).highLimit(new CPathConstant(v1_1));
-//
-//    public static PathedParticleFactory particleFactory = null, runeFactory;
-//
-//    public static void particlesTextureTest(EntityLivingBase entityLivingBase)
-//    {
-//        if (particleFactory == null)
-//        {
-//            particleRenderData = new PathedParticleSharedRenderData(false, GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, "minecraft:textures/particle/particles.png");
-//
-//
-//            particleFactory = args ->
+//            if (entity instanceof EntityLivingBase)
 //            {
-//                PathedParticle particle = new PathedParticle(particleRenderData, pathNone);
-//                particle.spriteMetaData = spriteMetaData;
-//
-//                particle.setMaxAge(100);
-//
-//                if (args != null)
+//                if (particleFactory == null)
 //                {
-//                    PathedParticle parent = (PathedParticle) args[0];
-//                    particle.applyPath(new CPathConstant(new VectorN(parent.deathPos.x, parent.deathPos.y, parent.deathPos.z).add(v3_GroundOffset)));
+//                    particleRenderData = new PathedParticleSharedRenderData(false, GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, "minecraft:textures/particle/particles.png");
 //
-//                    particle.animationPath(parent.animationPath.path);
+//                    runeFactory = args ->
+//                    {
+//                        EntityLivingBase livingBase = (EntityLivingBase) args[1];
 //
-//                    particle.rotationPath(new CPathConstant(parent.rotationPath.getRelativePosition(parent.currentRenderMillis(0)).copy()));
+//                        PathedParticle particle = new PathedParticle(particleRenderData, pathRadius.copy());
+//                        particle.applyPath(new CPathFollowEntity(livingBase).add(new CPathConstant(new VectorN(0, livingBase.getEyeHeight(), 0))));
+//
+//                        particle.setMaxAge(Integer.MAX_VALUE);
+//
+//                        particle.spriteMetaData = spriteMetaData;
+//                        particle.animationPath(new CPathConstant(new VectorN(Math.random())));
+//
+//                        return particle;
+//                    };
 //                }
 //
-//                return particle;
-//            };
 //
-//
-//            runeFactory = args ->
-//            {
-//                EntityLivingBase livingBase = (EntityLivingBase) args[1];
-//
-//                double theta = (double) args[2];
-//                PathedParticle particle = new PathedParticle(particleRenderData, pathRadius.copy().rotate(pathYAxis, new CPathConstant(new VectorN((Double) args[2])).add(pathRotation1D)));
-//                particle.applyPath(new CPathFollowEntity(livingBase).add(new CPathConstant(new VectorN(0, livingBase.height * 0.65, 0))));
-//
-//                particle.setMaxAge(50);
-//
-//                particle.spriteMetaData = spriteMetaData;
-//                particle.animationPath(new CPathConstant(new VectorN(Math.random())));
-//
-//                //Rotate at a certain speed
-//                particle.rotationPath(new CPathConstant(new VectorN(theta, 0, 0)).add(pathRotation3D));
-//
-//                particle.alphaPath(pathAlpha);
-//
-////                particle.addOnDeathParticles(particleFactory);
-//                return particle;
-//            };
-//        }
-//
-//        if (!Minecraft.getMinecraft().isGamePaused() && ClientTickTimer.currentTick() % 3 == 0)
-//        {
-//            for (int i = 0; i < 4; i++) runeFactory.create(null, entityLivingBase, (Math.PI * 0.5 * i));
+//                if (!Minecraft.getMinecraft().isGamePaused() && ClientTickTimer.currentTick() % 20 == 0)
+//                {
+//                    runeFactory.create(null, entity);
+//                }
+//            }
 //        }
 //    }
 }

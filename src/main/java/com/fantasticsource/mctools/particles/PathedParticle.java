@@ -191,9 +191,11 @@ public class PathedParticle
     }
 
 
-    public void onUpdate()
+    public void update()
     {
-        age++;
+        //Don't expire from age if max age is highest possible value, but still age up to that value - 1, and still do other death checks
+        if (maxAge != Integer.MAX_VALUE || age < maxAge - 1) age++;
+
         for (Predicate<PathedParticle> predicate : deathConditions)
         {
             if (predicate.test(this))
