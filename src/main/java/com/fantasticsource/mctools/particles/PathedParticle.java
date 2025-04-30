@@ -44,6 +44,7 @@ public class PathedParticle
     //Uncloned
     protected boolean dead = false;
     protected int age = 0;
+    public Vec3d deathPos = null;
     public Object[] extraDeathArgs = null;
 
 
@@ -158,7 +159,7 @@ public class PathedParticle
             RayTraceResult result = ImprovedRayTracing.rayTraceBlocks(world, from, to, true);
             if (result.typeOfHit == RayTraceResult.Type.MISS) return false;
 
-            extraDeathArgs = new Object[]{result.hitVec};
+            deathPos = result.hitVec;
             return true;
         });
         return this;
@@ -176,7 +177,7 @@ public class PathedParticle
             RayTraceResult result = ImprovedRayTracing.rayTraceBlocks(world, from, to, true, true);
             if (result.typeOfHit == RayTraceResult.Type.MISS) return false;
 
-            extraDeathArgs = new Object[]{result.hitVec};
+            deathPos = result.hitVec;
             return true;
         });
         return this;
@@ -198,17 +199,27 @@ public class PathedParticle
 
     public void onUpdate()
     {
-        boolean shouldDie = ++age >= maxAge;
+        age++;
         for (Predicate<PathedParticle> predicate : deathConditions)
         {
             if (predicate.test(this))
             {
-                shouldDie = true;
-                break;
+                if (deathPos == null)
+                {
+                    VectorN pos = currentPos(0);
+                    deathPos = new Vec3d(pos.values[0], pos.values[1], pos.values[2]);
+                }
+                die();
+                return;
             }
         }
 
-        if (shouldDie) die();
+        if (age >= maxAge)
+        {
+            VectorN pos = currentPos(0);
+            deathPos = new Vec3d(pos.values[0], pos.values[1], pos.values[2]);
+            die();
+        }
     }
 
 
