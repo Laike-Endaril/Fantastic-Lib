@@ -228,7 +228,7 @@ public class FantasticLib
 
 //    public static PathedParticleSharedRenderData particleRenderData;
 //    public static SpriteMetaData spriteMetaData = SpriteMetaData.VANILLA_RUNES_NON_EMPTY.copy().setNormalizedOriginDynamic(SpriteMetaData.VANILLA_RUNES_NON_EMPTY_OFFSETS);
-//    public static CPath pathRadius = new CPathConstant(new VectorN(0, 0, 1));
+//    public static CPath pathRadius = new CPathConstant(0, 0, 1);
 //
 //    public static PathedParticleFactory particleFactory = null, runeFactory;
 //
@@ -253,7 +253,7 @@ public class FantasticLib
 //                        EntityLivingBase livingBase = (EntityLivingBase) args[1];
 //
 //                        PathedParticle particle = new PathedParticle(particleRenderData, pathRadius.copy());
-//                        particle.applyPath(new CPathFollowEntity(livingBase).add(new CPathConstant(new VectorN(0, livingBase.getEyeHeight(), 0))));
+//                        particle.applyPath(new CPathFollowEntity(livingBase).add(new CPathConstant(0, livingBase.getEyeHeight(), 0)));
 //
 //                        particle.setMaxAge(Integer.MAX_VALUE);
 //

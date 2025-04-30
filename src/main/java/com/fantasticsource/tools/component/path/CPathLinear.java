@@ -20,6 +20,11 @@ public class CPathLinear extends CPath
     {
     }
 
+    public CPathLinear(double... values)
+    {
+        this(new VectorN(values));
+    }
+
     public CPathLinear(VectorN motionPerSecond)
     {
         this.motionPerSecond = motionPerSecond;
