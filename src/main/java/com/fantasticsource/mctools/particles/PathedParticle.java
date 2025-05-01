@@ -379,7 +379,7 @@ public class PathedParticle
                     };
 
 
-            //Manual 1D rotations
+            //Manual 1D rotations //TODO Possibly slow, need to check
             if (rotation != null)
             {
                 float theta = (float) (rotation.values[0] * 0.5);
@@ -411,7 +411,7 @@ public class PathedParticle
                 for (VectorN v : posOffsets) v.multiply(scalar.values[0], scalar.values[1], 0);
             }
 
-            //Manual 3D rotations
+            //Manual 3D rotations //TODO SLOW
             for (VectorN v : posOffsets)
             {
                 v.rotate(VectorN.Z_AXIS, rotation.values[2]);
@@ -451,22 +451,21 @@ public class PathedParticle
             b = 1;
         }
 
-        if (useFoliageColor || useGrassColor)
+        if (useFoliageColor || useGrassColor) //TODO SLOW
         {
-            Color color;
             if (useFoliageColor)
             {
-                color = new Color(BiomeColorHelper.getFoliageColorAtPos(world, blockPos), true);
-                r *= color.rf();
-                g *= color.gf();
-                b *= color.bf();
+                int c = BiomeColorHelper.getFoliageColorAtPos(world, blockPos);
+                r *= ((c >> 16) & 255) / 255d;
+                g *= ((c >> 8) & 255) / 255d;
+                b *= (c & 255) / 255d;
             }
             if (useGrassColor)
             {
-                color = new Color(BiomeColorHelper.getGrassColorAtPos(world, blockPos), true);
-                r *= color.rf();
-                g *= color.gf();
-                b *= color.bf();
+                int c = BiomeColorHelper.getGrassColorAtPos(world, blockPos);
+                r *= ((c >> 16) & 255) / 255d;
+                g *= ((c >> 8) & 255) / 255d;
+                b *= (c & 255) / 255d;
             }
         }
 

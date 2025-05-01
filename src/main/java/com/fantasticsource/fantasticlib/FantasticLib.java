@@ -226,10 +226,13 @@ public class FantasticLib
 //    }
 
 
-//    public static PathedParticleFactory fallingLeafFactory = null;
+//    public static PathedParticleFactory fallingLeafFactory = null, groundLeafFactory = null;
 //    public static PathedParticleSharedRenderData particleRenderData;
 //    public static SpriteMetaData[] leaves = new SpriteMetaData[2];
-//    public static CPath pathFall = new CPathLinear(0, -5, 0);
+//    public static CPath
+//            pathFall = new CPathLinear(0, -5, 0),
+//            pathRotate = new CPathLinear(Math.PI * 5, Math.PI * 2, Math.PI),
+//            pathFade = new CPathConstant(1).add(new CPathLinear(-1));
 //
 //
 //    @SideOnly(Side.CLIENT)
@@ -246,6 +249,24 @@ public class FantasticLib
 //            leaves[0] = new SpriteMetaData(128, 128, 0, 0, 8, 8);
 //            leaves[1] = new SpriteMetaData(128, 128, 8, 0, 16, 8);
 //
+//            groundLeafFactory = args ->
+//            {
+//                PathedParticle parent = (PathedParticle) args[0];
+//                Vec3d deathPos = parent.deathPos;
+//                PathedParticle particle = new PathedParticle(particleRenderData, new CPathConstant(deathPos.x, deathPos.y + 0.01, deathPos.z));
+//
+//                particle.setMaxAge(40);
+//
+//                particle.spriteMetaData = parent.spriteMetaData;
+//                particle.useFoliageColor = true; //TODO 150 -> 230 when disabled
+//
+//                particle.rotationPath(new CPathConstant(parent.rotationPath.getRelativePosition(parent.currentRenderMillis(0)))); //TODO 150 -> 225 when disabled
+//
+//                particle.alphaPath(pathFade);
+//
+//                return particle;
+//            };
+//
 //            fallingLeafFactory = args ->
 //            {
 //                EntityLivingBase livingBase = (EntityLivingBase) args[1];
@@ -256,9 +277,13 @@ public class FantasticLib
 //                particle.applyPath(pathFall);
 //
 //                particle.spriteMetaData = Tools.choose(leaves);
-//                particle.useFoliageColor = true;
+//                particle.useFoliageColor = true; //TODO 150 -> 230, 137 -> 200 when disabled
 //
-//                particle.dieOnSolidsAndLiquids();
+//                particle.rotationPath(pathRotate); //TODO 150 -> 225 when disabled
+//
+//                particle.dieOnSolidsAndLiquids(); //Surprisingly NOT fps intensive, actually INCREASES fps if not spawning another particle
+//
+////                particle.addOnDeathParticles(groundLeafFactory);
 //
 //                return particle;
 //            };
