@@ -28,12 +28,12 @@ public class SpriteMetaData
         {
             if (spriteFramesProgressVertically)
             {
-                if (firstFrameY2 == textureTotalHeight)
+                if (firstFrameY2 >= textureTotalHeight)
                 {
                     firstFrameX1 += w;
                     firstFrameX2 += w;
                     firstFrameY1 = 0;
-                    firstFrameY2 = firstFrameY1 + h;
+                    firstFrameY2 = h;
                 }
                 else
                 {
@@ -43,12 +43,12 @@ public class SpriteMetaData
             }
             else
             {
-                if (firstFrameX2 == textureTotalWidth)
+                if (firstFrameX2 >= textureTotalWidth)
                 {
                     firstFrameY1 += h;
                     firstFrameY2 += h;
                     firstFrameX1 = 0;
-                    firstFrameX2 = firstFrameX1 + w;
+                    firstFrameX2 = w;
                 }
                 else
                 {

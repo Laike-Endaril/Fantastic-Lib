@@ -2,6 +2,7 @@ package com.fantasticsource.mctools.particles;
 
 import com.fantasticsource.mctools.ImprovedRayTracing;
 import com.fantasticsource.tools.SpriteMetaData;
+import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.component.path.CPath;
 import com.fantasticsource.tools.datastructures.Color;
 import com.fantasticsource.tools.datastructures.VectorN;
@@ -136,7 +137,7 @@ public class PathedParticle
 
     public PathedParticle animationPath(CPath path)
     {
-        animationPath = new CPath.CPathData(path);
+        animationPath = new CPath.CPathData(path, 0);
         return this;
     }
 
@@ -294,7 +295,7 @@ public class PathedParticle
             SpriteMetaData.FrameMetaData frame;
             if (animationPath != null)
             {
-                frame = spriteMetaData.frames.get((int) (spriteMetaData.frames.size() * animationPath.getRelativePosition(renderMillis).values[0]));
+                frame = spriteMetaData.frames.get(Tools.posMod((int) (spriteMetaData.frames.size() * animationPath.getRelativePosition(renderMillis).values[0]), spriteMetaData.frames.size()));
             }
             else
             {
@@ -331,7 +332,7 @@ public class PathedParticle
         }
 
 
-        double xScale3D = 0.05, yScale3D = 0.05, zScale3D = 0.05;
+        double xScale3D = 0.1, yScale3D = 0.1, zScale3D = 0.1;
         if (scale3DPath != null)
         {
             VectorN scalar = scale3DPath.getRelativePosition(renderMillis);
@@ -358,17 +359,17 @@ public class PathedParticle
 
             if (xOrigin == 0.5 && yOrigin == 0.5) posOffsets = new VectorN[]
                     {
-                            new VectorN(-xScaleXFactor - yScaleZFactor, -yScaleYFactor, -xScaleZFactor - yScaleXFactor),
-                            new VectorN(-xScaleXFactor + yScaleZFactor, yScaleYFactor, -xScaleZFactor + yScaleXFactor),
-                            new VectorN(xScaleXFactor + yScaleZFactor, yScaleYFactor, xScaleZFactor + yScaleXFactor),
-                            new VectorN(xScaleXFactor - yScaleZFactor, -yScaleYFactor, xScaleZFactor - yScaleXFactor)
+                            new VectorN(-xScaleXFactor - yScaleZFactor, -yScaleYFactor, -xScaleZFactor - yScaleXFactor).scale(0.5),
+                            new VectorN(-xScaleXFactor + yScaleZFactor, yScaleYFactor, -xScaleZFactor + yScaleXFactor).scale(0.5),
+                            new VectorN(xScaleXFactor + yScaleZFactor, yScaleYFactor, xScaleZFactor + yScaleXFactor).scale(0.5),
+                            new VectorN(xScaleXFactor - yScaleZFactor, -yScaleYFactor, xScaleZFactor - yScaleXFactor).scale(0.5)
                     };
             else posOffsets = new VectorN[]
                     {
-                            new VectorN(-xScaleXFactor * xOrigin - yScaleZFactor * yOrigin, -yScaleYFactor * yOrigin, -xScaleZFactor * xOrigin - yScaleXFactor * yOrigin),
-                            new VectorN(-xScaleXFactor * xOrigin + yScaleZFactor * (1 - yOrigin), yScaleYFactor * (1 - yOrigin), -xScaleZFactor * xOrigin + yScaleXFactor * (1 - yOrigin)),
-                            new VectorN(xScaleXFactor * (1 - xOrigin) + yScaleZFactor * (1 - yOrigin), yScaleYFactor * (1 - yOrigin), xScaleZFactor * (1 - xOrigin) + yScaleXFactor * (1 - yOrigin)),
-                            new VectorN(xScaleXFactor * (1 - xOrigin) - yScaleZFactor * yOrigin, -yScaleYFactor * yOrigin, xScaleZFactor * (1 - xOrigin) - yScaleXFactor * yOrigin)
+                            new VectorN(xScaleXFactor * (xOrigin - 1) + yScaleZFactor * (yOrigin - 1), yScaleYFactor * (yOrigin - 1), xScaleZFactor * (xOrigin - 1) + yScaleXFactor * (yOrigin - 1)),
+                            new VectorN(xScaleXFactor * (xOrigin - 1) + yScaleZFactor * yOrigin, yScaleYFactor * yOrigin, xScaleZFactor * (xOrigin - 1) + yScaleXFactor * yOrigin),
+                            new VectorN(xScaleXFactor * xOrigin + yScaleZFactor * yOrigin, yScaleYFactor * yOrigin, xScaleZFactor * xOrigin + yScaleXFactor * yOrigin),
+                            new VectorN(xScaleXFactor * xOrigin + yScaleZFactor * (yOrigin - 1), yScaleYFactor * (yOrigin - 1), xScaleZFactor * xOrigin + yScaleXFactor * (yOrigin - 1))
                     };
 
 
@@ -392,10 +393,10 @@ public class PathedParticle
         {
             posOffsets = new VectorN[]
                     {
-                            new VectorN(-xOrigin * 2, -yOrigin * 2, 0),
-                            new VectorN(-xOrigin * 2, (1 - yOrigin) * 2, 0),
-                            new VectorN((1 - xOrigin) * 2, (1 - yOrigin) * 2, 0),
-                            new VectorN((1 - xOrigin) * 2, -yOrigin * 2, 0)
+                            new VectorN(xOrigin - 1, yOrigin - 1, 0),
+                            new VectorN(xOrigin - 1, yOrigin, 0),
+                            new VectorN(xOrigin, yOrigin, 0),
+                            new VectorN(xOrigin, yOrigin - 1, 0)
                     };
 
             if (scale2DPath != null)

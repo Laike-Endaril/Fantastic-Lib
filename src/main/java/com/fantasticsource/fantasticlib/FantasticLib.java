@@ -240,7 +240,7 @@ public class FantasticLib
 //        if (event.phase != TickEvent.Phase.END || world == null) return;
 //
 //
-//        //TODO figure out why x/y offset is translating incorrectly
+//        //TODO figure out why particle disappears when DS targeting triggers
 //        for (Entity entity : Minecraft.getMinecraft().world.loadedEntityList)
 //        {
 //            if (entity instanceof EntityLivingBase)
@@ -257,23 +257,22 @@ public class FantasticLib
 //                        PathedParticle particle = new PathedParticle(particleRenderData, pathRadius.copy().rotateYawPitchRoll(rotation));
 //                        particle.applyPath(new CPathFollowEntity(livingBase).add(new CPathConstant(0, livingBase.getEyeHeight(), 0)));
 //
-//                        particle.setMaxAge(Integer.MAX_VALUE);
+//                        particle.setMaxAge(20 * 26);
 //
 //                        particle.rotationPath(rotation);
 //
 //                        particle.spriteMetaData = spriteMetaData;
-////                        particle.animationPath(new CPathConstant((double) (int) args[2] / spriteMetaData.frames.size()));
-//                        particle.animationPath(new CPathConstant(2d / spriteMetaData.frames.size()));
+//                        particle.animationPath(new CPathLinear(2));
 //
 //                        return particle;
 //                    };
 //                }
 //
 //
-//                if (!Minecraft.getMinecraft().isGamePaused() && ClientTickTimer.currentTick() % 20 == 0)
+//                if (!Minecraft.getMinecraft().isGamePaused() && ClientTickTimer.currentTick() % (20 * 26) == 0)
 //                {
 //                    PathedParticleManager.clear();
-//                    runeFactory.create(null, entity, (int) ((ClientTickTimer.currentTick() / 20) % 26));
+//                    runeFactory.create(null, entity);
 //                }
 //            }
 //        }
