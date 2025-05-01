@@ -15,6 +15,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeColorHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,7 +23,6 @@ import java.util.function.Predicate;
 
 public class PathedParticle
 {
-    //Cloned
     public final PathedParticleSharedRenderData sharedRenderData;
 
     public int maxAge = 20;
@@ -36,11 +36,11 @@ public class PathedParticle
     public SpriteMetaData spriteMetaData = null;
 
 
-    //Uncloned
-    protected boolean dead = false;
-    protected int age = 0;
     public Vec3d deathPos = null;
     public Object[] extraDeathArgs = null;
+    public boolean useFoliageColor = false, useGrassColor = false;
+    protected int age = 0;
+    protected boolean dead = false;
 
 
     public PathedParticle(PathedParticleSharedRenderData sharedRenderData, CPath basePath, CPath... morePaths)
@@ -66,6 +66,12 @@ public class PathedParticle
 
         return this;
     }
+
+    public boolean isDead()
+    {
+        return dead;
+    }
+
 
     public PathedParticle delete()
     {
@@ -416,8 +422,8 @@ public class PathedParticle
 
 
         World world = Minecraft.getMinecraft().world;
-        BlockPos blockpos = new BlockPos(x, y, z);
-        int lightmapIndex = world.isBlockLoaded(blockpos) ? world.getCombinedLight(blockpos, 0) : 0;
+        BlockPos blockPos = new BlockPos(pos.values[0], pos.values[1], pos.values[2]);
+        int lightmapIndex = world.isBlockLoaded(blockPos) ? world.getCombinedLight(blockPos, 0) : 0;
         int skyLight = lightmapIndex >> 16 & 65535;
         int blockLight = lightmapIndex & 65535;
 
@@ -443,6 +449,25 @@ public class PathedParticle
             r = 1;
             g = 1;
             b = 1;
+        }
+
+        if (useFoliageColor || useGrassColor)
+        {
+            Color color;
+            if (useFoliageColor)
+            {
+                color = new Color(BiomeColorHelper.getFoliageColorAtPos(world, blockPos), true);
+                r *= color.rf();
+                g *= color.gf();
+                b *= color.bf();
+            }
+            if (useGrassColor)
+            {
+                color = new Color(BiomeColorHelper.getGrassColorAtPos(world, blockPos), true);
+                r *= color.rf();
+                g *= color.gf();
+                b *= color.bf();
+            }
         }
 
         float a = alphaPath == null ? 1 : (float) alphaPath.getRelativePosition(renderMillis).values[0];

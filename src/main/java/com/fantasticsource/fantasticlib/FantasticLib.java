@@ -226,11 +226,11 @@ public class FantasticLib
 //    }
 
 
+//    public static PathedParticleFactory fallingLeafFactory = null;
 //    public static PathedParticleSharedRenderData particleRenderData;
-//    public static SpriteMetaData spriteMetaData = SpriteMetaData.VANILLA_RUNES_NON_EMPTY.copy().setNormalizedOriginDynamic(SpriteMetaData.VANILLA_RUNES_NON_EMPTY_OFFSETS);
-//    public static CPath pathRadius = new CPathConstant(0, 0, 1);
+//    public static SpriteMetaData[] leaves = new SpriteMetaData[2];
+//    public static CPath pathFall = new CPathLinear(0, -5, 0);
 //
-//    public static PathedParticleFactory particleFactory = null, runeFactory;
 //
 //    @SideOnly(Side.CLIENT)
 //    @SubscribeEvent
@@ -240,39 +240,34 @@ public class FantasticLib
 //        if (event.phase != TickEvent.Phase.END || world == null) return;
 //
 //
-//        for (Entity entity : Minecraft.getMinecraft().world.loadedEntityList)
+//        if (fallingLeafFactory == null)
 //        {
-//            if (entity instanceof EntityLivingBase)
+//            particleRenderData = new PathedParticleSharedRenderData(true, GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, "flibtest:textures/particles.png");
+//            leaves[0] = new SpriteMetaData(128, 128, 0, 0, 8, 8);
+//            leaves[1] = new SpriteMetaData(128, 128, 8, 0, 16, 8);
+//
+//            fallingLeafFactory = args ->
 //            {
-//                if (particleFactory == null)
-//                {
-//                    particleRenderData = new PathedParticleSharedRenderData(false, GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, "minecraft:textures/particle/particles.png");
+//                EntityLivingBase livingBase = (EntityLivingBase) args[1];
 //
-//                    runeFactory = args ->
-//                    {
-//                        EntityLivingBase livingBase = (EntityLivingBase) args[1];
+//                PathedParticle particle = new PathedParticle(particleRenderData, new CPathConstant(livingBase.posX - 3 + Tools.random(6d), livingBase.posY + livingBase.height + Tools.random(3d), livingBase.posZ - 3 + Tools.random(6d)));
 //
-//                        CPath rotation = new CPathEntityYawPitch(livingBase);
-//                        PathedParticle particle = new PathedParticle(particleRenderData, pathRadius.copy().rotateYawPitchRoll(rotation));
-//                        particle.applyPath(new CPathFollowEntity(livingBase).add(new CPathConstant(0, livingBase.getEyeHeight(), 0)));
+//                particle.setMaxAge(200);
+//                particle.applyPath(pathFall);
 //
-//                        particle.setMaxAge(20 * 26);
+//                particle.spriteMetaData = Tools.choose(leaves);
+//                particle.useFoliageColor = true;
 //
-//                        particle.rotationPath(rotation);
+//                particle.dieOnSolidsAndLiquids();
 //
-//                        particle.spriteMetaData = spriteMetaData;
-//                        particle.animationPath(new CPathLinear(2));
-//
-//                        return particle;
-//                    };
-//                }
+//                return particle;
+//            };
+//        }
 //
 //
-//                if (!Minecraft.getMinecraft().isGamePaused() && ClientTickTimer.currentTick() % (20 * 26) == 0)
-//                {
-//                    runeFactory.create(null, entity);
-//                }
-//            }
+//        if (!Minecraft.getMinecraft().isGamePaused())
+//        {
+//            for (int i = 0; i < 10; i++) fallingLeafFactory.create(null, Minecraft.getMinecraft().player);
 //        }
 //    }
 }
