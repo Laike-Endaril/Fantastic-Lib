@@ -240,7 +240,6 @@ public class FantasticLib
 //        if (event.phase != TickEvent.Phase.END || world == null) return;
 //
 //
-//        //TODO figure out why particle disappears when DS targeting triggers
 //        for (Entity entity : Minecraft.getMinecraft().world.loadedEntityList)
 //        {
 //            if (entity instanceof EntityLivingBase)
@@ -271,7 +270,6 @@ public class FantasticLib
 //
 //                if (!Minecraft.getMinecraft().isGamePaused() && ClientTickTimer.currentTick() % (20 * 26) == 0)
 //                {
-//                    PathedParticleManager.clear();
 //                    runeFactory.create(null, entity);
 //                }
 //            }
