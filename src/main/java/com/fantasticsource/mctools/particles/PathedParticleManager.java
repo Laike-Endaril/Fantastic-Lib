@@ -120,7 +120,6 @@ public class PathedParticleManager
         float yScaleZFactor = -xScaleZFactor * MathHelper.sin(pitchRadians);
 
 
-        GlStateManager.depthMask(false);
         GlStateManager.enableBlend();
         RenderHelper.disableStandardItemLighting();
         GlStateManager.disableCull();
@@ -146,7 +145,6 @@ public class PathedParticleManager
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         Minecraft.getMinecraft().entityRenderer.disableLightmap();
         GlStateManager.disableBlend();
-        GlStateManager.depthMask(true);
     }
 
 
