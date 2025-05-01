@@ -36,7 +36,7 @@ public class CPathSinuous extends CPath
     @Override
     public VectorN getRelativePositionInternal(long time)
     {
-        double normalizedScalar = TrigLookupTable.TRIG_TABLE_1024.sin(Math.PI * 2 * (thetaOffset + thetaPerSec * time / 1000));
+        double normalizedScalar = TrigLookupTable.TRIG_TABLE_1048576.sin(Math.PI * 2 * (thetaOffset + thetaPerSec * time / 1000));
         return highPointOffsetPath.getRelativePosition(time).scale(normalizedScalar);
     }
 

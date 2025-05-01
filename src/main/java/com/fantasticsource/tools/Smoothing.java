@@ -13,7 +13,7 @@ public class Smoothing
         switch (type)
         {
             case SINUOUS:
-                return start + (end - start) * (1 - TrigLookupTable.TRIG_TABLE_1024.cos(Math.PI * normalizedProgress)) / 2;
+                return start + (end - start) * (1 - TrigLookupTable.TRIG_TABLE_1048576.cos(Math.PI * normalizedProgress)) / 2;
 
             case LINEAR:
             default:

@@ -2,7 +2,6 @@ package com.fantasticsource.tools;
 
 import com.fantasticsource.lwjgl.Quaternion;
 import com.fantasticsource.tools.datastructures.Pair;
-import net.minecraft.util.text.TextFormatting;
 import sun.misc.Cleaner;
 
 import java.io.*;
@@ -75,8 +74,13 @@ public class Tools
 
     public static Quaternion rotatedQuaternion(Quaternion v, Quaternion axis, double theta)
     {
-        double sinThetaDiv2 = TrigLookupTable.TRIG_TABLE_1024.sin(theta * 0.5);
-        double cosThetaDiv2 = TrigLookupTable.TRIG_TABLE_1024.cos(theta * 0.5);
+        return rotatedQuaternion(v, axis, theta, TrigLookupTable.TRIG_TABLE_1048576);
+    }
+
+    public static Quaternion rotatedQuaternion(Quaternion v, Quaternion axis, double theta, TrigLookupTable trigTable)
+    {
+        double sinThetaDiv2 = trigTable.sin(theta * 0.5);
+        double cosThetaDiv2 = trigTable.cos(theta * 0.5);
         Quaternion q = new Quaternion((float) (sinThetaDiv2 * axis.x), (float) (sinThetaDiv2 * axis.y), (float) (sinThetaDiv2 * axis.z), (float) cosThetaDiv2);
         Quaternion qConjugate = new Quaternion((float) -(sinThetaDiv2 * axis.x), (float) -(sinThetaDiv2 * axis.y), (float) -(sinThetaDiv2 * axis.z), (float) cosThetaDiv2);
         return Quaternion.mul(Quaternion.mul(q, v, null), qConjugate, null);
@@ -177,13 +181,13 @@ public class Tools
                             x = Math.sqrt(x);
                             break;
                         case "sin":
-                            x = TrigLookupTable.TRIG_TABLE_1024.sin(degtorad(x));
+                            x = TrigLookupTable.TRIG_TABLE_1048576.sin(degtorad(x));
                             break;
                         case "cos":
-                            x = TrigLookupTable.TRIG_TABLE_1024.cos(degtorad(x));
+                            x = TrigLookupTable.TRIG_TABLE_1048576.cos(degtorad(x));
                             break;
                         case "tan":
-                            x = TrigLookupTable.TRIG_TABLE_1024.tan(degtorad(x));
+                            x = TrigLookupTable.TRIG_TABLE_1048576.tan(degtorad(x));
                             break;
                         default:
                             throw new RuntimeException("Unknown function: " + func);

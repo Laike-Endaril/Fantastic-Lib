@@ -1,5 +1,6 @@
 package com.fantasticsource.mctools.particles;
 
+import com.fantasticsource.tools.component.path.CPath;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -93,8 +94,12 @@ public class PathedParticleManager
         Particle.interpPosZ = renderEntity.lastTickPosZ + (renderEntity.posZ - renderEntity.lastTickPosZ) * partialTick;
         Particle.cameraViewDir = renderEntity.getLook(partialTick);
 
+        CPath.partialTickCached = partialTick;
 
-        float yawRadians = renderEntity.rotationYaw, pitchRadians = renderEntity.rotationPitch;
+
+        float yawRadians = renderEntity.prevRotationYaw, pitchRadians = renderEntity.prevRotationPitch;
+        yawRadians += (renderEntity.rotationYaw - yawRadians) * partialTick;
+        pitchRadians += (renderEntity.rotationPitch - pitchRadians) * partialTick;
         if (Minecraft.getMinecraft().gameSettings.thirdPersonView == 2)
         {
             yawRadians += 180;

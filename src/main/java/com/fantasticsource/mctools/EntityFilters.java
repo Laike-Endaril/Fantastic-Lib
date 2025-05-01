@@ -1,5 +1,6 @@
 package com.fantasticsource.mctools;
 
+import com.fantasticsource.lwjgl.Quaternion;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.TrigLookupTable;
 import com.fantasticsource.tools.datastructures.ExplicitPriorityQueue;
@@ -7,7 +8,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.NotImplementedException;
-import com.fantasticsource.lwjgl.Quaternion;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -150,8 +150,8 @@ public class EntityFilters
     public static ArrayList<Entity> inCone(Vec3d origin, Vec3d direction, double range, double angle, boolean LOS, ArrayList<Entity> entitiesToCheck, double distributedRaytraceSpacing)
     {
         Vec3d pos2 = origin.add(direction);
-        float yaw = (float) MCTools.getYawDeg(origin, pos2, TrigLookupTable.TRIG_TABLE_1024);
-        float pitch = (float) MCTools.getPitchDeg(origin, pos2, TrigLookupTable.TRIG_TABLE_1024);
+        float yaw = (float) MCTools.getYawDeg(origin, pos2, TrigLookupTable.TRIG_TABLE_1048576);
+        float pitch = (float) MCTools.getPitchDeg(origin, pos2, TrigLookupTable.TRIG_TABLE_1048576);
 
         return inCone(origin, yaw, pitch, range, angle, LOS, entitiesToCheck, distributedRaytraceSpacing);
     }
@@ -219,7 +219,7 @@ public class EntityFilters
                 //Find evenly distributed points on evenly distributed subcones
                 //Transform order is: yaw, pitch, roll (theta along circular intersection of cone and sphere), subConeAngle(angle of current cone)
                 double distance = Math.sqrt(squareDist);
-                double subConeStep = Tools.radtodeg(MCTools.TRIG_TABLE.arctan(distributedRaytraceSpacing / distance));
+                double subConeStep = Tools.radtodeg(TrigLookupTable.TRIG_TABLE_1048576.arctan(distributedRaytraceSpacing / distance));
                 int subConeCount = (int) (halfAngle / subConeStep);
                 subConeStep = halfAngle / subConeCount;
                 double subConeAngle = subConeStep;
@@ -232,12 +232,12 @@ public class EntityFilters
                 boolean stop = false;
                 for (int cone = 0; cone < subConeCount; cone++)
                 {
-                    double radius = distance * MCTools.TRIG_TABLE.sin(Tools.degtorad(subConeAngle));
+                    double radius = distance * TrigLookupTable.TRIG_TABLE_1048576.sin(Tools.degtorad(subConeAngle));
                     double rollStep = Math.PI * radius * 2 / distributedRaytraceSpacing;
                     int thetaStepCount = Tools.max((int) rollStep + 1, 4);
                     rollStep = Math.PI * 2 / thetaStepCount;
                     double roll = rollStep;
-                    Quaternion theta0 = MCTools.rotatedQuaternion(qPitchYaw, qPitchAxis, Tools.degtorad(subConeAngle));
+                    Quaternion theta0 = Tools.rotatedQuaternion(qPitchYaw, qPitchAxis, Tools.degtorad(subConeAngle));
 
                     for (int thetaStepI = 0; thetaStepI < thetaStepCount; thetaStepI++)
                     {

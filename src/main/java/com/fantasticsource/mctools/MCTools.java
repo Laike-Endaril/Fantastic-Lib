@@ -77,7 +77,7 @@ import static com.fantasticsource.tools.Tools.radtodeg;
 
 public class MCTools
 {
-    public static final TrigLookupTable TRIG_TABLE = new TrigLookupTable(1024);
+    public static final TrigLookupTable TRIG_TABLE = TrigLookupTable.TRIG_TABLE_1048576;
 
     public static final Int2ObjectMap<WorldServer> DIMENSION_MANAGER_WORLDS = (Int2ObjectMap<WorldServer>) ReflectionTool.get(DimensionManager.class, "worlds", null);
 
@@ -806,6 +806,8 @@ public class MCTools
     }
 
 
+    //Only still here for backwards compat; see Tools.rotatedQuaternion
+    @Deprecated
     public static Quaternion rotatedQuaternion(Quaternion v, Quaternion axis, double theta)
     {
         return Tools.rotatedQuaternion(v, axis, theta);

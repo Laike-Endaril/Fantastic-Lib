@@ -13,16 +13,16 @@ import net.minecraft.nbt.NBTTagCompound;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class CPathEntityYaw extends CPath
+public class CPathEntityYawPitch extends CPath
 {
     public Entity entity;
 
 
-    public CPathEntityYaw()
+    public CPathEntityYawPitch()
     {
     }
 
-    public CPathEntityYaw(Entity entity)
+    public CPathEntityYawPitch(Entity entity)
     {
         this.entity = entity;
     }
@@ -35,12 +35,14 @@ public class CPathEntityYaw extends CPath
 
         float yaw = entity.prevRotationYaw;
         yaw += (entity.rotationYaw - yaw) * partialTickCached;
-        return new VectorN(-Tools.degtorad(yaw), 0, 0);
+        float pitch = entity.prevRotationPitch;
+        pitch += (entity.rotationPitch - pitch) * partialTickCached;
+        return new VectorN(-Tools.degtorad(yaw), Tools.degtorad(pitch), 0);
     }
 
 
     @Override
-    public CPathEntityYaw write(ByteBuf buf)
+    public CPathEntityYawPitch write(ByteBuf buf)
     {
         super.write(buf);
 
@@ -50,7 +52,7 @@ public class CPathEntityYaw extends CPath
     }
 
     @Override
-    public CPathEntityYaw read(ByteBuf buf)
+    public CPathEntityYawPitch read(ByteBuf buf)
     {
         super.read(buf);
 
@@ -60,7 +62,7 @@ public class CPathEntityYaw extends CPath
     }
 
     @Override
-    public CPathEntityYaw save(OutputStream stream)
+    public CPathEntityYawPitch save(OutputStream stream)
     {
         super.save(stream);
 
@@ -70,7 +72,7 @@ public class CPathEntityYaw extends CPath
     }
 
     @Override
-    public CPathEntityYaw load(InputStream stream)
+    public CPathEntityYawPitch load(InputStream stream)
     {
         super.load(stream);
 
@@ -95,6 +97,7 @@ public class CPathEntityYaw extends CPath
     {
         super.deserializeNBT(nbt);
 
-        entity = MCTools.getValidEntityByID(((NBTTagCompound) nbt).getInteger("entity"));
+        NBTTagCompound compound = (NBTTagCompound) nbt;
+        entity = MCTools.getValidEntityByID(compound.getInteger("entity"));
     }
 }

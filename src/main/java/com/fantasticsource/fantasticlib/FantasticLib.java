@@ -240,6 +240,7 @@ public class FantasticLib
 //        if (event.phase != TickEvent.Phase.END || world == null) return;
 //
 //
+//        //TODO figure out why x/y offset is translating incorrectly
 //        for (Entity entity : Minecraft.getMinecraft().world.loadedEntityList)
 //        {
 //            if (entity instanceof EntityLivingBase)
@@ -252,13 +253,17 @@ public class FantasticLib
 //                    {
 //                        EntityLivingBase livingBase = (EntityLivingBase) args[1];
 //
-//                        PathedParticle particle = new PathedParticle(particleRenderData, pathRadius);
+//                        CPath rotation = new CPathEntityYawPitch(livingBase);
+//                        PathedParticle particle = new PathedParticle(particleRenderData, pathRadius.copy().rotateYawPitchRoll(rotation));
 //                        particle.applyPath(new CPathFollowEntity(livingBase).add(new CPathConstant(0, livingBase.getEyeHeight(), 0)));
 //
 //                        particle.setMaxAge(Integer.MAX_VALUE);
 //
+//                        particle.rotationPath(rotation);
+//
 //                        particle.spriteMetaData = spriteMetaData;
-//                        particle.animationPath(new CPathConstant((double) (int) args[2] / spriteMetaData.frames.size()));
+////                        particle.animationPath(new CPathConstant((double) (int) args[2] / spriteMetaData.frames.size()));
+//                        particle.animationPath(new CPathConstant(2d / spriteMetaData.frames.size()));
 //
 //                        return particle;
 //                    };

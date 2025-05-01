@@ -10,12 +10,9 @@ public class TrigLookupTable
 {
     protected static final LinkedHashMap<Integer, TrigLookupTable> TABLES = new LinkedHashMap<>();
 
-    public static final TrigLookupTable TRIG_TABLE_1024 = new TrigLookupTable(1024);
+    public static final TrigLookupTable TRIG_TABLE_1024 = getInstance(4096);
+    public static final TrigLookupTable TRIG_TABLE_1048576 = getInstance(1048576);
 
-    static
-    {
-        TABLES.put(1024, TRIG_TABLE_1024);
-    }
 
     private double[] table, invtable;
 

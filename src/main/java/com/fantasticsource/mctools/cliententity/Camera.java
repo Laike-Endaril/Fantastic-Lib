@@ -370,8 +370,8 @@ public class Camera extends ClientEntity
             World world = entity.world;
             double testFollowOffsetLR = followOffsetLR > 0 ? followOffsetLR + OFFSET_COLLISION_BUFFER_DIRECT : followOffsetLR - OFFSET_COLLISION_BUFFER_DIRECT;
             Vec3d start = entity.getPositionEyes(1);
-            Vec3d testStart = start.addVector(-OFFSET_COLLISION_BUFFER_FORWARD * TrigLookupTable.TRIG_TABLE_1024.sin(Tools.degtorad(camera.rotationYaw)), 0, OFFSET_COLLISION_BUFFER_FORWARD * TrigLookupTable.TRIG_TABLE_1024.cos(Tools.degtorad(camera.rotationYaw)));
-            Vec3d testEnd = testStart.subtract(testFollowOffsetLR * TrigLookupTable.TRIG_TABLE_1024.cos(Tools.degtorad(camera.rotationYaw)), 0, testFollowOffsetLR * TrigLookupTable.TRIG_TABLE_1024.sin(Tools.degtorad(camera.rotationYaw)));
+            Vec3d testStart = start.addVector(-OFFSET_COLLISION_BUFFER_FORWARD * TrigLookupTable.TRIG_TABLE_1048576.sin(Tools.degtorad(camera.rotationYaw)), 0, OFFSET_COLLISION_BUFFER_FORWARD * TrigLookupTable.TRIG_TABLE_1048576.cos(Tools.degtorad(camera.rotationYaw)));
+            Vec3d testEnd = testStart.subtract(testFollowOffsetLR * TrigLookupTable.TRIG_TABLE_1048576.cos(Tools.degtorad(camera.rotationYaw)), 0, testFollowOffsetLR * TrigLookupTable.TRIG_TABLE_1048576.sin(Tools.degtorad(camera.rotationYaw)));
             RayTraceResult testResult = ImprovedRayTracing.rayTraceBlocks(world, testStart, testEnd, Math.abs(testFollowOffsetLR), true);
             Vec3d testHitVec = testResult.hitVec != null ? testResult.hitVec : testEnd;
             Vec3d testDif = testHitVec.subtract(testStart);
@@ -379,7 +379,7 @@ public class Camera extends ClientEntity
 
             if (testDist > 0)
             {
-                Vec3d end = start.subtract(testFollowOffsetLR * TrigLookupTable.TRIG_TABLE_1024.cos(Tools.degtorad(camera.rotationYaw)), 0, testFollowOffsetLR * TrigLookupTable.TRIG_TABLE_1024.sin(Tools.degtorad(camera.rotationYaw)));
+                Vec3d end = start.subtract(testFollowOffsetLR * TrigLookupTable.TRIG_TABLE_1048576.cos(Tools.degtorad(camera.rotationYaw)), 0, testFollowOffsetLR * TrigLookupTable.TRIG_TABLE_1048576.sin(Tools.degtorad(camera.rotationYaw)));
                 RayTraceResult result = ImprovedRayTracing.rayTraceBlocks(world, start, end, testDist + OFFSET_COLLISION_BUFFER_DIRECT, true);
                 Vec3d hitVec = result.hitVec != null ? result.hitVec : end;
                 Vec3d dif = hitVec.subtract(start);

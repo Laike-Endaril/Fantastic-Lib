@@ -485,7 +485,7 @@ public class NoiseTest
                     {
                         for (int y = 0; y < h; y++)
                         {
-                            float f = (float) (Noise.brownian(TrigLookupTable.TRIG_TABLE_1024.sin(x), TrigLookupTable.TRIG_TABLE_1024.sin(y), amplitude, amplitudeGain, frequency, frequencyGain, octaves, permutations));
+                            float f = (float) (Noise.brownian(TrigLookupTable.TRIG_TABLE_1048576.sin(x), TrigLookupTable.TRIG_TABLE_1048576.sin(y), amplitude, amplitudeGain, frequency, frequencyGain, octaves, permutations));
                             glColor4f(f, f, f, 1);
                             glVertex2d(x, y);
                         }

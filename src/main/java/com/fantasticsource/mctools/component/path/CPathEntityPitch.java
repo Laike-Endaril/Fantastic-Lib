@@ -33,7 +33,9 @@ public class CPathEntityPitch extends CPath
     {
         if (entity == null) return null;
 
-        return new VectorN(Tools.degtorad(entity.rotationPitch), 0, 0);
+        float pitch = entity.prevRotationPitch;
+        pitch += (entity.rotationPitch - pitch) * partialTickCached;
+        return new VectorN(0, Tools.degtorad(pitch), 0);
     }
 
 
@@ -93,6 +95,7 @@ public class CPathEntityPitch extends CPath
     {
         super.deserializeNBT(nbt);
 
-        entity = MCTools.getValidEntityByID(((NBTTagCompound) nbt).getInteger("entity"));
+        NBTTagCompound compound = (NBTTagCompound) nbt;
+        entity = MCTools.getValidEntityByID(compound.getInteger("entity"));
     }
 }

@@ -17,6 +17,10 @@ import java.util.ArrayList;
 
 public class CPath extends NBTSerializableComponent
 {
+    //This is for batched operations; set it once before you call a system that uses paths
+    public static float partialTickCached = 0;
+
+
     public ArrayList<CPathTransform> transforms = new ArrayList<>();
 
 
@@ -35,6 +39,12 @@ public class CPath extends NBTSerializableComponent
     public CPath rotate(CPath axisPath, CPath thetaPath)
     {
         transforms.add(new CPathTransform(CPathTransform.TYPE_ROTATE, axisPath, thetaPath));
+        return this;
+    }
+
+    public CPath rotateYawPitchRoll(CPath yawPitchRoll)
+    {
+        transforms.add(new CPathTransform(CPathTransform.TYPE_ROTATE_YAW_PITCH_ROLL, yawPitchRoll));
         return this;
     }
 
@@ -316,7 +326,8 @@ public class CPath extends NBTSerializableComponent
                 TYPE_HIGH_LIMIT = 8,
                 TYPE_ROUND = 9,
                 TYPE_FLOOR = 10,
-                TYPE_CEIL = 11;
+                TYPE_CEIL = 11,
+                TYPE_ROTATE_YAW_PITCH_ROLL = 12;
 
         public int type = TYPE_ADD;
         public CPath[] paths;
@@ -382,6 +393,13 @@ public class CPath extends NBTSerializableComponent
 
                 case TYPE_CEIL:
                     vectorN.ceil();
+                    break;
+
+                case TYPE_ROTATE_YAW_PITCH_ROLL:
+                    VectorN yawPitchRoll = paths[0].getRelativePosition(time);
+                    vectorN.rotate(VectorN.Z_AXIS, yawPitchRoll.values[2]);
+                    vectorN.rotate(VectorN.X_AXIS, yawPitchRoll.values[1]);
+                    vectorN.rotate(VectorN.Y_AXIS, yawPitchRoll.values[0]);
                     break;
             }
         }

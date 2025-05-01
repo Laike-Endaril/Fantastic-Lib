@@ -1,7 +1,6 @@
 package com.fantasticsource.tools.datastructures;
 
 import com.fantasticsource.lwjgl.Quaternion;
-import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.TrigLookupTable;
 
@@ -411,16 +410,21 @@ public class VectorN
             v2.values = new double[Tools.min(this.values.length, other.values.length)];
             System.arraycopy(other.values, 0, v2.values, 0, n);
         }
-        return TrigLookupTable.TRIG_TABLE_1024.arccos(v1.normalize().dotProduct(v2.normalize()));
+        return TrigLookupTable.TRIG_TABLE_1048576.arccos(v1.normalize().dotProduct(v2.normalize()));
     }
 
+
+    public VectorN rotate(VectorN axis, double theta)
+    {
+        return rotate(axis, theta, TrigLookupTable.TRIG_TABLE_1048576);
+    }
 
     /**
      * Only doing 3D rotations for now
      */
-    public VectorN rotate(VectorN axis, double theta)
+    public VectorN rotate(VectorN axis, double theta, TrigLookupTable trigTable)
     {
-        Quaternion quaternion = MCTools.rotatedQuaternion(new Quaternion((float) values[0], (float) values[1], (float) values[2], 0), new Quaternion((float) axis.values[0], (float) axis.values[1], (float) axis.values[2], 0), theta);
+        Quaternion quaternion = Tools.rotatedQuaternion(new Quaternion((float) values[0], (float) values[1], (float) values[2], 0), new Quaternion((float) axis.values[0], (float) axis.values[1], (float) axis.values[2], 0), theta, trigTable);
         values[0] = quaternion.x;
         values[1] = quaternion.y;
         values[2] = quaternion.z;
