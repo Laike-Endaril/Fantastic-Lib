@@ -452,6 +452,7 @@ public class PathedParticle
             b = 1;
         }
 
+
         if (useFoliageColor || useGrassColor)
         {
             if (lastBlockR == -1 || lastBlockX != blockPos.getX() || lastBlockZ != blockPos.getZ())
@@ -482,6 +483,7 @@ public class PathedParticle
             g *= lastBlockG;
             b *= lastBlockB;
         }
+
 
         float a = alphaPath == null ? 1 : (float) alphaPath.getRelativePosition(renderMillis).values[0];
 
