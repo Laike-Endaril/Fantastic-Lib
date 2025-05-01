@@ -258,7 +258,7 @@ public class FantasticLib
 //                particle.setMaxAge(40);
 //
 //                particle.spriteMetaData = parent.spriteMetaData;
-//                particle.useFoliageColor = true; //TODO 150 -> 230 when disabled
+//                particle.useFoliageColor = true;
 //
 //                particle.rotationPath(new CPathConstant(parent.rotationPath.getRelativePosition(parent.currentRenderMillis(0)))); //TODO 150 -> 225 when disabled
 //
@@ -277,7 +277,7 @@ public class FantasticLib
 //                particle.applyPath(pathFall);
 //
 //                particle.spriteMetaData = Tools.choose(leaves);
-//                particle.useFoliageColor = true; //TODO 150 -> 230, 137 -> 200 when disabled
+//                particle.useFoliageColor = true;
 //
 //                particle.rotationPath(pathRotate); //TODO 150 -> 225 when disabled
 //

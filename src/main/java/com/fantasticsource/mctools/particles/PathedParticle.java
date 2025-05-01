@@ -39,7 +39,8 @@ public class PathedParticle
     public Vec3d deathPos = null;
     public Object[] extraDeathArgs = null;
     public boolean useFoliageColor = false, useGrassColor = false;
-    protected int age = 0;
+    protected int age = 0, lastBlockX, lastBlockZ;
+    protected double lastBlockR = -1, lastBlockG, lastBlockB;
     protected boolean dead = false;
 
 
@@ -451,22 +452,35 @@ public class PathedParticle
             b = 1;
         }
 
-        if (useFoliageColor || useGrassColor) //TODO SLOW
+        if (useFoliageColor || useGrassColor)
         {
-            if (useFoliageColor)
+            if (lastBlockR == -1 || lastBlockX != blockPos.getX() || lastBlockZ != blockPos.getZ())
             {
-                int c = BiomeColorHelper.getFoliageColorAtPos(world, blockPos);
-                r *= ((c >> 16) & 255) / 255d;
-                g *= ((c >> 8) & 255) / 255d;
-                b *= (c & 255) / 255d;
+                lastBlockX = blockPos.getX();
+                lastBlockZ = blockPos.getZ();
+                lastBlockR = 1;
+                lastBlockG = 1;
+                lastBlockB = 1;
+
+                if (useFoliageColor)
+                {
+                    int c = BiomeColorHelper.getFoliageColorAtPos(world, blockPos);
+                    lastBlockR *= ((c >> 16) & 255) / 255d;
+                    lastBlockG *= ((c >> 8) & 255) / 255d;
+                    lastBlockB *= (c & 255) / 255d;
+                }
+                if (useGrassColor)
+                {
+                    int c = BiomeColorHelper.getGrassColorAtPos(world, blockPos);
+                    lastBlockR *= ((c >> 16) & 255) / 255d;
+                    lastBlockG *= ((c >> 8) & 255) / 255d;
+                    lastBlockB *= (c & 255) / 255d;
+                }
             }
-            if (useGrassColor)
-            {
-                int c = BiomeColorHelper.getGrassColorAtPos(world, blockPos);
-                r *= ((c >> 16) & 255) / 255d;
-                g *= ((c >> 8) & 255) / 255d;
-                b *= (c & 255) / 255d;
-            }
+
+            r *= lastBlockR;
+            g *= lastBlockG;
+            b *= lastBlockB;
         }
 
         float a = alphaPath == null ? 1 : (float) alphaPath.getRelativePosition(renderMillis).values[0];
