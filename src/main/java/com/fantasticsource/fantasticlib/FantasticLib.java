@@ -230,8 +230,7 @@ public class FantasticLib
 //    public static PathedParticleSharedRenderData particleRenderData;
 //    public static SpriteMetaData[] leaves = new SpriteMetaData[2];
 //    public static CPath
-//            pathFall = new CPathLinear(0, -5, 0),
-//            pathRotate = new CPathLinear(Math.PI * 5, Math.PI * 2, Math.PI),
+//            pathFall = new CPathLinear(0, -1d / 20, 0),
 //            pathFade = new CPathConstant(1).add(new CPathLinear(-1));
 //
 //
@@ -253,14 +252,14 @@ public class FantasticLib
 //            {
 //                PathedParticle parent = (PathedParticle) args[0];
 //                Vec3d deathPos = parent.deathPos;
-//                PathedParticle particle = new PathedParticle(particleRenderData, new CPathConstant(deathPos.x, deathPos.y + 0.01, deathPos.z));
-//
-//                particle.setMaxAge(40);
+//                double y = parent.deathPos.y;
+//                if (parent.getAge() == parent.maxAge) y += 0.01;
+//                PathedParticle particle = new PathedParticle(40, particleRenderData, new CPathConstant(deathPos.x, y, deathPos.z));
 //
 //                particle.spriteMetaData = parent.spriteMetaData;
 //                particle.useFoliageColor = true;
 //
-//                particle.rotationPath(new CPathConstant(parent.rotationPath.getRelativePosition(parent.currentRenderMillis(0)))); //TODO 150 -> 225 when disabled
+//                particle.rotationPath(new CPathConstant(parent.rotationPath.getRelativePosition(parent.currentRenderMillis(0))));
 //
 //                particle.alphaPath(pathFade);
 //
@@ -271,19 +270,19 @@ public class FantasticLib
 //            {
 //                EntityLivingBase livingBase = (EntityLivingBase) args[1];
 //
-//                PathedParticle particle = new PathedParticle(particleRenderData, new CPathConstant(livingBase.posX - 3 + Tools.random(6d), livingBase.posY + livingBase.height + Tools.random(3d), livingBase.posZ - 3 + Tools.random(6d)));
+//                PathedParticle particle = new PathedParticle(200, particleRenderData, new CPathConstant(livingBase.posX - 3 + Tools.random(6d), livingBase.posY + livingBase.height + 1, livingBase.posZ - 3 + Tools.random(6d)));
 //
-//                particle.setMaxAge(200);
 //                particle.applyPath(pathFall);
 //
 //                particle.spriteMetaData = Tools.choose(leaves);
 //                particle.useFoliageColor = true;
 //
-//                particle.rotationPath(pathRotate); //TODO 150 -> 225 when disabled
+//                double rotationStart = Tools.random(-Math.PI * 0.5);
+//                particle.rotationPath(new CPathConstant(rotationStart));
 //
 //                particle.dieOnSolidsAndLiquids(); //Surprisingly NOT fps intensive, actually INCREASES fps if not spawning another particle
 //
-////                particle.addOnDeathParticles(groundLeafFactory);
+//                particle.addOnDeathParticles(groundLeafFactory);
 //
 //                return particle;
 //            };

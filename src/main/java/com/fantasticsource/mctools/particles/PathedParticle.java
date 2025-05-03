@@ -25,15 +25,16 @@ public class PathedParticle
 {
     public final PathedParticleSharedRenderData sharedRenderData;
 
-    public int maxAge = 20;
-
-    public CPath.CPathData basePath, rgbPath = null, hsvPath = null, alphaPath = null, scale2DPath = null, scale3DPath = null, rotationPath = null, animationPath = null;
-    public ArrayList<CPath.CPathData> morePaths = new ArrayList<>();
-
-    public ArrayList<Predicate<PathedParticle>> deathConditions = new ArrayList<>();
-    public ArrayList<PathedParticleFactory> onDeathParticles = null;
 
     public SpriteMetaData spriteMetaData = null;
+
+    public final int maxAge;
+
+    public CPath.CPathData basePath, rgbPath = null, hsvPath = null, alphaPath = null, scale2DPath = null, scale3DPath = null, rotationPath = null, animationPath = null;
+    protected ArrayList<CPath.CPathData> morePaths = new ArrayList<>();
+
+    protected ArrayList<Predicate<PathedParticle>> deathConditions = new ArrayList<>();
+    protected ArrayList<PathedParticleFactory> onDeathParticles = null;
 
 
     public Vec3d deathPos = null;
@@ -44,13 +45,11 @@ public class PathedParticle
     protected boolean dead = false;
 
 
-    public PathedParticle(PathedParticleSharedRenderData sharedRenderData, CPath basePath, CPath... morePaths)
+    public PathedParticle(int maxAge, PathedParticleSharedRenderData sharedRenderData, CPath basePath)
     {
+        this.maxAge = maxAge;
         this.sharedRenderData = sharedRenderData;
-
         this.basePath = new CPath.CPathData(basePath, 0);
-        for (CPath path : morePaths) applyPath(path);
-
         PathedParticleManager.add(this);
     }
 
@@ -82,10 +81,9 @@ public class PathedParticle
     }
 
 
-    public PathedParticle setMaxAge(int maxAge)
+    public int getAge()
     {
-        this.maxAge = maxAge;
-        return this;
+        return age;
     }
 
 
@@ -229,7 +227,7 @@ public class PathedParticle
 
     public long currentRenderMillis(float partialTick)
     {
-        return (long) ((partialTick + age) * 1000 / maxAge);
+        return (long) (partialTick + age) * 50;
     }
 
 
@@ -380,7 +378,7 @@ public class PathedParticle
                     };
 
 
-            //Manual 1D rotations //TODO Possibly slow, need to check
+            //Manual 1D rotation (roll)
             if (rotation != null)
             {
                 float theta = (float) (rotation.values[0] * 0.5);
@@ -412,7 +410,8 @@ public class PathedParticle
                 for (VectorN v : posOffsets) v.multiply(scalar.values[0], scalar.values[1], 0);
             }
 
-            //Manual 3D rotations //TODO SLOW
+            //Manual 3D rotations (yaw, pitch, roll)
+            //TODO This is the most costly *common* part of my particle system...quaternion rotations in general can be a bit costly
             for (VectorN v : posOffsets)
             {
                 v.rotate(VectorN.Z_AXIS, rotation.values[2]);
