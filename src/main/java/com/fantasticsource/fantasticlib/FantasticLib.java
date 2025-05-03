@@ -11,10 +11,23 @@ import com.fantasticsource.mctools.event.InventoryChangedEvent;
 import com.fantasticsource.mctools.gui.screen.TestGUI;
 import com.fantasticsource.mctools.nbtcap.NBTCap;
 import com.fantasticsource.mctools.nbtcap.NBTCapStorage;
+import com.fantasticsource.mctools.particles.PathedParticle;
+import com.fantasticsource.mctools.particles.PathedParticleFactory;
+import com.fantasticsource.mctools.particles.PathedParticleSharedRenderData;
 import com.fantasticsource.tools.ReflectionTool;
+import com.fantasticsource.tools.SpriteMetaData;
+import com.fantasticsource.tools.Tools;
+import com.fantasticsource.tools.component.path.CPath;
+import com.fantasticsource.tools.component.path.CPathConstant;
+import com.fantasticsource.tools.component.path.CPathLinear;
 import com.fantasticsource.tools.datastructures.ColorImmutable;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.config.Config;
@@ -26,7 +39,9 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 @Mod(modid = FantasticLib.MODID, name = FantasticLib.NAME, version = FantasticLib.VERSION, acceptableRemoteVersions = "*")
 public class FantasticLib
@@ -226,72 +241,76 @@ public class FantasticLib
 //    }
 
 
-//    public static PathedParticleFactory fallingLeafFactory = null, groundLeafFactory = null;
-//    public static PathedParticleSharedRenderData particleRenderData;
-//    public static SpriteMetaData[] leaves = new SpriteMetaData[2];
-//    public static CPath
-//            pathFall = new CPathLinear(0, -1d / 20, 0),
-//            pathFade = new CPathConstant(1).add(new CPathLinear(-1));
-//
-//
-//    @SideOnly(Side.CLIENT)
-//    @SubscribeEvent
-//    public static void particleTest(TickEvent.ClientTickEvent event)
-//    {
-//        World world = Minecraft.getMinecraft().world;
-//        if (event.phase != TickEvent.Phase.END || world == null) return;
-//
-//
-//        if (fallingLeafFactory == null)
-//        {
-//            particleRenderData = new PathedParticleSharedRenderData(true, GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, "flibtest:textures/particles.png");
-//            leaves[0] = new SpriteMetaData(128, 128, 0, 0, 8, 8);
-//            leaves[1] = new SpriteMetaData(128, 128, 8, 0, 16, 8);
-//
-//            groundLeafFactory = args ->
-//            {
-//                PathedParticle parent = (PathedParticle) args[0];
-//                Vec3d deathPos = parent.deathPos;
-//                double y = parent.deathPos.y;
-//                if (parent.getAge() == parent.maxAge) y += 0.01;
-//                PathedParticle particle = new PathedParticle(40, particleRenderData, new CPathConstant(deathPos.x, y, deathPos.z));
-//
-//                particle.spriteMetaData = parent.spriteMetaData;
-//                particle.useFoliageColor = true;
-//
-//                particle.rotationPath(new CPathConstant(parent.rotationPath.getRelativePosition(parent.currentRenderMillis(0))));
-//
-//                particle.alphaPath(pathFade);
-//
-//                return particle;
-//            };
-//
-//            fallingLeafFactory = args ->
-//            {
-//                EntityLivingBase livingBase = (EntityLivingBase) args[1];
-//
-//                PathedParticle particle = new PathedParticle(200, particleRenderData, new CPathConstant(livingBase.posX - 3 + Tools.random(6d), livingBase.posY + livingBase.height + 1, livingBase.posZ - 3 + Tools.random(6d)));
-//
-//                particle.applyPath(pathFall);
-//
-//                particle.spriteMetaData = Tools.choose(leaves);
-//                particle.useFoliageColor = true;
-//
-//                double rotationStart = Tools.random(-Math.PI * 0.5);
-//                particle.rotationPath(new CPathConstant(rotationStart));
-//
-//                particle.dieOnSolidsAndLiquids(); //Surprisingly NOT fps intensive, actually INCREASES fps if not spawning another particle
-//
-//                particle.addOnDeathParticles(groundLeafFactory);
-//
-//                return particle;
-//            };
-//        }
-//
-//
-//        if (!Minecraft.getMinecraft().isGamePaused())
-//        {
-//            for (int i = 0; i < 10; i++) fallingLeafFactory.create(null, Minecraft.getMinecraft().player);
-//        }
-//    }
+    public static PathedParticleFactory fallingLeafFactory = null, groundLeafFactory = null;
+    public static PathedParticleSharedRenderData particleRenderData;
+    public static SpriteMetaData[] leaves = new SpriteMetaData[2];
+    public static int leafFadeTicks = 40;
+    public static CPath
+            pathFall = new CPathLinear(0, -1, 0),
+            pathFade = new CPathConstant(1).add(new CPathLinear(-20d / leafFadeTicks));
+
+
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent
+    public static void particleTest(TickEvent.ClientTickEvent event)
+    {
+        World world = Minecraft.getMinecraft().world;
+        if (event.phase != TickEvent.Phase.END || world == null) return;
+
+
+        if (fallingLeafFactory == null)
+        {
+            particleRenderData = new PathedParticleSharedRenderData(true, GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, "flibtest:textures/particles.png");
+            leaves[0] = new SpriteMetaData(128, 128, 0, 0, 8, 8);
+            leaves[1] = new SpriteMetaData(128, 128, 8, 0, 16, 8);
+
+            groundLeafFactory = args ->
+            {
+                PathedParticle particle = new PathedParticle(leafFadeTicks, particleRenderData);
+
+                PathedParticle parent = (PathedParticle) args[0];
+                Vec3d deathPos = parent.deathPos;
+                double y = parent.deathPos.y;
+                if (parent.getAge() == parent.maxAge) y += 0.01;
+                particle.positionPath(new CPathConstant(deathPos.x, y, deathPos.z));
+
+                particle.spriteMetaData = parent.spriteMetaData;
+                particle.useFoliageColor = true;
+
+                particle.rotationPath(new CPathConstant(parent.rotationData.getRelativePosition(parent.currentRenderMillis(0))));
+
+                particle.alphaPath(pathFade);
+
+                return particle;
+            };
+
+            fallingLeafFactory = args ->
+            {
+                EntityLivingBase livingBase = (EntityLivingBase) args[1];
+
+                PathedParticle particle = new PathedParticle(200, particleRenderData);
+
+                particle.positionPath(new CPathConstant(livingBase.posX - 3 + Tools.random(6d), livingBase.posY + livingBase.height + 1, livingBase.posZ - 3 + Tools.random(6d)));
+                particle.positionPath(pathFall);
+
+                particle.spriteMetaData = Tools.choose(leaves);
+                particle.useFoliageColor = true;
+
+                double rotationStart = Tools.random(-Math.PI * 0.5);
+                particle.rotationPath(new CPathConstant(rotationStart));
+
+                particle.dieOnSolidsAndLiquids(); //Surprisingly NOT fps intensive, actually INCREASES fps if not spawning another particle
+
+                particle.addOnDeathParticles(groundLeafFactory);
+
+                return particle;
+            };
+        }
+
+
+        if (!Minecraft.getMinecraft().isGamePaused())
+        {
+            for (int i = 0; i < 10; i++) fallingLeafFactory.create(null, Minecraft.getMinecraft().player);
+        }
+    }
 }

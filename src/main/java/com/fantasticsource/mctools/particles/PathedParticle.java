@@ -30,8 +30,15 @@ public class PathedParticle
 
     public final int maxAge;
 
-    public CPath.CPathData basePath, rgbPath = null, hsvPath = null, alphaPath = null, scale2DPath = null, scale3DPath = null, rotationPath = null, animationPath = null;
-    protected ArrayList<CPath.CPathData> morePaths = new ArrayList<>();
+    public CPath.CPathData
+            positionData = new CPath.CPathData(0),
+            rgbData = null,
+            hsvData = null,
+            alphaData = null,
+            scale2DData = null,
+            scale3DData = null,
+            rotationData = null,
+            animationData = null;
 
     protected ArrayList<Predicate<PathedParticle>> deathConditions = new ArrayList<>();
     protected ArrayList<PathedParticleFactory> onDeathParticles = null;
@@ -45,11 +52,10 @@ public class PathedParticle
     protected boolean dead = false;
 
 
-    public PathedParticle(int maxAge, PathedParticleSharedRenderData sharedRenderData, CPath basePath)
+    public PathedParticle(int maxAge, PathedParticleSharedRenderData sharedRenderData)
     {
         this.maxAge = maxAge;
         this.sharedRenderData = sharedRenderData;
-        this.basePath = new CPath.CPathData(basePath, 0);
         PathedParticleManager.add(this);
     }
 
@@ -87,28 +93,31 @@ public class PathedParticle
     }
 
 
-    public PathedParticle applyPath(CPath path)
+    public PathedParticle positionPath(CPath path)
     {
-        morePaths.add(new CPath.CPathData(path, 0));
+        positionData.paths.add(path);
         return this;
     }
 
 
     public PathedParticle rgbPath(CPath path)
     {
-        rgbPath = new CPath.CPathData(path, 0);
+        if (rgbData == null) rgbData = new CPath.CPathData(0);
+        rgbData.paths.add(path);
         return this;
     }
 
     public PathedParticle hsvPath(CPath path)
     {
-        hsvPath = new CPath.CPathData(path, 0);
+        if (hsvData == null) hsvData = new CPath.CPathData(0);
+        hsvData.paths.add(path);
         return this;
     }
 
     public PathedParticle alphaPath(CPath path)
     {
-        alphaPath = new CPath.CPathData(path, 0);
+        if (alphaData == null) alphaData = new CPath.CPathData(0);
+        alphaData.paths.add(path);
         return this;
     }
 
@@ -117,7 +126,8 @@ public class PathedParticle
     {
         if (path.getRelativePosition(0).values.length != 2) throw new IllegalArgumentException("The 2D scale path must be 2D!");
 
-        scale2DPath = new CPath.CPathData(path, 0);
+        if (scale2DData == null) scale2DData = new CPath.CPathData(0);
+        scale2DData.paths.add(path);
         return this;
     }
 
@@ -125,7 +135,8 @@ public class PathedParticle
     {
         if (path.getRelativePosition(0).values.length != 3) throw new IllegalArgumentException("The 3D scale path must be 3D!");
 
-        scale3DPath = new CPath.CPathData(path, 0);
+        if (scale3DData == null) scale3DData = new CPath.CPathData(0);
+        scale3DData.paths.add(path);
         return this;
     }
 
@@ -135,14 +146,16 @@ public class PathedParticle
         int count = path.getRelativePosition(0).values.length;
         if (count != 1 && count != 3) throw new IllegalArgumentException("Rotation path must be 1D (rotation facing player) or 3D (manual rotation; yaw, pitch, roll)");
 
-        rotationPath = new CPath.CPathData(path, 0);
+        if (rotationData == null) rotationData = new CPath.CPathData(0);
+        rotationData.paths.add(path);
         return this;
     }
 
 
     public PathedParticle animationPath(CPath path)
     {
-        animationPath = new CPath.CPathData(path, 0);
+        if (rgbData == null) rgbData = new CPath.CPathData(0);
+        animationData.paths.add(path);
         return this;
     }
 
@@ -252,19 +265,7 @@ public class PathedParticle
 
     public VectorN currentPos(float partialTick)
     {
-        long millis = currentRenderMillis(partialTick);
-
-        VectorN pos = basePath.getRelativePosition(millis), pathPos;
-        if (pos == null) return null;
-
-        for (CPath.CPathData data : morePaths)
-        {
-            pathPos = data.getRelativePosition(millis);
-            if (pathPos == null) return null;
-
-            pos.add(pathPos);
-        }
-        return pos;
+        return positionData.getRelativePosition(currentRenderMillis(partialTick));
     }
 
 
@@ -298,9 +299,9 @@ public class PathedParticle
         if (spriteMetaData != null)
         {
             SpriteMetaData.FrameMetaData frame;
-            if (animationPath != null)
+            if (animationData != null)
             {
-                frame = spriteMetaData.frames.get(Tools.posMod((int) (spriteMetaData.frames.size() * animationPath.getRelativePosition(renderMillis).values[0]), spriteMetaData.frames.size()));
+                frame = spriteMetaData.frames.get(Tools.posMod((int) (spriteMetaData.frames.size() * animationData.getRelativePosition(renderMillis).values[0]), spriteMetaData.frames.size()));
             }
             else
             {
@@ -338,9 +339,9 @@ public class PathedParticle
 
 
         double xScale3D = 0.1, yScale3D = 0.1, zScale3D = 0.1;
-        if (scale3DPath != null)
+        if (scale3DData != null)
         {
-            VectorN scalar = scale3DPath.getRelativePosition(renderMillis);
+            VectorN scalar = scale3DData.getRelativePosition(renderMillis);
             xScale3D *= scalar.values[0];
             yScale3D *= scalar.values[1];
             zScale3D *= scalar.values[2];
@@ -349,12 +350,12 @@ public class PathedParticle
 
         VectorN[] posOffsets;
         VectorN rotation = null;
-        if (rotationPath != null) rotation = rotationPath.getRelativePosition(renderMillis);
+        if (rotationData != null) rotation = rotationData.getRelativePosition(renderMillis);
         if (rotation == null || rotation.values.length == 1)
         {
-            if (scale2DPath != null)
+            if (scale2DData != null)
             {
-                VectorN scalar = scale2DPath.getRelativePosition(renderMillis);
+                VectorN scalar = scale2DData.getRelativePosition(renderMillis);
                 xScaleXFactor *= scalar.values[0];
                 xScaleZFactor *= scalar.values[0];
                 yScaleYFactor *= scalar.values[1];
@@ -404,9 +405,9 @@ public class PathedParticle
                             new VectorN(xOrigin, yOrigin - 1, 0)
                     };
 
-            if (scale2DPath != null)
+            if (scale2DData != null)
             {
-                VectorN scalar = scale2DPath.getRelativePosition(renderMillis);
+                VectorN scalar = scale2DData.getRelativePosition(renderMillis);
                 for (VectorN v : posOffsets) v.multiply(scalar.values[0], scalar.values[1], 0);
             }
 
@@ -429,16 +430,16 @@ public class PathedParticle
 
 
         float r, g, b;
-        if (rgbPath != null)
+        if (rgbData != null)
         {
-            VectorN rgb = rgbPath.getRelativePosition(renderMillis);
+            VectorN rgb = rgbData.getRelativePosition(renderMillis);
             r = (float) rgb.values[0];
             g = (float) rgb.values[1];
             b = (float) rgb.values[2];
         }
-        else if (hsvPath != null)
+        else if (hsvData != null)
         {
-            VectorN hsv = hsvPath.getRelativePosition(renderMillis);
+            VectorN hsv = hsvData.getRelativePosition(renderMillis);
             Color c = new Color(0).setColorHSV((float) hsv.values[0], (float) hsv.values[1], (float) hsv.values[2]);
             r = c.rf();
             g = c.gf();
@@ -484,7 +485,7 @@ public class PathedParticle
         }
 
 
-        float a = alphaPath == null ? 1 : (float) alphaPath.getRelativePosition(renderMillis).values[0];
+        float a = alphaData == null ? 1 : (float) alphaData.getRelativePosition(renderMillis).values[0];
 
 
         buffer.pos(x + posOffsets[0].values[0] * xScale3D, y + posOffsets[0].values[1] * yScale3D, z + posOffsets[0].values[2] * zScale3D).tex(u2, v2).color(r, g, b, a).lightmap(skyLight, blockLight).endVertex();

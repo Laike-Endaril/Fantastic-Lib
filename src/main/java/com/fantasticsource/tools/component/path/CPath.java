@@ -14,6 +14,8 @@ import net.minecraft.nbt.NBTTagList;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 
 public class CPath extends NBTSerializableComponent
 {
@@ -207,7 +209,7 @@ public class CPath extends NBTSerializableComponent
 
     public static class CPathData extends Component
     {
-        public CPath path = null;
+        public ArrayList<CPath> paths = new ArrayList<>();
         public long startTime = 0, pauseTime = -1;
         public double rate = 1;
 
@@ -217,13 +219,13 @@ public class CPath extends NBTSerializableComponent
 
         public CPathData(CPath path)
         {
-            this(path, System.currentTimeMillis());
+            this(System.currentTimeMillis(), path);
         }
 
-        public CPathData(CPath path, long startTime)
+        public CPathData(long startTime, CPath... paths)
         {
-            this.path = path;
             this.startTime = startTime;
+            this.paths.addAll(Arrays.asList(paths));
         }
 
         public VectorN getRelativePosition()
@@ -233,8 +235,13 @@ public class CPath extends NBTSerializableComponent
 
         public VectorN getRelativePosition(long time)
         {
-            if (pauseTime > -1) return path.getRelativePosition((long) ((double) (pauseTime - startTime) * rate));
-            return path.getRelativePosition((long) ((double) (time - startTime) * rate));
+            if (paths.size() == 0) return null;
+
+            double t = pauseTime > -1 ? (double) (pauseTime - startTime) * rate : (double) (time - startTime) * rate;
+            Iterator<CPath> i = paths.iterator();
+            VectorN result = i.next().getRelativePosition((long) t);
+            while (i.hasNext()) result.add(i.next().getRelativePosition((long) t));
+            return result;
         }
 
 
@@ -268,7 +275,8 @@ public class CPath extends NBTSerializableComponent
         @Override
         public CPathData write(ByteBuf buf)
         {
-            writeMarkedOrNull(buf, path);
+            buf.writeInt(paths.size());
+            for (CPath path : paths) writeMarkedOrNull(buf, path);
             buf.writeLong(startTime);
             buf.writeLong(pauseTime);
             buf.writeDouble(rate);
@@ -279,7 +287,8 @@ public class CPath extends NBTSerializableComponent
         @Override
         public CPathData read(ByteBuf buf)
         {
-            path = (CPath) readMarkedOrNull(buf);
+            paths.clear();
+            for (int i = buf.readInt(); i > 0; i--) paths.add((CPath) readMarkedOrNull(buf));
             startTime = buf.readLong();
             pauseTime = buf.readLong();
             rate = buf.readDouble();
@@ -290,7 +299,8 @@ public class CPath extends NBTSerializableComponent
         @Override
         public CPathData save(OutputStream stream)
         {
-            saveMarkedOrNull(stream, path);
+            new CInt().set(paths.size()).save(stream);
+            for (CPath path : paths) saveMarkedOrNull(stream, path);
             new CLong().set(startTime).save(stream).set(pauseTime).save(stream);
             new CDouble().set(rate).save(stream);
 
@@ -302,7 +312,7 @@ public class CPath extends NBTSerializableComponent
         {
             CLong cl = new CLong();
 
-            path = (CPath) loadMarkedOrNull(stream);
+            for (int i = new CInt().load(stream).value; i > 0; i--) paths.add((CPath) loadMarkedOrNull(stream));
             startTime = cl.load(stream).value;
             pauseTime = cl.load(stream).value;
             rate = new CDouble().load(stream).value;
