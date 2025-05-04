@@ -8,13 +8,13 @@ import net.minecraft.util.ResourceLocation;
 
 public class PathedParticleSharedRenderData
 {
-    public static final ResourceLocation PARTICLE_TEXTURE_ATLAS = new ResourceLocation("textures/particle/particles.png");
     public static final ResourceLocation BLOCK_TEXTURE_ATLAS = TextureMap.LOCATION_BLOCKS_TEXTURE;
 
     //Data that requires openGL state change
     public final boolean useBlockLight;
     public final GlStateManager.SourceFactor sourceFactor;
     public final GlStateManager.DestFactor destFactor;
+    public final String textureString;
     public final ResourceLocation texture;
     public final int hash;
 
@@ -26,6 +26,7 @@ public class PathedParticleSharedRenderData
         this.useBlockLight = useBlockLight;
         this.sourceFactor = sourceFactor;
         this.destFactor = destFactor;
+        textureString = texture;
 
         try
         {
