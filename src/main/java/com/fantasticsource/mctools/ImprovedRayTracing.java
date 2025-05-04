@@ -23,9 +23,12 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.function.Predicate;
 
 public class ImprovedRayTracing
 {
+    public static final ArrayList<Predicate<IBlockState>> BLOCK_STATE_ENDS_RAYTRACE_FILTERS = new ArrayList<>();
+
     protected static HashSet<IBlockState> transparentBlockstates = new HashSet<>(), nonTransparentBlockstates = new HashSet<>();
     protected static HashSet<Block> transparentBlocks = new HashSet<>(), nonTransparentBlocks = new HashSet<>();
     protected static HashSet<Class<? extends Block>> transparentBlockSuperclasses = new HashSet<>(), nonTransparentBlockSuperclasses = new HashSet<>(),
@@ -875,8 +878,14 @@ public class ImprovedRayTracing
 
     public static boolean canSeeThrough(IBlockState blockState)
     {
-        //Config filters
+        //Library filters
+        for (Predicate<IBlockState> predicate : BLOCK_STATE_ENDS_RAYTRACE_FILTERS)
+        {
+            if (!predicate.test(blockState)) return false;
+        }
 
+
+        //Config filters
         if (transparentBlockstates.contains(blockState)) return true;
         if (nonTransparentBlockstates.contains(blockState)) return false;
 
