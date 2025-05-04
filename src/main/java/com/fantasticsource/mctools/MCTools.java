@@ -814,6 +814,11 @@ public class MCTools
     }
 
 
+    public static EntitySnowball spawnDebugSnowball(World world, VectorN position)
+    {
+        return spawnDebugSnowball(world, position.values[0], position.values[1], position.values[2]);
+    }
+
     public static EntitySnowball spawnDebugSnowball(World world, Vec3d position)
     {
         return spawnDebugSnowball(world, position.x, position.y, position.z);
