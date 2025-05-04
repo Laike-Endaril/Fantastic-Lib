@@ -28,8 +28,10 @@ import java.util.Map;
 @SideOnly(Side.CLIENT)
 public class PathedParticleManager
 {
-    protected static final Profiler profiler = Minecraft.getMinecraft().mcProfiler;
-    protected static final TextureManager renderer = Minecraft.getMinecraft().renderEngine;
+    protected static final Profiler PROFILER = Minecraft.getMinecraft().mcProfiler;
+    protected static final TextureManager RENDERER = Minecraft.getMinecraft().renderEngine;
+
+
     protected static LinkedHashMap<PathedParticleSharedRenderData, ArrayList<PathedParticle>> particles = new LinkedHashMap<>();
 
     protected static boolean busy = false;
@@ -129,7 +131,7 @@ public class PathedParticleManager
         {
             data = entry.getKey();
             GlStateManager.blendFunc(data.sourceFactor, data.destFactor);
-            renderer.bindTexture(data.texture);
+            RENDERER.bindTexture(data.texture);
             if (data.useBlockLight) Minecraft.getMinecraft().entityRenderer.enableLightmap();
             else Minecraft.getMinecraft().entityRenderer.disableLightmap();
 
@@ -155,18 +157,18 @@ public class PathedParticleManager
 
         if (!Minecraft.getMinecraft().isGamePaused())
         {
-            profiler.startSection("FLib: Pathed Particles Update");
+            PROFILER.startSection("FLib: Pathed Particles Update");
             update();
-            profiler.endSection();
+            PROFILER.endSection();
         }
     }
 
     @SubscribeEvent
     public static void renderLast(RenderWorldLastEvent event)
     {
-        profiler.startSection("FLib: Pathed Particles Render");
+        PROFILER.startSection("FLib: Pathed Particles Render");
         render(event.getPartialTicks());
-        profiler.endSection();
+        PROFILER.endSection();
     }
 
     @SubscribeEvent

@@ -24,12 +24,13 @@ import java.util.function.Predicate;
 public class PathedParticle
 {
     public final PathedParticleSharedRenderData sharedRenderData;
-
-
-    public SpriteMetaData spriteMetaData = null;
-
     public final int maxAge;
 
+    public int maxRenderDistance = 50;
+    public Vec3d deathPos = null;
+    public Object[] extraDeathArgs = null;
+    public boolean useFoliageColor = false, useGrassColor = false;
+    public SpriteMetaData spriteMetaData = null;
     public CPath.CPathData
             positionData = new CPath.CPathData(0),
             rgbData = null,
@@ -40,16 +41,12 @@ public class PathedParticle
             rotationData = null,
             animationData = null;
 
-    protected ArrayList<Predicate<PathedParticle>> deathConditions = new ArrayList<>();
-    protected ArrayList<PathedParticleFactory> onDeathParticles = null;
 
-
-    public Vec3d deathPos = null;
-    public Object[] extraDeathArgs = null;
-    public boolean useFoliageColor = false, useGrassColor = false;
     protected int age = 0, lastBlockX, lastBlockZ;
     protected double lastBlockR = -1, lastBlockG, lastBlockB;
     protected boolean dead = false;
+    protected ArrayList<Predicate<PathedParticle>> deathConditions = new ArrayList<>();
+    protected ArrayList<PathedParticleFactory> onDeathParticles = null;
 
 
     public PathedParticle(int maxAge, PathedParticleSharedRenderData sharedRenderData)
@@ -273,7 +270,8 @@ public class PathedParticle
     //The letter before "Factor" is what coordinate of the normalized rotated scalar vector is factoring into the equation
     public void renderParticle(BufferBuilder buffer, float partialTick, float xScaleXFactor, float yScaleYFactor, float xScaleZFactor, float yScaleZFactor, float yScaleXFactor)
     {
-        if (Minecraft.getMinecraft().world == null) dead = true;
+        World world = Minecraft.getMinecraft().world;
+        if (world == null) dead = true;
         if (dead) return;
 
 
@@ -422,7 +420,6 @@ public class PathedParticle
         }
 
 
-        World world = Minecraft.getMinecraft().world;
         BlockPos blockPos = new BlockPos(pos.values[0], pos.values[1], pos.values[2]);
         int lightmapIndex = world.isBlockLoaded(blockPos) ? world.getCombinedLight(blockPos, 0) : 0;
         int skyLight = lightmapIndex >> 16 & 65535;
