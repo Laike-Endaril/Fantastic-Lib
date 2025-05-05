@@ -461,23 +461,18 @@ public class VectorN
                 return this;
             }
 
-            //In standard Cartesian coordinates, if right is +x and up is +y, then forward is -z
-            if (axisX < 0 || axisY < 0 || axisZ < 0)
-            {
-                theta = Math.PI * 2 - theta;
-                axisX = -axisX;
-                axisY = -axisY;
-                axisZ = -axisZ;
-            }
 
-            if (axisZ > 0)
+            //If the axis is negative, invert theta and pretend the axis is positive
+            if (axisX < 0 || axisY < 0 || axisZ < 0) theta = Math.PI * 2 - theta;
+            //In standard Cartesian coordinates, if right is +x and up is +y, then forward is -z
+            if (axisZ != 0)
             {
                 values[0] = x * TRIG_TABLE_1048576.cos(theta) - y * TRIG_TABLE_1048576.sin(theta);
                 values[1] = x * TRIG_TABLE_1048576.sin(theta) + y * TRIG_TABLE_1048576.cos(theta);
                 return this;
             }
 
-            if (axisY > 0)
+            if (axisY != 0)
             {
                 values[0] = z * TRIG_TABLE_1048576.sin(theta) + x * TRIG_TABLE_1048576.cos(theta);
                 values[2] = z * TRIG_TABLE_1048576.cos(theta) - x * TRIG_TABLE_1048576.sin(theta);
