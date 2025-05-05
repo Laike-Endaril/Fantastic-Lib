@@ -424,6 +424,15 @@ public class VectorN
      */
     public VectorN rotate(VectorN axis, double theta, TrigLookupTable trigTable)
     {
+        theta = Tools.posMod(theta, Math.PI * 2);
+        if (theta == 0) return this;
+        if (axis.values.length != 3) throw new IllegalArgumentException("Can only use rotate() with a 3D axis; actual axis is " + axis.toString());
+
+
+        int axisZeroes = axis.zeros();
+        if (axisZeroes == 3) throw new IllegalArgumentException("Axis cannot be all zeroes!");
+
+
         Quaternion quaternion = Tools.rotatedQuaternion(new Quaternion((float) values[0], (float) values[1], (float) values[2], 0), new Quaternion((float) axis.values[0], (float) axis.values[1], (float) axis.values[2], 0), theta, trigTable);
         values[0] = quaternion.x;
         values[1] = quaternion.y;
