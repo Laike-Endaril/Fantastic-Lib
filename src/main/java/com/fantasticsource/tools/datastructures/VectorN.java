@@ -4,6 +4,8 @@ import com.fantasticsource.lwjgl.Quaternion;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.TrigLookupTable;
 
+import static com.fantasticsource.tools.TrigLookupTable.TRIG_TABLE_1048576;
+
 public class VectorN
 {
     public static final VectorN
@@ -410,13 +412,13 @@ public class VectorN
             v2.values = new double[Tools.min(this.values.length, other.values.length)];
             System.arraycopy(other.values, 0, v2.values, 0, n);
         }
-        return TrigLookupTable.TRIG_TABLE_1048576.arccos(v1.normalize().dotProduct(v2.normalize()));
+        return TRIG_TABLE_1048576.arccos(v1.normalize().dotProduct(v2.normalize()));
     }
 
 
     public VectorN rotate(VectorN axis, double theta)
     {
-        return rotate(axis, theta, TrigLookupTable.TRIG_TABLE_1048576);
+        return rotate(axis, theta, TRIG_TABLE_1048576);
     }
 
     /**
@@ -458,6 +460,35 @@ public class VectorN
                 values[1] = -y;
                 return this;
             }
+
+            //In standard Cartesian coordinates, if right is +x and up is +y, then forward is -z
+            if (axisX < 0 || axisY < 0 || axisZ < 0)
+            {
+                theta = Math.PI * 2 - theta;
+                axisX = -axisX;
+                axisY = -axisY;
+                axisZ = -axisZ;
+            }
+
+            if (axisZ > 0)
+            {
+                values[0] = x * TRIG_TABLE_1048576.cos(theta) - y * TRIG_TABLE_1048576.sin(theta);
+                values[1] = x * TRIG_TABLE_1048576.sin(theta) + y * TRIG_TABLE_1048576.cos(theta);
+                return this;
+            }
+
+            if (axisY > 0)
+            {
+                values[0] = z * TRIG_TABLE_1048576.sin(theta) + x * TRIG_TABLE_1048576.cos(theta);
+                values[2] = z * TRIG_TABLE_1048576.cos(theta) - x * TRIG_TABLE_1048576.sin(theta);
+                return this;
+            }
+
+            //axisX > 0
+            values[1] = y * TRIG_TABLE_1048576.cos(theta) - z * TRIG_TABLE_1048576.sin(theta);
+            values[2] = y * TRIG_TABLE_1048576.sin(theta) + z * TRIG_TABLE_1048576.cos(theta);
+            return this;
+        }
 
 
         Quaternion quaternion = Tools.rotatedQuaternion(new Quaternion((float) values[0], (float) values[1], (float) values[2], 0), new Quaternion((float) axis.values[0], (float) axis.values[1], (float) axis.values[2], 0), theta, trigTable);
