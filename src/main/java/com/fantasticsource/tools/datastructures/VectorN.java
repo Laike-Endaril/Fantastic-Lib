@@ -467,21 +467,60 @@ public class VectorN
             //In standard Cartesian coordinates, if right is +x and up is +y, then forward is -z
             if (axisZ != 0)
             {
-                values[0] = x * TRIG_TABLE_1048576.cos(theta) - y * TRIG_TABLE_1048576.sin(theta);
-                values[1] = x * TRIG_TABLE_1048576.sin(theta) + y * TRIG_TABLE_1048576.cos(theta);
+                if (theta == Math.PI)
+                {
+                    values[0] = -x;
+                    values[1] = -y;
+                }
+                else if (theta == Math.PI * 3 / 2)
+                {
+                    values[0] = y;
+                    values[1] = -x;
+                }
+                else
+                {
+                    values[0] = x * TRIG_TABLE_1048576.cos(theta) - y * TRIG_TABLE_1048576.sin(theta);
+                    values[1] = x * TRIG_TABLE_1048576.sin(theta) + y * TRIG_TABLE_1048576.cos(theta);
+                }
                 return this;
             }
 
             if (axisY != 0)
             {
-                values[0] = z * TRIG_TABLE_1048576.sin(theta) + x * TRIG_TABLE_1048576.cos(theta);
-                values[2] = z * TRIG_TABLE_1048576.cos(theta) - x * TRIG_TABLE_1048576.sin(theta);
+                if (theta == Math.PI)
+                {
+                    values[0] = -x;
+                    values[2] = -z;
+                }
+                else if (theta == Math.PI * 3 / 2)
+                {
+                    values[0] = -z;
+                    values[2] = x;
+                }
+                else
+                {
+                    values[0] = z * TRIG_TABLE_1048576.sin(theta) + x * TRIG_TABLE_1048576.cos(theta);
+                    values[2] = z * TRIG_TABLE_1048576.cos(theta) - x * TRIG_TABLE_1048576.sin(theta);
+                }
                 return this;
             }
 
             //axisX > 0
-            values[1] = y * TRIG_TABLE_1048576.cos(theta) - z * TRIG_TABLE_1048576.sin(theta);
-            values[2] = y * TRIG_TABLE_1048576.sin(theta) + z * TRIG_TABLE_1048576.cos(theta);
+            if (theta == Math.PI)
+            {
+                values[1] = -y;
+                values[2] = -z;
+            }
+            else if (theta == Math.PI * 3 / 2)
+            {
+                values[1] = z;
+                values[2] = -y;
+            }
+            else
+            {
+                values[1] = y * TRIG_TABLE_1048576.cos(theta) - z * TRIG_TABLE_1048576.sin(theta);
+                values[2] = y * TRIG_TABLE_1048576.sin(theta) + z * TRIG_TABLE_1048576.cos(theta);
+            }
             return this;
         }
 
