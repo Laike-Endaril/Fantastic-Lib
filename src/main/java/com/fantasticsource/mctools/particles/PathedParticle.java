@@ -152,7 +152,7 @@ public class PathedParticle
 
     public PathedParticle animationPath(CPath path)
     {
-        if (rgbData == null) rgbData = new CPath.CPathData(0);
+        if (animationData == null) animationData = new CPath.CPathData(0);
         animationData.paths.add(path);
         return this;
     }
