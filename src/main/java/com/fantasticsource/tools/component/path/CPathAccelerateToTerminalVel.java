@@ -43,13 +43,19 @@ public class CPathAccelerateToTerminalVel extends CPath
         long minTime = Tools.min(time, timeToTerminalVelocity);
         for (int i = 0; i < result.values.length; i++)
         {
-            result.values[i]
+            if (result.values[i] < 0) result.values[i]
+                    //"Accelerative" part of equation
+                    = 0.5 * result.values[i] * minTime - timeToTerminalVelocity * terminalVelocity.values[i] * TrigLookupTable.TRIG_TABLE_1048576.sin(Math.PI * minTime / timeToTerminalVelocity) / (2 * Math.PI)
+                    //"Post-acceleration constant" part of equation
+                    + Tools.min(0, (time - timeToTerminalVelocity) * terminalVelocity.values[i]);
+
+            else result.values[i]
                     //"Accelerative" part of equation
                     = 0.5 * result.values[i] * minTime - timeToTerminalVelocity * terminalVelocity.values[i] * TrigLookupTable.TRIG_TABLE_1048576.sin(Math.PI * minTime / timeToTerminalVelocity) / (2 * Math.PI)
                     //"Post-acceleration constant" part of equation
                     + Tools.max(0, (time - timeToTerminalVelocity) * terminalVelocity.values[i]);
         }
-        return result;
+        return result.scale(0.001);
     }
 
 
