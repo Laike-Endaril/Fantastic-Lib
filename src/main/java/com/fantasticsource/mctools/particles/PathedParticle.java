@@ -210,6 +210,16 @@ public class PathedParticle
 
     public void update()
     {
+        //Remove if outside render distance
+        VectorN pos = currentPos(0);
+        EntityPlayer player = Minecraft.getMinecraft().player;
+        if (pos.squareDistanceTo(player.posX, player.posY, player.posZ) > maxRenderDistanceSquared)
+        {
+            dead = true;
+            return;
+        }
+
+
         //Don't expire from age if max age is highest possible value, but still age up to that value - 1, and still do other death checks
         if (maxAge != Integer.MAX_VALUE || age < maxAge - 1) age++;
 
@@ -217,11 +227,7 @@ public class PathedParticle
         {
             if (predicate.test(this))
             {
-                if (deathPos == null)
-                {
-                    VectorN pos = currentPos(0);
-                    deathPos = new Vec3d(pos.values[0], pos.values[1], pos.values[2]);
-                }
+                if (deathPos == null) deathPos = new Vec3d(pos.values[0], pos.values[1], pos.values[2]);
                 die();
                 return;
             }
@@ -229,7 +235,6 @@ public class PathedParticle
 
         if (age >= maxAge)
         {
-            VectorN pos = currentPos(0);
             deathPos = new Vec3d(pos.values[0], pos.values[1], pos.values[2]);
             die();
         }
@@ -285,11 +290,6 @@ public class PathedParticle
         {
             dead = true;
             return;
-        }
-        else
-        {
-            EntityPlayer player = Minecraft.getMinecraft().player;
-            if (pos.squareDistanceTo(player.posX, player.posY, player.posZ) > maxRenderDistanceSquared) return;
         }
 
 
