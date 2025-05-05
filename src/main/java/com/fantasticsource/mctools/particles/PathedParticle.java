@@ -10,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
@@ -26,7 +27,7 @@ public class PathedParticle
     public final PathedParticleSharedRenderData sharedRenderData;
     public final int maxAge;
 
-    public int maxRenderDistance = 50;
+    public int maxRenderDistanceSquared = 900;
     public Vec3d deathPos = null;
     public Object[] extraDeathArgs = null;
     public boolean useFoliageColor = false, useGrassColor = false;
@@ -284,6 +285,11 @@ public class PathedParticle
         {
             dead = true;
             return;
+        }
+        else
+        {
+            EntityPlayer player = Minecraft.getMinecraft().player;
+            if (pos.squareDistanceTo(player.posX, player.posY, player.posZ) > maxRenderDistanceSquared) return;
         }
 
 
