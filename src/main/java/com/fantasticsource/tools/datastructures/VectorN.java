@@ -433,6 +433,33 @@ public class VectorN
         if (axisZeroes == 3) throw new IllegalArgumentException("Axis cannot be all zeroes!");
 
 
+        if (axisZeroes == 2)
+        {
+            double axisX = axis.values[0], axisY = axis.values[1], axisZ = axis.values[2];
+            double x = values[0], y = values[1], z = values[2];
+            if (theta == Math.PI)
+            {
+                if (axisX != 0)
+                {
+                    values[1] = -y;
+                    values[2] = -z;
+                    return this;
+                }
+
+                if (axisY != 0)
+                {
+                    values[0] = -x;
+                    values[2] = -z;
+                    return this;
+                }
+
+                //axisZ != 0
+                values[0] = -x;
+                values[1] = -y;
+                return this;
+            }
+
+
         Quaternion quaternion = Tools.rotatedQuaternion(new Quaternion((float) values[0], (float) values[1], (float) values[2], 0), new Quaternion((float) axis.values[0], (float) axis.values[1], (float) axis.values[2], 0), theta, trigTable);
         values[0] = quaternion.x;
         values[1] = quaternion.y;
