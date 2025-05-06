@@ -115,12 +115,16 @@ public class RegistryRegexBlockFilter
 
                 //Check matching oreDict entries
                 boolean found = false;
-                for (int oreDictID : OreDictionary.getOreIDs(new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state))))
+                ItemStack stack = new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state));
+                if (!stack.isEmpty())
                 {
-                    if (matchingOredictIDs.contains(oreDictID))
+                    for (int oreDictID : OreDictionary.getOreIDs(stack))
                     {
-                        found = true;
-                        break;
+                        if (matchingOredictIDs.contains(oreDictID))
+                        {
+                            found = true;
+                            break;
+                        }
                     }
                 }
                 if (!found) return false;
