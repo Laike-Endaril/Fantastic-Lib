@@ -54,9 +54,9 @@ public class RegistryRegexBlockFilter
         }
         if (regexTokens.length == 1)
         {
-            result.domainRegex = "minecraft";
+            result.domainRegex = ".*";
             result.blockRegex = regexTokens[0].trim();
-            result.metaRegex = "0";
+            result.metaRegex = ".*";
         }
         else if (regexTokens.length == 2)
         {
