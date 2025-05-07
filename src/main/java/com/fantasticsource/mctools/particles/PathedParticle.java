@@ -27,7 +27,7 @@ public class PathedParticle
     public final PathedParticleSharedRenderData sharedRenderData;
     public final int maxAge;
 
-    public int maxRenderDistanceSquared = 900;
+    public int cullDistanceSquared = 900;
     public Vec3d deathPos = null;
     public Object[] extraDeathArgs = null;
     public boolean useFoliageColor = false, useGrassColor = false;
@@ -213,7 +213,7 @@ public class PathedParticle
         //Remove if outside render distance
         VectorN pos = currentPos(0);
         EntityPlayer player = Minecraft.getMinecraft().player;
-        if (pos.squareDistanceTo(player.posX, player.posY, player.posZ) > maxRenderDistanceSquared)
+        if (pos.squareDistanceTo(player.posX, player.posY, player.posZ) > cullDistanceSquared)
         {
             dead = true;
             return;
