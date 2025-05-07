@@ -243,7 +243,7 @@ public class PathedParticle
 
     public long currentRenderMillis(float partialTick)
     {
-        return (long) (partialTick + age) * 50;
+        return (long) ((partialTick + age) * 50);
     }
 
 
