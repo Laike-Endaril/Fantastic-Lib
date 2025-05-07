@@ -71,3 +71,13 @@ fantasticlib.cmd.rendermodes.noneSet.comment=No render modes set for %s
 
 fantasticlib.cmd.uptime=%s Days, %s Hours, %s Minutes, %s Seconds
 fantasticlib.cmd.uptime.noserver=§cNo running server detected
+
+
+
+potion.potency.3=IV
+potion.potency.4=V
+potion.potency.5=VI
+potion.potency.6=VII
+potion.potency.7=VIII
+potion.potency.8=IX
+potion.potency.9=X
