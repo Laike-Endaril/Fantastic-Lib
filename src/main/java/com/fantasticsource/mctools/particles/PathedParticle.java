@@ -213,7 +213,7 @@ public class PathedParticle
         //Remove if outside render distance
         VectorN pos = currentPos(0);
         EntityPlayer player = Minecraft.getMinecraft().player;
-        if (pos.squareDistanceTo(player.posX, player.posY, player.posZ) > cullDistanceSquared)
+        if (pos.squareDistanceTo(player.posX, player.posY + player.eyeHeight, player.posZ) > cullDistanceSquared)
         {
             dead = true;
             return;
