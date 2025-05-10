@@ -4,12 +4,19 @@ import java.util.ArrayList;
 
 public class SpriteMetaData
 {
-    public static final SpriteMetaData VANILLA_RUNES = new SpriteMetaData(128, 128, 0, 112, 8, 120, false, 27);
-    public static final SpriteMetaData VANILLA_RUNES_NON_EMPTY = new SpriteMetaData(128, 128, 8, 112, 16, 120, false, 26);
-    public static final SpriteMetaData VANILLA_RUNES_EXTENDED = new SpriteMetaData(128, 128, 0, 112, 8, 120, false, 32);
     public static final double[] VANILLA_RUNES_OFFSETS = new double[]{0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.1875, 0.5, 0.3125, 0.5, 0.0625, 0.5, 0.0625, 0.5, 0.3125, 0.5, 0.1875, 0.5, 0.3125, 0.5, 0.25, 0.5, 0.25, 0.5, 0.1875, 0.5, 0.3125, 0.5, 0.25, 0.5, 0.125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.1875, 0.5, 0.3125, 0.5};
     public static final double[] VANILLA_RUNES_NON_EMPTY_OFFSETS = new double[]{0.3125, 0.5, 0.3125, 0.5, 0.125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.1875, 0.5, 0.3125, 0.5, 0.0625, 0.5, 0.0625, 0.5, 0.3125, 0.5, 0.1875, 0.5, 0.3125, 0.5, 0.25, 0.5, 0.25, 0.5, 0.1875, 0.5, 0.3125, 0.5, 0.25, 0.5, 0.125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.1875, 0.5, 0.3125, 0.5};
     public static final double[] VANILLA_RUNES_EXTENDED_OFFSETS = new double[]{0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.1875, 0.5, 0.3125, 0.5, 0.0625, 0.5, 0.0625, 0.5, 0.3125, 0.5, 0.1875, 0.5, 0.3125, 0.5, 0.25, 0.5, 0.25, 0.5, 0.1875, 0.5, 0.3125, 0.5, 0.25, 0.5, 0.125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.1875, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5, 0.3125, 0.5};
+    public static final SpriteMetaData VANILLA_RUNES = new SpriteMetaData(128, 128, 0, 112, 8, 120, false, 27);
+    public static final SpriteMetaData VANILLA_RUNES_NON_EMPTY = new SpriteMetaData(128, 128, 8, 112, 16, 120, false, 26);
+    public static final SpriteMetaData VANILLA_RUNES_EXTENDED = new SpriteMetaData(128, 128, 0, 112, 8, 120, false, 32);
+
+    static
+    {
+        VANILLA_RUNES.setNormalizedOriginDynamic(VANILLA_RUNES_OFFSETS);
+        VANILLA_RUNES_NON_EMPTY.setNormalizedOriginDynamic(VANILLA_RUNES_NON_EMPTY_OFFSETS);
+        VANILLA_RUNES_EXTENDED.setNormalizedOriginDynamic(VANILLA_RUNES_EXTENDED_OFFSETS);
+    }
 
 
     public ArrayList<FrameMetaData> frames = new ArrayList<>();
