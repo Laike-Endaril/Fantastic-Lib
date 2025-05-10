@@ -2,6 +2,7 @@ package com.fantasticsource.tools.component.path;
 
 import com.fantasticsource.tools.TrigLookupTable;
 import com.fantasticsource.tools.component.CDouble;
+import com.fantasticsource.tools.component.CVectorN;
 import com.fantasticsource.tools.datastructures.VectorN;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTBase;
@@ -12,24 +13,29 @@ import java.io.OutputStream;
 
 public class CPathSinuous extends CPath
 {
-    public CPath highPointOffsetPath;
     public double thetaPerSec, thetaOffset;
+    public VectorN amplitude;
 
 
     public CPathSinuous()
     {
     }
 
-    public CPathSinuous(CPath highPointOffsetPath, double thetaPerSec)
+    public CPathSinuous(double thetaPerSec, VectorN amplitude)
     {
-        this(highPointOffsetPath, thetaPerSec, 0);
+        this(thetaPerSec, 0, amplitude);
     }
 
-    public CPathSinuous(CPath highPointOffsetPath, double thetaPerSec, double thetaOffset)
+    public CPathSinuous(double thetaPerSec, double thetaOffset, double... values)
     {
-        this.highPointOffsetPath = highPointOffsetPath;
+        this(thetaPerSec, thetaOffset, new VectorN(values));
+    }
+
+    public CPathSinuous(double thetaPerSec, double thetaOffset, VectorN amplitude)
+    {
         this.thetaPerSec = thetaPerSec;
         this.thetaOffset = thetaOffset;
+        this.amplitude = amplitude;
     }
 
 
@@ -37,7 +43,7 @@ public class CPathSinuous extends CPath
     public VectorN getRelativePositionInternal(long time)
     {
         double normalizedScalar = TrigLookupTable.TRIG_TABLE_1048576.sin(Math.PI * 2 * (thetaOffset + thetaPerSec * time / 1000));
-        return highPointOffsetPath.getRelativePosition(time).scale(normalizedScalar);
+        return amplitude.copy().scale(normalizedScalar);
     }
 
 
@@ -46,7 +52,7 @@ public class CPathSinuous extends CPath
     {
         super.write(buf);
 
-        writeMarked(buf, highPointOffsetPath);
+        new CVectorN().set(amplitude).write(buf);
         buf.writeDouble(thetaPerSec);
         buf.writeDouble(thetaOffset);
 
@@ -58,7 +64,7 @@ public class CPathSinuous extends CPath
     {
         super.read(buf);
 
-        highPointOffsetPath = (CPath) readMarked(buf);
+        amplitude = new CVectorN().read(buf).value;
         thetaPerSec = buf.readDouble();
         thetaOffset = buf.readDouble();
 
@@ -70,7 +76,7 @@ public class CPathSinuous extends CPath
     {
         super.save(stream);
 
-        saveMarked(stream, highPointOffsetPath);
+        new CVectorN().set(amplitude).save(stream);
         new CDouble().set(thetaPerSec).save(stream).set(thetaOffset).save(stream);
 
         return this;
@@ -83,7 +89,7 @@ public class CPathSinuous extends CPath
 
         CDouble cd = new CDouble();
 
-        highPointOffsetPath = (CPath) loadMarked(stream);
+        amplitude = new CVectorN().load(stream).value;
         thetaPerSec = cd.load(stream).value;
         thetaOffset = cd.load(stream).value;
 
@@ -96,8 +102,8 @@ public class CPathSinuous extends CPath
     {
         NBTTagCompound compound = super.serializeNBT();
 
-        compound.setTag("highPointOffsetPath", serializeMarked(highPointOffsetPath));
-
+        for (int i = 0; i < amplitude.values.length; i++) compound.setDouble("amplitude" + i, amplitude.values[i]);
+        compound.setDouble("n", amplitude.values.length);
         compound.setDouble("thetaPerSec", thetaPerSec);
         compound.setDouble("thetaOffset", thetaOffset);
 
@@ -111,6 +117,8 @@ public class CPathSinuous extends CPath
 
         NBTTagCompound compound = (NBTTagCompound) nbt;
 
-        highPointOffsetPath = (CPath) deserializeMarked(compound.getCompoundTag("highPointOffsetPath"));
+        int n = compound.getInteger("n");
+        double[] values = new double[n];
+        for (int i = 0; i < n; i++) values[i] = compound.getDouble("amplitude" + i);
     }
 }
