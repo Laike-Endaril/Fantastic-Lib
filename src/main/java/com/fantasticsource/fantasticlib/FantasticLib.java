@@ -34,7 +34,7 @@ public class FantasticLib
     public static final String MODID = "fantasticlib";
     public static final String DOMAIN = "flib"; //Referenced in some other mods
     public static final String NAME = "Fantastic Lib";
-    public static final String VERSION = "1.12.2.059";
+    public static final String VERSION = "1.12.2.060";
 
 
     public static long serverStartTime = -1;
