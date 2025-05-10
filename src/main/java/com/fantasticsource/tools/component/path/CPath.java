@@ -16,6 +16,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Stack;
 
 public class CPath extends NBTSerializableComponent
 {
@@ -207,8 +208,13 @@ public class CPath extends NBTSerializableComponent
         }
     }
 
+
+    public static final Stack<CPathData> PATH_DATA_STACK = new Stack<>();
+
     public static class CPathData extends Component
     {
+        public final int hash = hashCode() ^ (int) System.nanoTime();
+
         public ArrayList<CPath> paths = new ArrayList<>();
         public long startTime = 0, pauseTime = -1;
         public double rate = 1;
@@ -237,10 +243,12 @@ public class CPath extends NBTSerializableComponent
         {
             if (paths.size() == 0) return null;
 
+            PATH_DATA_STACK.push(this);
             double t = pauseTime > -1 ? (double) (pauseTime - startTime) * rate : (double) (time - startTime) * rate;
             Iterator<CPath> i = paths.iterator();
             VectorN result = i.next().getRelativePosition((long) t);
             while (i.hasNext()) result.add(i.next().getRelativePosition((long) t));
+            PATH_DATA_STACK.pop();
             return result;
         }
 
@@ -318,6 +326,13 @@ public class CPath extends NBTSerializableComponent
             rate = new CDouble().load(stream).value;
 
             return this;
+        }
+
+
+        @Override
+        public int hashCode()
+        {
+            return hash;
         }
     }
 

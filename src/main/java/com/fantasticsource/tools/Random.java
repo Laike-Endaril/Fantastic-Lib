@@ -37,6 +37,11 @@ public class Random
         return seed;
     }
 
+    public void setSeed(double seed)
+    {
+        setSeed(Double.doubleToRawLongBits(seed));
+    }
+
     public void setSeed(long seed)
     {
         this.seed = seed;
@@ -45,11 +50,6 @@ public class Random
         rng_c = seed;
         nextIteration = 1;
         for (int i = 0; i < 12; i++) nextLong();
-    }
-
-    public void setSeed(double seed)
-    {
-        setSeed(Double.doubleToRawLongBits(seed));
     }
 
     public void randomize()
@@ -64,7 +64,7 @@ public class Random
         rng_a = rng_b ^ (rng_b >> 12);
         rng_b = rng_c + (rng_c << 3);
         rng_c = ((rng_c << 25) | (rng_c >> (64 - 25))) + tmp;
-        return tmp & Long.MAX_VALUE;
+        return tmp & Long.MAX_VALUE; //Trims negativity bit, ie fast version of Math.abs()
     }
 
     public long nextLong(long limit)
