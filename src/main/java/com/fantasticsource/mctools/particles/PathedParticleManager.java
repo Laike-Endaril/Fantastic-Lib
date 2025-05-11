@@ -71,17 +71,16 @@ public class PathedParticleManager
 
 
         busy = true;
-        ArrayList<PathedParticle> list;
-        for (Map.Entry<PathedParticleSharedRenderData, ArrayList<PathedParticle>> entry : particles.entrySet())
+        particles.entrySet().removeIf(entry ->
         {
-            list = entry.getValue();
+            ArrayList<PathedParticle> list = entry.getValue();
             list.removeIf(particle ->
             {
                 particle.update();
                 return particle.dead;
             });
-            if (list.size() == 0) particles.remove(entry.getKey());
-        }
+            return (list.size() == 0);
+        });
         busy = false;
 
         for (PathedParticle particle : queued) add(particle);
