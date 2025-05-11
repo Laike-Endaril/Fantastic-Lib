@@ -37,6 +37,9 @@ public class CPathRandomConstant extends CPath
     @Override
     public VectorN getRelativePositionInternal(long time)
     {
+        if (PATH_DATA_STACK.isEmpty()) return position.copy();
+
+
         CPathData data = PATH_DATA_STACK.peek();
         if (data == null) return position.copy();
 
