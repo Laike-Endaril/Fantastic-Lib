@@ -63,6 +63,13 @@ public class PathedParticleManager
 
     public static void update()
     {
+        if (Minecraft.getMinecraft().world == null)
+        {
+            particles.clear();
+            return;
+        }
+
+
         busy = true;
         ArrayList<PathedParticle> list;
         for (Map.Entry<PathedParticleSharedRenderData, ArrayList<PathedParticle>> entry : particles.entrySet())
