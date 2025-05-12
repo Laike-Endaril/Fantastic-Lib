@@ -842,7 +842,7 @@ public class MCTools
     {
         double angleDif = p1.subtract(origin).normalize().dotProduct(p2.subtract(origin).normalize());
 
-        //And because Vec3d.fromPitchYaw occasionally returns values barely out of the range of (-1, 1)...
+        //At this point, we will, on rare occasion, be BARELY outside the range of (-1, 1)
         if (angleDif < -1) angleDif = -1;
         else if (angleDif > 1) angleDif = 1;
 
