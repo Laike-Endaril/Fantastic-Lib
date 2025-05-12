@@ -578,27 +578,32 @@ public class Tools
 
     public static int angleDifDeg(int angle1, int angle2)
     {
-        return posMod(angle2 - angle1, 360);
+        int result = posMod(angle2 - angle1, 360);
+        return result < 180 ? result : 360 - result;
     }
 
     public static float angleDifDeg(float angle1, float angle2)
     {
-        return posMod(angle2 - angle1, 360);
+        float result = posMod(angle2 - angle1, 360);
+        return result < 180 ? result : 360 - result;
     }
 
     public static double angleDifDeg(double angle1, double angle2)
     {
-        return posMod(angle2 - angle1, 360);
+        double result = posMod(angle2 - angle1, 360);
+        return result < 180 ? result : 360 - result;
     }
 
     public static float angleDifRad(float angle1, float angle2)
     {
-        return posMod(angle2 - angle1, (float) Math.PI * 2);
+        float result = posMod(angle2 - angle1, (float) Math.PI * 2);
+        return result < Math.PI ? result : (float) (Math.PI * 2 - result);
     }
 
     public static double angleDifRad(double angle1, double angle2)
     {
-        return posMod(angle2 - angle1, Math.PI * 2);
+        double result = posMod(angle2 - angle1, Math.PI * 2);
+        return result < Math.PI ? result : Math.PI * 2 - result;
     }
 
 

@@ -1,3 +1,5 @@
+Use angleDif methods in paths that get angles from entities to prevent bad results when crossing the 360* threshold between current and previous yaw
+
 Look into using MethodHandle for ReflectionTool (has higher initial CPU cost, but CPU cost is FAR LOWER after JIT optimizations take hold)
 
 
