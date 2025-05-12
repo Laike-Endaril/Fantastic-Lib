@@ -1,6 +1,7 @@
 package com.fantasticsource.mctools.component.path;
 
 import com.fantasticsource.mctools.MCTools;
+import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.component.CInt;
 import com.fantasticsource.tools.component.path.CPath;
 import com.fantasticsource.tools.datastructures.VectorN;
@@ -40,12 +41,12 @@ public class CPathEntityLook extends CPath
         {
             EntityLivingBase livingBase = (EntityLivingBase) entity;
             yaw = livingBase.prevRotationYawHead;
-            yaw += (livingBase.rotationYawHead - yaw) * partialTickCached;
+            yaw += Tools.angleDifRad(livingBase.rotationYawHead, yaw) * partialTickCached;
         }
         else
         {
             yaw = entity.prevRotationYaw;
-            yaw += (entity.rotationYaw - yaw) * partialTickCached;
+            yaw += Tools.angleDifRad(entity.rotationYaw, yaw) * partialTickCached;
         }
 
         float pitch = entity.prevRotationPitch;

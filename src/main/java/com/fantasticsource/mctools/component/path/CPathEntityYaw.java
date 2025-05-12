@@ -40,12 +40,12 @@ public class CPathEntityYaw extends CPath
         {
             EntityLivingBase livingBase = (EntityLivingBase) entity;
             yaw = livingBase.prevRotationYawHead;
-            yaw += (livingBase.rotationYawHead - yaw) * partialTickCached;
+            yaw += Tools.angleDifRad(livingBase.rotationYawHead, yaw) * partialTickCached;
         }
         else
         {
             yaw = entity.prevRotationYaw;
-            yaw += (entity.rotationYaw - yaw) * partialTickCached;
+            yaw += Tools.angleDifRad(entity.rotationYaw, yaw) * partialTickCached;
         }
 
         return new VectorN(-Tools.degtorad(yaw), 0, 0);
