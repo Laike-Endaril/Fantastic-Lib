@@ -5,7 +5,6 @@ import com.fantasticsource.mctools.ClientTickTimer;
 import com.fantasticsource.mctools.MCTools;
 import com.fantasticsource.mctools.Render;
 import com.fantasticsource.mctools.gui.element.view.GUIView;
-import com.fantasticsource.tools.ReflectionTool;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
@@ -14,7 +13,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.config.ConfigManager;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -23,7 +22,6 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,8 +33,6 @@ import static com.fantasticsource.fantasticlib.FantasticLib.MODID;
 @SideOnly(Side.CLIENT)
 public abstract class GUIScreen extends GuiScreen
 {
-    protected static final Field CONFIG_MANAGER_CONFIGS_FIELD = ReflectionTool.getField(ConfigManager.class, "CONFIGS");
-
     public static final Stack<ScreenEntry> SCREEN_STACK = new Stack<>();
     public static final FontRenderer FONT_RENDERER = Minecraft.getMinecraft().fontRenderer;
     public static int[] currentScissor;
@@ -397,5 +393,11 @@ public abstract class GUIScreen extends GuiScreen
     {
         ScaledResolution sr = new ScaledResolution(mc);
         super.renderToolTip(stack, Mouse.getX() * sr.getScaledWidth() / mc.displayWidth, sr.getScaledHeight() - Mouse.getY() * sr.getScaledHeight() / mc.displayHeight - 1);
+    }
+
+
+    public static String reformat(String string)
+    {
+        return I18n.translateToLocal(string).replaceAll("FIXNEWLINES ", "").replaceAll("FILLSCREEN ", "").replaceAll("\\\\n", "\n").trim();
     }
 }
