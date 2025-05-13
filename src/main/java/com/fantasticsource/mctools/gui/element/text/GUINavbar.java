@@ -8,6 +8,8 @@ import com.fantasticsource.tools.datastructures.Color;
 
 public class GUINavbar extends GUITextButton
 {
+    public int maxParentsDisplayed = Integer.MAX_VALUE;
+
     public GUINavbar(GUIScreen screen)
     {
         this(screen, 1);
@@ -35,7 +37,7 @@ public class GUINavbar extends GUITextButton
 
     public GUINavbar(GUIScreen screen, Color border, Color center, double scale)
     {
-        super(screen, genText(screen), border, center, scale);
+        super(screen, "", border, center, scale);
         setSubElementAutoplaceMethod(AP_CENTERED_H_TOP_TO_BOTTOM);
         width = 1;
 
@@ -48,11 +50,14 @@ public class GUINavbar extends GUITextButton
         fore.setColor(back.border);
     }
 
-    private static String genText(GUIScreen screen)
+    protected String genText(GUIScreen screen)
     {
         StringBuilder result = null;
+        int i = Tools.min(GUIScreen.SCREEN_STACK.size(), maxParentsDisplayed) - GUIScreen.SCREEN_STACK.size() - 1;
         for (GUIScreen.ScreenEntry entry : GUIScreen.SCREEN_STACK)
         {
+            if (i++ < 0) continue;
+
             if (result == null) result = new StringBuilder(entry.screen instanceof GUIScreen ? ((GUIScreen) entry.screen).title() : entry.screen.getClass().getSimpleName());
             else result.append(" > ").append(entry.screen instanceof GUIScreen ? ((GUIScreen) entry.screen).title() : entry.screen.getClass().getSimpleName());
         }
