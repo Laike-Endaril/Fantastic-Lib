@@ -39,7 +39,7 @@ public class Render
             SCALING_MC_GUI = 1;
 
 
-    private static Field activeRenderInfoViewportField, activeRenderInfoProjectionField, activeRenderInfoModelviewField, minecraftRenderPartialTicksPausedField;
+    private static Field activeRenderInfoModelviewField, activeRenderInfoProjectionField, activeRenderInfoViewportField, minecraftRenderPartialTicksPausedField;
 
     private static float fov, fovMultiplier;
 
@@ -48,9 +48,9 @@ public class Render
     {
         try
         {
-            activeRenderInfoViewportField = ReflectionTool.getField(ActiveRenderInfo.class, "field_178814_a", "VIEWPORT");
-            activeRenderInfoProjectionField = ReflectionTool.getField(ActiveRenderInfo.class, "field_178813_c", "PROJECTION");
             activeRenderInfoModelviewField = ReflectionTool.getField(ActiveRenderInfo.class, "field_178812_b", "MODELVIEW");
+            activeRenderInfoProjectionField = ReflectionTool.getField(ActiveRenderInfo.class, "field_178813_c", "PROJECTION");
+            activeRenderInfoViewportField = ReflectionTool.getField(ActiveRenderInfo.class, "field_178814_a", "VIEWPORT");
             minecraftRenderPartialTicksPausedField = ReflectionTool.getField(Minecraft.class, "field_193996_ah", "renderPartialTicksPaused");
 
             MinecraftForge.EVENT_BUS.register(Render.class);
@@ -315,6 +315,14 @@ public class Render
 
     public static IntBuffer getStoredViewportMatrix() throws IllegalAccessException
     {
+        //Update activerenderinfo if it isn't already being updated
+        if (Minecraft.getMinecraft().player == null)
+        {
+            GlStateManager.getFloat(2982, (FloatBuffer) ReflectionTool.get(activeRenderInfoModelviewField, null));
+            GlStateManager.getFloat(2983, (FloatBuffer) ReflectionTool.get(activeRenderInfoProjectionField, null));
+            GlStateManager.glGetInteger(2978, (IntBuffer) ReflectionTool.get(activeRenderInfoViewportField, null));
+        }
+
         return ((IntBuffer) activeRenderInfoViewportField.get(null)).duplicate();
     }
 
@@ -327,6 +335,14 @@ public class Render
 
     public static FloatBuffer getStoredProjectionMatrix() throws IllegalAccessException
     {
+        //Update activerenderinfo if it isn't already being updated
+        if (Minecraft.getMinecraft().player == null)
+        {
+            GlStateManager.getFloat(2982, (FloatBuffer) ReflectionTool.get(activeRenderInfoModelviewField, null));
+            GlStateManager.getFloat(2983, (FloatBuffer) ReflectionTool.get(activeRenderInfoProjectionField, null));
+            GlStateManager.glGetInteger(2978, (IntBuffer) ReflectionTool.get(activeRenderInfoViewportField, null));
+        }
+
         return ((FloatBuffer) activeRenderInfoProjectionField.get(null)).duplicate();
     }
 
@@ -345,6 +361,14 @@ public class Render
 
     public static FloatBuffer getStoredModelViewMatrix() throws IllegalAccessException
     {
+        //Update activerenderinfo if it isn't already being updated
+        if (Minecraft.getMinecraft().player == null)
+        {
+            GlStateManager.getFloat(2982, (FloatBuffer) ReflectionTool.get(activeRenderInfoModelviewField, null));
+            GlStateManager.getFloat(2983, (FloatBuffer) ReflectionTool.get(activeRenderInfoProjectionField, null));
+            GlStateManager.glGetInteger(2978, (IntBuffer) ReflectionTool.get(activeRenderInfoViewportField, null));
+        }
+
         return ((FloatBuffer) activeRenderInfoModelviewField.get(null)).duplicate();
     }
 
