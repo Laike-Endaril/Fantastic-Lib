@@ -4,6 +4,7 @@ import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
 import com.fantasticsource.mctools.gui.element.other.GUIDarkenedBackground;
 import com.fantasticsource.mctools.gui.element.text.GUIText;
+import com.fantasticsource.mctools.gui.element.text.GUITextSpacer;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
 
@@ -87,10 +88,12 @@ public class GUITooltipView extends GUIAutocroppedView
         clear();
         add(background);
 
+        add(new GUITextSpacer(screen));
         for (String line : Tools.fixedSplit(tooltip, "\n"))
         {
             add(new GUIText(screen, line, Color.YELLOW));
         }
+        add(new GUITextSpacer(screen));
         return this;
     }
 }
