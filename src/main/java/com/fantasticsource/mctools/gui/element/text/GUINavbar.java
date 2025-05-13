@@ -53,7 +53,7 @@ public class GUINavbar extends GUITextButton
     protected String genText(GUIScreen screen)
     {
         StringBuilder result = null;
-        int i = Tools.min(GUIScreen.SCREEN_STACK.size(), maxParentsDisplayed) - GUIScreen.SCREEN_STACK.size() - 1;
+        int i = Tools.min(GUIScreen.SCREEN_STACK.size(), maxParentsDisplayed) - GUIScreen.SCREEN_STACK.size();
         for (GUIScreen.ScreenEntry entry : GUIScreen.SCREEN_STACK)
         {
             if (i++ < 0) continue;
