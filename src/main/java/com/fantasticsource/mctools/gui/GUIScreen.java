@@ -82,14 +82,8 @@ public abstract class GUIScreen extends GuiScreen
             System.arraycopy(FantasticConfig.guiSettings.perGUIScaling, 0, entries, 0, FantasticConfig.guiSettings.perGUIScaling.length);
             entries[entries.length - 1] = getClass().getName() + ", 1";
             FantasticConfig.guiSettings.perGUIScaling = entries;
-            try
-            {
-                MCTools.saveConfig(MODID);
-            }
-            catch (IllegalAccessException e)
-            {
-                e.printStackTrace();
-            }
+
+            MCTools.saveConfig(MODID);
         }
 
 

@@ -48,6 +48,7 @@ import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
+import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
@@ -83,7 +84,6 @@ public class MCTools
 
     protected static final Field
             CONFIG_MANAGER_CONFIGS_FIELD = ReflectionTool.getField(ConfigManager.class, "CONFIGS"),
-            CONFIGURATION_CHANGED_FIELD = ReflectionTool.getField(Configuration.class, "changed"),
             ITEMSTACK_CAPABILITIES_FIELD = ReflectionTool.getField(ItemStack.class, "capabilities");
 
     protected static final Method
@@ -1171,13 +1171,29 @@ public class MCTools
         return ((Map<String, Configuration>) CONFIG_MANAGER_CONFIGS_FIELD.get(null)).get(getConfigDir() + modid + ".cfg");
     }
 
-    public static void saveConfig(String modid) throws IllegalAccessException
+
+    public static void saveConfig(String modid)
     {
-        Configuration config = getConfig(modid);
-        ReflectionTool.set(CONFIGURATION_CHANGED_FIELD, config, true);
-        ConfigManager.sync(modid, Config.Type.INSTANCE);
-        config.save();
+        saveConfig(modid, "general");
     }
+
+    public static void saveConfig(String modid, String category)
+    {
+        saveConfig(modid, category, false);
+    }
+
+    public static void saveConfig(String modid, String category, boolean requiresMCRestart)
+    {
+        saveConfig(modid, category, Minecraft.getMinecraft().world != null, requiresMCRestart);
+    }
+
+    public static void saveConfig(String modid, String category, boolean isWorldRunning, boolean requiresMCRestart)
+    {
+        ConfigChangedEvent event = new ConfigChangedEvent.OnConfigChangedEvent(modid, category, isWorldRunning, requiresMCRestart);
+        MinecraftForge.EVENT_BUS.post(event);
+        if (!event.getResult().equals(Event.Result.DENY)) MinecraftForge.EVENT_BUS.post(new ConfigChangedEvent.PostConfigChangedEvent(modid, category, isWorldRunning, requiresMCRestart));
+    }
+
 
     public static void reloadConfig(String modid) throws IllegalAccessException
     {
