@@ -10,26 +10,37 @@ import com.fantasticsource.tools.datastructures.Color;
 
 public class GUITooltipView extends GUIAutocroppedView
 {
-    private double offset = 0;
+    protected GUIElement target;
+    protected double offset = 0;
 
-    public GUITooltipView(GUIScreen screen)
+    public GUITooltipView(GUIScreen screen, GUIElement target)
     {
         super(screen, 0, 0, 0.1, new GUIDarkenedBackground(screen));
         setSubElementAutoplaceMethod(AP_X_0_TOP_TO_BOTTOM);
+        this.target = target;
     }
 
     @Override
     public void draw()
     {
         x = mouseX() + offset;
-        y = mouseY() - height / 2;
-
-        if (y + height > 1) y = 1 - height;
-        if (y < 0) y = 0;
-
         if (x + width > 1) x = mouseX() - width - offset;
         if (x < 0) x = 1 - width;
         if (x < 0) x = 0;
+
+        if (target != null)
+        {
+            y = target.absoluteY() - height;
+            if (y < 0) y = target.absoluteY() + target.absoluteHeight();
+            if (y > 1 - height) y = 0;
+        }
+        else
+        {
+            y = mouseY() - height;
+
+            if (y + height > 1) y = 1 - height;
+            if (y < 0) y = 0;
+        }
 
         drawChildren();
     }

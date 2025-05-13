@@ -101,7 +101,7 @@ public class GUIElement
             return this;
         }
 
-        if (!(this.tooltip instanceof GUITooltipView)) this.tooltip = new GUITooltipView(screen);
+        if (!(this.tooltip instanceof GUITooltipView)) this.tooltip = new GUITooltipView(screen, this);
         ((GUITooltipView) this.tooltip).setTooltip(tooltip);
         return this;
     }
