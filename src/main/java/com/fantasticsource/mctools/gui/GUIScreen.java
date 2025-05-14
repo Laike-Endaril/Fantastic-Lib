@@ -341,7 +341,11 @@ public abstract class GUIScreen extends GuiScreen
     public void close()
     {
         Minecraft mc = Minecraft.getMinecraft();
-        if (mc.currentScreen == this) mc.player.closeScreenAndDropStack();
+        if (mc.currentScreen == this)
+        {
+            if (mc.player != null) mc.player.closeScreenAndDropStack();
+            else this.mc.displayGuiScreen(null);
+        }
     }
 
     @Override
