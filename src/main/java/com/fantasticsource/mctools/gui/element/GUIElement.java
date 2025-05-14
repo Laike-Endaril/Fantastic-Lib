@@ -761,4 +761,10 @@ public class GUIElement
         for (Runnable action : onEditActions) action.run();
         runningEdit = false;
     }
+
+
+    public static String reformat(String string)
+    {
+        return GUIScreen.reformat(string);
+    }
 }

@@ -21,7 +21,7 @@ public class GUIText extends GUIElement
     public String oldText;
     protected String text;
     protected ArrayList<String> lines = new ArrayList<>(), fullLines = new ArrayList<>();
-    protected Color color, hoverColor, activeColor;
+    public Color color, hoverColor, activeColor;
 
 
     public GUIText(GUIScreen screen, String text)
