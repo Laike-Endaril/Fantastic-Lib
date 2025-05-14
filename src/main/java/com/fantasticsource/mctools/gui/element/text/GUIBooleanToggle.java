@@ -6,7 +6,7 @@ import com.fantasticsource.tools.datastructures.Color;
 public class GUIBooleanToggle extends GUITextButton
 {
     public String label;
-    public boolean value = true;
+    public boolean value;
 
     public GUIBooleanToggle(GUIScreen screen, String text)
     {
@@ -17,6 +17,7 @@ public class GUIBooleanToggle extends GUITextButton
     {
         super(screen, text, Color.GREEN, scale);
         label = text;
+        set(true);
     }
 
 
@@ -29,6 +30,7 @@ public class GUIBooleanToggle extends GUITextButton
     {
         super(screen, x, y, text, Color.GREEN, scale);
         label = text;
+        set(true);
     }
 
 
@@ -38,6 +40,7 @@ public class GUIBooleanToggle extends GUITextButton
         if (value) setColor(Color.GREEN);
         else setColor(Color.RED);
         internalText.setText(label + ": " + Boolean.toString(value).toUpperCase());
+        runEditActions();
         return this;
     }
 
