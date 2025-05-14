@@ -56,6 +56,23 @@ public class GUINavbar extends GUITextButton
         int i = Tools.min(GUIScreen.SCREEN_STACK.size(), maxParentsDisplayed) - GUIScreen.SCREEN_STACK.size();
         for (GUIScreen.ScreenEntry entry : GUIScreen.SCREEN_STACK)
         {
+            if (entry.screen instanceof GUIScreen)
+            {
+                GUIScreen other = (GUIScreen) entry.screen;
+                for (GUIElement element : other.root.children)
+                {
+                    if (element instanceof GUINavbar)
+                    {
+                        int otherMax = ((GUINavbar) element).maxParentsDisplayed;
+                        if (otherMax >= 0 && i > otherMax)
+                        {
+                            result = null;
+                            i = otherMax;
+                        }
+                    }
+                }
+            }
+
             if (i++ < 0) continue;
 
             if (result == null) result = new StringBuilder(entry.screen instanceof GUIScreen ? ((GUIScreen) entry.screen).title() : entry.screen.getClass().getSimpleName());
