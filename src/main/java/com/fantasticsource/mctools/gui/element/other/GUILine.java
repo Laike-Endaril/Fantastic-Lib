@@ -183,4 +183,26 @@ public class GUILine extends GUIElement
 
         drawChildren();
     }
+
+
+    @Override
+    public int hashCode()
+    {
+        long l = (long) (x1 * y1 * x2 * y2 * color.color() * color2.color());
+        return (int) ((l >> 32) ^ l);
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (obj == this) return true;
+        if (!(obj instanceof GUILine)) return false;
+
+        GUILine other = (GUILine) obj;
+
+        return getClass() == obj.getClass()
+                && x1 == other.x1 && y1 == other.y1 && x2 == other.x2 && y2 == other.y2 && thickness == other.thickness
+                && color.equals(other.color) && hoverColor.equals(other.hoverColor) && activeColor.equals(other.activeColor)
+                && color2.equals(other.color2) && hoverColor2.equals(other.hoverColor2) && activeColor2.equals(other.activeColor2);
+    }
 }
