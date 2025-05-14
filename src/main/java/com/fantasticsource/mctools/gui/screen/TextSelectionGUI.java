@@ -6,6 +6,7 @@ import com.fantasticsource.mctools.gui.element.other.GUIDarkenedBackground;
 import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
 import com.fantasticsource.mctools.gui.element.text.GUINavbar;
 import com.fantasticsource.mctools.gui.element.text.GUIText;
+import com.fantasticsource.mctools.gui.element.text.GUITextButton;
 import com.fantasticsource.mctools.gui.element.view.GUIList;
 import com.fantasticsource.tools.datastructures.Color;
 import net.minecraft.client.Minecraft;
@@ -42,10 +43,10 @@ public class TextSelectionGUI extends GUIScreen
             @Override
             public GUIElement[] newLineDefaultElements()
             {
-                GUIText text = new GUIText(screen, clickedElement.getText());
-                return new GUIElement[]{text.addClickActions(() ->
+                GUITextButton button = new GUITextButton(screen, clickedElement.getText());
+                return new GUIElement[]{button.addClickActions(() ->
                 {
-                    clickedElement.setText(text.getText());
+                    clickedElement.setText(button.internalText.getText());
                     screen.close();
                 })};
             }
@@ -68,10 +69,10 @@ public class TextSelectionGUI extends GUIScreen
         //Add options
         for (String option : options)
         {
-            GUIText text = (GUIText) list.addLine().getLineElement(0);
-            text.setText(option);
-            if (option.equals(clickedElement.getText())) text.setColor(getIdleColor(Color.PURPLE), getHoverColor(Color.PURPLE), Color.PURPLE);
-            else text.setColor(getIdleColor(Color.WHITE), getHoverColor(Color.WHITE), Color.WHITE);
+            GUITextButton button = (GUITextButton) list.addLine().getLineElement(0);
+            button.internalText.setText(option);
+            if (option.equals(clickedElement.getText())) button.setColor(Color.PURPLE);
+            else button.setColor(Color.AQUA);
         }
     }
 
