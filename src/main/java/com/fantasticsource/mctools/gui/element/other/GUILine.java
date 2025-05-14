@@ -60,6 +60,20 @@ public class GUILine extends GUIElement
     }
 
 
+    public void set(double x1, double y1, double x2, double y2)
+    {
+        x = Tools.min(x1, x2);
+        width = Math.abs(x2 - x1);
+        y = Tools.min(y1, y2);
+        height = Math.abs(y2 - y1);
+
+        this.x1 = x1;
+        this.y1 = y1;
+        this.x2 = x2;
+        this.y2 = y2;
+    }
+
+
     public double getX1()
     {
         return x1;
