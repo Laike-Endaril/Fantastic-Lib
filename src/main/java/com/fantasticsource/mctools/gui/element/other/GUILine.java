@@ -12,8 +12,8 @@ import static org.lwjgl.opengl.GL11.GL_LINES;
 public class GUILine extends GUIElement
 {
     protected static final int TOLERANCE_PX = 5;
-    protected Color color, hoverColor, activeColor;
-    protected boolean isDownRight;
+    protected Color color, hoverColor, activeColor, color2, hoverColor2, activeColor2;
+    protected boolean isDownRight, reverse;
     public float thickness;
     protected double x1, y1, x2, y2;
 
@@ -34,16 +34,31 @@ public class GUILine extends GUIElement
 
     public GUILine(GUIScreen screen, double x1, double y1, double x2, double y2, Color color, Color hoverColor, Color activeColor, float thickness)
     {
+        this(screen, x1, y1, x2, y2, color, hoverColor, activeColor, color, hoverColor, activeColor, thickness);
+    }
+
+    public GUILine(GUIScreen screen, double x1, double y1, double x2, double y2, Color color1, Color color2)
+    {
+        this(screen, x1, y1, x2, y2, color1, color1, color1, color2, color2, color2, 1);
+    }
+
+    public GUILine(GUIScreen screen, double x1, double y1, double x2, double y2, Color color1, Color color2, float thickness)
+    {
+        this(screen, x1, y1, x2, y2, color1, color1, color1, color2, color2, color2, thickness);
+    }
+
+    public GUILine(GUIScreen screen, double x1, double y1, double x2, double y2, Color color1, Color hoverColor1, Color activeColor1, Color color2, Color hoverColor2, Color activeColor2)
+    {
+        this(screen, x1, y1, x2, y2, color1, hoverColor1, activeColor1, color2, hoverColor2, activeColor2, 1);
+    }
+
+    public GUILine(GUIScreen screen, double x1, double y1, double x2, double y2, Color color1, Color hoverColor1, Color activeColor1, Color color2, Color hoverColor2, Color activeColor2, float thickness)
+    {
         super(screen, Tools.min(x1, x2), Tools.min(y1, y2), Math.abs(x2 - x1), Math.abs(y2 - y1));
 
-        isDownRight = (x1 < x2 == y1 < y2);
-        setColor(color, hoverColor, activeColor);
+        setColor(color1, hoverColor1, activeColor1, color2, hoverColor2, activeColor2);
         this.thickness = thickness;
-
-        this.x1 = x1;
-        this.y1 = y1;
-        this.x2 = x2;
-        this.y2 = y2;
+        set(x1, y1, x2, y2);
     }
 
 
@@ -52,11 +67,24 @@ public class GUILine extends GUIElement
         setColor(color, color, color);
     }
 
+    public void setColor(Color color, Color color2)
+    {
+        setColor(color, color, color, color2, color2, color2);
+    }
+
     public void setColor(Color color, Color hoverColor, Color activeColor)
+    {
+        setColor(color, hoverColor, activeColor, color, hoverColor, activeColor);
+    }
+
+    public void setColor(Color color, Color hoverColor, Color activeColor, Color color2, Color hoverColor2, Color activeColor2)
     {
         this.color = color;
         this.hoverColor = hoverColor;
         this.activeColor = activeColor;
+        this.color2 = color2;
+        this.hoverColor2 = hoverColor2;
+        this.activeColor2 = activeColor2;
     }
 
 
@@ -66,6 +94,9 @@ public class GUILine extends GUIElement
         width = Math.abs(x2 - x1);
         y = Tools.min(y1, y2);
         height = Math.abs(y2 - y1);
+
+        isDownRight = (x1 < x2 == y1 < y2);
+        reverse = x2 < x1;
 
         this.x1 = x1;
         this.y1 = y1;
@@ -109,6 +140,7 @@ public class GUILine extends GUIElement
         GlStateManager.disableAlpha();
 
         Color color = active ? activeColor : isMouseWithin() ? hoverColor : this.color;
+        Color color2 = active ? activeColor2 : isMouseWithin() ? hoverColor2 : this.color2;
 
         GlStateManager.glLineWidth(thickness);
 
@@ -116,13 +148,33 @@ public class GUILine extends GUIElement
         GlStateManager.color(color.rf(), color.gf(), color.bf(), color.af());
         if (isDownRight)
         {
-            GlStateManager.glVertex3f(0, 0, 0);
-            GlStateManager.glVertex3f(1, 1, 0);
+            if (reverse)
+            {
+                GlStateManager.glVertex3f(1, 1, 0);
+                GlStateManager.color(color2.rf(), color2.gf(), color2.bf(), color2.af());
+                GlStateManager.glVertex3f(0, 0, 0);
+            }
+            else
+            {
+                GlStateManager.glVertex3f(0, 0, 0);
+                GlStateManager.color(color2.rf(), color2.gf(), color2.bf(), color2.af());
+                GlStateManager.glVertex3f(1, 1, 0);
+            }
         }
         else
         {
-            GlStateManager.glVertex3f(0, 1, 0);
-            GlStateManager.glVertex3f(1, 0, 0);
+            if (reverse)
+            {
+                GlStateManager.glVertex3f(1, 0, 0);
+                GlStateManager.color(color2.rf(), color2.gf(), color2.bf(), color2.af());
+                GlStateManager.glVertex3f(0, 1, 0);
+            }
+            else
+            {
+                GlStateManager.glVertex3f(0, 1, 0);
+                GlStateManager.color(color2.rf(), color2.gf(), color2.bf(), color2.af());
+                GlStateManager.glVertex3f(1, 0, 0);
+            }
         }
         GlStateManager.glEnd();
 
