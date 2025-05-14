@@ -97,10 +97,4 @@ public class GUITextLabel extends GUITextButton
 
         return this;
     }
-
-    @Override
-    public void draw()
-    {
-        if (screen.isVisible()) super.draw();
-    }
 }
