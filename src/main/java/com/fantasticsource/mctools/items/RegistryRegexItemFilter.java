@@ -1,6 +1,7 @@
 package com.fantasticsource.mctools.items;
 
 import com.fantasticsource.fantasticlib.FantasticLib;
+import com.fantasticsource.tools.Tools;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
@@ -88,13 +89,13 @@ public class RegistryRegexItemFilter
         }
         else if (regexTokens.length == 2)
         {
-            if (Pattern.matches(".*[a-zA-Z].*", regexTokens[1]))
+            if (Tools.regexMatches(".*[a-zA-Z].*", regexTokens[1]))
             {
                 result.domainRegex = regexTokens[0];
                 result.itemRegex = regexTokens[1];
                 result.metaRegex = ".*";
             }
-            else if (Pattern.matches(".*[0-9].*", regexTokens[1]))
+            else if (Tools.regexMatches(".*[0-9].*", regexTokens[1]))
             {
                 result.domainRegex = ".*";
                 result.itemRegex = regexTokens[0];
@@ -164,19 +165,19 @@ public class RegistryRegexItemFilter
     public boolean matches(ItemStack stack)
     {
         //Domain, item, and meta
-        if (!Pattern.matches(metaRegex, "" + stack.getMetadata())) return false; //Quickest check first
+        if (!Tools.regexMatches(metaRegex, "" + stack.getMetadata())) return false; //Quickest check first
 
         ResourceLocation resourceLocation = stack.getItem().getRegistryName();
-        if (!Pattern.matches(domainRegex, resourceLocation.getResourceDomain()) || !Pattern.matches(itemRegex, resourceLocation.getResourcePath()))
+        if (!Tools.regexMatches(domainRegex, resourceLocation.getResourceDomain()) || !Tools.regexMatches(itemRegex, resourceLocation.getResourcePath()))
         {
             //Oredict checks
-            if (!stack.isEmpty() && Pattern.matches(domainRegex, "ore"))
+            if (!stack.isEmpty() && Tools.regexMatches(domainRegex, "ore"))
             {
                 //Add any missing oreDict IDs to cache
                 String[] oreDictNames = OreDictionary.getOreNames();
                 for (int i = lastCacheOreDictSize; i < oreDictNames.length; i++)
                 {
-                    if (Pattern.matches(itemRegex, oreDictNames[i])) matchingOredictIDs.add(i);
+                    if (Tools.regexMatches(itemRegex, oreDictNames[i])) matchingOredictIDs.add(i);
                 }
 
                 //Check matching oreDict entries

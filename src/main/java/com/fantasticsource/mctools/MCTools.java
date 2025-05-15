@@ -71,7 +71,6 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.regex.Pattern;
 
 import static com.fantasticsource.tools.Tools.distance;
 import static com.fantasticsource.tools.Tools.radtodeg;
@@ -1016,8 +1015,8 @@ public class MCTools
             {
                 for (Map.Entry<ResourceLocation, EntityEntry> entry : ForgeRegistries.ENTITIES.getEntries())
                 {
-                    if (!Pattern.matches(domain, entry.getKey().getResourceDomain())) continue;
-                    if (!Pattern.matches(name, entry.getKey().getResourcePath())) continue;
+                    if (!Tools.regexMatches(domain, entry.getKey().getResourceDomain())) continue;
+                    if (!Tools.regexMatches(name, entry.getKey().getResourcePath())) continue;
 
                     Class cls = entry.getValue().getEntityClass();
                     if (!(EntityLivingBase.class.isAssignableFrom(cls))) continue;
@@ -1036,7 +1035,7 @@ public class MCTools
         String name = entity.getName();
         for (Map.Entry<String, Double> entry : map.entrySet())
         {
-            if (Pattern.matches(entry.getKey(), name)) return entry.getValue();
+            if (Tools.regexMatches(entry.getKey(), name)) return entry.getValue();
         }
 
         return defaultValue;
@@ -1072,8 +1071,8 @@ public class MCTools
             {
                 for (Map.Entry<ResourceLocation, EntityEntry> entry : ForgeRegistries.ENTITIES.getEntries())
                 {
-                    if (!Pattern.matches(domain, entry.getKey().getResourceDomain())) continue;
-                    if (!Pattern.matches(name, entry.getKey().getResourcePath())) continue;
+                    if (!Tools.regexMatches(domain, entry.getKey().getResourceDomain())) continue;
+                    if (!Tools.regexMatches(name, entry.getKey().getResourcePath())) continue;
 
                     mapToPopulate.computeIfAbsent(entry.getValue().getEntityClass(), o -> new LinkedHashMap<>()).put(specificName, value);
                 }
@@ -1089,7 +1088,7 @@ public class MCTools
         String name = entity.getName();
         for (Map.Entry<String, Integer> entry : map.entrySet())
         {
-            if (Pattern.matches(entry.getKey(), name)) return entry.getValue();
+            if (Tools.regexMatches(entry.getKey(), name)) return entry.getValue();
         }
 
         return defaultValue;
@@ -1122,8 +1121,8 @@ public class MCTools
             {
                 for (Map.Entry<ResourceLocation, EntityEntry> entry : ForgeRegistries.ENTITIES.getEntries())
                 {
-                    if (!Pattern.matches(domain, entry.getKey().getResourceDomain())) continue;
-                    if (!Pattern.matches(name, entry.getKey().getResourcePath())) continue;
+                    if (!Tools.regexMatches(domain, entry.getKey().getResourceDomain())) continue;
+                    if (!Tools.regexMatches(name, entry.getKey().getResourcePath())) continue;
 
                     mapToPopulate.computeIfAbsent(entry.getValue().getEntityClass(), o -> new HashSet<>()).add(specificName);
                 }
@@ -1137,7 +1136,7 @@ public class MCTools
         if (set == null) return false;
 
         String name = entity.getName();
-        for (String s : set) if (Pattern.matches(s, name)) return true;
+        for (String s : set) if (Tools.regexMatches(s, name)) return true;
         return false;
     }
 

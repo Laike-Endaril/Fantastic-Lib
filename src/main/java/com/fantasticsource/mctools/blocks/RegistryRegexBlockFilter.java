@@ -1,6 +1,7 @@
 package com.fantasticsource.mctools.blocks;
 
 import com.fantasticsource.fantasticlib.FantasticLib;
+import com.fantasticsource.tools.Tools;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -9,7 +10,6 @@ import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.ArrayList;
-import java.util.regex.Pattern;
 
 public class RegistryRegexBlockFilter
 {
@@ -60,13 +60,13 @@ public class RegistryRegexBlockFilter
         }
         else if (regexTokens.length == 2)
         {
-            if (Pattern.matches(".*[a-zA-Z].*", regexTokens[1]))
+            if (Tools.regexMatches(".*[a-zA-Z].*", regexTokens[1]))
             {
                 result.domainRegex = regexTokens[0];
                 result.blockRegex = regexTokens[1];
                 result.metaRegex = ".*";
             }
-            else if (Pattern.matches(".*[0-9].*", regexTokens[1]))
+            else if (Tools.regexMatches(".*[0-9].*", regexTokens[1]))
             {
                 result.domainRegex = ".*";
                 result.blockRegex = regexTokens[0];
@@ -98,19 +98,19 @@ public class RegistryRegexBlockFilter
     public boolean matches(IBlockState state)
     {
         //Domain, block, and meta
-        if (!Pattern.matches(metaRegex, "" + state.getBlock().getMetaFromState(state))) return false; //Quickest check first
+        if (!Tools.regexMatches(metaRegex, "" + state.getBlock().getMetaFromState(state))) return false; //Quickest check first
 
         ResourceLocation resourceLocation = state.getBlock().getRegistryName();
-        if (!Pattern.matches(domainRegex, resourceLocation.getResourceDomain()) || !Pattern.matches(blockRegex, resourceLocation.getResourcePath()))
+        if (!Tools.regexMatches(domainRegex, resourceLocation.getResourceDomain()) || !Tools.regexMatches(blockRegex, resourceLocation.getResourcePath()))
         {
             //Oredict checks
-            if (state.getBlock() != Blocks.AIR && Pattern.matches(domainRegex, "ore"))
+            if (state.getBlock() != Blocks.AIR && Tools.regexMatches(domainRegex, "ore"))
             {
                 //Add any missing oreDict IDs to cache
                 String[] oreDictNames = OreDictionary.getOreNames();
                 for (int i = lastCacheOreDictSize; i < oreDictNames.length; i++)
                 {
-                    if (Pattern.matches(blockRegex, oreDictNames[i])) matchingOredictIDs.add(i);
+                    if (Tools.regexMatches(blockRegex, oreDictNames[i])) matchingOredictIDs.add(i);
                 }
 
                 //Check matching oreDict entries

@@ -1119,4 +1119,11 @@ public class Tools
             }
         }
     }
+
+
+    public static boolean regexMatches(String regex, String string)
+    {
+        if (regex == null || string == null) return false;
+        return Tools.regexMatches(regex, string);
+    }
 }
