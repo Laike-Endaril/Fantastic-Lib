@@ -2,9 +2,10 @@ package com.fantasticsource.mctools.gui.element.text;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
-import com.fantasticsource.mctools.gui.element.other.GUIGradientBorder;
 import com.fantasticsource.tools.Tools;
 import com.fantasticsource.tools.datastructures.Color;
+
+import static com.fantasticsource.mctools.gui.GUIScreen.getIdleColor;
 
 public class GUITextLabel extends GUITextButton
 {
@@ -25,7 +26,7 @@ public class GUITextLabel extends GUITextButton
 
     public GUITextLabel(GUIScreen screen, double width, Color color, double scale)
     {
-        this(screen, width, color, Color.BLANK, scale);
+        this(screen, width, color, getIdleColor(color).setAF(color.af() * 0.4f), scale);
     }
 
     public GUITextLabel(GUIScreen screen, double width, Color border, Color center)
@@ -39,13 +40,7 @@ public class GUITextLabel extends GUITextButton
         setSubElementAutoplaceMethod(AP_CENTERED_H_TOP_TO_BOTTOM);
         this.width = width;
 
-        GUIGradientBorder back = (GUIGradientBorder) background;
-        back.border = back.activeBorder;
-        back.hoverBorder = back.activeBorder;
-
-        GUIText fore = (GUIText) children.get(1);
-        fore.setText("");
-        fore.setColor(back.border);
+        setColor(border, center);
     }
 
 
