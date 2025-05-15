@@ -400,9 +400,14 @@ public abstract class GUIScreen extends GuiScreen
     }
 
 
+    public static String reformat(String string)
+    {
+        return I18n.translateToLocal(string).replaceAll("FIXNEWLINES ", "").replaceAll("FILLSCREEN ", "").replaceAll("\\\\n", "\n").trim();
+    }
+
     public static String reformat(String string, Object... args)
     {
-        if (args.length == 0) return I18n.translateToLocal(string).replaceAll("FIXNEWLINES ", "").replaceAll("FILLSCREEN ", "").replaceAll("\\\\n", "\n").trim();
+        if (args.length == 0) return reformat(string);
         return I18n.translateToLocalFormatted(string, args).replaceAll("FIXNEWLINES ", "").replaceAll("FILLSCREEN ", "").replaceAll("\\\\n", "\n").trim();
     }
 }
