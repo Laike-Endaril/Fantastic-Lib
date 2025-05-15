@@ -9,6 +9,8 @@ import com.fantasticsource.mctools.gui.element.text.GUITextButton;
 import com.fantasticsource.mctools.gui.element.text.GUITextSpacer;
 import com.fantasticsource.tools.datastructures.Color;
 
+import static com.fantasticsource.fantasticlib.FantasticLib.MODID;
+
 public class YesNoGUI extends GUIScreen
 {
     public final String title;
@@ -41,13 +43,13 @@ public class YesNoGUI extends GUIScreen
                         new GUITextSpacer(this),
                         new GUIText(this, message, Color.PURPLE),
                         new GUITextSpacer(this),
-                        new GUITextButton(this, "YES", Color.GREEN).addClickActions(() ->
+                        new GUITextButton(this, reformat(MODID + ".yes"), Color.GREEN).addClickActions(() ->
                         {
                             pressedYes = true;
                             close();
                         }),
                         new GUITextSpacer(this),
-                        new GUITextButton(this, "NO", Color.RED).addClickActions(this::close)
+                        new GUITextButton(this, reformat(MODID + ".no"), Color.RED).addClickActions(this::close)
                 );
     }
 
