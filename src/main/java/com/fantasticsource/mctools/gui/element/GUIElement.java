@@ -763,8 +763,8 @@ public class GUIElement
     }
 
 
-    public static String reformat(String string)
+    public static String reformat(String string, String... args)
     {
-        return GUIScreen.reformat(string);
+        return GUIScreen.reformat(string, args);
     }
 }
