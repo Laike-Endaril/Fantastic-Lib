@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @SuppressWarnings("unused")
 public class Tools
@@ -1124,6 +1125,6 @@ public class Tools
     public static boolean regexMatches(String regex, String string)
     {
         if (regex == null || string == null) return false;
-        return Tools.regexMatches(regex, string);
+        return Pattern.matches(regex, string);
     }
 }
