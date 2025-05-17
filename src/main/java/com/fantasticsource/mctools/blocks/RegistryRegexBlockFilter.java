@@ -164,4 +164,10 @@ public class RegistryRegexBlockFilter
 
         return other;
     }
+
+    @Override
+    public String toString()
+    {
+        return domainRegex + ":" + blockRegex + ":" + metaRegex;
+    }
 }

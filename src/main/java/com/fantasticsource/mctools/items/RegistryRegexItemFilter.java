@@ -317,4 +317,29 @@ public class RegistryRegexItemFilter
 
         return other;
     }
+
+    @Override
+    public String toString()
+    {
+        String result = domainRegex + ":" + itemRegex + ":" + metaRegex;
+
+        if (tagsRequired.size() + tagsDisallowed.size() > 0) result += " > ";
+
+        int i = 0;
+        for (Map.Entry<String, String> entry : tagsRequired.entrySet())
+        {
+            result += i++ == 0 ? " > " : " & ";
+            result += entry.getKey();
+            if (entry.getValue() != null) result += " = " + entry.getValue();
+        }
+
+        for (Map.Entry<String, String> entry : tagsDisallowed.entrySet())
+        {
+            result += i++ == 0 ? " > " : " & ";
+            result += "!" + entry.getKey();
+            if (entry.getValue() != null) result += " = " + entry.getValue();
+        }
+
+        return result;
+    }
 }
