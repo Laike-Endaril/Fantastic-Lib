@@ -18,8 +18,10 @@ import java.util.regex.Pattern;
 public class RegistryRegexItemFilter
 {
     public String domainRegex, itemRegex, metaRegex;
+
     public LinkedHashMap<String, String> tagsRequired = new LinkedHashMap<>();
     public LinkedHashMap<String, String> tagsDisallowed = new LinkedHashMap<>();
+
     public int lastCacheOreDictSize = 0;
     public ArrayList<Integer> matchingOredictIDs = new ArrayList<>();
 
@@ -296,5 +298,23 @@ public class RegistryRegexItemFilter
         for (Map.Entry<String, String> entry : tagsDisallowed.entrySet()) if (!entry.getValue().equals(other.tagsDisallowed.get(entry.getKey()))) return false;
 
         return true;
+    }
+
+
+    public RegistryRegexItemFilter clone()
+    {
+        RegistryRegexItemFilter other = new RegistryRegexItemFilter();
+
+        other.domainRegex = domainRegex;
+        other.itemRegex = itemRegex;
+        other.metaRegex = metaRegex;
+
+        for (Map.Entry<String, String> entry : tagsRequired.entrySet()) other.tagsRequired.put(entry.getKey(), entry.getValue());
+        for (Map.Entry<String, String> entry : tagsDisallowed.entrySet()) other.tagsDisallowed.put(entry.getKey(), entry.getValue());
+
+        other.lastCacheOreDictSize = lastCacheOreDictSize;
+        other.matchingOredictIDs.addAll(matchingOredictIDs); //This is probably actually copying memory addresses, but the values of the Integer objects never change anyway (the objects get replaced instead)
+
+        return other;
     }
 }

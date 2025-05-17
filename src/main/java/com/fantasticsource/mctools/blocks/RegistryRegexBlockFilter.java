@@ -15,6 +15,7 @@ public class RegistryRegexBlockFilter
 {
     public String domainRegex, blockRegex, metaRegex;
     public int lastCacheOreDictSize = 0;
+
     public ArrayList<Integer> matchingOredictIDs = new ArrayList<>();
 
 
@@ -147,5 +148,20 @@ public class RegistryRegexBlockFilter
 
         RegistryRegexBlockFilter other = (RegistryRegexBlockFilter) obj;
         return domainRegex.equals(other.domainRegex) && blockRegex.equals(other.blockRegex) && metaRegex.equals(other.metaRegex);
+    }
+
+
+    public RegistryRegexBlockFilter clone()
+    {
+        RegistryRegexBlockFilter other = new RegistryRegexBlockFilter();
+
+        other.domainRegex = domainRegex;
+        other.blockRegex = blockRegex;
+        other.metaRegex = metaRegex;
+
+        other.lastCacheOreDictSize = lastCacheOreDictSize;
+        other.matchingOredictIDs.addAll(matchingOredictIDs); //This is probably actually copying memory addresses, but the values of the Integer objects never change anyway (the objects get replaced instead)
+
+        return other;
     }
 }
