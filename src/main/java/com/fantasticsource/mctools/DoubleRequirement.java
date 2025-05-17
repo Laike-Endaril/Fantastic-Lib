@@ -95,4 +95,10 @@ public class DoubleRequirement
         }
         return false;
     }
+
+
+    public DoubleRequirement clone()
+    {
+        return new DoubleRequirement(mode, amount);
+    }
 }
