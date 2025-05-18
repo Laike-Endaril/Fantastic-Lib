@@ -43,7 +43,7 @@ public abstract class GUIScreen extends GuiScreen
 
     public final GUIView root, tooltips;
     public ItemStack tooltipStack = null;
-    public final ArrayList<Runnable> onClosedActions = new ArrayList<>();
+    public final ArrayList<Runnable> onClosedActions = new ArrayList<>(), postClosedActions = new ArrayList<>();
     public final double textScale;
     public boolean drawStack = true, closeIfStackedOn = false;
     public int pxWidth, pxHeight;
@@ -365,6 +365,8 @@ public abstract class GUIScreen extends GuiScreen
             mc.displayGuiScreen(screen);
             screen.onResize(Minecraft.getMinecraft(), width, height);
         }
+
+        for (Runnable action : postClosedActions) action.run();
     }
 
     @Override
@@ -377,6 +379,12 @@ public abstract class GUIScreen extends GuiScreen
     public GUIScreen addOnClosedActions(Runnable... actions)
     {
         onClosedActions.addAll(Arrays.asList(actions));
+        return this;
+    }
+
+    public GUIScreen addPostClosedActions(Runnable... actions)
+    {
+        postClosedActions.addAll(Arrays.asList(actions));
         return this;
     }
 
