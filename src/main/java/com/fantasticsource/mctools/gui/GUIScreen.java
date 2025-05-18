@@ -297,8 +297,22 @@ public abstract class GUIScreen extends GuiScreen
         //Cancel if outside game window
         if (!Mouse.isInsideWindow())
         {
-            //Note: isInsideWindow returns true if you drag a mouse button from inside the window to outside it, until you release said button (inclusive)
+            //isInsideWindow returns true if you drag a mouse button from inside the window to outside it, until you release said button (inclusive)
+            //HOWEVER, it returns FALSE when the mouse is RELEASED on the BORDER of the minecraft window!!!
+            //Ie. need to handle mouse release events when false
+
+
             Mouse.getDWheel(); //Clear the wheel delta, or it will trigger when mouse re-enters window
+
+            int btn = Mouse.getEventButton();
+            if (btn != -1)
+            {
+                if (!Mouse.isButtonDown(btn))
+                {
+                    mouseButtons.remove((Integer) btn); //Need to cast so it uses the object-based removal and not the index-based removal
+                    root.mouseReleased(btn);
+                }
+            }
             return;
         }
 
@@ -331,10 +345,7 @@ public abstract class GUIScreen extends GuiScreen
         }
         else
         {
-            for (int b : mouseButtons)
-            {
-                root.mouseDrag(b);
-            }
+            for (int b : mouseButtons) root.mouseDrag(b);
         }
     }
 
