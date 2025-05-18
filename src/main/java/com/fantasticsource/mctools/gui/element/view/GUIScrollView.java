@@ -2,13 +2,16 @@ package com.fantasticsource.mctools.gui.element.view;
 
 import com.fantasticsource.mctools.gui.GUIScreen;
 import com.fantasticsource.mctools.gui.element.GUIElement;
+import com.fantasticsource.mctools.gui.element.other.GUIVerticalScrollbar;
 import com.fantasticsource.tools.Tools;
 import net.minecraft.client.renderer.GlStateManager;
 
 public class GUIScrollView extends GUIView
 {
-    public double internalHeight, progress = -1;
+    private double progress = -1;
+    public double internalHeight;
     public double top, bottom;
+    public GUIVerticalScrollbar scrollbar = null;
 
     public GUIScrollView(GUIScreen screen, double width, double height, GUIElement... subElements)
     {
@@ -65,15 +68,27 @@ public class GUIScrollView extends GUIView
     {
         if (internalHeight <= 1)
         {
-            progress = -1;
+            setProgress(-1);
             top = 0;
         }
         else
         {
-            if (progress == -1) progress = 0;
+            if (progress == -1) setProgress(0);
             top = (internalHeight - 1) * progress;
         }
         bottom = top + 1;
+    }
+
+
+    public void setProgress(double progress)
+    {
+        this.progress = progress;
+        if (scrollbar != null) scrollbar.runEditActions();
+    }
+
+    public double getProgress()
+    {
+        return progress;
     }
 
     public void focus(GUIElement child)
@@ -82,8 +97,9 @@ public class GUIScrollView extends GUIView
 
         if (internalHeight <= height) return;
 
-        progress = Tools.min(1, child.y * height / (internalHeight - height));
+        setProgress(Tools.min(1, child.y * height / (internalHeight - height)));
     }
+
 
     @Override
     public void draw()

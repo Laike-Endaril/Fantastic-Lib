@@ -919,12 +919,12 @@ public class GUITextInput extends GUIText
             {
                 if (element.y < code.top)
                 {
-                    code.progress = element.y / (code.internalHeight - 1);
+                    code.setProgress(element.y / (code.internalHeight - 1));
                 }
 
                 if (element.y + element.height > code.bottom)
                 {
-                    code.progress = (element.y + element.height - 1) / (code.internalHeight - 1);
+                    code.setProgress((element.y + element.height - 1) / (code.internalHeight - 1));
                 }
             }
         }

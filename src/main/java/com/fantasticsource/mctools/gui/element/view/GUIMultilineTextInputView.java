@@ -33,8 +33,8 @@ public class GUIMultilineTextInputView extends GUIScrollView
         double ratio = 1d / multilineTextInput.fullLineCount();
         double lineTop = line * ratio * internalHeight;
         double lineBottom = (line + 1) * ratio * internalHeight;
-        if (lineTop < top) progress = lineTop / (internalHeight - 1);
-        else if (lineBottom > bottom) progress = (lineBottom - 1) / (internalHeight - 1);
+        if (lineTop < top) setProgress(lineTop / (internalHeight - 1));
+        else if (lineBottom > bottom) setProgress((lineBottom - 1) / (internalHeight - 1));
 
         super.recalc(subIndexChanged);
 

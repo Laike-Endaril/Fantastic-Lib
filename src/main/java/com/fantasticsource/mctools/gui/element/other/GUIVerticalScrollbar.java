@@ -14,6 +14,7 @@ public class GUIVerticalScrollbar extends GUIGradientBorder
     {
         super(screen, width, height, 1d / 3, backgroundBorder, backgroundCenter);
         this.scrollView = scrollView;
+        scrollView.scrollbar = this;
 
         slider = new GUIGradientBorder(screen, 0, -9999, 1, 1d / 10, 1d / 3, sliderBorder, sliderCenter);
         add(slider);
@@ -31,9 +32,10 @@ public class GUIVerticalScrollbar extends GUIGradientBorder
     @Override
     public void draw()
     {
-        if (scrollView.progress >= 0 && scrollView.progress <= 1)
+        double progress = scrollView.getProgress();
+        if (progress >= 0 && progress <= 1)
         {
-            slider.y = (1 - slider.height) * scrollView.progress;
+            slider.y = (1 - slider.height) * progress;
         }
         else slider.y = -99999;
 
@@ -43,21 +45,21 @@ public class GUIVerticalScrollbar extends GUIGradientBorder
     @Override
     public void mouseWheel(int delta)
     {
-        if (scrollView.progress != -1 && (isMouseWithin() || scrollView.isMouseWithin()))
+        double progress = scrollView.getProgress();
+        if (progress != -1 && (isMouseWithin() || scrollView.isMouseWithin()))
         {
             if (delta < 0)
             {
-                scrollView.progress += 0.25 / scrollView.internalHeight;
-                if (scrollView.progress > 1) scrollView.progress = 1;
+                progress += 0.25 / scrollView.internalHeight;
+                if (progress > 1) progress = 1;
             }
             else
             {
-                scrollView.progress -= 0.25 / scrollView.internalHeight;
-                if (scrollView.progress < 0) scrollView.progress = 0;
+                progress -= 0.25 / scrollView.internalHeight;
+                if (progress < 0) progress = 0;
             }
         }
-
-        runEditActions();
+        scrollView.setProgress(progress);
     }
 
     @Override
@@ -66,12 +68,10 @@ public class GUIVerticalScrollbar extends GUIGradientBorder
         boolean result = super.mousePressed(button);
         setActive(result);
 
-        if (active && scrollView.progress != -1)
+        if (active && scrollView.getProgress() != -1)
         {
-            scrollView.progress = Tools.min(Tools.max((mouseY() - absoluteY() - slider.absoluteHeight() * 0.5) / (absoluteHeight() - slider.absoluteHeight()), 0), 1);
+            scrollView.setProgress(Tools.min(Tools.max((mouseY() - absoluteY() - slider.absoluteHeight() * 0.5) / (absoluteHeight() - slider.absoluteHeight()), 0), 1));
         }
-
-        runEditActions();
 
         return result;
     }
@@ -81,10 +81,8 @@ public class GUIVerticalScrollbar extends GUIGradientBorder
     {
         if (active && button == 0)
         {
-            if (scrollView.progress == -1) setActive(false);
-            else scrollView.progress = Tools.min(Tools.max((mouseY() - absoluteY() - slider.absoluteHeight() * 0.5) / (absoluteHeight() - slider.absoluteHeight()), 0), 1);
+            if (scrollView.getProgress() == -1) setActive(false);
+            else scrollView.setProgress(Tools.min(Tools.max((mouseY() - absoluteY() - slider.absoluteHeight() * 0.5) / (absoluteHeight() - slider.absoluteHeight()), 0), 1));
         }
-
-        runEditActions();
     }
 }
