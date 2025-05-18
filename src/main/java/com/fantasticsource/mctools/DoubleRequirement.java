@@ -97,8 +97,40 @@ public class DoubleRequirement
     }
 
 
+    public String getModeString()
+    {
+        switch (mode)
+        {
+            case 0:
+                return ">=";
+
+            case 1:
+                return "<=";
+
+            case 2:
+                return "=";
+
+            case 3:
+                return ">";
+
+            case 4:
+                return "<";
+
+            case 5:
+                return "!=";
+        }
+        return null;
+    }
+
+
     public DoubleRequirement clone()
     {
         return new DoubleRequirement(mode, amount);
+    }
+
+    @Override
+    public String toString()
+    {
+        return getModeString() + " " + amount;
     }
 }
