@@ -323,8 +323,6 @@ public class RegistryRegexItemFilter
     {
         String result = domainRegex + ":" + itemRegex + ":" + metaRegex;
 
-        if (tagsRequired.size() + tagsDisallowed.size() > 0) result += " > ";
-
         int i = 0;
         for (Map.Entry<String, String> entry : tagsRequired.entrySet())
         {
