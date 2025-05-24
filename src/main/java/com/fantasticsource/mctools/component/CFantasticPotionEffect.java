@@ -34,7 +34,7 @@ public class CFantasticPotionEffect extends Component
         buf.writeBoolean(value.getIsAmbient());
         buf.writeBoolean(value.doesShowParticles());
 
-        buf.writeBoolean(value.getDuration() >= 32767);
+        buf.writeBoolean(value.getDuration() >= FantasticPotionEffect.MAX_DURATION_THRESHOLD);
 
         CItemStack cstack = new CItemStack();
         List<ItemStack> cures = value.getCurativeItems();

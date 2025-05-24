@@ -63,7 +63,7 @@ public class FantasticPotionEffect extends PotionEffect
     @Override
     public boolean onUpdate(EntityLivingBase entityIn)
     {
-        if (getDuration() >= 32767)
+        if (getDuration() >= MAX_DURATION_THRESHOLD)
         {
             //Skip decrementation if we're supposed to be infinite
             if (getPotion().isReady(getDuration(), getAmplifier())) performEffect(entityIn);
