@@ -91,7 +91,7 @@ public class FantasticPotionEffect extends PotionEffect
         if (showDurationWhenNoInterval || interval > 0)
         {
             int duration = getDuration();
-            if (getDuration() > 0 && duration < Integer.MAX_VALUE && (interval <= 0 || duration < interval))
+            if (getDuration() > 0 && duration < MAX_DURATION_THRESHOLD && (interval <= 0 || duration < interval))
             {
                 int hours, minutes;
                 double seconds;
