@@ -76,6 +76,18 @@ public class DoubleRequirement
     }
 
 
+    public int getMode()
+    {
+        return mode;
+    }
+
+
+    public double getAmount()
+    {
+        return amount;
+    }
+
+
     public boolean check(double amount)
     {
         switch (mode)
