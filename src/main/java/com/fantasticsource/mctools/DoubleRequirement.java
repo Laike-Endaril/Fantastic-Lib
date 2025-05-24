@@ -12,10 +12,10 @@ public class DoubleRequirement
     {
         VALID_MODE_STRINGS.add(">=");
         VALID_MODE_STRINGS.add("<=");
-        VALID_MODE_STRINGS.add("!=");
         VALID_MODE_STRINGS.add("=");
         VALID_MODE_STRINGS.add(">");
         VALID_MODE_STRINGS.add("<");
+        VALID_MODE_STRINGS.add("!=");
 
     }
 
@@ -28,8 +28,8 @@ public class DoubleRequirement
             MODE_NOT_EQUAL = 5;
 
 
-    private int mode;
-    private double amount;
+    public int mode;
+    public double amount;
 
 
     public DoubleRequirement(double amount)
@@ -88,18 +88,6 @@ public class DoubleRequirement
         }
 
         return result;
-    }
-
-
-    public int getMode()
-    {
-        return mode;
-    }
-
-
-    public double getAmount()
-    {
-        return amount;
     }
 
 
