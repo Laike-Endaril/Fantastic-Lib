@@ -2,8 +2,23 @@ package com.fantasticsource.mctools;
 
 import com.fantasticsource.tools.datastructures.Pair;
 
+import java.util.ArrayList;
+
 public class DoubleRequirement
 {
+    public static final ArrayList<String> VALID_MODE_STRINGS = new ArrayList<>();
+
+    static
+    {
+        VALID_MODE_STRINGS.add(">=");
+        VALID_MODE_STRINGS.add("<=");
+        VALID_MODE_STRINGS.add("!=");
+        VALID_MODE_STRINGS.add("=");
+        VALID_MODE_STRINGS.add(">");
+        VALID_MODE_STRINGS.add("<");
+
+    }
+
     public static final int
             MODE_GREATER_OR_EQUAL = 0,
             MODE_LESS_OR_EQUAL = 1,
