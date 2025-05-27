@@ -15,7 +15,10 @@ import net.minecraftforge.oredict.OreDictionary;
 import java.util.*;
 import java.util.regex.Pattern;
 
-public class CachedRRItemFilter
+//Supports oredict
+//Supports regex for each of domain, item, and meta (including oredict domains and oredict items)
+//Caches state and does more efficient checks based on it
+public class AdvancedItemFilter
 {
     protected String domainCheck, itemCheck, metaCheck;
     protected boolean domainIsRegex, itemIsRegex, metaIsRegex;
@@ -26,15 +29,16 @@ public class CachedRRItemFilter
     protected ArrayList<Integer> matchingOredictIDs = new ArrayList<>();
 
 
-    public CachedRRItemFilter()
+    public AdvancedItemFilter()
     {
         this(".*", ".*", ".*", new LinkedHashMap<>(), new LinkedHashMap<>());
     }
 
-    public CachedRRItemFilter(String domainRegex, String itemRegex, String metaRegex, LinkedHashMap<String, String> tagsRequired, LinkedHashMap<String, String> tagsDisallowed)
+    public AdvancedItemFilter(String domainRegex, String itemRegex, String metaRegex, LinkedHashMap<String, String> tagsRequired, LinkedHashMap<String, String> tagsDisallowed)
     {
         set(domainRegex, itemRegex, metaRegex, tagsRequired, tagsDisallowed);
     }
+
 
     public void set(String domainRegex, String itemRegex, String metaRegex, LinkedHashMap<String, String> tagsRequired, LinkedHashMap<String, String> tagsDisallowed)
     {
@@ -65,6 +69,32 @@ public class CachedRRItemFilter
     }
 
 
+    public String getDomainRegex()
+    {
+        return domainCheck;
+    }
+
+    public String getItemRegex()
+    {
+        return itemCheck;
+    }
+
+    public String getMetaRegex()
+    {
+        return metaCheck;
+    }
+
+    public LinkedHashMap<String, String> getTagsRequired()
+    {
+        return new LinkedHashMap<>(tagsRequired);
+    }
+
+    public LinkedHashMap<String, String> getTagsDisallowed()
+    {
+        return new LinkedHashMap<>(tagsDisallowed);
+    }
+
+
     /**
      * Syntax is domain:item:meta > nbtkey1 = nbtvalue1 & nbtkey2 = nbtvalue2
      * All of these are optional except item
@@ -83,9 +113,9 @@ public class CachedRRItemFilter
      * dye:0
      * tetra:duplex_tool_modular > duplex/sickle_left_material & duplex/butt_right_material
      */
-    public static CachedRRItemFilter getInstance(String itemStackString)
+    public static AdvancedItemFilter getInstance(String itemStackString)
     {
-        CachedRRItemFilter result = new CachedRRItemFilter();
+        AdvancedItemFilter result = new AdvancedItemFilter();
 
         String[] registryAndNBT = itemStackString.trim().split(Pattern.quote(">"));
 
@@ -330,10 +360,10 @@ public class CachedRRItemFilter
     public boolean equals(Object obj)
     {
         if (this == obj) return true;
-        if (!(obj instanceof CachedRRItemFilter)) return false;
+        if (!(obj instanceof AdvancedItemFilter)) return false;
         if (obj.getClass() != getClass()) return obj.equals(this);
 
-        CachedRRItemFilter other = (CachedRRItemFilter) obj;
+        AdvancedItemFilter other = (AdvancedItemFilter) obj;
         if (!domainCheck.equals(other.domainCheck) || !itemCheck.equals(other.itemCheck) || !metaCheck.equals(other.metaCheck)) return false;
 
         if (tagsRequired.size() != other.tagsRequired.size()) return false;
@@ -346,9 +376,9 @@ public class CachedRRItemFilter
     }
 
 
-    public CachedRRItemFilter clone()
+    public AdvancedItemFilter clone()
     {
-        CachedRRItemFilter other = new CachedRRItemFilter();
+        AdvancedItemFilter other = new AdvancedItemFilter();
 
         other.domainCheck = domainCheck;
         other.itemCheck = itemCheck;
