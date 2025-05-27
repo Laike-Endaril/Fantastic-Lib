@@ -3,6 +3,7 @@ package com.fantasticsource.mctools.items;
 import com.fantasticsource.fantasticlib.FantasticLib;
 import com.fantasticsource.tools.Tools;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -33,6 +34,7 @@ public class AdvancedItemFilter
 
     protected int lastCacheOreDictSize = 0;
     protected ArrayList<Integer> matchingOredictIDs = new ArrayList<>();
+    protected LinkedHashMap<Item, Boolean> cachedItemResults = new LinkedHashMap<>();
 
 
     public AdvancedItemFilter()
@@ -82,14 +84,14 @@ public class AdvancedItemFilter
         metaIsRegex = metaCheck == null || Tools.hasRegexSpecialCharacters(metaCheck);
         if (!metaIsRegex) meta = Integer.parseInt(metaCheck);
 
-        //TODO cache matching items (not stacks)
+
+        cachedItemResults.clear();
+
+        //TODO If further improvements are necessary, check the list below
+        //TODO If any further improvements are made, make sure to copy all cache values to clone in clone() method
 
         //TODO cache matching stacks within last x time?
-
         //TODO cache size of each valid oredict array (change lastCacheOreDictSize to an array or hashmap of sizes)
-
-
-        //TODO copy all cache values to clone in clone() method
     }
 
 
@@ -254,36 +256,52 @@ public class AdvancedItemFilter
 
     public boolean matches(ItemStack stack)
     {
-        //Meta
-        if (!checkMeta(stack.getMetadata())) return false;
-
-        //Domain, item
-        ResourceLocation resourceLocation = stack.getItem().getRegistryName();
-        if (!checkDomain(resourceLocation.getResourceDomain()) || !checkItem(resourceLocation.getResourcePath()))
+        //Item (Domain, name)
+        Item item = stack.getItem();
+        Boolean cachedItemCheck = cachedItemResults.get(item);
+        if (cachedItemCheck == null)
         {
-            //Oredict checks
-            if (stack.isEmpty() || !checkDomain("ore")) return false;
-
-
-            //Add any missing oreDict IDs to cache
-            String[] oreDictNames = OreDictionary.getOreNames();
-            for (int i = lastCacheOreDictSize; i < oreDictNames.length; i++)
+            ResourceLocation resourceLocation = item.getRegistryName();
+            if (!checkDomain(resourceLocation.getResourceDomain()) || !checkItem(resourceLocation.getResourcePath()))
             {
-                if (checkItem(oreDictNames[i])) matchingOredictIDs.add(i);
-            }
-
-            //Check matching oreDict entries
-            boolean found = false;
-            for (int oreDictID : OreDictionary.getOreIDs(stack))
-            {
-                if (matchingOredictIDs.contains(oreDictID))
+                //Oredict checks
+                if (stack.isEmpty() || !checkDomain("ore"))
                 {
-                    found = true;
-                    break;
+                    cachedItemResults.put(item, false);
+                    return false;
+                }
+
+
+                //Add any missing oreDict IDs to cache
+                String[] oreDictNames = OreDictionary.getOreNames();
+                for (int i = lastCacheOreDictSize; i < oreDictNames.length; i++)
+                {
+                    if (checkItem(oreDictNames[i])) matchingOredictIDs.add(i);
+                }
+
+                //Check matching oreDict entries
+                boolean found = false;
+                for (int oreDictID : OreDictionary.getOreIDs(stack))
+                {
+                    if (matchingOredictIDs.contains(oreDictID))
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    cachedItemResults.put(item, false);
+                    return false;
                 }
             }
-            if (!found) return false;
+            cachedItemResults.put(item, true);
         }
+        else if (!cachedItemCheck) return false;
+
+
+        //Meta
+        if (!checkMeta(stack.getMetadata())) return false;
 
 
         //Disallowed NBT
@@ -416,8 +434,8 @@ public class AdvancedItemFilter
         other.itemCheck = itemCheck;
         other.metaCheck = metaCheck;
 
-        for (Map.Entry<String, String> entry : tagsRequired.entrySet()) other.tagsRequired.put(entry.getKey(), entry.getValue());
-        for (Map.Entry<String, String> entry : tagsDisallowed.entrySet()) other.tagsDisallowed.put(entry.getKey(), entry.getValue());
+        if (tagsRequired != null) other.tagsRequired = new LinkedHashMap<>(tagsRequired);
+        if (tagsDisallowed != null) other.tagsDisallowed = new LinkedHashMap<>(tagsDisallowed);
 
         other.lastCacheOreDictSize = lastCacheOreDictSize;
         other.matchingOredictIDs.addAll(matchingOredictIDs); //This is probably actually copying memory addresses, but the values of the Integer objects never change anyway (the objects get replaced instead)
@@ -426,6 +444,8 @@ public class AdvancedItemFilter
         other.domainIsRegex = domainIsRegex;
         other.itemIsRegex = itemIsRegex;
         other.metaIsRegex = metaIsRegex;
+
+        other.cachedItemResults.putAll(cachedItemResults);
 
         //TODO copy all cache values to clone
 
