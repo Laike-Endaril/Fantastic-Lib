@@ -37,7 +37,7 @@ public class AdvancedItemFilter
 
     public AdvancedItemFilter()
     {
-        this(".*", ".*", ".*", new LinkedHashMap<>(), new LinkedHashMap<>());
+        this(".*", ".*", ".*", null, null);
     }
 
     public AdvancedItemFilter(@Nullable String domainRegex, @Nullable String itemRegex, @Nullable String metaRegex, @Nullable LinkedHashMap<String, String> tagsRequired, @Nullable LinkedHashMap<String, String> tagsDisallowed)
@@ -232,9 +232,15 @@ public class AdvancedItemFilter
                     if (key.charAt(0) == '!')
                     {
                         key = key.substring(1);
+
+                        if (result.tagsDisallowed == null) result.tagsDisallowed = new LinkedHashMap<>();
                         map = result.tagsDisallowed;
                     }
-                    else map = result.tagsRequired;
+                    else
+                    {
+                        if (result.tagsRequired == null) result.tagsRequired = new LinkedHashMap<>();
+                        map = result.tagsRequired;
+                    }
 
                     map.put(key, keyValue.length == 2 ? keyValue[1].trim() : null);
                 }
