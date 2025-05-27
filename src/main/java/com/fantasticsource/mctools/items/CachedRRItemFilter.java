@@ -17,7 +17,9 @@ import java.util.regex.Pattern;
 
 public class CachedRRItemFilter
 {
-    protected String domainRegex, itemRegex, metaRegex;
+    protected String domainCheck, itemCheck, metaCheck;
+    protected boolean domainIsRegex, itemIsRegex, metaIsRegex;
+    protected int meta;
     protected LinkedHashMap<String, String> tagsRequired, tagsDisallowed;
 
     protected int lastCacheOreDictSize = 0;
@@ -36,9 +38,9 @@ public class CachedRRItemFilter
 
     public void set(String domainRegex, String itemRegex, String metaRegex, LinkedHashMap<String, String> tagsRequired, LinkedHashMap<String, String> tagsDisallowed)
     {
-        this.domainRegex = domainRegex;
-        this.itemRegex = itemRegex;
-        this.metaRegex = metaRegex;
+        this.domainCheck = domainRegex.trim();
+        this.itemCheck = itemRegex.trim();
+        this.metaCheck = metaRegex.trim();
         this.tagsRequired = tagsRequired;
         this.tagsDisallowed = tagsDisallowed;
 
@@ -47,9 +49,15 @@ public class CachedRRItemFilter
 
     public void resetAllCaches()
     {
-        //TODO cache whether domain, item, and meta are actually regex checks or not; if not, can do a normal contains() check
+        domainIsRegex = Tools.hasRegexSpecialCharacters(domainCheck);
+        itemIsRegex = Tools.hasRegexSpecialCharacters(itemCheck);
+        metaIsRegex = Tools.hasRegexSpecialCharacters(metaCheck);
+        if (!metaIsRegex) meta = Integer.parseInt(metaCheck);
+
         //TODO cache matching items (not stacks)
+
         //TODO cache matching stacks within last x time?
+
         //TODO cache size of each valid oredict array (change lastCacheOreDictSize to an array or hashmap of sizes)
 
 
@@ -102,41 +110,41 @@ public class CachedRRItemFilter
         }
         if (regexTokens.length == 1)
         {
-            result.domainRegex = ".*";
-            result.itemRegex = regexTokens[0].trim();
-            result.metaRegex = ".*";
+            result.domainCheck = ".*";
+            result.itemCheck = regexTokens[0].trim();
+            result.metaCheck = ".*";
         }
         else if (regexTokens.length == 2)
         {
             if (Tools.regexMatches(".*[a-zA-Z].*", regexTokens[1]))
             {
-                result.domainRegex = regexTokens[0];
-                result.itemRegex = regexTokens[1];
-                result.metaRegex = ".*";
+                result.domainCheck = regexTokens[0];
+                result.itemCheck = regexTokens[1];
+                result.metaCheck = ".*";
             }
             else if (Tools.regexMatches(".*[0-9].*", regexTokens[1]))
             {
-                result.domainRegex = ".*";
-                result.itemRegex = regexTokens[0];
-                result.metaRegex = regexTokens[1];
+                result.domainCheck = ".*";
+                result.itemCheck = regexTokens[0];
+                result.metaCheck = regexTokens[1];
             }
             else
             {
-                result.domainRegex = regexTokens[0];
-                result.itemRegex = regexTokens[1];
-                result.metaRegex = ".*";
+                result.domainCheck = regexTokens[0];
+                result.itemCheck = regexTokens[1];
+                result.metaCheck = ".*";
             }
         }
         else
         {
-            result.domainRegex = regexTokens[0].trim();
-            result.itemRegex = regexTokens[1].trim();
-            result.metaRegex = regexTokens[2].trim();
+            result.domainCheck = regexTokens[0].trim();
+            result.itemCheck = regexTokens[1].trim();
+            result.metaCheck = regexTokens[2].trim();
         }
 
-        if (result.domainRegex.equals("")) result.domainRegex = ".*";
-        if (result.itemRegex.equals("")) result.itemRegex = ".*";
-        if (result.metaRegex.equals("")) result.metaRegex = ".*";
+        if (result.domainCheck.equals("")) result.domainCheck = ".*";
+        if (result.itemCheck.equals("")) result.itemCheck = ".*";
+        if (result.metaCheck.equals("")) result.metaCheck = ".*";
 
 
         //NBT
@@ -184,35 +192,35 @@ public class CachedRRItemFilter
 
     public boolean matches(ItemStack stack)
     {
-        //Domain, item, and meta
-        if (!Tools.regexMatches(metaRegex, "" + stack.getMetadata())) return false; //Quickest check first
+        //Meta
+        if (!checkMeta(stack.getMetadata())) return false;
 
+        //Domain, item
         ResourceLocation resourceLocation = stack.getItem().getRegistryName();
-        if (!Tools.regexMatches(domainRegex, resourceLocation.getResourceDomain()) || !Tools.regexMatches(itemRegex, resourceLocation.getResourcePath()))
+        if (!checkDomain(resourceLocation.getResourceDomain()) || !checkItem(resourceLocation.getResourcePath()))
         {
             //Oredict checks
-            if (!stack.isEmpty() && Tools.regexMatches(domainRegex, "ore"))
-            {
-                //Add any missing oreDict IDs to cache
-                String[] oreDictNames = OreDictionary.getOreNames();
-                for (int i = lastCacheOreDictSize; i < oreDictNames.length; i++)
-                {
-                    if (Tools.regexMatches(itemRegex, oreDictNames[i])) matchingOredictIDs.add(i);
-                }
+            if (stack.isEmpty() || !checkDomain("ore")) return false;
 
-                //Check matching oreDict entries
-                boolean found = false;
-                for (int oreDictID : OreDictionary.getOreIDs(stack))
-                {
-                    if (matchingOredictIDs.contains(oreDictID))
-                    {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) return false;
+
+            //Add any missing oreDict IDs to cache
+            String[] oreDictNames = OreDictionary.getOreNames();
+            for (int i = lastCacheOreDictSize; i < oreDictNames.length; i++)
+            {
+                if (checkItem(oreDictNames[i])) matchingOredictIDs.add(i);
             }
-            else return false;
+
+            //Check matching oreDict entries
+            boolean found = false;
+            for (int oreDictID : OreDictionary.getOreIDs(stack))
+            {
+                if (matchingOredictIDs.contains(oreDictID))
+                {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) return false;
         }
 
 
@@ -244,6 +252,25 @@ public class CachedRRItemFilter
         //Passed all filters
         return true;
     }
+
+    protected boolean checkDomain(String domain)
+    {
+        if (domainIsRegex) return Tools.regexMatches(domainCheck, domain);
+        return domain.equals(domainCheck);
+    }
+
+    protected boolean checkItem(String item)
+    {
+        if (itemIsRegex) return Tools.regexMatches(itemCheck, item);
+        return item.equals(itemCheck);
+    }
+
+    protected boolean checkMeta(int stackMeta)
+    {
+        if (metaIsRegex) return Tools.regexMatches(metaCheck, "" + stackMeta);
+        return stackMeta == meta;
+    }
+
 
     protected boolean checkNBT(NBTBase base, String[] keymap, String value)
     {
@@ -307,7 +334,7 @@ public class CachedRRItemFilter
         if (obj.getClass() != getClass()) return obj.equals(this);
 
         CachedRRItemFilter other = (CachedRRItemFilter) obj;
-        if (!domainRegex.equals(other.domainRegex) || !itemRegex.equals(other.itemRegex) || !metaRegex.equals(other.metaRegex)) return false;
+        if (!domainCheck.equals(other.domainCheck) || !itemCheck.equals(other.itemCheck) || !metaCheck.equals(other.metaCheck)) return false;
 
         if (tagsRequired.size() != other.tagsRequired.size()) return false;
         if (tagsDisallowed.size() != other.tagsDisallowed.size()) return false;
@@ -323,9 +350,9 @@ public class CachedRRItemFilter
     {
         CachedRRItemFilter other = new CachedRRItemFilter();
 
-        other.domainRegex = domainRegex;
-        other.itemRegex = itemRegex;
-        other.metaRegex = metaRegex;
+        other.domainCheck = domainCheck;
+        other.itemCheck = itemCheck;
+        other.metaCheck = metaCheck;
 
         for (Map.Entry<String, String> entry : tagsRequired.entrySet()) other.tagsRequired.put(entry.getKey(), entry.getValue());
         for (Map.Entry<String, String> entry : tagsDisallowed.entrySet()) other.tagsDisallowed.put(entry.getKey(), entry.getValue());
@@ -333,6 +360,10 @@ public class CachedRRItemFilter
         other.lastCacheOreDictSize = lastCacheOreDictSize;
         other.matchingOredictIDs.addAll(matchingOredictIDs); //This is probably actually copying memory addresses, but the values of the Integer objects never change anyway (the objects get replaced instead)
 
+
+        other.domainIsRegex = domainIsRegex;
+        other.itemIsRegex = itemIsRegex;
+        other.metaIsRegex = metaIsRegex;
 
         //TODO copy all cache values to clone
 
@@ -343,7 +374,7 @@ public class CachedRRItemFilter
     @Override
     public String toString()
     {
-        String result = domainRegex + ":" + itemRegex + ":" + metaRegex;
+        String result = domainCheck + ":" + itemCheck + ":" + metaCheck;
 
         int i = 0;
         for (Map.Entry<String, String> entry : tagsRequired.entrySet())
