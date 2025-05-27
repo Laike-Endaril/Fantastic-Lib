@@ -461,18 +461,24 @@ public class AdvancedItemFilter
         String result = domainCheck + ":" + itemCheck + ":" + metaCheck;
 
         int i = 0;
-        for (Map.Entry<String, String> entry : tagsRequired.entrySet())
+        if (tagsRequired != null)
         {
-            result += i++ == 0 ? " > " : " & ";
-            result += entry.getKey();
-            if (entry.getValue() != null) result += " = " + entry.getValue();
+            for (Map.Entry<String, String> entry : tagsRequired.entrySet())
+            {
+                result += i++ == 0 ? " > " : " & ";
+                result += entry.getKey();
+                if (entry.getValue() != null) result += " = " + entry.getValue();
+            }
         }
 
-        for (Map.Entry<String, String> entry : tagsDisallowed.entrySet())
+        if (tagsDisallowed != null)
         {
-            result += i++ == 0 ? " > " : " & ";
-            result += "!" + entry.getKey();
-            if (entry.getValue() != null) result += " = " + entry.getValue();
+            for (Map.Entry<String, String> entry : tagsDisallowed.entrySet())
+            {
+                result += i++ == 0 ? " > " : " & ";
+                result += "!" + entry.getKey();
+                if (entry.getValue() != null) result += " = " + entry.getValue();
+            }
         }
 
         return result;
