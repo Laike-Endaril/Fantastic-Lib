@@ -11,6 +11,8 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.ArrayList;
 
+//Use AdvancedBlockFilter instead, it might even perform 100x better, depending (not joking)
+@Deprecated
 public class RegistryRegexBlockFilter
 {
     public String domainRegex, blockRegex, metaRegex;

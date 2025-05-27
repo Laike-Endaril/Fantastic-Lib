@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("unused")
 public class Tools
 {
-    public static final String REGEX_SPECIAL_CHARACTERS_TEST = ".*[.+*?^$()\\[\\]{}|\\\\].*";
+    public static final String REGEX_ANY = ".*", REGEX_SPECIAL_CHARACTERS_TEST = ".*[.+*?^$()\\[\\]{}|\\\\].*";
 
     protected static PrintStream out = null, err = null;
 

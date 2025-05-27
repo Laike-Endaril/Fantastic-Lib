@@ -15,7 +15,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import java.util.*;
 import java.util.regex.Pattern;
 
-//Use AdvancedItemFilter instead
+//Use AdvancedItemFilter instead, it might even perform 100x better, depending (not joking)
 @Deprecated
 public class RegistryRegexItemFilter
 {

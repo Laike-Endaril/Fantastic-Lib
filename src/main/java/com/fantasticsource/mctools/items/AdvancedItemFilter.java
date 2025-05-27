@@ -20,13 +20,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import static com.fantasticsource.tools.Tools.REGEX_ANY;
+
 //Supports oredict
 //Supports regex for each of domain, item, and meta (including oredict domains and oredict items)
+//Supports nbt checks (but not regex for them)
 //Caches state and does more efficient checks based on it
 public class AdvancedItemFilter
 {
-    public static final String REGEX_ANY = ".*";
-
     protected String domainCheck, itemCheck, metaCheck;
     protected boolean domainIsRegex, itemIsRegex, metaIsRegex;
     protected int meta;
@@ -248,6 +249,7 @@ public class AdvancedItemFilter
                 }
             }
         }
+
 
         result.set(result.domainCheck, result.itemCheck, result.metaCheck, result.tagsRequired, result.tagsDisallowed);
         return result;
