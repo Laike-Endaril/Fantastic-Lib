@@ -15,6 +15,8 @@ import net.minecraftforge.oredict.OreDictionary;
 import java.util.*;
 import java.util.regex.Pattern;
 
+//Use AdvancedItemFilter instead
+@Deprecated
 public class RegistryRegexItemFilter
 {
     public String domainRegex, itemRegex, metaRegex;
