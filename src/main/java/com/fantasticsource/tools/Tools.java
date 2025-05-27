@@ -19,6 +19,8 @@ import java.util.regex.Pattern;
 @SuppressWarnings("unused")
 public class Tools
 {
+    public static final String REGEX_SPECIAL_CHARACTERS_TEST = ".*[.+*?^$()\\[\\]{}|\\\\].*";
+
     protected static PrintStream out = null, err = null;
 
 
@@ -1121,6 +1123,11 @@ public class Tools
         }
     }
 
+
+    public static boolean hasRegexSpecialCharacters(String string)
+    {
+        return regexMatches(REGEX_SPECIAL_CHARACTERS_TEST, string);
+    }
 
     public static boolean regexMatches(String regex, String string)
     {
