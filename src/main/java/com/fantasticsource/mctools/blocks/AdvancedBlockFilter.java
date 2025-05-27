@@ -207,12 +207,15 @@ public class AdvancedBlockFilter
                 //Check matching oreDict entries
                 boolean found = false;
                 ItemStack stack = new ItemStack(state.getBlock(), 1, stateMeta);
-                for (int oreDictID : OreDictionary.getOreIDs(stack))
+                if (!stack.isEmpty())
                 {
-                    if (matchingOredictIDs.contains(oreDictID))
+                    for (int oreDictID : OreDictionary.getOreIDs(stack))
                     {
-                        found = true;
-                        break;
+                        if (matchingOredictIDs.contains(oreDictID))
+                        {
+                            found = true;
+                            break;
+                        }
                     }
                 }
                 if (!found)
