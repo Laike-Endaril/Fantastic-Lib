@@ -12,7 +12,11 @@ import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.OreDictionary;
 
-import java.util.*;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 //Supports oredict
@@ -20,6 +24,8 @@ import java.util.regex.Pattern;
 //Caches state and does more efficient checks based on it
 public class AdvancedItemFilter
 {
+    public static final String REGEX_ANY = ".*";
+
     protected String domainCheck, itemCheck, metaCheck;
     protected boolean domainIsRegex, itemIsRegex, metaIsRegex;
     protected int meta;
@@ -34,7 +40,7 @@ public class AdvancedItemFilter
         this(".*", ".*", ".*", new LinkedHashMap<>(), new LinkedHashMap<>());
     }
 
-    public AdvancedItemFilter(String domainRegex, String itemRegex, String metaRegex, LinkedHashMap<String, String> tagsRequired, LinkedHashMap<String, String> tagsDisallowed)
+    public AdvancedItemFilter(@Nullable String domainRegex, @Nullable String itemRegex, @Nullable String metaRegex, @Nullable LinkedHashMap<String, String> tagsRequired, @Nullable LinkedHashMap<String, String> tagsDisallowed)
     {
         set(domainRegex, itemRegex, metaRegex, tagsRequired, tagsDisallowed);
     }
@@ -42,20 +48,38 @@ public class AdvancedItemFilter
 
     public void set(String domainRegex, String itemRegex, String metaRegex, LinkedHashMap<String, String> tagsRequired, LinkedHashMap<String, String> tagsDisallowed)
     {
-        this.domainCheck = domainRegex.trim();
-        this.itemCheck = itemRegex.trim();
-        this.metaCheck = metaRegex.trim();
-        this.tagsRequired = tagsRequired;
-        this.tagsDisallowed = tagsDisallowed;
+        if (domainCheck == null) domainCheck = REGEX_ANY;
+        else
+        {
+            domainCheck = domainRegex.trim();
+            if (domainCheck.isEmpty()) domainCheck = REGEX_ANY;
+        }
+
+        if (itemCheck == null) itemCheck = REGEX_ANY;
+        else
+        {
+            itemCheck = itemRegex.trim();
+            if (itemCheck.isEmpty()) itemCheck = REGEX_ANY;
+        }
+
+        if (metaCheck == null) metaCheck = REGEX_ANY;
+        else
+        {
+            metaCheck = metaRegex.trim();
+            if (metaCheck.isEmpty()) metaCheck = REGEX_ANY;
+        }
+
+        this.tagsRequired = tagsRequired != null && tagsRequired.size() == 0 ? null : tagsRequired;
+        this.tagsDisallowed = tagsDisallowed != null && tagsDisallowed.size() == 0 ? null : tagsDisallowed;
 
         resetAllCaches();
     }
 
     public void resetAllCaches()
     {
-        domainIsRegex = Tools.hasRegexSpecialCharacters(domainCheck);
-        itemIsRegex = Tools.hasRegexSpecialCharacters(itemCheck);
-        metaIsRegex = Tools.hasRegexSpecialCharacters(metaCheck);
+        domainIsRegex = domainCheck == null || Tools.hasRegexSpecialCharacters(domainCheck);
+        itemIsRegex = itemCheck == null || Tools.hasRegexSpecialCharacters(itemCheck);
+        metaIsRegex = metaCheck == null || Tools.hasRegexSpecialCharacters(metaCheck);
         if (!metaIsRegex) meta = Integer.parseInt(metaCheck);
 
         //TODO cache matching items (not stacks)
@@ -86,11 +110,13 @@ public class AdvancedItemFilter
 
     public LinkedHashMap<String, String> getTagsRequired()
     {
+        if (tagsRequired == null) return new LinkedHashMap<>();
         return new LinkedHashMap<>(tagsRequired);
     }
 
     public LinkedHashMap<String, String> getTagsDisallowed()
     {
+        if (tagsDisallowed == null) return new LinkedHashMap<>();
         return new LinkedHashMap<>(tagsDisallowed);
     }
 
@@ -215,7 +241,7 @@ public class AdvancedItemFilter
             }
         }
 
-        result.resetAllCaches();
+        result.set(result.domainCheck, result.itemCheck, result.metaCheck, result.tagsRequired, result.tagsDisallowed);
         return result;
     }
 
@@ -257,7 +283,7 @@ public class AdvancedItemFilter
         //Disallowed NBT
         NBTTagCompound compound = stack.getTagCompound();
 
-        if (compound != null)
+        if (compound != null && tagsDisallowed != null)
         {
             for (Map.Entry<String, String> entry : tagsDisallowed.entrySet())
             {
@@ -267,12 +293,12 @@ public class AdvancedItemFilter
 
 
         //Required NBT
-        Set<Map.Entry<String, String>> entrySet = tagsRequired.entrySet();
-        if (entrySet.size() > 0)
+        if (tagsRequired != null && tagsRequired.size() > 0)
         {
             if (compound == null) return false;
 
-            for (Map.Entry<String, String> entry : entrySet)
+
+            for (Map.Entry<String, String> entry : tagsRequired.entrySet())
             {
                 if (!checkNBT(compound, entry.getKey().split(":", -1), entry.getValue())) return false;
             }
