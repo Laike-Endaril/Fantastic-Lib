@@ -131,6 +131,7 @@ public class PathedParticleManager
         GlStateManager.enableBlend();
         RenderHelper.disableStandardItemLighting();
         GlStateManager.disableCull();
+        GlStateManager.depthMask(false);
 
         PathedParticleSharedRenderData data;
         for (Map.Entry<PathedParticleSharedRenderData, ArrayList<PathedParticle>> entry : particles.entrySet())
@@ -149,6 +150,7 @@ public class PathedParticleManager
             tessellator.draw();
         }
 
+        GlStateManager.depthMask(true);
         GlStateManager.enableCull();
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         Minecraft.getMinecraft().entityRenderer.disableLightmap();
