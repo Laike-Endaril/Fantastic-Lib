@@ -1064,6 +1064,20 @@ public class Tools
         return center + range * result;
     }
 
+    public static double[] randomWithinSphere(double r)
+    {
+        double x, y, z;
+        do
+        {
+            x = random() * 2 - 1;
+            y = random() * 2 - 1;
+            z = random() * 2 - 1;
+        }
+        while (x * x + y * y + z * z > 1);
+
+        return new double[]{x * r, y * r, z * r};
+    }
+
 
     public static double distance(double x1, double y1, double x2, double y2)
     {
