@@ -27,7 +27,7 @@ public class PathedParticle
     public final PathedParticleSharedRenderData sharedRenderData;
     public final int maxAge;
 
-    public int cullDistanceSquared = 900;
+    public double cullDistanceSquared = 900;
     public Vec3d deathPos = null;
     public Object[] extraDeathArgs = null;
     public boolean useFoliageColor = false, useGrassColor = false;
