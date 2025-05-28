@@ -253,14 +253,7 @@ public abstract class GUIScreen extends GuiScreen
             init();
         }
 
-        try
-        {
-            Mouse.setCursorPosition((int) (mouseX * Render.getStoredViewportWidth()), (int) ((1 - mouseY) * Render.getStoredViewportHeight()));
-        }
-        catch (IllegalAccessException e)
-        {
-            e.printStackTrace();
-        }
+        Mouse.setCursorPosition((int) (mouseX * Render.getStoredViewportWidth()), (int) ((1 - mouseY) * Render.getStoredViewportHeight()));
 
         mouseButtons.clear();
         root.recalc(0);

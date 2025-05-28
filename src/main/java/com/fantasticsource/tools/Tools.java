@@ -1068,12 +1068,9 @@ public class Tools
     }
 
 
-    public static void freeDirectByteBuffer(ByteBuffer directBuffer) throws NoSuchFieldException, IllegalAccessException
+    public static void freeDirectByteBuffer(ByteBuffer directBuffer)
     {
-        Field field = directBuffer.getClass().getDeclaredField("cleaner");
-        field.setAccessible(true);
-        Cleaner cleaner = (Cleaner) field.get(directBuffer);
-        cleaner.clean();
+        ((Cleaner) ReflectionTool.get(directBuffer.getClass(), "cleaner", directBuffer)).clean();
     }
 
 

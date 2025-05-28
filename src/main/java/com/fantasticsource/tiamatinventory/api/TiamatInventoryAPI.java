@@ -10,26 +10,18 @@ import java.util.UUID;
 
 public class TiamatInventoryAPI
 {
-    private static Field clientInventoryField = null;
+    private static Field clientInventoryField;
     private static LinkedHashMap<UUID, ITiamatPlayerInventory> tiamatServerInventories = null;
 
     static
     {
         try
         {
-            for (Field field : Class.forName("com.fantasticsource.tiamatinventory.inventory.TiamatPlayerInventory").getDeclaredFields())
-            {
-                if (field.getName().equals("tiamatServerInventories"))
-                {
-                    tiamatServerInventories = (LinkedHashMap<UUID, ITiamatPlayerInventory>) field.get(null);
-                }
-                else if (field.getName().equals("tiamatClientInventory"))
-                {
-                    clientInventoryField = field;
-                }
-            }
+            Class c = ReflectionTool.getClassByName("com.fantasticsource.tiamatinventory.inventory.TiamatPlayerInventory");
+            clientInventoryField = ReflectionTool.getField(c, "tiamatClientInventory");
+            tiamatServerInventories = (LinkedHashMap<UUID, ITiamatPlayerInventory>) ReflectionTool.get(c, "tiamatServerInventories", null);
         }
-        catch (ClassNotFoundException | IllegalAccessException e)
+        catch (Exception e)
         {
             if (Loader.isModLoaded("tiamatinventory")) e.printStackTrace();
         }

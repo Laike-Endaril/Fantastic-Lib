@@ -1,8 +1,7 @@
 package com.fantasticsource.fantasticaw.api;
 
+import com.fantasticsource.tools.ReflectionTool;
 import net.minecraft.entity.Entity;
-
-import java.lang.reflect.Field;
 
 public class FantasticAWAPI
 {
@@ -12,15 +11,9 @@ public class FantasticAWAPI
     {
         try
         {
-            for (Field field : Class.forName("com.fantasticsource.fantasticaw.apinatives.FantasticAWAPI").getDeclaredFields())
-            {
-                if (field.getName().equals("NATIVES"))
-                {
-                    fantasticAWAPIMethods = (IFantasticAWNatives) field.get(null);
-                }
-            }
+            fantasticAWAPIMethods = (IFantasticAWNatives) ReflectionTool.get(ReflectionTool.getClassByName("com.fantasticsource.fantasticaw.apinatives.FantasticAWAPI"), "NATIVES", null);
         }
-        catch (ClassNotFoundException | IllegalAccessException e)
+        catch (Exception e)
         {
             e.printStackTrace();
         }

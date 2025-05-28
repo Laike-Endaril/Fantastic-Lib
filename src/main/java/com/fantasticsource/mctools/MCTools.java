@@ -970,18 +970,18 @@ public class MCTools
 
 
     @SideOnly(Side.CLIENT)
-    public static void removeLangKey(String key) throws IllegalAccessException
+    public static void removeLangKey(String key)
     {
-        Locale locale = (Locale) languageManagerCurrentLocaleField.get(null);
-        Map<String, String> properties = (Map<String, String>) localePropertiesField.get(locale);
+        Locale locale = (Locale) ReflectionTool.get(languageManagerCurrentLocaleField, null);
+        Map<String, String> properties = (Map<String, String>) ReflectionTool.get(localePropertiesField, locale);
         properties.remove(key);
     }
 
     @SideOnly(Side.CLIENT)
-    public static void addLangKey(String key, String value) throws IllegalAccessException
+    public static void addLangKey(String key, String value)
     {
-        Locale locale = (Locale) languageManagerCurrentLocaleField.get(null);
-        Map<String, String> properties = (Map<String, String>) localePropertiesField.get(locale);
+        Locale locale = (Locale) ReflectionTool.get(languageManagerCurrentLocaleField, null);
+        Map<String, String> properties = (Map<String, String>) ReflectionTool.get(localePropertiesField, locale);
         properties.put(key, value);
     }
 
@@ -1165,9 +1165,9 @@ public class MCTools
         return Loader.instance().getConfigDir().getAbsolutePath() + File.separator;
     }
 
-    public static Configuration getConfig(String modid) throws IllegalAccessException
+    public static Configuration getConfig(String modid)
     {
-        return ((Map<String, Configuration>) CONFIG_MANAGER_CONFIGS_FIELD.get(null)).get(getConfigDir() + modid + ".cfg");
+        return ((Map<String, Configuration>) ReflectionTool.get(CONFIG_MANAGER_CONFIGS_FIELD, null)).get(getConfigDir() + modid + ".cfg");
     }
 
 
@@ -1194,16 +1194,16 @@ public class MCTools
     }
 
 
-    public static void reloadConfig(String modid) throws IllegalAccessException
+    public static void reloadConfig(String modid)
     {
         //TODO This wipes config tooltips and doesn't fully load configs
         reloadConfig(getConfigDir() + modid + ".cfg", modid);
     }
 
-    public static void reloadConfig(String configFilename, String modid) throws IllegalAccessException
+    public static void reloadConfig(String configFilename, String modid)
     {
         //TODO This wipes config tooltips and doesn't fully load configs
-        ((Map<String, Configuration>) CONFIG_MANAGER_CONFIGS_FIELD.get(null)).remove(configFilename);
+        ((Map<String, Configuration>) ReflectionTool.get(CONFIG_MANAGER_CONFIGS_FIELD, null)).remove(configFilename);
         ConfigManager.sync(modid, Config.Type.INSTANCE);
     }
 

@@ -132,25 +132,25 @@ public class Render
         return fov * fovMultiplier;
     }
 
-    public static double getStoredHFOV(TrigLookupTable trigLookupTable) throws IllegalAccessException
+    public static double getStoredHFOV(TrigLookupTable trigLookupTable)
     {
         return radtodeg(trigLookupTable.arctan(getStoredZNearWidth() * 0.5 / getStoredZNearDist())) * 2;
     }
 
 
-    public static double getPartialTick() throws IllegalAccessException
+    public static double getPartialTick()
     {
         Minecraft mc = Minecraft.getMinecraft();
-        return mc.isGamePaused() ? (double) (float) minecraftRenderPartialTicksPausedField.get(mc) : mc.getRenderPartialTicks();
+        return mc.isGamePaused() ? (double) (float) ReflectionTool.get(minecraftRenderPartialTicksPausedField, mc) : mc.getRenderPartialTicks();
     }
 
 
-    public static Pair<Float, Float> getEntityXYInWindow(Entity entity) throws IllegalAccessException
+    public static Pair<Float, Float> getEntityXYInWindow(Entity entity)
     {
         return getEntityXYInWindow(entity, 0, 0, 0);
     }
 
-    public static Pair<Float, Float> getEntityXYInWindow(Entity entity, double xOffset, double yOffset, double zOffset) throws IllegalAccessException
+    public static Pair<Float, Float> getEntityXYInWindow(Entity entity, double xOffset, double yOffset, double zOffset)
     {
         double partialTick = getPartialTick();
 
@@ -161,7 +161,7 @@ public class Render
         return get2DWindowCoordsFrom3DWorldCoords(x, y, z, partialTick);
     }
 
-    public static Pair<Float, Float> get2DWindowCoordsFrom3DWorldCoords(double x, double y, double z) throws IllegalAccessException
+    public static Pair<Float, Float> get2DWindowCoordsFrom3DWorldCoords(double x, double y, double z)
     {
         return get2DWindowCoordsFrom3DWorldCoords(x, y, z, getPartialTick());
     }
@@ -170,7 +170,7 @@ public class Render
      * When the entity is visible in the current projection, the returned values are its position in the window
      * When the entity is not visible in the current projection, the returned values are an off-screen position with the correct ratio to be used for an edge-of-screen indicator
      */
-    private static Pair<Float, Float> get2DWindowCoordsFrom3DWorldCoords(double x, double y, double z, double partialTick) throws IllegalAccessException
+    private static Pair<Float, Float> get2DWindowCoordsFrom3DWorldCoords(double x, double y, double z, double partialTick)
     {
         //Based on GLU.gluProject()
         Entity viewEntity = Minecraft.getMinecraft().getRenderViewEntity();
@@ -246,7 +246,7 @@ public class Render
         return (2f * projection.get(11)) / (2f * projection.get(10) - 2f);
     }
 
-    public static double getStoredZNearDist() throws IllegalAccessException
+    public static double getStoredZNearDist()
     {
         FloatBuffer projection = getStoredProjectionMatrix();
         return (2f * projection.get(11)) / (2f * projection.get(10) - 2f);
@@ -257,7 +257,7 @@ public class Render
         return getCurrentZNearDist() * 2 / getCurrentProjectionMatrix().get(0);
     }
 
-    public static double getStoredZNearWidth() throws IllegalAccessException
+    public static double getStoredZNearWidth()
     {
         return getStoredZNearDist() * 2 / getStoredProjectionMatrix().get(0);
     }
@@ -267,7 +267,7 @@ public class Render
         return getCurrentZNearDist() * 2 / getCurrentProjectionMatrix().get(5);
     }
 
-    public static double getStoredZNearHeight() throws IllegalAccessException
+    public static double getStoredZNearHeight()
     {
         return getStoredZNearDist() * 2 / getStoredProjectionMatrix().get(5);
     }
@@ -284,7 +284,7 @@ public class Render
     /**
      * This is not the width of the near plane!  This is the PORT width, not the VIEW width, ie. usually the window width
      */
-    public static int getStoredViewportWidth() throws IllegalAccessException
+    public static int getStoredViewportWidth()
     {
         return getStoredViewportMatrix().get(2);
     }
@@ -300,7 +300,7 @@ public class Render
     /**
      * This is not the height of the near plane!  This is the PORT height, not the VIEW height, ie. usually the window height
      */
-    public static int getStoredViewportHeight() throws IllegalAccessException
+    public static int getStoredViewportHeight()
     {
         return getStoredViewportMatrix().get(3);
     }
@@ -313,7 +313,7 @@ public class Render
         return result;
     }
 
-    public static IntBuffer getStoredViewportMatrix() throws IllegalAccessException
+    public static IntBuffer getStoredViewportMatrix()
     {
         //Update activerenderinfo if it isn't already being updated
         if (Minecraft.getMinecraft().player == null)
@@ -323,7 +323,7 @@ public class Render
             GlStateManager.glGetInteger(2978, (IntBuffer) ReflectionTool.get(activeRenderInfoViewportField, null));
         }
 
-        return ((IntBuffer) activeRenderInfoViewportField.get(null)).duplicate();
+        return ((IntBuffer) ReflectionTool.get(activeRenderInfoViewportField, null)).duplicate();
     }
 
     public static FloatBuffer getCurrentProjectionMatrix()
@@ -333,7 +333,7 @@ public class Render
         return result;
     }
 
-    public static FloatBuffer getStoredProjectionMatrix() throws IllegalAccessException
+    public static FloatBuffer getStoredProjectionMatrix()
     {
         //Update activerenderinfo if it isn't already being updated
         if (Minecraft.getMinecraft().player == null)
@@ -343,7 +343,7 @@ public class Render
             GlStateManager.glGetInteger(2978, (IntBuffer) ReflectionTool.get(activeRenderInfoViewportField, null));
         }
 
-        return ((FloatBuffer) activeRenderInfoProjectionField.get(null)).duplicate();
+        return ((FloatBuffer) ReflectionTool.get(activeRenderInfoProjectionField, null)).duplicate();
     }
 
     public static void setProjectionMatrix(FloatBuffer matrix)
@@ -359,7 +359,7 @@ public class Render
         return result;
     }
 
-    public static FloatBuffer getStoredModelViewMatrix() throws IllegalAccessException
+    public static FloatBuffer getStoredModelViewMatrix()
     {
         //Update activerenderinfo if it isn't already being updated
         if (Minecraft.getMinecraft().player == null)
@@ -369,7 +369,7 @@ public class Render
             GlStateManager.glGetInteger(2978, (IntBuffer) ReflectionTool.get(activeRenderInfoViewportField, null));
         }
 
-        return ((FloatBuffer) activeRenderInfoModelviewField.get(null)).duplicate();
+        return ((FloatBuffer) ReflectionTool.get(activeRenderInfoModelviewField, null)).duplicate();
     }
 
     public static void setModelViewMatrix(FloatBuffer matrix)
@@ -404,7 +404,7 @@ public class Render
             return parentEvent;
         }
 
-        public void setScalingMode(byte scalingMode) throws IllegalAccessException
+        public void setScalingMode(byte scalingMode)
         {
             if (this.scalingMode == scalingMode) return;
 
@@ -462,7 +462,7 @@ public class Render
             return parentEvent;
         }
 
-        public void setScalingMode(byte scalingMode) throws IllegalAccessException
+        public void setScalingMode(byte scalingMode)
         {
             if (this.scalingMode == scalingMode) return;
 

@@ -40,16 +40,9 @@ public class WorldEventDistributor implements IWorldEventListener
     @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
     public static void worldLoad(WorldEvent.Load event)
     {
-        try
-        {
-            World world = event.getWorld();
-            List<IWorldEventListener> originalListeners = (List<IWorldEventListener>) worldEventListenersField.get(world);
-            originalListeners.add(0, new WorldEventDistributor(world, originalListeners));
-        }
-        catch (IllegalAccessException e)
-        {
-            MCTools.crash(e, true);
-        }
+        World world = event.getWorld();
+        List<IWorldEventListener> originalListeners = (List<IWorldEventListener>) ReflectionTool.get(worldEventListenersField, world);
+        originalListeners.add(0, new WorldEventDistributor(world, originalListeners));
     }
 
 
