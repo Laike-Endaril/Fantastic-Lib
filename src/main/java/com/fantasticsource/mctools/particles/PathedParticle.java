@@ -43,6 +43,7 @@ public class PathedParticle
             animationData = null;
 
 
+    protected boolean firstChecksDone = false;
     protected int age = 0, lastBlockX, lastBlockZ;
     protected double lastBlockR = -1, lastBlockG, lastBlockB;
     protected boolean dead = false;
@@ -213,9 +214,9 @@ public class PathedParticle
         //Remove if outside render distance
         VectorN pos = currentPos(0);
         EntityPlayer player = Minecraft.getMinecraft().player;
-        if (pos.squareDistanceTo(player.posX, player.posY + player.eyeHeight, player.posZ) > cullDistanceSquared)
+        if (player == null || pos.squareDistanceTo(player.posX, player.posY + player.eyeHeight, player.posZ) > cullDistanceSquared)
         {
-            dead = true;
+            delete();
             return;
         }
 
@@ -276,8 +277,20 @@ public class PathedParticle
     //The letter before "Factor" is what coordinate of the normalized rotated scalar vector is factoring into the equation
     public void renderParticle(BufferBuilder buffer, float partialTick, float xScaleXFactor, float yScaleYFactor, float xScaleZFactor, float yScaleZFactor, float yScaleXFactor)
     {
+        if (!firstChecksDone)
+        {
+            VectorN pos = currentPos(0);
+            EntityPlayer player = Minecraft.getMinecraft().player;
+            if (player == null || pos.squareDistanceTo(player.posX, player.posY + player.eyeHeight, player.posZ) > cullDistanceSquared)
+            {
+                delete();
+                return;
+            }
+        }
+
+
         World world = Minecraft.getMinecraft().world;
-        if (world == null) dead = true;
+        if (world == null) delete();
         if (dead) return;
 
 
@@ -288,7 +301,7 @@ public class PathedParticle
         VectorN pos = currentPos(partialTick);
         if (pos == null)
         {
-            dead = true;
+            delete();
             return;
         }
 
