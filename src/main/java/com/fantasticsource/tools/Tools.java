@@ -13,6 +13,7 @@ import java.nio.InvalidMarkException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.SplittableRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,6 +22,7 @@ public class Tools
 {
     public static final String REGEX_ANY = ".*", REGEX_SPECIAL_CHARACTERS_TEST = ".*[.+*?^$()\\[\\]{}|\\\\].*";
 
+    protected static SplittableRandom random = new SplittableRandom();
     protected static PrintStream out = null, err = null;
 
 
@@ -818,63 +820,63 @@ public class Tools
 
     public static <T> T choose(T[] choices)
     {
-        return choices[(int) Math.floor(Math.random() * choices.length)];
+        return choices[(int) Math.floor(random() * choices.length)];
     }
 
     public static <T> T choose(List<T> choices)
     {
-        return choices.get((int) Math.floor(Math.random() * choices.size()));
+        return choices.get((int) Math.floor(random() * choices.size()));
     }
 
     public static byte choose(byte... choices)
     {
-        return choices[(int) Math.floor(Math.random() * choices.length)];
+        return choices[(int) Math.floor(random() * choices.length)];
     }
 
     public static short choose(short... choices)
     {
-        return choices[(int) Math.floor(Math.random() * choices.length)];
+        return choices[(int) Math.floor(random() * choices.length)];
     }
 
     public static int choose(int... choices)
     {
-        return choices[(int) Math.floor(Math.random() * choices.length)];
+        return choices[(int) Math.floor(random() * choices.length)];
     }
 
     public static long choose(long... choices)
     {
-        return choices[(int) Math.floor(Math.random() * choices.length)];
+        return choices[(int) Math.floor(random() * choices.length)];
     }
 
     public static float choose(float... choices)
     {
-        return choices[(int) Math.floor(Math.random() * choices.length)];
+        return choices[(int) Math.floor(random() * choices.length)];
     }
 
     public static double choose(double... choices)
     {
-        return choices[(int) Math.floor(Math.random() * choices.length)];
+        return choices[(int) Math.floor(random() * choices.length)];
     }
 
     public static boolean choose(boolean... choices)
     {
-        return choices[(int) Math.floor(Math.random() * choices.length)];
+        return choices[(int) Math.floor(random() * choices.length)];
     }
 
     public static char choose(char... choices)
     {
-        return choices[(int) Math.floor(Math.random() * choices.length)];
+        return choices[(int) Math.floor(random() * choices.length)];
     }
 
     public static String choose(String... choices)
     {
-        return choices[(int) Math.floor(Math.random() * choices.length)];
+        return choices[(int) Math.floor(random() * choices.length)];
     }
 
     @SuppressWarnings("unchecked")
     public static <E> E chooseObj(E... choices)
     {
-        return choices[(int) Math.floor(Math.random() * choices.length)];
+        return choices[(int) Math.floor(random() * choices.length)];
     }
 
 
@@ -1014,39 +1016,45 @@ public class Tools
         return a;
     }
 
+
+    public static double random()
+    {
+        return random.nextDouble();
+    }
+
     public static byte random(byte maxvalue)
     {
-        return (byte) (maxvalue * Math.random());
+        return (byte) (maxvalue * random());
     }
 
     public static short random(short maxvalue)
     {
-        return (short) (maxvalue * Math.random());
+        return (short) (maxvalue * random());
     }
 
     public static int random(int maxvalue)
     {
-        return (int) (maxvalue * Math.random());
+        return (int) (maxvalue * random());
     }
 
     public static long random(long maxvalue)
     {
-        return (long) (maxvalue * Math.random());
+        return (long) (maxvalue * random());
     }
 
     public static float random(float maxvalue)
     {
-        return (float) (maxvalue * Math.random());
+        return (float) (maxvalue * random());
     }
 
     public static double random(double maxvalue)
     {
-        return maxvalue * Math.random();
+        return maxvalue * random();
     }
 
     public static char random(char maxvalue)
     {
-        return (char) (maxvalue * Math.random());
+        return (char) (maxvalue * random());
     }
 
     public static double randomGaussian(Random random, double center, double range)

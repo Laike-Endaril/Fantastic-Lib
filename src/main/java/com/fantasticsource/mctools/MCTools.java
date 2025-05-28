@@ -1332,7 +1332,7 @@ public class MCTools
 
     public static BlockPos randomPos(BlockPos centerPos, int xzRange, int yRange)
     {
-        return centerPos.add(-xzRange + (int) (Math.random() * xzRange * 2 + 1), -xzRange + (int) (Math.random() * xzRange * 2 + 1), -yRange + (int) (Math.random() * yRange * 2 + 1));
+        return centerPos.add(-xzRange + (int) (Tools.random() * xzRange * 2 + 1), -xzRange + (int) (Tools.random() * xzRange * 2 + 1), -yRange + (int) (Tools.random() * yRange * 2 + 1));
     }
 
     public static boolean isOP(EntityPlayerMP player)

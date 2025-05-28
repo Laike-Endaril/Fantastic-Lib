@@ -57,12 +57,12 @@ public class TrigLookupTable
         d1 = new Date();
         for (i = 0; i < 1000000; i++)
         {
-            doubles[i] = t.sin(Math.random() * (double) 2000000 - (double) 1000000);
+            doubles[i] = t.sin(Tools.random() * (double) 2000000 - (double) 1000000);
         }
         d2 = new Date();
         for (i = 0; i < 1000000; i++)
         {
-            doubles[i] = Math.sin(Math.random() * (double) 2000000 - (double) 1000000);
+            doubles[i] = Math.sin(Tools.random() * (double) 2000000 - (double) 1000000);
         }
         d3 = new Date();
         System.out.println("TrigLookupTable.sin = " + (d2.getTime() - d1.getTime()));
@@ -71,12 +71,12 @@ public class TrigLookupTable
         d1 = new Date();
         for (i = 0; i < 1000000; i++)
         {
-            doubles[i] = t.cos(Math.random() * (double) 2000000 - (double) 1000000);
+            doubles[i] = t.cos(Tools.random() * (double) 2000000 - (double) 1000000);
         }
         d2 = new Date();
         for (i = 0; i < 1000000; i++)
         {
-            doubles[i] = Math.cos(Math.random() * (double) 2000000 - (double) 1000000);
+            doubles[i] = Math.cos(Tools.random() * (double) 2000000 - (double) 1000000);
         }
         d3 = new Date();
         System.out.println("TrigLookupTable.cos = " + (d2.getTime() - d1.getTime()));
@@ -85,12 +85,12 @@ public class TrigLookupTable
         d1 = new Date();
         for (i = 0; i < 1000000; i++)
         {
-            doubles[i] = t.tan(Math.random() * (double) 2000000 - (double) 1000000);
+            doubles[i] = t.tan(Tools.random() * (double) 2000000 - (double) 1000000);
         }
         d2 = new Date();
         for (i = 0; i < 1000000; i++)
         {
-            doubles[i] = Math.tan(Math.random() * (double) 2000000 - (double) 1000000);
+            doubles[i] = Math.tan(Tools.random() * (double) 2000000 - (double) 1000000);
         }
         d3 = new Date();
         System.out.println("TrigLookupTable.tan = " + (d2.getTime() - d1.getTime()));
@@ -99,12 +99,12 @@ public class TrigLookupTable
         d1 = new Date();
         for (i = 0; i < 1000000; i++)
         {
-            doubles[i] = t.arcsin(Math.random() * (double) 2 - (double) 1);
+            doubles[i] = t.arcsin(Tools.random() * (double) 2 - (double) 1);
         }
         d2 = new Date();
         for (i = 0; i < 1000000; i++)
         {
-            doubles[i] = Math.asin(Math.random() * (double) 2 - (double) 1);
+            doubles[i] = Math.asin(Tools.random() * (double) 2 - (double) 1);
         }
         d3 = new Date();
         System.out.println("TrigLookupTable.arcsin = " + (d2.getTime() - d1.getTime()));
@@ -113,12 +113,12 @@ public class TrigLookupTable
         d1 = new Date();
         for (i = 0; i < 1000000; i++)
         {
-            doubles[i] = t.arccos(Math.random() * (double) 2 - (double) 1);
+            doubles[i] = t.arccos(Tools.random() * (double) 2 - (double) 1);
         }
         d2 = new Date();
         for (i = 0; i < 1000000; i++)
         {
-            doubles[i] = Math.acos(Math.random() * (double) 2 - (double) 1);
+            doubles[i] = Math.acos(Tools.random() * (double) 2 - (double) 1);
         }
         d3 = new Date();
         System.out.println("TrigLookupTable.arccos = " + (d2.getTime() - d1.getTime()));
@@ -127,12 +127,12 @@ public class TrigLookupTable
         d1 = new Date();
         for (i = 0; i < 1000000; i++)
         {
-            doubles[i] = t.arctan(Math.random() * (double) 2000000 - (double) 1000000);
+            doubles[i] = t.arctan(Tools.random() * (double) 2000000 - (double) 1000000);
         }
         d2 = new Date();
         for (i = 0; i < 1000000; i++)
         {
-            doubles[i] = Math.atan(Math.random() * (double) 2000000 - (double) 1000000);
+            doubles[i] = Math.atan(Tools.random() * (double) 2000000 - (double) 1000000);
         }
         d3 = new Date();
         System.out.println("TrigLookupTable.arctan = " + (d2.getTime() - d1.getTime()));
