@@ -180,6 +180,9 @@ public class AdvancedBlockFilter
 
     public boolean matches(IBlockState state)
     {
+        if (state == null) return false;
+
+
         //Block (Domain, name)
         Block block = state.getBlock();
         int stateMeta = block.getMetaFromState(state);
@@ -187,6 +190,13 @@ public class AdvancedBlockFilter
         if (cachedBlockCheck == null)
         {
             ResourceLocation resourceLocation = block.getRegistryName();
+            if (resourceLocation == null)
+            {
+                cachedBlockResults.put(block, false);
+                return false;
+            }
+
+
             if (!checkDomain(resourceLocation.getResourceDomain()) || !checkBlock(resourceLocation.getResourcePath()))
             {
                 //Oredict checks
@@ -240,13 +250,13 @@ public class AdvancedBlockFilter
     protected boolean checkDomain(String domain)
     {
         if (domainIsRegex) return Tools.regexMatches(domainCheck, domain);
-        return domain.equals(domainCheck);
+        return domainCheck.equals(domain);
     }
 
     protected boolean checkBlock(String block)
     {
         if (blockIsRegex) return Tools.regexMatches(blockCheck, block);
-        return block.equals(blockCheck);
+        return blockCheck.equals(block);
     }
 
     protected boolean checkMeta(int stackMeta)

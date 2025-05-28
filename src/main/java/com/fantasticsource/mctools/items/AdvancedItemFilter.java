@@ -258,12 +258,21 @@ public class AdvancedItemFilter
 
     public boolean matches(ItemStack stack)
     {
+        if (stack == null) return false;
+
+
         //Item (Domain, name)
         Item item = stack.getItem();
         Boolean cachedItemCheck = cachedItemResults.get(item);
         if (cachedItemCheck == null)
         {
             ResourceLocation resourceLocation = item.getRegistryName();
+            if (resourceLocation == null)
+            {
+                cachedItemResults.put(item, false);
+                return false;
+            }
+
             if (!checkDomain(resourceLocation.getResourceDomain()) || !checkItem(resourceLocation.getResourcePath()))
             {
                 //Oredict checks
@@ -338,13 +347,13 @@ public class AdvancedItemFilter
     protected boolean checkDomain(String domain)
     {
         if (domainIsRegex) return Tools.regexMatches(domainCheck, domain);
-        return domain.equals(domainCheck);
+        return domainCheck.equals(domain);
     }
 
     protected boolean checkItem(String item)
     {
         if (itemIsRegex) return Tools.regexMatches(itemCheck, item);
-        return item.equals(itemCheck);
+        return itemCheck.equals(item);
     }
 
     protected boolean checkMeta(int stackMeta)
