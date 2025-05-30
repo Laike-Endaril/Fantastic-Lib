@@ -8,32 +8,28 @@ import net.minecraft.world.WorldType;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.function.Predicate;
 
-public class BlockTickEvent extends Event
+public class BlockTick
 {
-    static
+    protected static ArrayList<Predicate<BlockTickData>> actions = new ArrayList<>();
+
+    public static void addAction(Predicate<BlockTickData> action)
     {
-        MinecraftForge.EVENT_BUS.register(BlockTickEvent.class);
+        actions.add(action);
+        if (actions.size() == 1) MinecraftForge.EVENT_BUS.register(BlockTick.class);
     }
 
-
-    public final World world;
-    public final int x, y, z;
-    public final IBlockState blockState;
-
-    public BlockTickEvent(World world, int x, int y, int z, IBlockState blockState)
+    public static void removeAction(Predicate<BlockTickData> action)
     {
-        this.world = world;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.blockState = blockState;
+        actions.remove(action);
+        if (actions.size() == 0) MinecraftForge.EVENT_BUS.unregister(BlockTick.class);
     }
 
 
@@ -51,7 +47,7 @@ public class BlockTickEvent extends Event
         if (i <= 0) return;
 
 
-        world.profiler.startSection("FLib BlockTickEvent");
+        world.profiler.startSection("FLib BlockTick");
         int r, x, y, z;
         Chunk chunk;
         for (Iterator<Chunk> iterator = world.getPersistentChunkIterable(world.getPlayerChunkMap().getChunkIterator()); iterator.hasNext(); )
@@ -67,11 +63,29 @@ public class BlockTickEvent extends Event
                         x = r & 15;
                         z = r >> 8 & 15;
                         y = r >> 16 & 15;
-                        MinecraftForge.EVENT_BUS.post(new BlockTickEvent(world, x + (chunk.x << 4), y + extendedblockstorage.getYLocation(), z + (chunk.z << 4), extendedblockstorage.get(x, y, z)));
+                        BlockTickData blockTickData = new BlockTickData(world, x + (chunk.x << 4), y + extendedblockstorage.getYLocation(), z + (chunk.z << 4), extendedblockstorage.get(x, y, z));
+                        for (Predicate<BlockTickData> action : actions) action.test(blockTickData);
                     }
                 }
             }
         }
         world.profiler.endSection();
+    }
+
+
+    public static class BlockTickData
+    {
+        public final World world;
+        public final int x, y, z;
+        public final IBlockState blockState;
+
+        public BlockTickData(World world, int x, int y, int z, IBlockState blockState)
+        {
+            this.world = world;
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.blockState = blockState;
+        }
     }
 }
