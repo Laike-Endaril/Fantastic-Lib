@@ -53,9 +53,11 @@ public class BlockTickEvent extends Event
 
         world.profiler.startSection("FLib BlockTickEvent");
         int r, x, y, z;
+        Chunk chunk;
         for (Iterator<Chunk> iterator = world.getPersistentChunkIterable(world.getPlayerChunkMap().getChunkIterator()); iterator.hasNext(); )
         {
-            for (ExtendedBlockStorage extendedblockstorage : iterator.next().getBlockStorageArray())
+            chunk = iterator.next();
+            for (ExtendedBlockStorage extendedblockstorage : chunk.getBlockStorageArray())
             {
                 if (extendedblockstorage != Chunk.NULL_BLOCK_STORAGE && extendedblockstorage.needsRandomTick())
                 {
@@ -65,7 +67,7 @@ public class BlockTickEvent extends Event
                         x = r & 15;
                         z = r >> 8 & 15;
                         y = r >> 16 & 15;
-                        MinecraftForge.EVENT_BUS.post(new BlockTickEvent(world, x, y, z, extendedblockstorage.get(x, y, z)));
+                        MinecraftForge.EVENT_BUS.post(new BlockTickEvent(world, x + (chunk.x << 4), y + extendedblockstorage.getYLocation(), z + (chunk.z << 4), extendedblockstorage.get(x, y, z)));
                     }
                 }
             }
