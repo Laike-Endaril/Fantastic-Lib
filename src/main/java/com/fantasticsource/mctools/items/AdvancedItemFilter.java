@@ -322,7 +322,7 @@ public class AdvancedItemFilter
         {
             for (Map.Entry<String, String> entry : tagsDisallowed.entrySet())
             {
-                if (checkNBT(compound, entry.getKey().split(":", -1), entry.getValue())) return false;
+                if (checkNBT(compound, entry.getKey().split("/", -1), entry.getValue())) return false;
             }
         }
 
@@ -335,7 +335,7 @@ public class AdvancedItemFilter
 
             for (Map.Entry<String, String> entry : tagsRequired.entrySet())
             {
-                if (!checkNBT(compound, entry.getKey().split(":", -1), entry.getValue())) return false;
+                if (!checkNBT(compound, entry.getKey().split("/", -1), entry.getValue())) return false;
             }
         }
 
