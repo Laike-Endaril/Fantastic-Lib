@@ -445,27 +445,29 @@ public class PathedParticle
         int blockLight = lightmapIndex & 65535;
 
 
-        float r, g, b;
+        float r = 1, g = 1, b = 1;
+        VectorN vec;
         if (rgbData != null)
         {
-            VectorN rgb = rgbData.getRelativePosition(renderMillis);
-            r = (float) rgb.values[0];
-            g = (float) rgb.values[1];
-            b = (float) rgb.values[2];
+            for (CPath path : rgbData.paths)
+            {
+                vec = path.getRelativePosition(renderMillis);
+                r *= (float) vec.values[0];
+                g *= (float) vec.values[1];
+                b *= (float) vec.values[2];
+            }
         }
-        else if (hsvData != null)
+        if (hsvData != null)
         {
-            VectorN hsv = hsvData.getRelativePosition(renderMillis);
-            Color c = new Color(0).setColorHSV((float) hsv.values[0], (float) hsv.values[1], (float) hsv.values[2]);
-            r = c.rf();
-            g = c.gf();
-            b = c.bf();
-        }
-        else
-        {
-            r = 1;
-            g = 1;
-            b = 1;
+            Color c = new Color(0);
+            for (CPath path : hsvData.paths)
+            {
+                vec = path.getRelativePosition(renderMillis);
+                c.setColorHSV((float) vec.values[0], (float) vec.values[1], (float) vec.values[2]);
+                r *= c.rf();
+                g *= c.gf();
+                b *= c.bf();
+            }
         }
 
 
