@@ -16,7 +16,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeColorHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +29,6 @@ public class PathedParticle
     public double cullDistanceSquared = 900;
     public Vec3d deathPos = null;
     public Object[] extraDeathArgs = null;
-    public boolean useFoliageColor = false, useGrassColor = false;
     public SpriteMetaData spriteMetaData = null;
     public CPath.CPathData
             positionData = new CPath.CPathData(0),
@@ -44,8 +42,7 @@ public class PathedParticle
 
 
     protected boolean firstChecksDone = false;
-    protected int age = 0, lastBlockX, lastBlockZ;
-    protected double lastBlockR = -1, lastBlockG, lastBlockB;
+    protected int age = 0;
     protected boolean dead = false;
     protected ArrayList<Predicate<PathedParticle>> deathConditions = new ArrayList<>();
     protected ArrayList<PathedParticleFactory> onDeathParticles = null;
@@ -445,7 +442,7 @@ public class PathedParticle
         int blockLight = lightmapIndex & 65535;
 
 
-        float r = 1, g = 1, b = 1;
+        float r = 1, g = 1, b = 1, a = 1;
         VectorN vec;
         if (rgbData != null)
         {
@@ -471,39 +468,10 @@ public class PathedParticle
         }
 
 
-        if (useFoliageColor || useGrassColor)
+        if (alphaData != null)
         {
-            if (lastBlockR == -1 || lastBlockX != blockPos.getX() || lastBlockZ != blockPos.getZ())
-            {
-                lastBlockX = blockPos.getX();
-                lastBlockZ = blockPos.getZ();
-                lastBlockR = 1;
-                lastBlockG = 1;
-                lastBlockB = 1;
-
-                if (useFoliageColor)
-                {
-                    int c = BiomeColorHelper.getFoliageColorAtPos(world, blockPos);
-                    lastBlockR *= ((c >> 16) & 255) / 255d;
-                    lastBlockG *= ((c >> 8) & 255) / 255d;
-                    lastBlockB *= (c & 255) / 255d;
-                }
-                if (useGrassColor)
-                {
-                    int c = BiomeColorHelper.getGrassColorAtPos(world, blockPos);
-                    lastBlockR *= ((c >> 16) & 255) / 255d;
-                    lastBlockG *= ((c >> 8) & 255) / 255d;
-                    lastBlockB *= (c & 255) / 255d;
-                }
-            }
-
-            r *= lastBlockR;
-            g *= lastBlockG;
-            b *= lastBlockB;
+            for (CPath path : alphaData.paths) a *= path.getRelativePosition(renderMillis).values[0];
         }
-
-
-        float a = alphaData == null ? 1 : (float) alphaData.getRelativePosition(renderMillis).values[0];
 
 
         buffer.pos(x + posOffsets[0].values[0] * xScale3D, y + posOffsets[0].values[1] * yScale3D, z + posOffsets[0].values[2] * zScale3D).tex(u2, v2).color(r, g, b, a).lightmap(skyLight, blockLight).endVertex();
