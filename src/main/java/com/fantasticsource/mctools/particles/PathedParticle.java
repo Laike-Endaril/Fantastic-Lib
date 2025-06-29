@@ -444,11 +444,13 @@ public class PathedParticle
 
         float r = 1, g = 1, b = 1, a = 1;
         VectorN vec;
+        long renderMillisWithRate;
         if (rgbData != null)
         {
+            renderMillisWithRate = (long) (renderMillis * rgbData.rate);
             for (CPath path : rgbData.paths)
             {
-                vec = path.getRelativePosition(renderMillis);
+                vec = path.getRelativePosition(renderMillisWithRate);
                 r *= (float) vec.values[0];
                 g *= (float) vec.values[1];
                 b *= (float) vec.values[2];
@@ -456,10 +458,11 @@ public class PathedParticle
         }
         if (hsvData != null)
         {
+            renderMillisWithRate = (long) (renderMillis * hsvData.rate);
             Color c = new Color(0);
             for (CPath path : hsvData.paths)
             {
-                vec = path.getRelativePosition(renderMillis);
+                vec = path.getRelativePosition(renderMillisWithRate);
                 c.setColorHSV((float) vec.values[0], (float) vec.values[1], (float) vec.values[2]);
                 r *= c.rf();
                 g *= c.gf();
@@ -470,7 +473,8 @@ public class PathedParticle
 
         if (alphaData != null)
         {
-            for (CPath path : alphaData.paths) a *= path.getRelativePosition(renderMillis).values[0];
+            renderMillisWithRate = (long) (renderMillis * alphaData.rate);
+            for (CPath path : alphaData.paths) a *= path.getRelativePosition(renderMillisWithRate).values[0];
         }
 
 
