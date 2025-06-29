@@ -26,6 +26,7 @@ public class PathedParticle
     public final PathedParticleSharedRenderData sharedRenderData;
     public final int maxAge;
 
+    public int age = 0;
     public double cullDistanceSquared = 900;
     public Vec3d deathPos = null;
     public Object[] extraDeathArgs = null;
@@ -42,7 +43,6 @@ public class PathedParticle
 
 
     protected boolean firstChecksDone = false;
-    protected int age = 0;
     protected boolean dead = false;
     protected ArrayList<Predicate<PathedParticle>> deathConditions = new ArrayList<>();
     protected ArrayList<PathedParticleFactory> onDeathParticles = null;
@@ -80,12 +80,6 @@ public class PathedParticle
         //Deletion, not death; don't call on-death stuff
         dead = true;
         return this;
-    }
-
-
-    public int getAge()
-    {
-        return age;
     }
 
 
