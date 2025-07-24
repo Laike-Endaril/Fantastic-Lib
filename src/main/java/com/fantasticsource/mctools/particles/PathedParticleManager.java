@@ -1,12 +1,10 @@
 package com.fantasticsource.mctools.particles;
 
+import com.fantasticsource.tools.ReflectionTool;
 import com.fantasticsource.tools.component.path.CPath;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
@@ -21,6 +19,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -30,6 +29,7 @@ public class PathedParticleManager
 {
     protected static final Profiler PROFILER = Minecraft.getMinecraft().mcProfiler;
     protected static final TextureManager RENDERER = Minecraft.getMinecraft().renderEngine;
+    protected static final Method ENTITY_RENDERER_SETUP_FOG_METHOD = ReflectionTool.getMethod(EntityRenderer.class, "func_78468_a", "setupFog");
 
 
     protected static LinkedHashMap<PathedParticleSharedRenderData, ArrayList<PathedParticle>> particles = new LinkedHashMap<>();
@@ -175,7 +175,9 @@ public class PathedParticleManager
     public static void renderLast(RenderWorldLastEvent event)
     {
         PROFILER.startSection("FLib: Pathed Particles Render");
+        ReflectionTool.invoke(ENTITY_RENDERER_SETUP_FOG_METHOD, Minecraft.getMinecraft().entityRenderer, 0, event.getPartialTicks());
         render(event.getPartialTicks());
+        GlStateManager.disableFog();
         PROFILER.endSection();
     }
 
