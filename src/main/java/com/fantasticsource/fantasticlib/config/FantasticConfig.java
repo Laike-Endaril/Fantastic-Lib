@@ -55,6 +55,14 @@ public class FantasticConfig
             })
     public static double tooltipScaling = 1;
 
+    @Config.Name("NBT Separator")
+    @Config.LangKey(MODID + ".config.nbtSeparator")
+    @Config.Comment(
+            {
+                    "Matching boxed NBT will use this separator to access keys inside a compound. Before 1.12.2.069 this was \".\""
+            })
+    public static String nbtSeparator = "/";
+
     @Config.Name("GUI Settings")
     @Config.LangKey(MODID + ".config.guiSettings")
     public static GUIConfig guiSettings = new GUIConfig();

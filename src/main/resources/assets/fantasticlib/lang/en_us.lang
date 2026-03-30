@@ -44,6 +44,8 @@ fantasticlib.config.negativeAttributes=Negative Attributes
 fantasticlib.config.negativeAttributes.tooltip=FILLSCREEN A list of attributes which are bad to have, for render color purposes\n \n
 fantasticlib.config.tooltipScaling=Tooltip Scaling
 fantasticlib.config.tooltipScaling.tooltip=FILLSCREEN Multiplies tooltip render size by this amount\n \n
+fantasticlib.config.nbtSeparator=NBT Separator
+fantasticlib.config.nbtSeparator.tooltip=FILLSCREEN Matching boxed NBT will use this separator to access keys inside a compound. Before 1.12.2.069 this was "."\n \n
 fantasticlib.config.guiSettings=GUI Settings
 fantasticlib.config.raytraceSettings=Raytrace Settings
 
