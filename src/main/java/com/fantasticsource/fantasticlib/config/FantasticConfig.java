@@ -59,7 +59,7 @@ public class FantasticConfig
     @Config.LangKey(MODID + ".config.nbtSeparator")
     @Config.Comment(
             {
-                    "Matching boxed NBT will use this separator to access keys inside a compound. Before 1.12.2.069 this was \".\""
+                    "Matching boxed NBT will use this separator to access keys inside a compound. Before 1.12.2.069 this was \":\""
             })
     public static String nbtSeparator = "/";
 
