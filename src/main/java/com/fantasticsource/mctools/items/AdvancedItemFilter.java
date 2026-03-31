@@ -1,6 +1,7 @@
 package com.fantasticsource.mctools.items;
 
 import com.fantasticsource.fantasticlib.FantasticLib;
+import com.fantasticsource.fantasticlib.config.FantasticConfig;
 import com.fantasticsource.tools.Tools;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
@@ -322,7 +323,7 @@ public class AdvancedItemFilter
         {
             for (Map.Entry<String, String> entry : tagsDisallowed.entrySet())
             {
-                if (checkNBT(compound, entry.getKey().split("/", -1), entry.getValue())) return false;
+                if (checkNBT(compound, entry.getKey().split(FantasticConfig.nbtSeparator, -1), entry.getValue())) return false;
             }
         }
 
@@ -335,7 +336,7 @@ public class AdvancedItemFilter
 
             for (Map.Entry<String, String> entry : tagsRequired.entrySet())
             {
-                if (!checkNBT(compound, entry.getKey().split("/", -1), entry.getValue())) return false;
+                if (!checkNBT(compound, entry.getKey().split(FantasticConfig.nbtSeparator, -1), entry.getValue())) return false;
             }
         }
 
